@@ -1,0 +1,200 @@
+.hotel_card {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  column-gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0px 2px 16px 0px rgba(167, 182, 207, 0.12);
+
+  box-shadow: 0px 4px 8px 0px rgba(89, 99, 117, 0.2);
+}
+
+.card_right {
+  width: 25%;
+}
+.card_mid {
+  width: 50%;
+}
+
+.card_mid {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: 8px;
+}
+
+.card_mid-title {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.4000000059604645px;
+  text-align: left;
+  color: rgba(37, 105, 215, 1);
+  margin-bottom: 2px;
+}
+
+.card_mid-location {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: rgba(37, 52, 61, 0.5);
+}
+
+.card_mid-rating {
+  display: flex;
+  column-gap: 10px;
+  font-family: GT Walsheim Pro;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: rgba(41, 45, 50, 0.7);
+}
+
+.card_mid-desc {
+  font-family: GT Walsheim Pro;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: 0px;
+  text-align: left;
+  color: rgba(41, 45, 50, 0.8);
+}
+
+.card_right-price {
+  font-family: GT Walsheim Pro;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: 0em;
+  text-align: left;
+
+  text-align: left;
+  margin-bottom: 2px;
+  color: rgba(41, 45, 50, 1);
+  span {
+    font-size: 24px;
+  }
+}
+
+.card_right-people {
+  color: rgba(37, 52, 61, 0.36);
+  font-family: GT Walsheim Pro;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 15px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.card_right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 25%;
+  padding: 14px 7px 7px;
+  border: solid 2px rgba(41, 45, 50, 0.08);
+  border-radius: 8px;
+  .primary-btn {
+    font-family: GT Walsheim Pro;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 18px;
+    letter-spacing: 0em;
+  }
+}
+
+.card_right-top {
+  border-bottom: solid 2px rgba(41, 45, 50, 0.08);
+  padding-bottom: 12px;
+}
+
+.hotel_card-img {
+  border-radius: 8px;
+  position: relative;
+}
+
+.card_right-old-price {
+  font-family: GT Walsheim Pro;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: rgba(132, 143, 150, 0.4);
+  text-decoration: line-through;
+}
+
+.card_left {
+  position: relative;
+  display: unset;
+}
+
+.discount_box {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  height: 38px;
+  width: 58px;
+  left: 158px;
+  top: 6px;
+  border-radius: 4px;
+  padding: 10px;
+  background-color: rgba(231, 75, 48, 1);
+  color: #fff;
+}
+
+.rating-stars {
+  display: flex;
+  column-gap: 6px;
+}
+
+.rating-num {
+  font-family: GT Walsheim Pro;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #fff;
+  background-color: rgba(94, 178, 21, 1);
+  padding: 4px 8px;
+  display: flex;
+  column-gap: 8px;
+  border-radius: 4px;
+}
+
+.card_days {
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+}
+
+.card_right-days {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card_tag {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+  left: 0px;
+  top: 0px;
+  border-radius: 8px;
+  padding: 8px 12px 8px 12px;
+  color: rgba(37, 105, 215, 1);
+  background-color: rgba(101, 159, 254, 0.06);
+}
+
+.card_mid-tags {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 8px;
+  row-gap: 8px;
+}
