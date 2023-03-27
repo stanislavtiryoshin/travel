@@ -28,7 +28,11 @@ import search1 from "../../assets/search/search1.svg";
 import search2 from "../../assets/search/search2.svg";
 import search3 from "../../assets/search/search3.svg";
 import search4 from "../../assets/search/search4.svg";
-import { getSearchedHotels } from "../../features/hotel/hotelSlice";
+import {
+  getSearchedHotels,
+  getHotels,
+  reset,
+} from "../../features/hotel/hotelSlice";
 
 const tags = [
   {
@@ -53,20 +57,8 @@ const tags = [
   },
 ];
 
-const SearchPanel = (
-  {
-    // changeAmount,
-    // changeDaysAmount,
-    // changeDate,
-    // handleSearch,
-  }
-) => {
+const SearchPanel = () => {
   const dispatch = useDispatch();
-
-  const handleSearch = (location) => {
-    dispatch(getSearchedHotels(location));
-    console.log(location);
-  };
 
   const [panelTag, setPanelTag] = useState("");
 
@@ -88,7 +80,7 @@ const SearchPanel = (
     origin: "Астана",
     destination: allLocations ? allLocations[0]._id : null,
     startDate: new Date(),
-    endDate: null,
+    endDate: new Date(),
     number: 1,
   });
 
@@ -147,16 +139,26 @@ const SearchPanel = (
     window.localStorage.setItem("peopleAmount", clientData.peopleAmount);
   }, [clientData]);
 
-  console.log(clientData);
-
   const handleTagChange = (text) => {
     setPanelTag(text);
     setSearchTerms({ ...searchTerms, tag: text });
   };
 
-  const onSearchClick = (locationId) => {
-    handleSearch(locationId);
+  const handleSearch = ({
+    locationId,
+    peopleAmount,
+    daysAmount,
+    startDate,
+  }) => {
+    dispatch(
+      getSearchedHotels({ locationId, peopleAmount, daysAmount, startDate })
+    );
   };
+
+  // const onSearchClick = (locationId, peopleAmount, daysAmount, startDate) => {
+  //   handleSearch({ locationId, peopleAmount, daysAmount, startDate });
+  //   console.log({ locationId, peopleAmount, daysAmount, startDate });
+  // };
 
   return (
     <div className="search_box">
@@ -209,13 +211,13 @@ const SearchPanel = (
                   dispatch(setDestination(e.target.value));
                 }}
               >
+                <option value="Весь" selected>
+                  Весь Казахстан
+                </option>
                 {allLocations ? (
                   allLocations.map((location, idx) => {
                     return (
-                      <option
-                        value={location._id}
-                        selected={idx === 0 ? true : false}
-                      >
+                      <option value={location._id}>
                         {location.locationName}
                       </option>
                     );
@@ -270,8 +272,24 @@ const SearchPanel = (
           <button
             className="primary-btn yellow"
             onClick={() => {
-              if (searchTerms.destination)
-                handleSearch(searchTerms.destination);
+              if (
+                searchTerms.destination &&
+                searchTerms.destination !== "Весь"
+              ) {
+                handleSearch({
+                  locationId: searchTerms.destination,
+                  peopleAmount: clientData.peopleAmount,
+                  daysAmount: clientData.daysAmount,
+                  startDate: clientData.startDate,
+                });
+              } else if (searchTerms.destination === "Весь") {
+                handleSearch({
+                  locationId: "",
+                  peopleAmount: clientData.peopleAmount,
+                  daysAmount: clientData.daysAmount,
+                  startDate: clientData.startDate,
+                });
+              }
             }}
           >
             Найти

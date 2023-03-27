@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import hotelService from "./hotelService";
 
-const user = JSON.parse(localStorage.getItem("user"));
-
 const initialState = {
   hotels: [],
   singleHotel: {},
@@ -70,9 +68,14 @@ export const getHotels = createAsyncThunk(
 
 export const getSearchedHotels = createAsyncThunk(
   "hotels/getSearched",
-  async (locationId, thunkAPI) => {
+  async (searchData, thunkAPI) => {
     try {
-      return await hotelService.getSearchedHotels(locationId);
+      return await hotelService.getSearchedHotels(
+        searchData.locationId,
+        searchData.peopleAmount,
+        searchData.daysAmount,
+        searchData.startDate
+      );
     } catch (error) {
       const message =
         (error.response &&

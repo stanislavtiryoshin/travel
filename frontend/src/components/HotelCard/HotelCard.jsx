@@ -10,6 +10,7 @@ import star from "../../assets/star.svg";
 import sun from "../../assets/sun.svg";
 import moon from "../../assets/moon.svg";
 import tag from "../../assets/tag.svg";
+import { useSelector } from "react-redux";
 
 const HotelCard = ({
   hotelId,
@@ -17,25 +18,106 @@ const HotelCard = ({
   locationId,
   description,
   rating,
-  amount,
-  days,
-  startDate,
-  endDate,
+  totalPrice,
+  // amount,
+  // days,
+  // startDate,
+  // endDate,
   rooms,
 }) => {
   const [cheapestRoom, setCheapestRoom] = useState();
+
+  const { startDate, endDate, daysAmount, peopleAmount } = useSelector(
+    (state) => state.client
+  );
 
   useEffect(() => {
     if (rooms) {
       setCheapestRoom(
         rooms
-          .filter((room) => room.capacity >= amount)
+          .filter((room) => room.capacity >= peopleAmount)
           .reduce(function (prev, current) {
             return prev.roomPrice < current.roomPrice ? prev : current;
           })
       );
     }
   }, [rooms]);
+
+  const [clientStartingDate, setClientStartingDate] = useState(new Date());
+  const [clientEndingDate, setClientEndingDate] = useState(new Date());
+
+  useEffect(() => {
+    setClientStartingDate(new Date(+startDate));
+    setClientEndingDate(new Date(+endDate));
+  }, [startDate, endDate]);
+
+  // const [sum, setSum] = useState(0);
+
+  // const calculatePrice = (start, daysNum, basePrice) => {
+  //   let daysArray = [];
+
+  //   const pricesArray = cheapestRoom.prices;
+
+  //   for (let i = 0; i < daysNum; i++) {
+  //     let date = new Date();
+  //     date.setDate(start.getDate() + i);
+  //     daysArray.push(date);
+  //   }
+
+  //   let sum = 0;
+
+  //   const findPriceByDate = (date) => {
+  //     if (pricesArray && pricesArray.length > 0) {
+  //       pricesArray.forEach((el) => {
+  //         if (
+  //           date.getMonth() + 1 >= el.dateStart.month &&
+  //           date.getMonth() + 1 <= el.dateEnd.month &&
+  //           date.getDate() >= el.dateStart.day &&
+  //           date.getDate() <= el.dateEnd.day &&
+  //           el.price
+  //         ) {
+  //           sum += el.price;
+  //         } else {
+  //           sum += basePrice;
+  //         }
+  //       });
+  //     } else {
+  //       sum += basePrice;
+  //     }
+  //     return;
+  //   };
+
+  //   for (let i = 0; i < daysNum; i++) {
+  //     findPriceByDate(daysArray[i]);
+  //   }
+
+  //   return sum;
+  // };
+
+  const [clientData, setClientData] = useState({
+    endDate: 0,
+    startDate: 0,
+    peopleAmount: 1,
+    daysAmount: 1,
+  });
+
+  useEffect(() => {
+    setClientData({
+      ...clientData,
+      startDate: window.localStorage.getItem("startDate"),
+      endDate: window.localStorage.getItem("endDate"),
+      peopleAmount: window.localStorage.getItem("peopleAmount"),
+      daysAmount: window.localStorage.getItem("daysAmount"),
+    });
+  }, []);
+
+  // useEffect(() => {
+  //   if (clientData && cheapestRoom) {
+  //     setSum(
+  //       calculatePrice(clientStartingDate, daysAmount, cheapestRoom?.roomPrice)
+  //     );
+  //   }
+  // }, [clientData, cheapestRoom, daysAmount]);
 
   return (
     <div className="hotel_card">
@@ -79,32 +161,33 @@ const HotelCard = ({
       <div className="card_right card_col">
         <div className="card_right-top">
           {cheapestRoom?.discount ? (
-            <div className="card_right-old-price">
-              {cheapestRoom?.roomPrice * days} тг
+            <>
+              <div className="card_right-old-price">{totalPrice} тг</div>
+              <div className="card_right-price">
+                от{" "}
+                <span>
+                  {(totalPrice * (100 - cheapestRoom?.discount)) / 100}
+                </span>{" "}
+                тг
+              </div>
+            </>
+          ) : (
+            <div className="card_right-price">
+              от <span>{totalPrice}</span> тг
             </div>
-          ) : null}
-          <div className="card_right-price">
-            от{" "}
-            <span>
-              {cheapestRoom?.discount
-                ? (cheapestRoom?.roomPrice / 100) *
-                  (100 - cheapestRoom?.discount) *
-                  days
-                : cheapestRoom?.roomPrice * days}
-            </span>{" "}
-            тг
-          </div>
-          <div className="card_right-people">На {amount} взр.</div>
+          )}
+
+          <div className="card_right-people">На {peopleAmount} взр.</div>
         </div>
         <div className="card_right-days">
           <div className="card_days">
             <img src={sun} alt="" />
-            <span>{days}</span>
+            <span>{daysAmount}</span>
             дней
           </div>
           <div className="card_days nights">
             <img src={moon} alt="" />
-            <span>{days - 1}</span>
+            <span>{daysAmount - 1}</span>
             ночи
           </div>
         </div>

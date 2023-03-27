@@ -20,14 +20,18 @@ export const addOrder = createAsyncThunk(
       const token = thunkAPI.getState().auth.user.token;
       return await orderService.addOrder(
         {
-          name: orderData.name,
-          days: orderData.days,
-          location: orderData.location,
+          hotel: orderData.hotel,
+          daysAmount: orderData.daysAmount,
           startDate: orderData.startDate,
           sum: orderData.sum,
           endDate: orderData.endDate,
-          amount: orderData.amount,
+          peopleAmount: orderData.peopleAmount,
           room: orderData.room,
+          clientName: orderData.clientName,
+          clientEmail: orderData.clientEmail,
+          clientPhone: orderData.clientPhone,
+          clientOtherPhone: orderData.clientOtherPhone,
+          extraInfo: orderData.extraInfo,
         },
         token
       );

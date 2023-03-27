@@ -68,8 +68,6 @@ const Home = () => {
   const [from, setFrom] = useState(0);
   const [to, setTo] = useState(100000);
 
-  console.log(destination);
-
   const [value, setValue] = useState([]);
 
   return (
@@ -265,6 +263,7 @@ const Home = () => {
                         startDate={startDate}
                         endDate={endDate}
                         rooms={hotel.rooms}
+                        totalPrice={hotel.totalPrice}
                       />
                     );
                   })}

@@ -2,21 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import { Link } from "react-router-dom";
 
-import HotelCard from "../../components/HotelCard/HotelCard";
 import { login, reset } from "../../features/auth/authSlice";
 import {
   addHotel,
   getHotels,
   getSingleHotel,
 } from "../../features/hotel/hotelSlice";
-import { getExcursions } from "../../features/excursion/excursionSlice";
 import { RatingBox } from "../../components/HotelCard/HotelCard";
 import { addOrder } from "../../features/order/orderSlice";
 
-import Hero from "../../components/Hero/Hero";
-import banner from "../../assets/banner.png";
 import geo from "../../assets/geo.svg";
 import map from "../../assets/map.svg";
 import tag from "../../assets/tag.svg";
@@ -24,6 +20,7 @@ import clock from "../../assets/clock.svg";
 import serv from "../../assets/serv.svg";
 import check from "../../assets/check.svg";
 import person from "../../assets/person.svg";
+import calendar from "../../assets/calendar.svg";
 import kids from "../../assets/kids.png";
 import media from "../../assets/media.svg";
 import media1 from "../../assets/media1.svg";
@@ -33,6 +30,7 @@ import ad from "../../assets/ad.png";
 import hotel from "../../assets/hotel.png";
 import "./Hotel.scss";
 import Room from "./Room";
+import Excursions from "../../components/Excursions/Excursions";
 
 const Hotel = () => {
   const dispatch = useDispatch();
@@ -43,28 +41,11 @@ const Hotel = () => {
     (state) => state.hotels
   );
 
-  const [location, setLocation] = useState(null);
-
-  useEffect(() => {
-    if (singleHotel?.locationId)
-      axios
-        .get(`http://localhost:3000/api/locations/${singleHotel.locationId}`)
-        .then((response) => {
-          setLocation(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-  }, [singleHotel.locationId]);
-
-  // const { excursions } = useSelector((state) => state.excursions);
-
   useEffect(() => {
     if (isError) {
       console.log(message);
     }
     if (hotelId) dispatch(getSingleHotel(hotelId));
-    // dispatch(getExcursions());
     dispatch(reset());
   }, [hotelId, isError, isSuccess, message, navigate, dispatch]);
 
@@ -79,7 +60,6 @@ const Hotel = () => {
     startDate: null,
     endDate: null,
     name: "",
-    location: "",
     room: "",
     sum: null,
   });
@@ -101,33 +81,20 @@ const Hotel = () => {
     });
   }, []);
 
-  // useEffect(() => {
-
-  // }, [])
-
-  // useEffect(() => {
-  //   setOrderTerms({
-  //       ...orderTerms,
-  //       amount: clientData.peopleAmount,
-  //       days: clientData.daysAmount,
-  //       startDate: clientData.startDate,
-  //       endDate: clientData.endDate,
-  //     }),
-  // }, [clientData]);
-
-  // console.log(orderTerms);
-
-  const [clientRoom, setClientRoom] = useState("");
-  const [clientRoomPrice, setClientRoomPrice] = useState();
-
-  const chooseRoom = (chosenRoom, chosenRoomPrice) => {
-    setClientRoom(chosenRoom);
-    setClientRoomPrice(chosenRoomPrice);
+  useEffect(() => {
     setOrderTerms({
       ...orderTerms,
-      room: chosenRoom,
-      sum: clientData?.daysAmount * chosenRoomPrice,
+      amount: clientData.peopleAmount,
+      days: clientData.daysAmount,
+      startDate: clientData.startDate,
+      endDate: clientData.endDate,
     });
+  }, [clientData]);
+
+  const [clientRoom, setClientRoom] = useState();
+
+  const chooseRoom = (chosenRoom) => {
+    setClientRoom(chosenRoom);
   };
 
   useEffect(() => {
@@ -137,28 +104,15 @@ const Hotel = () => {
           .filter((room) => room.capacity >= clientData.peopleAmount)
           .reduce(function (prev, current) {
             return prev.roomPrice < current.roomPrice ? prev : current;
-          }).roomName
+          })
       );
     }
   }, [singleHotel.rooms]);
 
-  const [currentRoom, setCurrentRoom] = useState();
-
-  useEffect(() => {
-    if (singleHotel?.rooms) {
-      setCurrentRoom(
-        singleHotel?.rooms?.filter((room) => room.roomName === clientRoom)[0]
-          ?.prices
-      );
-    }
-  }, [singleHotel.rooms]);
-
-  console.log(clientData);
-
-  const calculatePrice = (start, daysNum) => {
+  const calculatePrice = (start, daysNum, basePrice) => {
     let daysArray = [];
 
-    const pricesArray = currentRoom;
+    const pricesArray = clientRoom.prices;
 
     for (let i = 0; i < daysNum; i++) {
       let date = new Date();
@@ -169,23 +123,24 @@ const Hotel = () => {
     let sum = 0;
 
     const findPriceByDate = (date) => {
-      if (pricesArray && pricesArray.length >= 0) {
+      if (pricesArray && pricesArray.length > 0) {
         pricesArray.forEach((el) => {
-          // console.log(el.dateStart.month);
           if (
             date.getMonth() + 1 >= el.dateStart.month &&
             date.getMonth() + 1 <= el.dateEnd.month &&
             date.getDate() >= el.dateStart.day &&
-            date.getDate() <= el.dateEnd.day
+            date.getDate() <= el.dateEnd.day &&
+            el.price
           ) {
-            console.log(el.price);
             sum += el.price;
           } else {
-            sum += 10000;
+            sum += basePrice;
           }
-          return;
         });
+      } else {
+        sum += basePrice;
       }
+      return;
     };
 
     for (let i = 0; i < daysNum; i++) {
@@ -206,8 +161,25 @@ const Hotel = () => {
   const [sum, setSum] = useState(0);
 
   useEffect(() => {
-    setSum(calculatePrice(clientStartingDate, clientData.daysAmount));
-  }, [calculatePrice]);
+    if (clientData && clientRoom) {
+      setSum(
+        calculatePrice(
+          clientStartingDate,
+          clientData?.daysAmount,
+          clientRoom?.roomPrice
+        )
+      );
+      window.localStorage.setItem("sum", "sum");
+    }
+  }, [calculatePrice, clientData, clientRoom]);
+
+  useEffect(() => {
+    window.localStorage.setItem("sum", sum);
+    if (clientRoom) window.localStorage.setItem("room", clientRoom?._id);
+    if (singleHotel) window.localStorage.setItem("hotel", singleHotel?._id);
+  }, [sum, clientRoom, singleHotel]);
+
+  console.log(singleHotel?.locationId?._id);
 
   return (
     <div className="hotel_page page">
@@ -228,8 +200,13 @@ const Hotel = () => {
                     <div className="top_location-row row">
                       <div className="top_location-box">
                         <img src={geo} alt="" />
-                        {location ? location.locationName : null},{" "}
-                        {location ? location.locationCountry : null}
+                        {singleHotel?.locationId
+                          ? singleHotel?.locationId.locationName
+                          : null}
+                        ,{" "}
+                        {singleHotel?.locationId
+                          ? singleHotel?.locationId.locationCountry
+                          : null}
                       </div>
                       <button className="top_location-btn primary-btn">
                         <img src={map} alt="" />
@@ -290,27 +267,21 @@ const Hotel = () => {
                       </div>
                     </div>
                     <div className="chosen_room-box">
-                      {singleHotel.rooms &&
-                        singleHotel.rooms
-                          .filter((room) => room.roomName === clientRoom)
-                          .map((room, index) => {
-                            return (
-                              <Room
-                                key={index}
-                                days={clientData?.daysAmount}
-                                roomPrice={room.roomPrice}
-                                roomName={room.roomName}
-                                active="active"
-                              />
-                            );
-                          })}
+                      {clientRoom && (
+                        <Room
+                          room={clientRoom}
+                          days={clientData?.daysAmount}
+                          active={true}
+                        />
+                      )}
                     </div>
                   </div>
                   <div className="gen_info-row">
                     <div className="body_title-box">
                       <div className="body_title">Об отеле</div>
                       <div className="body_title-text">
-                        Расположение: {singleHotel?.location}
+                        Расположение: {singleHotel?.locationId?.locationName},{" "}
+                        {singleHotel?.locationId?.locationCountry}
                       </div>
                     </div>
                     <div className="schedule-row row">
@@ -381,18 +352,24 @@ const Hotel = () => {
                       </div>
                     </div>
                     {singleHotel.rooms &&
-                      singleHotel?.rooms.map((room, index) => {
-                        return (
-                          <Room
-                            key={index}
-                            roomPrice={room.roomPrice}
-                            roomName={room.roomName}
-                            chooseRoom={chooseRoom}
-                            days={clientData?.daysAmount}
-                            active={clientRoom === room.roomName ? true : false}
-                          />
-                        );
-                      })}
+                      clientRoom &&
+                      singleHotel?.rooms
+                        ?.filter(
+                          (room) => room.capacity >= clientData.peopleAmount
+                        )
+                        .map((room, index) => {
+                          return (
+                            <Room
+                              key={index}
+                              room={room}
+                              chooseRoom={chooseRoom}
+                              days={clientData?.daysAmount}
+                              active={
+                                clientRoom?._id === room._id ? true : false
+                              }
+                            />
+                          );
+                        })}
                   </div>
                 </div>
               </div>
@@ -400,8 +377,15 @@ const Hotel = () => {
                 <div className="hotel_side-top shadowed_box">
                   <div className="hotel_side-title">Бронирование</div>
                   <div className="hotel_side-row">
-                    {clientStartingDate.toLocaleDateString()} -{" "}
-                    {clientEndingDate.toLocaleDateString()}
+                    {clientStartingDate.toLocaleString(undefined, {
+                      month: "numeric",
+                      day: "numeric",
+                    })}{" "}
+                    -{" "}
+                    {clientEndingDate.toLocaleString(undefined, {
+                      month: "numeric",
+                      day: "numeric",
+                    })}
                   </div>
                   <div className="hotel_side-row">
                     <img src={person} alt="" /> {orderTerms?.amount} взр.
@@ -409,9 +393,13 @@ const Hotel = () => {
                   <div className="hotel_side-row total">
                     Итого: <span>{sum} тг.</span>
                   </div>
-                  <div className="primary-btn yellow" onClick={handleOrder}>
+                  <Link
+                    to="/orders/new-order"
+                    className="primary-btn yellow"
+                    onClick={handleOrder}
+                  >
                     Забронировать
-                  </div>
+                  </Link>
                   <div className="side-top-bot">
                     <img src={check} alt="" />У нас самые выгодные цены!
                   </div>
@@ -424,23 +412,12 @@ const Hotel = () => {
                     </div>
                   </div>
                 </div>
-                <div className="side_exc-box shadowed_box small">
-                  <div className="body_title-box">
-                    <div className="body_title">
-                      Дополните свой отдых яркими впечатлениями!
-                    </div>
-                    <div className="body_title-text">
-                      Просто выберите экскурсию, которую хотели бы добавить с
-                      свой тур и мы включим его в стоимость
-                    </div>
-                    {/* {excursions &&
-                      excursions?.map((exc, index) => {
-                        return (
-                          <div className="exc_card">{exc.excursionName}</div>
-                        );
-                      })} */}
-                  </div>
-                </div>
+
+                {singleHotel?.locationId?._id ? (
+                  <Excursions locationId={singleHotel?.locationId?._id} />
+                ) : (
+                  "Экскурсии загружаются"
+                )}
 
                 <ExpandableText text="Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum." />
 

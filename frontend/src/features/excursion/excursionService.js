@@ -4,8 +4,8 @@ const API_URL = "/api/excursions/";
 
 // Get searched hotels
 
-const getExcursions = async (excursionData) => {
-  const response = await axios.get(API_URL, excursionData);
+const getExcursions = async (locationId) => {
+  const response = await axios.get(API_URL + locationId);
   return response.data;
 };
 

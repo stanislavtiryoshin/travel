@@ -7,6 +7,7 @@ import Register from "./pages/Register/Register";
 import Login from "./pages/Login/Login";
 import Hotel from "./pages/Hotel/Hotel";
 import Footer from "./components/Footer/Footer";
+import Order from "./pages/Order/Order";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/hotels/:hotelId" element={<Hotel />} />
+          <Route path="/orders/new-order" element={<Order />} />
         </Routes>
         <Footer />
       </Router>

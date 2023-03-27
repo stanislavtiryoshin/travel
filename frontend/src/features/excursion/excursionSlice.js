@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import excursionService from "./excursionService";
 
-const user = JSON.parse(localStorage.getItem("user"));
-
 const initialState = {
   excursions: [],
   isError: false,
@@ -15,11 +13,9 @@ const initialState = {
 
 export const getExcursions = createAsyncThunk(
   "excursions/getAll",
-  async (searchData, thunkAPI) => {
+  async (locationId, thunkAPI) => {
     try {
-      return await excursionService.getExcursions({
-        params: { location: searchData },
-      });
+      return await excursionService.getExcursions(locationId);
     } catch (error) {
       const message =
         (error.response &&

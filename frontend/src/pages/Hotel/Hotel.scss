@@ -469,3 +469,16 @@
     height: fit-content;
   }
 }
+
+.room_bot-left,
+.room_bot-right {
+  width: 50%;
+}
+
+.room_bot-right {
+  justify-content: flex-end;
+  .room_bot-row {
+    text-align: right;
+  }
+  border-left: solid 1px rgba(41, 45, 50, 0.08);
+}

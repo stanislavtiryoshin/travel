@@ -23,8 +23,19 @@ const getHotels = async () => {
 
 // Get searched hotels
 
-const getSearchedHotels = async (locationId) => {
-  const response = await axios.get(API_URL + "searched/" + locationId);
+const getSearchedHotels = async (
+  locationId,
+  peopleAmount,
+  daysAmount,
+  startDate
+) => {
+  const params = {
+    locationId,
+    peopleAmount,
+    daysAmount,
+    startDate,
+  };
+  const response = await axios.get(API_URL + "searched/", { params });
   return response.data;
 };
 

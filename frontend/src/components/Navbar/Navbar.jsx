@@ -31,8 +31,6 @@ const Navbar = () => {
 
   const [phone, setPhone] = useState();
 
-  console.log(phone);
-
   const handleSendPhone = () => {
     axios
       .post("/api/send-phone-email", { phone: phone })

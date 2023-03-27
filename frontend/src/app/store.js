@@ -12,6 +12,7 @@ export const store = configureStore({
     hotels: hotelReducer,
     orders: orderReducer,
     client: clientReducer,
-    excursion: excursionReducer,
+    excursions: excursionReducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
