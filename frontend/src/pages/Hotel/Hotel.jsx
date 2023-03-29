@@ -56,7 +56,7 @@ const Hotel = () => {
 
   const [orderTerms, setOrderTerms] = useState({
     amount: 1,
-    days: 1,
+    days: 2,
     startDate: null,
     endDate: null,
     name: "",
@@ -68,7 +68,7 @@ const Hotel = () => {
     endDate: 0,
     startDate: 0,
     peopleAmount: 1,
-    daysAmount: 1,
+    daysAmount: 2,
   });
 
   useEffect(() => {
@@ -150,36 +150,60 @@ const Hotel = () => {
     return sum;
   };
 
-  const [clientStartingDate, setClientStartingDate] = useState(new Date());
-  const [clientEndingDate, setClientEndingDate] = useState(new Date());
+  const [clientStartingDate, setClientStartingDate] = useState(
+    Date.parse(new Date())
+  );
+  const [clientEndingDate, setClientEndingDate] = useState(
+    Date.parse(new Date(Date.now() + 3600 * 1000 * 24))
+  );
 
   useEffect(() => {
     setClientStartingDate(new Date(+clientData.startDate));
     setClientEndingDate(new Date(+clientData.endDate));
-  }, [clientData]);
+  }, [clientData.startDate, clientData.endDate]);
+
+  console.log(clientData);
 
   const [sum, setSum] = useState(0);
 
+  const { clientExcursions, excSum } = useSelector((state) => state.client);
+
   useEffect(() => {
     if (clientData && clientRoom) {
-      setSum(
-        calculatePrice(
-          clientStartingDate,
-          clientData?.daysAmount,
-          clientRoom?.roomPrice
-        )
-      );
-      window.localStorage.setItem("sum", "sum");
+      if (clientRoom?.discount) {
+        setSum(
+          (calculatePrice(
+            clientStartingDate,
+            clientData?.daysAmount,
+            clientRoom?.roomPrice
+          ) *
+            (100 - clientRoom?.discount)) /
+            100 +
+            excSum
+        );
+      } else {
+        setSum(
+          calculatePrice(
+            clientStartingDate,
+            clientData?.daysAmount,
+            clientRoom?.roomPrice
+          ) + excSum
+        );
+      }
+      window.localStorage.setItem("sum", sum);
     }
-  }, [calculatePrice, clientData, clientRoom]);
+  }, [clientRoom, excSum]);
 
   useEffect(() => {
     window.localStorage.setItem("sum", sum);
     if (clientRoom) window.localStorage.setItem("room", clientRoom?._id);
     if (singleHotel) window.localStorage.setItem("hotel", singleHotel?._id);
-  }, [sum, clientRoom, singleHotel]);
-
-  console.log(singleHotel?.locationId?._id);
+    if (clientExcursions)
+      window.localStorage.setItem(
+        "excursions",
+        JSON.stringify(clientExcursions)
+      );
+  }, [sum, clientRoom, singleHotel, clientExcursions]);
 
   return (
     <div className="hotel_page page">
@@ -216,7 +240,7 @@ const Hotel = () => {
                     <div className="top_desc-row">
                       <div className="desc_title">Описание</div>
                       <div className="desc_box">{singleHotel?.description}</div>
-                      <a href="" className="hotel_anchor">
+                      <a href="#anchor" className="hotel_anchor">
                         Подробнее
                       </a>
                     </div>
@@ -256,7 +280,9 @@ const Hotel = () => {
                 <div className="hotel_page-gen shadowed_box">
                   <div className="gen_chosen-row">
                     <div className="body_title-box">
-                      <div className="body_title">Ваш номер</div>
+                      <div className="body_title" id="anchor">
+                        Ваш номер
+                      </div>
                       <div className="body_title-text">
                         Выбранный вами номер отображается здесь. Другие варианты
                         номеров и цены находятся{" "}
@@ -377,15 +403,17 @@ const Hotel = () => {
                 <div className="hotel_side-top shadowed_box">
                   <div className="hotel_side-title">Бронирование</div>
                   <div className="hotel_side-row">
-                    {clientStartingDate.toLocaleString(undefined, {
-                      month: "numeric",
-                      day: "numeric",
-                    })}{" "}
+                    {clientStartingDate &&
+                      clientStartingDate.toLocaleString(undefined, {
+                        month: "numeric",
+                        day: "numeric",
+                      })}{" "}
                     -{" "}
-                    {clientEndingDate.toLocaleString(undefined, {
-                      month: "numeric",
-                      day: "numeric",
-                    })}
+                    {clientEndingDate &&
+                      clientEndingDate.toLocaleString(undefined, {
+                        month: "numeric",
+                        day: "numeric",
+                      })}
                   </div>
                   <div className="hotel_side-row">
                     <img src={person} alt="" /> {orderTerms?.amount} взр.

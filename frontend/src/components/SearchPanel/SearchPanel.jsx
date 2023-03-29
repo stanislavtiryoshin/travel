@@ -78,7 +78,7 @@ const SearchPanel = () => {
   const [searchTerms, setSearchTerms] = useState({
     tag: "Туры",
     origin: "Астана",
-    destination: allLocations ? allLocations[0]._id : null,
+    destination: allLocations?._id ? allLocations[0]._id : null,
     startDate: new Date(),
     endDate: new Date(),
     number: 1,
@@ -92,10 +92,10 @@ const SearchPanel = () => {
   );
 
   const [clientData, setClientData] = useState({
-    endDate: new Date(Date.now() + 3600 * 1000 * 24),
-    startDate: new Date(),
+    endDate: Date.parse(new Date(Date.now() + 3600 * 1000 * 24)),
+    startDate: Date.parse(new Date()),
     peopleAmount: 1,
-    daysAmount: 1,
+    daysAmount: 2,
     destination: "",
   });
 
@@ -217,7 +217,7 @@ const SearchPanel = () => {
                 {allLocations ? (
                   allLocations.map((location, idx) => {
                     return (
-                      <option value={location._id}>
+                      <option value={location._id} key={idx}>
                         {location.locationName}
                       </option>
                     );

@@ -11,6 +11,7 @@ import sun from "../../assets/sun.svg";
 import moon from "../../assets/moon.svg";
 import tag from "../../assets/tag.svg";
 import { useSelector } from "react-redux";
+import HotelStars from "../HotelStars/HotelStars";
 
 const HotelCard = ({
   hotelId,
@@ -24,6 +25,7 @@ const HotelCard = ({
   // startDate,
   // endDate,
   rooms,
+  hotelStars,
 }) => {
   const [cheapestRoom, setCheapestRoom] = useState();
 
@@ -98,7 +100,7 @@ const HotelCard = ({
     endDate: 0,
     startDate: 0,
     peopleAmount: 1,
-    daysAmount: 1,
+    daysAmount: 2,
   });
 
   useEffect(() => {
@@ -136,16 +138,13 @@ const HotelCard = ({
           </div>
         </div>
         <div className="card_mid-rating">
-          <div className="rating-stars">
-            <img src={star} alt="" />
-            <img src={star} alt="" />
-            <img src={star} alt="" />
-            <img src={star} alt="" />
-            <img src={star} alt="" />
-          </div>
+          <HotelStars number={hotelStars} />
           <RatingBox rating={rating} />
         </div>
-        <div className="card_mid-desc">{description}</div>
+        <div className="card_mid-desc">
+          {description.slice(0, 100)}
+          {description.length > 100 ? "..." : ""}
+        </div>
         <div className="card_mid-tags">
           <div className="card_tag">
             <img src={tag} alt="" />

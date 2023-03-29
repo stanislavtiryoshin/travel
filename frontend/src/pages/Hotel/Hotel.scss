@@ -363,8 +363,9 @@
 
 /* SIDE COLUMN */
 
-.side-top-bot {
+.hotel_side-top .side-top-bot {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   column-gap: 14px;

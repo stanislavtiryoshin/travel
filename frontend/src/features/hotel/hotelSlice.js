@@ -4,6 +4,12 @@ import hotelService from "./hotelService";
 const initialState = {
   hotels: [],
   singleHotel: {},
+  filterData: {
+    filterRating: [],
+    filterMaxPrice: null,
+    filterMinPrice: null,
+    filterFood: [],
+  },
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -12,7 +18,7 @@ const initialState = {
   filterType: null, // type of filter applied to hotels, null if no filter applied
 };
 
-// Add hotels
+// Add hotel
 
 export const addHotel = createAsyncThunk(
   "hotels/add",
@@ -117,16 +123,16 @@ export const hotelSlice = createSlice({
       state.isError = false;
       state.message = "";
     },
-    filterByType: (state, action) => {
-      const filterType = action.payload;
-      const filteredHotels = state.allHotels.filter(
-        (hotel) => hotel.type === filterType
-      );
-      return { ...state, filteredHotels, filterType };
+    setFilterData: (state, action) => {
+      state.filterData = action.payload;
     },
-    // Action to remove the filter on hotels
-    clearFilter: (state) => {
-      return { ...state, filteredHotels: [], filterType: null };
+    clearFilterData: (state) => {
+      state.filterData = {
+        filterMaxPrice: null,
+        filterMinPrice: null,
+        filterFood: null,
+        filterRating: null,
+      };
     },
   },
   extraReducers: (builder) => {
@@ -154,5 +160,35 @@ export const hotelSlice = createSlice({
   },
 });
 
-export const { reset, filterByType, clearFilter } = hotelSlice.actions;
+export const selectHotels = (state) => {
+  const { filterMaxPrice, filterMinPrice, filterFood, filterRating } =
+    state.hotels.filterData;
+
+  // Filter the hotels array based on the filter data
+  let filteredHotels = state.hotels.hotels;
+  if (filterMaxPrice) {
+    filteredHotels = filteredHotels.filter(
+      (hotel) => hotel.totalPrice <= filterMaxPrice
+    );
+  }
+  if (filterMinPrice) {
+    filteredHotels = filteredHotels.filter(
+      (hotel) => hotel.totalPrice >= filterMinPrice
+    );
+  }
+  // if (filterFood) {
+  //   filteredHotels = filteredHotels.filter(
+  //     (hotel) => hotel.food === filterFood
+  //   );
+  // }
+  // if (filterRating) {
+  //   filteredHotels = filteredHotels.filter(
+  //     (hotel) => hotel.rating === filterRating
+  //   );
+  // }
+
+  return filteredHotels;
+};
+
+export const { reset, setFilterData, clearFilterData } = hotelSlice.actions;
 export default hotelSlice.reducer;

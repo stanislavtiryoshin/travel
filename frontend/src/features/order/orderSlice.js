@@ -32,6 +32,7 @@ export const addOrder = createAsyncThunk(
           clientPhone: orderData.clientPhone,
           clientOtherPhone: orderData.clientOtherPhone,
           extraInfo: orderData.extraInfo,
+          excursions: orderData.excursions,
         },
         token
       );

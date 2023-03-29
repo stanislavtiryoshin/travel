@@ -15,9 +15,11 @@ import check from "../../assets/check.svg";
 import { PatternFormat } from "react-number-format";
 
 import "./Order.scss";
+import { useNavigate } from "react-router-dom";
 
 const Order = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [orderTerms, setOrderTerms] = useState({
     peopleAmount: 1,
     daysAmount: 1,
@@ -40,6 +42,7 @@ const Order = () => {
     daysAmount: 1,
     hotel: null,
     room: null,
+    excursions: [],
   });
 
   useEffect(() => {
@@ -52,6 +55,7 @@ const Order = () => {
       hotel: window.localStorage.getItem("hotel"),
       room: window.localStorage.getItem("room"),
       sum: window.localStorage.getItem("sum"),
+      excursions: JSON.parse(window.localStorage.getItem("excursions")),
     });
   }, []);
 
@@ -60,6 +64,7 @@ const Order = () => {
       ...orderTerms,
       peopleAmount: +clientData.peopleAmount,
       daysAmount: +clientData.daysAmount,
+      excursions: clientData.excursions,
       startDate: clientData.startDate,
       endDate: clientData.endDate,
       hotel: clientData.hotel,
@@ -67,6 +72,8 @@ const Order = () => {
       sum: clientData.sum,
     });
   }, [clientData]);
+
+  console.log(clientData);
 
   const [firstFull, setFirstFull] = useState(true);
   const [secondFull, setSecondFull] = useState(true);
@@ -124,7 +131,13 @@ const Order = () => {
   };
 
   const handleOrder = (e) => {
-    dispatch(addOrder(orderTerms));
+    dispatch(addOrder(orderTerms))
+      .then(() => {
+        // navigate("/");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -138,9 +151,9 @@ const Order = () => {
                 action=""
                 onSubmit={(e) => {
                   e.preventDefault();
-                  handleOrder();
                   handleSendOrderEmail();
                   handleSendClientEmail();
+                  handleOrder();
                 }}
               >
                 <div className="contacts_form">
@@ -208,7 +221,9 @@ const Order = () => {
                       />
                     </div>
                     <div className="input_box">
-                      <div className="input_title">Второй номер</div>
+                      <div className="input_title">
+                        Второй номер (опционально)
+                      </div>
                       {/* <input
                         type="phone"
                         className="order_input"

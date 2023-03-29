@@ -4,8 +4,10 @@ const initialStateValues = {
   startDate: new Date(),
   endDate: new Date(Date.now() + 3600 * 1000 * 24),
   peopleAmount: 1,
-  daysAmount: 1,
+  daysAmount: 2,
   destination: "64188de62648843412b12980",
+  clientExcursions: [],
+  excSum: 0,
 };
 
 export const clientSlice = createSlice({
@@ -27,6 +29,20 @@ export const clientSlice = createSlice({
     setDestination: (state, action) => {
       state.destination = action.payload;
     },
+    addClientExcursion: (state, action) => {
+      state.clientExcursions = [...state.clientExcursions, action.payload];
+    },
+    removeClientExcursion: (state, action) => {
+      state.clientExcursions = state.clientExcursions.filter(
+        (excId) => excId != action.payload
+      );
+    },
+    addExcSum: (state, action) => {
+      state.excSum += action.payload;
+    },
+    removeExcSum: (state, action) => {
+      state.excSum -= action.payload;
+    },
   },
 });
 
@@ -37,6 +53,14 @@ export const {
   setPeopleAmount,
   setDaysAmount,
   setDestination,
+  addClientExcursion,
+  removeClientExcursion,
+  addExcSum,
+  removeExcSum,
+  setFilterFood,
+  setFilterMinPrice,
+  setFilterMaxPrice,
+  setFilterRating,
 } = clientSlice.actions;
 
 export default clientSlice.reducer;

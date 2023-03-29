@@ -5,11 +5,9 @@ import { useNavigate } from "react-router-dom";
 import HotelCard from "../../components/HotelCard/HotelCard";
 import { login, reset } from "../../features/auth/authSlice";
 import {
-  addHotel,
-  getHotels,
   getSearchedHotels,
+  selectHotels,
 } from "../../features/hotel/hotelSlice";
-import RangeSlider from "react-range-slider-input";
 import "react-range-slider-input/dist/style.css";
 import Hero from "../../components/Hero/Hero";
 import banner from "../../assets/banner.png";
@@ -18,13 +16,10 @@ import media from "../../assets/media.svg";
 import media1 from "../../assets/media1.svg";
 import media2 from "../../assets/media2.svg";
 import ad from "../../assets/ad.png";
-import person2 from "../../assets/person2.svg";
-import calendar from "../../assets/calendar.svg";
-import plane from "../../assets/plane.svg";
 
 import "./Home.scss";
 
-import star from "../../assets/star.svg";
+import Filter from "../../components/Filter/Filter";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -36,6 +31,10 @@ const Home = () => {
     (state) => state.hotels
   );
 
+  const selectedHotels = useSelector(selectHotels);
+
+  console.log(selectedHotels);
+
   const { startDate, endDate, peopleAmount, daysAmount, destination } =
     useSelector((state) => state.client);
 
@@ -43,7 +42,14 @@ const Home = () => {
     if (isError) {
       console.log(message);
     }
-    dispatch(getHotels());
+    dispatch(
+      getSearchedHotels({
+        locationId: "",
+        peopleAmount: 1,
+        daysAmount: 2,
+        startDate: Date.parse(new Date()),
+      })
+    );
     dispatch(reset());
   }, [isError, isSuccess, message, navigate, dispatch]);
 
@@ -65,24 +71,25 @@ const Home = () => {
         });
   }, [destination]);
 
-  const [from, setFrom] = useState(0);
-  const [to, setTo] = useState(100000);
-
-  const [value, setValue] = useState([]);
-
   return (
     <div className="main_page">
       <Hero />
       <section className="all_hotels_section">
         <div className="main_wrapper wrapper">
           <div className="main_side">
-            <div className="filter_box">
+            {/* <div className="filter_box">
               <div className="filter_row">
                 <div className="filter_title">Ваш запрос</div>
                 <div className="icon_row row">
                   <img src={plane} alt="" />
-                  {currentLocation?.locationName} &#183;{" "}
-                  {currentLocation?.locationCountry}
+                  {currentLocation?.locationName ? (
+                    <>
+                      {currentLocation?.locationName} &#183;{" "}
+                      {currentLocation?.locationCountry}
+                    </>
+                  ) : (
+                    "Весь Казахстан"
+                  )}
                 </div>
                 <div className="icon_row row">
                   <img src={calendar} alt="" />
@@ -231,7 +238,8 @@ const Home = () => {
                   Сбросить фильтр
                 </button>
               </div>
-            </div>
+            </div> */}
+            <Filter />
           </div>
           <div className="container main_container">
             <div className="all_hotels_wrapper wrapper ver">
@@ -239,14 +247,14 @@ const Home = () => {
 
               <div className="all_hotels-top">
                 <div className="all_hotels-num">
-                  Найдено: <span>{hotels?.length}</span>
+                  Найдено: <span>{selectedHotels?.length}</span>
                 </div>
                 <button className="sort-btn">
                   Сортировать <img src={sort} alt="" />
                 </button>
               </div>
-              {hotels &&
-                hotels
+              {selectedHotels &&
+                selectedHotels
                   ?.filter((hotel, idx) => idx < hotelsToShow)
                   .map((hotel, idx) => {
                     return (
@@ -264,10 +272,11 @@ const Home = () => {
                         endDate={endDate}
                         rooms={hotel.rooms}
                         totalPrice={hotel.totalPrice}
+                        hotelStars={hotel.hotelStars}
                       />
                     );
                   })}
-              {hotels.length >= hotelsToShow ? (
+              {selectedHotels.length >= hotelsToShow ? (
                 <button
                   className="more-hotels-btn"
                   onClick={() => setHotelsToShow(hotelsToShow + 5)}
