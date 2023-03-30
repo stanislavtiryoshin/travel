@@ -113,6 +113,29 @@ export const getSingleHotel = createAsyncThunk(
   }
 );
 
+// Get all admin hotels
+
+export const getAdminHotels = createAsyncThunk(
+  "hotels/getAdminHotels",
+  async (searchData, thunkAPI) => {
+    try {
+      return await hotelService.getAdminHotels(
+        searchData.name,
+        searchData.minAge,
+        searchData.locationId
+      );
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const hotelSlice = createSlice({
   name: "hotel",
   initialState,
@@ -130,7 +153,7 @@ export const hotelSlice = createSlice({
       state.filterData = {
         filterMaxPrice: null,
         filterMinPrice: null,
-        filterFood: null,
+        filterFood: [],
         filterRating: null,
       };
     },
@@ -156,6 +179,11 @@ export const hotelSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.singleHotel = action.payload;
+      })
+      .addCase(getAdminHotels.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.hotels = action.payload;
       });
   },
 });
@@ -176,11 +204,11 @@ export const selectHotels = (state) => {
       (hotel) => hotel.totalPrice >= filterMinPrice
     );
   }
-  // if (filterFood) {
-  //   filteredHotels = filteredHotels.filter(
-  //     (hotel) => hotel.food === filterFood
-  //   );
-  // }
+  if (filterFood && filterFood.length > 0) {
+    filteredHotels = filteredHotels.filter((hotel) => {
+      return hotel.food.some((el) => filterFood.includes(el.foodId.foodName));
+    });
+  }
   // if (filterRating) {
   //   filteredHotels = filteredHotels.filter(
   //     (hotel) => hotel.rating === filterRating

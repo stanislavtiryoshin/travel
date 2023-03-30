@@ -81,3 +81,46 @@
 
   color: rgba(37, 52, 61, 0.5);
 }
+
+.dashboard_page.page {
+  padding-top: 0;
+}
+
+.dash_search_wrapper.wrapper.ver {
+  justify-content: center;
+  align-items: center;
+  .search_box {
+    margin: 0;
+  }
+}
+
+.dash_search_section {
+  padding: 40px 0;
+  background-color: rgba(217, 217, 217, 1);
+  .search_box {
+    width: 780px;
+  }
+  .search_bot {
+    padding: 8px 8px 8px 16px;
+    border-radius: 8px;
+  }
+  .dash_heading {
+    font-family: GT Walsheim Pro;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 28px;
+    letter-spacing: 0.4000000059604645px;
+    text-align: center;
+    color: rgba(41, 45, 50, 1);
+    margin-bottom: 16px;
+  }
+  .search_col {
+    min-width: 20%;
+  }
+  .search_col-content {
+    width: 100%;
+    input {
+      width: 100%;
+    }
+  }
+}

@@ -3,31 +3,27 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Order = require("../models/orderModel");
-
 const nodemailer = require("nodemailer");
 
 //@desc   Add new order
 //@route  POST /api/orders
 //@access Public
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "stanislav.tiryoshin@gmail.com",
-    pass: "1917Kornilov!",
-  },
-});
-
 const addOrder = asyncHandler(async (req, res) => {
   const post = await Order.create({
-    name: req.body.name,
-    days: req.body.days,
+    hotel: req.body.hotel,
+    daysAmount: req.body.daysAmount,
     startDate: req.body.startDate,
     endDate: req.body.endDate,
     sum: req.body.sum,
-    amount: req.body.amount,
+    peopleAmount: req.body.peopleAmount,
     room: req.body.room,
-    location: req.body.location,
+    clientName: req.body.clientName,
+    clientEmail: req.body.clientEmail,
+    clientPhone: req.body.clientPhone,
+    clientOtherPhone: req.body.clientOtherPhone,
+    extraInfo: req.body.extraInfo,
+    excursions: req.body.excursions,
   });
   res.status(200).json(post);
 });
@@ -39,6 +35,14 @@ const addOrder = asyncHandler(async (req, res) => {
 const getOrders = asyncHandler(async (req, res) => {
   const orders = await Order.find();
   res.status(200).json(orders);
+});
+
+const getSingleOrder = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.orderId)
+    .populate({ path: "hotel", select: "name" })
+    .populate("location")
+    .populate({ path: "hotelRoom", select: "rooms.roomName" });
+  res.status(200).json(order);
 });
 
 //@desc   Update status
@@ -77,4 +81,5 @@ module.exports = {
   getOrders,
   addOrder,
   updateOrder,
+  getSingleOrder,
 };

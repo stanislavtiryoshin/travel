@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 import RangeSlider from "react-range-slider-input";
-import {
+import HotelSlice, {
   selectHotels,
   setFilterData,
   clearFilterData,
 } from "../../features/hotel/hotelSlice";
+import HotelStars from "../HotelStars/HotelStars";
 import person2 from "../../assets/person2.svg";
 import calendar from "../../assets/calendar.svg";
 import plane from "../../assets/plane.svg";
@@ -14,17 +16,19 @@ import star from "../../assets/star.svg";
 const Filter = () => {
   const selectedHotels = useSelector(selectHotels);
   const dispatch = useDispatch();
-  const { filterData } = useSelector((state) => state.hotels);
 
   const { hotels, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.hotels
   );
 
+  const { filterData } = useSelector((state) => state.hotels);
+
   const [filterObj, setFilterObj] = useState({
-    filterMaxPrice: 10000,
+    filterMaxPrice: 100000,
     filterMinPrice: 0,
-    filterFood: null,
+    filterFood: [],
     filterRating: null,
+    filterStars: null,
   });
 
   const handleSetFilterData = () => {
@@ -35,7 +39,7 @@ const Filter = () => {
     dispatch(clearFilterData());
   };
 
-  const [value, setValue] = useState([0, 10000]);
+  const [value, setValue] = useState([0, 600000]);
 
   useEffect(() => {
     setFilterObj({
@@ -45,7 +49,20 @@ const Filter = () => {
     });
   }, [value]);
 
-  console.log(filterObj);
+  const [allFoods, setAllFoods] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3000/api/foods`)
+      .then((response) => {
+        setAllFoods(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  // console.log(filterData);
 
   return (
     <div className="filter_box">
@@ -86,7 +103,7 @@ const Filter = () => {
       <div className="filter_row">
         <div className="filter_title">Цена</div>
         <div className="filter_content price_range">
-          <RangeSlider onInput={setValue} min={0} max={100000} step={1000} />
+          <RangeSlider onInput={setValue} min={0} max={600000} step={1000} />
           <div className="price-box">
             <div className="price-col left">
               <div className="price-col-title">от</div>
@@ -124,59 +141,71 @@ const Filter = () => {
       </div>
       <div className="filter_row">
         <div className="filter_title">Питание</div>
-        <div className="filter_content">
-          <button className="check-btn"></button>
-          Все включено
-        </div>
-        <div className="filter_content">
-          <button className="check-btn"></button>
-          Только завтрак
-        </div>
-        <div className="filter_content">
-          <button className="check-btn"></button>
-          Завтрак и ужин
-        </div>
-        <div className="filter_content">
-          <button className="check-btn"></button>
-          3-х разовое
-        </div>
-        <div className="filter_content">
-          <button className="check-btn"></button>
-          Без питания
-        </div>
+        {allFoods
+          ? allFoods.map((food, idx) => {
+              return (
+                <div
+                  className="filter_content"
+                  onClick={() => {
+                    if (filterObj.filterFood.includes(food._id)) {
+                      setFilterObj((prevState) => ({
+                        ...prevState,
+                        filterFood: prevState.filterFood.filter(
+                          (el) => el !== food.foodName
+                        ),
+                      }));
+                    } else {
+                      setFilterObj((prevState) => ({
+                        ...prevState,
+                        filterFood: [...prevState.filterFood, food.foodName],
+                      }));
+                    }
+                  }}
+                >
+                  <button className="check-btn"></button>
+                  {food.foodName}
+                </div>
+              );
+            })
+          : null}
       </div>
       <div className="filter_row">
         <div className="filter_title">Количество звезд</div>
-        <div className="filter_content">
+        <div
+          className="filter_content"
+          onClick={() => setFilterObj({ ...filterObj, filterStars: null })}
+        >
           <button className="check-btn"></button>
           Любой класс
         </div>
-        <div className="filter_content">
+        <div
+          className="filter_content"
+          onClick={() => setFilterObj({ ...filterObj, filterStars: 5 })}
+        >
           <button className="check-btn"></button>
-          <img src={star} alt="" />
-          <img src={star} alt="" />
-          <img src={star} alt="" />
-          <img src={star} alt="" />
-          <img src={star} alt="" />
+          <HotelStars number={5} />
         </div>
-        <div className="filter_content">
+        <div
+          className="filter_content"
+          onClick={() => setFilterObj({ ...filterObj, filterStars: 4 })}
+        >
           <button className="check-btn"></button>
-          <img src={star} alt="" />
-          <img src={star} alt="" />
-          <img src={star} alt="" />
-          <img src={star} alt="" />
+          <HotelStars number={4} />
         </div>
-        <div className="filter_content">
+        <div
+          className="filter_content"
+          onClick={() => setFilterObj({ ...filterObj, filterStars: 3 })}
+        >
           <button className="check-btn"></button>
-          <img src={star} alt="" />
-          <img src={star} alt="" />
-          <img src={star} alt="" />
+          <HotelStars number={3} />
         </div>
 
-        <div className="filter_content">
+        <div
+          className="filter_content"
+          onClick={() => setFilterObj({ ...filterObj, filterStars: 2 })}
+        >
           <button className="check-btn"></button>
-          <img src={star} alt="" />
-          <img src={star} alt="" />
+          <HotelStars number={2} />
         </div>
       </div>
       <div className="filter_row">

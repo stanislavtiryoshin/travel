@@ -4,11 +4,13 @@ const {
   addOrder,
   getOrders,
   updateOrder,
+  getSingleOrder,
 } = require("../controllers/orderController");
 const { protect } = require("../middleware/authMiddleware");
 
 router.post("/", addOrder);
 router.get("/", getOrders);
 router.patch("/:id", updateOrder);
+router.get("/:orderId", getSingleOrder);
 
 module.exports = router;

@@ -46,11 +46,24 @@ const getSingleHotel = async (hotelId) => {
   return response.data;
 };
 
+// Get admin hotels
+
+const getAdminHotels = async (name, minAge, locationId) => {
+  const params = {
+    name,
+    minAge,
+    locationId,
+  };
+  const response = await axios.get(API_URL + "admin/", { params });
+  return response.data;
+};
+
 const hotelService = {
   addHotel,
   getHotels,
   getSearchedHotels,
   getSingleHotel,
+  getAdminHotels,
 };
 
 export default hotelService;

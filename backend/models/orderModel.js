@@ -2,11 +2,12 @@ const mongoose = require("mongoose");
 
 const orderSchema = mongoose.Schema(
   {
-    name: {
-      type: String,
+    hotel: {
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
+      ref: "Hotel",
     },
-    amount: {
+    peopleAmount: {
       type: Number,
       required: true,
     },
@@ -22,27 +23,53 @@ const orderSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    days: {
+    daysAmount: {
       type: Number,
       required: true,
     },
-    location: {
-      type: String,
-      required: true,
-    },
     room: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     status: {
       type: String,
       default: "В обработке",
     },
-    
+    clientName: {
+      type: String,
+      required: true,
+    },
+    clientEmail: {
+      type: String,
+      required: true,
+    },
+    clientPhone: {
+      type: String,
+      required: true,
+    },
+    clientOtherPhone: {
+      type: String,
+    },
+    extraInfo: {
+      type: String,
+    },
+    excursions: {
+      type: [mongoose.Schema.Types.ObjectId],
+    },
   },
   {
     timestamps: true,
   }
 );
+
+orderSchema.virtual("hotelRoom", {
+  ref: "Hotel",
+  localField: "room",
+  foreignField: "rooms._id",
+  justOne: true,
+});
+
+orderSchema.set("toObject", { virtuals: true });
+orderSchema.set("toJSON", { virtuals: true });
 
 module.exports = new mongoose.model("Order", orderSchema);

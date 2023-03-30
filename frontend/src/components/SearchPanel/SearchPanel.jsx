@@ -84,8 +84,6 @@ const SearchPanel = () => {
     number: 1,
   });
 
-  const [days, setDays] = useState(1);
-
   const [startingDate, setStartingDate] = useState(new Date());
   const [endingDate, setEndingDate] = useState(
     new Date(Date.now() + 3600 * 1000 * 24)

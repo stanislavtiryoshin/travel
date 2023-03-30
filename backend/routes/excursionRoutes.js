@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { getExcursions } = require("../controllers/excursionController");
+const {
+  getExcursions,
+  addExcursion,
+} = require("../controllers/excursionController");
 const { protect } = require("../middleware/authMiddleware");
 
-router.get("/", getExcursions);
+router.get("/:locationId", getExcursions);
+router.post("/", addExcursion);
 
 module.exports = router;

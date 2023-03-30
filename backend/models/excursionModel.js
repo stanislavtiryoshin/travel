@@ -2,16 +2,17 @@ const mongoose = require("mongoose");
 
 const excursionSchema = mongoose.Schema(
   {
-    excursionName: {
+    name: {
       type: String,
     },
-    excursionLocation: {
+    location: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Location",
+    },
+    description: {
       type: String,
     },
-    excursionDescription: {
-      type: String,
-    },
-    excursionPrice: {
+    price: {
       type: Number,
     },
   },

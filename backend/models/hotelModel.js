@@ -36,6 +36,7 @@ const hotelSchema = mongoose.Schema(
       {
         foodId: {
           type: mongoose.Schema.Types.ObjectId,
+          ref: "Food",
         },
       },
     ],
@@ -81,9 +82,6 @@ const hotelSchema = mongoose.Schema(
           type: Number,
         },
         discount: {
-          type: Number,
-        },
-        beds: {
           type: Number,
         },
         area: {

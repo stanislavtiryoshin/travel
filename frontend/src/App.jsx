@@ -8,6 +8,7 @@ import Login from "./pages/Login/Login";
 import Hotel from "./pages/Hotel/Hotel";
 import Footer from "./components/Footer/Footer";
 import Order from "./pages/Order/Order";
+import AddHotel from "./pages/AddHotel/AddHotel";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/hotels/:hotelId" element={<Hotel />} />
           <Route path="/orders/new-order" element={<Order />} />
+          <Route path="/dashboard/add-hotel" element={<AddHotel />} />
         </Routes>
         <Footer />
       </Router>

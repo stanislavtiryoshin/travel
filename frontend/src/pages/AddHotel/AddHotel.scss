@@ -1,0 +1,144 @@
+.add_gen-wrapper.wrapper {
+  width: 100%;
+  justify-content: flex-start;
+  align-items: unset;
+  column-gap: 20px;
+}
+
+.gen_img-box {
+  max-width: 30%;
+  img {
+    max-width: 100%;
+  }
+}
+
+.gen_content-box {
+  width: 70%;
+}
+
+.input_row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  column-gap: 16px;
+  textarea {
+    width: 100%;
+  }
+  input,
+  select {
+    width: 50%;
+    border: none;
+  }
+  select:focus {
+    outline: none;
+  }
+  ::placeholder {
+    font-family: GT Walsheim Pro;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: rgba(141, 147, 155, 1);
+  }
+}
+
+.add_gen-section {
+  margin-bottom: 20px;
+}
+
+.primary-input {
+  padding: 15px 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: rgba(249, 249, 249, 1);
+  option,
+  select {
+    font-family: GT Walsheim Pro;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: rgba(141, 147, 155, 1);
+  }
+}
+
+.gen_title {
+  font-family: GT Walsheim Pro;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 27px;
+  letter-spacing: 1px;
+  text-align: left;
+  color: rgba(37, 52, 61, 1);
+}
+
+.gen_content-box {
+  row-gap: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.add_more-col.shadowed_box {
+  width: 50%;
+}
+
+.add_more-wrapper.wrapper {
+  column-gap: 20px;
+  align-items: unset;
+}
+
+.service-title {
+  font-family: GT Walsheim Pro;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: 1px;
+  text-align: left;
+  color: rgba(81, 85, 91, 1);
+}
+
+.service-card {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+}
+
+.service-input {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: flex-start;
+  select {
+    min-width: 60%;
+    &:focus {
+      outline: none;
+    }
+  }
+  label {
+    font-family: GT Walsheim Pro;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: rgba(141, 147, 155, 1);
+    margin-bottom: -8px;
+    margin-left: 12px;
+    z-index: 1;
+  }
+}
+
+.service-input.full {
+  select {
+    width: 100%;
+  }
+}
+
+.add_more-col {
+  display: flex;
+  flex-direction: column;
+  row-gap: 32px;
+}

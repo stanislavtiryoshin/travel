@@ -29,8 +29,38 @@ const addHotel = asyncHandler(async (req, res) => {
 //@access Public
 
 const getHotels = asyncHandler(async (req, res) => {
-  const todos = await Hotel.find().populate("locationId");
-  res.status(200).json(todos);
+  const hotels = await Hotel.find()
+    .populate("locationId")
+    .populate("food.foodId");
+  res.status(200).json(hotels);
+});
+
+//@desc   Get all hotels for admin
+//@route  GET /api/hotels/admin
+//@access Private
+
+const getAdminHotels = asyncHandler(async (req, res) => {
+  const { name, locationId, minAge } = req.query;
+
+  const query = {};
+
+  if (name && name != "") {
+    query.name = name;
+  }
+
+  if (minAge && minAge != 0) {
+    query.minAge = minAge;
+  }
+
+  if (locationId && locationId != "") {
+    query.locationId = locationId;
+  }
+
+  const hotels = await Hotel.find(query)
+    .populate("locationId")
+    .populate("food.foodId");
+
+  res.status(200).json(hotels);
 });
 
 //@desc   Get hotel by id
@@ -38,21 +68,101 @@ const getHotels = asyncHandler(async (req, res) => {
 //@access Public
 
 const getSingleHotel = asyncHandler(async (req, res) => {
-  const singleHotel = await Hotel.findById(req.params.id).populate(
-    "locationId"
-  );
+  const singleHotel = await Hotel.findById(req.params.id)
+    .populate("locationId")
+    .populate("food.foodId");
   res.status(200).json(singleHotel);
 });
 
 //@desc   Get searched hotels
-//@route  GET /api/hotels/searched/:locationId
+//@route  GET /api/hotels/searched
 //@access Public
 
 const getSearchedHotels = asyncHandler(async (req, res) => {
-  const hotels = await Hotel.find({
-    locationId: req.params.locationId,
-  }).populate("locationId");
-  res.status(200).send(hotels);
+  const { peopleAmount, daysAmount, startDate, locationId } = req.query;
+
+  const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
+    let daysArray = [];
+    const startingDate = new Date(start);
+
+    for (let i = 0; i < daysNum; i++) {
+      let date = new Date();
+      date.setDate(startingDate.getDate() + i);
+      daysArray.push(date);
+    }
+
+    let sum = 0;
+
+    const findPriceByDate = (date) => {
+      if (pricesArray && pricesArray.length > 0) {
+        pricesArray.forEach((el) => {
+          if (
+            date.getMonth() + 1 >= el.dateStart.month &&
+            date.getMonth() + 1 <= el.dateEnd.month &&
+            date.getDate() >= el.dateStart.day &&
+            date.getDate() <= el.dateEnd.day &&
+            el.price
+          ) {
+            sum += el.price;
+          } else {
+            sum += basePrice;
+          }
+        });
+      } else {
+        sum += basePrice;
+      }
+      return;
+    };
+
+    for (let i = 0; i < daysNum; i++) {
+      findPriceByDate(daysArray[i]);
+    }
+
+    return sum;
+  };
+
+  let costArray = [];
+
+  let hotels = [];
+
+  if (locationId !== "") {
+    hotels = await Hotel.find({
+      locationId: locationId,
+    })
+      .populate("locationId")
+      .populate("food.foodId");
+  } else {
+    hotels = await Hotel.find().populate("locationId").populate("food.foodId");
+  }
+
+  const updatedHotels = hotels.map((plainHotel) => {
+    const hotel = plainHotel.toObject();
+    const rooms = hotel.rooms.filter((room) => room.capacity >= peopleAmount);
+
+    const cheapestRoom = rooms.reduce((prev, curr) =>
+      prev.roomPrice < curr.roomPrice ? prev : curr
+    );
+
+    const basePrice = cheapestRoom.roomPrice;
+    const pricesArray = cheapestRoom.prices;
+
+    const costOfStay = calculatePrice(
+      startDate,
+      daysAmount,
+      basePrice,
+      pricesArray
+    );
+
+    if (cheapestRoom.discount && cheapestRoom.discount !== 0) {
+      hotel.totalPrice = (costOfStay * (100 - cheapestRoom.discount)) / 100;
+    } else {
+      hotel.totalPrice = costOfStay;
+    }
+
+    return hotel;
+  });
+
+  res.status(200).send(updatedHotels);
 });
 
 module.exports = {
@@ -60,4 +170,5 @@ module.exports = {
   getHotels,
   getSearchedHotels,
   getSingleHotel,
+  getAdminHotels,
 };
