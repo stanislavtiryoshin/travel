@@ -28,8 +28,8 @@ const sanatoriumSchema = Schema(
     leaveTime: {
       type: String,
     },
-    sanatoriumService: {
-      serviceId: {
+    sanatoriumProgram: {
+      programId: {
         type: Schema.Types.ObjectId,
       },
     },

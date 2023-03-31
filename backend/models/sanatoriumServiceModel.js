@@ -5,9 +5,8 @@ const sanatoriumServiceSchema = Schema(
     sanatoriumServiceName: {
       type: String,
     },
-    service: {
-      type: Schema.Types.ObjectId,
-      ref: "Service",
+    description: {
+      type: String,
     },
   },
   {
@@ -15,4 +14,4 @@ const sanatoriumServiceSchema = Schema(
   }
 );
 
-module.exports = model("SanatoriumService", sanatoriumServiceSchema);
+module.exports = model("SanatoriumProgram", sanatoriumServiceSchema);
