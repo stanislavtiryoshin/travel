@@ -130,6 +130,27 @@ button {
   &.yellow {
     background-color: rgba(228, 155, 12, 1);
   }
+  &.white {
+    font-family: GT Walsheim Pro;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 18px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: rgba(37, 105, 215, 1);
+    background-color: #fff;
+  }
+}
+
+.cancel-btn {
+  appearance: none;
+  font-family: GT Walsheim Pro;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #fff;
 }
 
 a {

@@ -86,11 +86,13 @@ const hotelSchema = mongoose.Schema(
     leaveTime: {
       type: String,
     },
-    hotelServices: {
-      serviceId: {
-        type: mongoose.Schema.Types.ObjectId,
+    hotelServices: [
+      {
+        serviceId: {
+          type: mongoose.Schema.Types.ObjectId,
+        },
       },
-    },
+    ],
     rooms: [
       {
         type: mongoose.Schema.Types.ObjectId,

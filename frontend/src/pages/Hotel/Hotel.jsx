@@ -149,6 +149,7 @@ const Hotel = () => {
 
     return sum;
   };
+  console.log(singleHotel);
 
   const [clientStartingDate, setClientStartingDate] = useState(
     Date.parse(new Date())

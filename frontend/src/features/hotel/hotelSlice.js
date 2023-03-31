@@ -25,20 +25,7 @@ export const addHotel = createAsyncThunk(
   async (hotelData, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await hotelService.addHotel(
-        {
-          name: hotelData.name,
-          type: hotelData.type,
-          location: hotelData.location,
-          resort: hotelData.resort,
-          price: hotelData.price,
-          discount: hotelData.discount,
-          description: hotelData.description,
-          food: hotelData.food,
-          rooms: hotelData.rooms,
-        },
-        token
-      );
+      return await hotelService.addHotel(hotelData, token);
     } catch (error) {
       const message =
         (error.response &&
