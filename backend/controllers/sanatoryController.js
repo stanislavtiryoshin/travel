@@ -28,7 +28,7 @@ const getSanatoriums = (req, res) => {
     .populate("locationId")
     .populate("sanatoriumProgram.programId")
     .then((response) => res.status(200).json(response))
-    .catch((err) => res.sendStatus(404));
+    .catch((err) => res.sendStatus(403));
 };
 
 // TODO: Спросить у Стаса
@@ -41,7 +41,7 @@ const getSingleSanatorium = (req, res) => {
     .populate("locationId")
     .populate("sanatoriumProgram.programId")
     .then((response) => res.status(200).json(response))
-    .catch((err) => res.sendStatus(404));
+    .catch((err) => res.sendStatus(403));
 };
 
 module.exports = {
