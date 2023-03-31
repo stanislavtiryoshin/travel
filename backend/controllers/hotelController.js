@@ -19,7 +19,7 @@ const addHotel = asyncHandler(async (req, res) => {
     food: req.body.food,
     rating: req.body.rating,
     description: req.body.description,
-    rooms: req.body.rooms,
+    rooms: reqRooms,
   });
   res.status(200).json(post);
 });

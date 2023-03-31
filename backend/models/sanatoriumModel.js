@@ -31,6 +31,7 @@ const sanatoriumSchema = Schema(
     sanatoriumProgram: {
       programId: {
         type: Schema.Types.ObjectId,
+        ref: "Program",
       },
     },
     rooms: [
@@ -85,7 +86,7 @@ const sanatoriumSchema = Schema(
         roomServices: [
           {
             serviceId: {
-              type: mongoose.Schema.Types.ObjectId,
+              type: Schema.Types.ObjectId,
             },
           },
         ],
