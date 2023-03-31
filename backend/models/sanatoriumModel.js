@@ -16,6 +16,9 @@ const sanatoriumSchema = Schema(
       type: Number,
       default: 0,
     },
+    ratingVotes: {
+      type: Number,
+    },
     description: {
       type: String,
     },
@@ -34,62 +37,34 @@ const sanatoriumSchema = Schema(
         ref: "Program",
       },
     },
+    kids: {
+      babyMaxAge: {
+        type: Number,
+      },
+      kidMaxAge: {
+        type: Number,
+      },
+      kidDiscount: {
+        discountType: {
+          type: String,
+        },
+        discountValue: {
+          type: Number,
+        },
+      },
+    },
+    payment: {
+      paymentType: {
+        type: String,
+      },
+      prepayment: {
+        type: Number,
+      },
+    },
     rooms: [
       {
-        roomName: {
-          type: String,
-        },
-        roomType: {
-          type: String,
-        },
-        capacity: {
-          type: Number,
-        },
-        extraPlace: {
-          type: Number,
-        },
-        roomPrice: {
-          type: Number,
-        },
-        discount: {
-          type: Number,
-        },
-        area: {
-          type: Number,
-        },
-        prices: [
-          {
-            dateStart: {
-              day: {
-                type: Number,
-              },
-              month: {
-                type: Number,
-              },
-            },
-            dateEnd: {
-              day: {
-                type: Number,
-              },
-              month: {
-                type: Number,
-              },
-            },
-            price: {
-              type: Number,
-            },
-          },
-        ],
-        roomDescription: {
-          type: Number,
-        },
-        roomServices: [
-          {
-            serviceId: {
-              type: Schema.Types.ObjectId,
-            },
-          },
-        ],
+        type: Schema.Types.ObjectId,
+        ref: "Room",
       },
     ],
   },
