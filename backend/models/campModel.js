@@ -6,6 +6,10 @@ const campSchema = Schema({
     type: Schema.Types.ObjectId,
     ref: "Location",
   },
+  food: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Food",
+  },
   locationFeature: {
     type: String,
   },
@@ -13,9 +17,46 @@ const campSchema = Schema({
     type: String,
   },
   description: String,
+  kids: {
+    forWho: String,
+    minCountInGroup: {
+      type: Number,
+      default: 12,
+    },
+    maxCountInGroup: {
+      type: Number,
+      default: 20,
+    },
+    minAgeInGroup: {
+      type: Number,
+      default: 2,
+    },
+    maxAgeInGroup: {
+      type: Number,
+      default: 14,
+    },
+  },
+  comforts: [String],
   rating: {
     type: Number,
     default: 0,
+  },
+  ratingVotes: {
+    type: Number,
+  },
+  payment: {
+    paymentType: {
+      type: String,
+    },
+    prepayment: {
+      type: Number,
+    },
+  },
+  hotelName: {
+    type: String,
+  },
+  hotelDescription: {
+    type: String,
   },
   campProgram: {
     programId: {

@@ -67,7 +67,13 @@ const sanatoriumSchema = Schema(
         ref: "Room",
       },
     ],
+    additionalPlaces: {
+      maxAdditionalPlaces: Number,
+      adultPrice: Number,
+      kidPrice: Number,
+    },
   },
+
   {
     timestamps: true,
   }
