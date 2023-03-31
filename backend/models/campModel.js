@@ -61,6 +61,7 @@ const campSchema = Schema({
   campProgram: {
     programId: {
       type: Schema.Types.ObjectId,
+      ref: "Program",
     },
   },
 });
