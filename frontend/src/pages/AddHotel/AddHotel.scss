@@ -42,6 +42,13 @@
     text-align: left;
     color: rgba(141, 147, 155, 1);
   }
+  .service-input {
+    width: 50%;
+    input,
+    select {
+      width: 100%;
+    }
+  }
 }
 
 .add_gen-section {
@@ -53,6 +60,9 @@
   border: none;
   border-radius: 8px;
   background-color: rgba(249, 249, 249, 1);
+  &:focus {
+    outline: none;
+  }
   option,
   select {
     font-family: GT Walsheim Pro;
@@ -87,7 +97,7 @@
 
 .add_more-wrapper.wrapper {
   column-gap: 20px;
-  align-items: unset;
+  align-items: flex-start;
 }
 
 .service-title {
@@ -141,4 +151,23 @@
   display: flex;
   flex-direction: column;
   row-gap: 32px;
+}
+
+.input_title {
+  font-family: GT Walsheim Pro;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: 1px;
+  text-align: left;
+  color: rgba(81, 85, 91, 1);
+}
+
+.input_box {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  .input_title {
+    margin-bottom: 0;
+  }
 }

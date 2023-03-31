@@ -33,7 +33,7 @@ const Home = () => {
 
   const selectedHotels = useSelector(selectHotels);
 
-  console.log(selectedHotels);
+  console.log(hotels);
 
   const { startDate, endDate, peopleAmount, daysAmount, destination } =
     useSelector((state) => state.client);
@@ -272,6 +272,7 @@ const Home = () => {
                         endDate={endDate}
                         rooms={hotel.rooms}
                         totalPrice={hotel.totalPrice}
+                        oldPrice={hotel.oldPrice}
                         hotelStars={hotel.hotelStars}
                       />
                     );
