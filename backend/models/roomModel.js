@@ -27,6 +27,38 @@ const roomSchema = mongoose.Schema(
     area: {
       type: Number,
     },
+    smokingPolicy: {
+      type: String,
+    },
+    roomsNumber: {
+      type: Number,
+    },
+    beds: {
+      bedsType: {
+        type: String,
+      },
+      largeBeds: {
+        type: Number,
+      },
+      smallBeds: Number,
+    },
+    people: {
+      adultMax: {
+        type: Number,
+      },
+      babyMax: {
+        type: Number,
+      },
+      kidsMax: {
+        type: Number,
+      },
+    },
+    restroom: {
+      type: String,
+    },
+    bathroom: {
+      type: String,
+    },
     prices: [
       {
         dateStart: {

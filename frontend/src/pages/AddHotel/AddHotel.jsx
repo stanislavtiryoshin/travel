@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Select from "react-select";
 
 import addhotel from "../../assets/addhotel.png";
 
+import { setNewHotelData } from "../../features/adminSlice";
+import { addHotel } from "../../features/hotel/hotelSlice";
+
 import "./AddHotel.scss";
+import { useDispatch, useSelector } from "react-redux";
 
 const AddHotel = () => {
   const [hotelData, setHotelData] = useState({
-    services: [{ serviceId: "64258af02ba7928f871a09cd" }],
+    hotelServices: [{ serviceId: "64258af02ba7928f871a09cd" }],
     locationId: null,
     name: "",
     locSpecialty: "",
     mapLink: "",
     rating: null,
     description: "",
-    enterTime: "",
-    leaveTime: "",
+    enterTime: "07:00",
+    leaveTime: "07:00",
     food: null,
     kidFoodPrice: null,
     adultFoodPrice: null,
@@ -23,8 +28,8 @@ const AddHotel = () => {
       babyMaxAge: null,
       kidMaxAge: null,
       kidDiscount: {
-        discountType: "",
-        discountValue: null,
+        discountType: "В тенге",
+        discountValue: 2000,
       },
     },
     payment: {
@@ -32,12 +37,54 @@ const AddHotel = () => {
       prepayment: null,
     },
   });
-  console.log(hotelData);
+
+  const dispatch = useDispatch();
+
   const [allLocations, setAllLocations] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [allServices, setAllServices] = useState([]);
 
+  const [servicesObjs, setServicesObjs] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const { newHotelData } = useSelector((state) => state.admin);
+
+  useEffect(() => {
+    let services = [];
+    allServices.map((serv, idx) => {
+      services.push({
+        value: serv.hotelServiceName,
+        label: serv.hotelServiceName,
+        category: serv.category.categoryName,
+        servId: serv._id,
+      });
+    });
+    setServicesObjs(services);
+  }, [allServices]);
+
+  useEffect(() => {
+    let services = [];
+    selectedOptions.map((serv, idx) => {
+      services.push({ serviceId: serv.servId });
+    });
+    setNewServices(services);
+  }, [selectedOptions]);
+
+  function handleSelect(data) {
+    setSelectedOptions(data);
+  }
+
+  useEffect(() => {
+    dispatch(setNewHotelData(hotelData));
+  }, [hotelData]);
+
+  console.log(hotelData);
+
   const [newServices, setNewServices] = useState([
+    { serviceId: "64258af02ba7928f871a09cd" },
+  ]);
+
+  const [addedServices, setAddedServices] = useState([
     { serviceId: "64258af02ba7928f871a09cd" },
   ]);
 
@@ -60,7 +107,7 @@ const AddHotel = () => {
   };
 
   useEffect(() => {
-    setHotelData({ ...hotelData, services: newServices });
+    setHotelData({ ...hotelData, hotelServices: newServices });
   }, [newServices]);
 
   useEffect(() => {
@@ -90,219 +137,193 @@ const AddHotel = () => {
       });
   }, []);
 
-  const [serviceCount, setServiceCount] = useState(1);
-
-  const renderServices = () => {
-    newServices?.map((serv, idx) => {
-      return (
-        <ServiceCard
-          number={idx + 1}
-          allCategories={allCategories}
-          allServices={allServices}
-          addService={addService}
-          deleteService={deleteService}
-        />
-      );
-    });
-  };
-
   return (
-    <div className="add_hotel-page page">
-      <section className="add_gen-section">
+    <>
+      <div className="header_bot">
         <div className="container">
-          <div className="add_gen-wrapper wrapper shadowed_box">
-            <div className="gen_img-box">
-              <img src={addhotel} alt="" />
+          <div className="header_bot-wrapper wrapper">
+            <div className="header_bot-left wrapper">
+              <div className="header_bot-left-text">Создание нового отеля</div>
             </div>
-            <div className="gen_content-box">
-              <div className="gen_title">Основное об отеле</div>
-              <div className="input_row">
-                <input
-                  type="text"
-                  className="primary-input"
-                  placeholder="Название"
-                  onChange={(e) =>
-                    setHotelData({ ...hotelData, name: e.target.value })
-                  }
-                />
-                <input
-                  type="text"
-                  className="primary-input"
-                  placeholder="Особенность местоположения"
-                  onChange={(e) =>
-                    setHotelData({ ...hotelData, locSpecialty: e.target.value })
-                  }
-                />
-              </div>
-              <div className="input_row">
-                <select
-                  className="primary-input"
-                  type="text"
-                  placeholder="Местоположение"
-                  name="destination"
-                  value={hotelData.locationId}
-                  onChange={(e) => {
-                    setHotelData({
-                      ...hotelData,
-                      locationId: e.target.value,
-                    });
-                  }}
-                >
-                  {allLocations && allLocations.length >= 0 ? (
-                    allLocations.map((location, idx) => {
-                      return (
-                        <option value={location._id} key={idx}>
-                          {location.locationName}
-                        </option>
-                      );
-                    })
-                  ) : (
-                    <p>Locations are loading</p>
-                  )}
-                </select>
-                <input
-                  type="text"
-                  className="primary-input"
-                  placeholder="Ссылка на карту"
-                  onChange={(e) =>
-                    setHotelData({ ...hotelData, mapLink: e.target.value })
-                  }
-                />
-              </div>
-              <div className="input_row">
-                <input
-                  type="text"
-                  className="primary-input"
-                  placeholder="Рейтинг отеля"
-                  onChange={(e) =>
-                    setHotelData({ ...hotelData, rating: e.target.value })
-                  }
-                />
-                <select
-                  className="primary-input"
-                  type="text"
-                  placeholder="Местоположение"
-                  name="hotelStars"
-                  value={hotelData.hotelStars}
-                  onChange={(e) => {
-                    setHotelData({
-                      ...hotelData,
-                      hotelStars: e.target.value,
-                    });
-                  }}
-                >
-                  <option value={5}>5</option>
-                  <option value={4}>4</option>
-                  <option value={3}>3</option>
-                  <option value={2}>2</option>
-                  <option value={1}>1</option>
-                </select>
-              </div>
-              <div className="input_row">
-                <textarea
-                  className="primary-input"
-                  name=""
-                  id=""
-                  cols="30"
-                  rows="5"
-                  placeholder="Описание"
-                  onChange={(e) =>
-                    setHotelData({ ...hotelData, description: e.target.value })
-                  }
-                ></textarea>
-              </div>
+            <div className="header_bot-right wrapper">
+              <button className="cancel-btn">Отмена</button>
+              <button
+                className="primary-btn white"
+                onClick={() => dispatch(addHotel(hotelData))}
+              >
+                Сохранить изменения
+              </button>
             </div>
           </div>
         </div>
-      </section>
-      <section className="add_more-section">
-        <div className="container">
-          <div className="add_more-wrapper wrapper">
-            <div className="add_more-col more-col shadowed_box">
-              <div className="gen_title">Подробнее</div>
-              <div className="input_box">
-                <div className="input_title">Время заезда</div>
+      </div>
+      <div className="add_hotel-page page">
+        <section className="add_gen-section">
+          <div className="container">
+            <div className="add_gen-wrapper wrapper shadowed_box">
+              <div className="gen_img-box">
+                <img src={addhotel} alt="" />
+              </div>
+              <div className="gen_content-box">
+                <div className="gen_title">Основное об отеле</div>
+                <div className="input_row">
+                  <input
+                    type="text"
+                    className="primary-input"
+                    placeholder="Название"
+                    onChange={(e) =>
+                      setHotelData({ ...hotelData, name: e.target.value })
+                    }
+                  />
+                  <input
+                    type="text"
+                    className="primary-input"
+                    placeholder="Особенность местоположения"
+                    onChange={(e) =>
+                      setHotelData({
+                        ...hotelData,
+                        locSpecialty: e.target.value,
+                      })
+                    }
+                  />
+                </div>
                 <div className="input_row">
                   <select
-                    name=""
-                    id=""
                     className="primary-input"
-                    onChange={(e) =>
-                      setHotelData({ ...hotelData, enterTime: e.target.value })
-                    }
+                    type="text"
+                    placeholder="Местоположение"
+                    name="destination"
+                    value={hotelData.locationId}
+                    onChange={(e) => {
+                      setHotelData({
+                        ...hotelData,
+                        locationId: e.target.value,
+                      });
+                    }}
                   >
-                    <option value="" disabled selected>
-                      Заезд с
-                    </option>
-                    <option value="07:00">07:00</option>
-                    <option value="07:00">08:00</option>
-                    <option value="07:00">09:00</option>
-                    <option value="07:00">10:00</option>
+                    {allLocations && allLocations.length >= 0 ? (
+                      allLocations.map((location, idx) => {
+                        return (
+                          <option value={location._id} key={idx}>
+                            {location.locationName}
+                          </option>
+                        );
+                      })
+                    ) : (
+                      <p>Locations are loading</p>
+                    )}
                   </select>
+                  <input
+                    type="text"
+                    className="primary-input"
+                    placeholder="Ссылка на карту"
+                    onChange={(e) =>
+                      setHotelData({ ...hotelData, mapLink: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="input_row">
+                  <input
+                    type="text"
+                    className="primary-input"
+                    placeholder="Рейтинг отеля"
+                    onChange={(e) =>
+                      setHotelData({ ...hotelData, rating: e.target.value })
+                    }
+                  />
                   <select
+                    className="primary-input"
+                    type="number"
+                    placeholder="Местоположение"
+                    name="hotelStars"
+                    value={hotelData.hotelStars}
+                    onChange={(e) => {
+                      setHotelData({
+                        ...hotelData,
+                        hotelStars: e.target.value,
+                      });
+                    }}
+                  >
+                    <option value={5}>5</option>
+                    <option value={4}>4</option>
+                    <option value={3}>3</option>
+                    <option value={2}>2</option>
+                    <option value={1}>1</option>
+                  </select>
+                </div>
+                <div className="input_row">
+                  <textarea
+                    className="primary-input"
                     name=""
                     id=""
-                    className="primary-input"
+                    cols="30"
+                    rows="5"
+                    placeholder="Описание"
                     onChange={(e) =>
-                      setHotelData({ ...hotelData, leaveTime: e.target.value })
+                      setHotelData({
+                        ...hotelData,
+                        description: e.target.value,
+                      })
                     }
-                  >
-                    <option value="" disabled selected>
-                      Выезд с
-                    </option>
-                    <option value="07:00">07:00</option>
-                    <option value="07:00">08:00</option>
-                    <option value="07:00">09:00</option>
-                    <option value="07:00">10:00</option>
-                  </select>
+                  ></textarea>
                 </div>
               </div>
-              <div className="input_box">
-                <div className="input_title">Дети</div>
-                <div className="input_row">
-                  <select
-                    name="babyMaxAge"
-                    id=""
-                    className="primary-input"
-                    onChange={(e) =>
-                      setHotelData({
-                        ...hotelData,
-                        kids: { ...hotelData.kids, babyMaxAge: e.target.value },
-                      })
-                    }
-                  >
-                    <option value="" disabled selected>
-                      Макс. возр. млад.
-                    </option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                  </select>
-                  <select
-                    name="kidMaxAge"
-                    id=""
-                    className="primary-input"
-                    onChange={(e) =>
-                      setHotelData({
-                        ...hotelData,
-                        kids: { ...hotelData.kids, kidMaxAge: e.target.value },
-                      })
-                    }
-                  >
-                    <option value="" disabled selected>
-                      Макс. возр. реб.
-                    </option>
-                    <option value="12">12</option>
-                    <option value="13">13</option>
-                    <option value="14">14</option>
-                  </select>
-                </div>
-                <div className="input_row">
-                  <div className="service-input">
-                    <label htmlFor="discountType">Тип скидки для ребенка</label>
-
+            </div>
+          </div>
+        </section>
+        <section className="add_more-section">
+          <div className="container">
+            <div className="add_more-wrapper wrapper">
+              <div className="add_more-col more-col shadowed_box">
+                <div className="gen_title">Подробнее</div>
+                <div className="input_box">
+                  <div className="input_title">Время заезда</div>
+                  <div className="input_row">
                     <select
-                      name="discountType"
+                      name=""
+                      id=""
+                      className="primary-input"
+                      onChange={(e) =>
+                        setHotelData({
+                          ...hotelData,
+                          enterTime: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="" disabled selected>
+                        Заезд с
+                      </option>
+                      <option value="07:00">07:00</option>
+                      <option value="07:00">08:00</option>
+                      <option value="07:00">09:00</option>
+                      <option value="07:00">10:00</option>
+                    </select>
+                    <select
+                      name=""
+                      id=""
+                      className="primary-input"
+                      onChange={(e) =>
+                        setHotelData({
+                          ...hotelData,
+                          leaveTime: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="" disabled selected>
+                        Выезд с
+                      </option>
+                      <option value="07:00">07:00</option>
+                      <option value="07:00">08:00</option>
+                      <option value="07:00">09:00</option>
+                      <option value="07:00">10:00</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="input_box">
+                  <div className="input_title">Дети</div>
+                  <div className="input_row">
+                    <select
+                      name="babyMaxAge"
                       id=""
                       className="primary-input"
                       onChange={(e) =>
@@ -310,141 +331,250 @@ const AddHotel = () => {
                           ...hotelData,
                           kids: {
                             ...hotelData.kids,
-                            kidDiscount: {
-                              ...hotelData.kids.kidDiscount,
-                              discountType: e.target.value,
-                            },
+                            babyMaxAge: e.target.value,
                           },
                         })
                       }
                     >
-                      <option value="В тенге">В тенге</option>
-                      <option value="В процентах">В процентах</option>
+                      <option value="" disabled selected>
+                        Макс. возр. млад.
+                      </option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
                     </select>
-                  </div>
-                  <div className="service-input">
-                    <label htmlFor="discount">Скидка</label>
-                    <input
-                      type="number"
-                      name="discount"
+                    <select
+                      name="kidMaxAge"
+                      id=""
                       className="primary-input"
-                      placeholder="2000"
                       onChange={(e) =>
                         setHotelData({
                           ...hotelData,
                           kids: {
                             ...hotelData.kids,
-                            kidDiscount: {
-                              ...hotelData.kids.kidDiscount,
-                              discountValue: e.target.value,
-                            },
+                            kidMaxAge: e.target.value,
                           },
                         })
                       }
+                    >
+                      <option value="" disabled selected>
+                        Макс. возр. реб.
+                      </option>
+                      <option value="12">12</option>
+                      <option value="13">13</option>
+                      <option value="14">14</option>
+                    </select>
+                  </div>
+                  <div className="input_row">
+                    <div className="service-input">
+                      <label htmlFor="discountType">
+                        Тип скидки для ребенка
+                      </label>
+
+                      <select
+                        name="discountType"
+                        id=""
+                        className="primary-input"
+                        onChange={(e) =>
+                          setHotelData({
+                            ...hotelData,
+                            kids: {
+                              ...hotelData.kids,
+                              kidDiscount: {
+                                ...hotelData.kids.kidDiscount,
+                                discountType: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                      >
+                        <option value="В тенге">В тенге</option>
+                        <option value="В процентах">В процентах</option>
+                      </select>
+                    </div>
+                    <div className="service-input">
+                      <label htmlFor="discount">Скидка</label>
+                      <input
+                        type="number"
+                        name="discount"
+                        className="primary-input"
+                        placeholder="2000"
+                        onChange={(e) =>
+                          setHotelData({
+                            ...hotelData,
+                            kids: {
+                              ...hotelData.kids,
+                              kidDiscount: {
+                                ...hotelData.kids.kidDiscount,
+                                discountValue: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="input_box">
+                  <div className="input_title">Тип питания</div>
+                  <select
+                    name="foodType"
+                    id=""
+                    className="primary-input"
+                    onChange={(e) =>
+                      setHotelData({ ...hotelData, food: e.target.value })
+                    }
+                  >
+                    <option value="642150a586cfa75278c280b9">
+                      Без питания
+                    </option>
+                    <option value="642150a586cfa75278c280b9">
+                      Без питания
+                    </option>
+                    <option value="642150a586cfa75278c280b9">
+                      Без питания
+                    </option>
+                    <option value="642150a586cfa75278c280b9">
+                      Без питания
+                    </option>
+                    <option value="642150a586cfa75278c280b9">
+                      Без питания
+                    </option>
+                  </select>
+                  <div className="input_row">
+                    <input
+                      type="text"
+                      className="primary-input"
+                      name="adultFoodPrice"
+                      placeholder="Цена за питание взрослого"
+                      onChange={(e) => {
+                        setHotelData({
+                          ...hotelData,
+                          adultFoodPrice: e.target.value,
+                        });
+                      }}
+                    />
+                    <input
+                      type="number"
+                      name="kidFoodPrice"
+                      className="primary-input"
+                      placeholder="Цена за детское питание"
+                      onChange={(e) => {
+                        setHotelData({
+                          ...hotelData,
+                          kidFoodPrice: e.target.value,
+                        });
+                      }}
                     />
                   </div>
                 </div>
-              </div>
-              <div className="input_box">
-                <div className="input_title">Тип питания</div>
-                <select
-                  name="foodType"
-                  id=""
-                  className="primary-input"
-                  onChange={(e) =>
-                    setHotelData({ ...hotelData, food: e.target.value })
-                  }
-                >
-                  <option value="Без питания">Без питания</option>
-                  <option value="Без питания">Без питания</option>
-                  <option value="Без питания">Без питания</option>
-                  <option value="Без питания">Без питания</option>
-                  <option value="Без питания">Без питания</option>
-                </select>
-                <div className="input_row">
-                  <input
-                    type="text"
+                <div className="input_box">
+                  <div className="input_title">Удобства</div>
+                  <select
+                    name="foodType"
+                    id=""
                     className="primary-input"
-                    name="adultFoodPrice"
-                    placeholder="Цена за питание взрослого"
-                  />
-                  <input
-                    type="number"
-                    name="kidFoodPrice"
-                    className="primary-input"
-                    placeholder="Цена за детское питание"
-                  />
+                    onChange={(e) =>
+                      setHotelData({ ...hotelData, services: e.target.value })
+                    }
+                  >
+                    <option value="" disabled selected>
+                      Введите значение
+                    </option>
+                    <option value="642150a586cfa75278c280b9">
+                      Без питания
+                    </option>
+                    <option value="642150a586cfa75278c280b9">
+                      Без питания
+                    </option>
+                    <option value="642150a586cfa75278c280b9">
+                      Без питания
+                    </option>
+                    <option value="642150a586cfa75278c280b9">
+                      Без питания
+                    </option>
+                  </select>
+                </div>
+                <div className="input_box">
+                  <div className="input_title">Тип оплаты</div>
+                  <div className="input_row">
+                    <div className="service-input">
+                      <label htmlFor="paymentType">Оплата за</label>
+                      <select
+                        name=""
+                        id=""
+                        className="primary-input"
+                        onChange={(e) => {
+                          setHotelData({
+                            ...hotelData,
+                            payment: {
+                              ...hotelData.payment,
+                              paymentType: e.target.value,
+                            },
+                          });
+                        }}
+                      >
+                        <option value="Оплата за номер">Оплата за номер</option>
+                        <option value="Оплата за человека">
+                          Оплата за человека
+                        </option>
+                      </select>
+                    </div>
+                    <div className="service-input">
+                      <label htmlFor="paymentType">Предоплата</label>
+                      <select
+                        name=""
+                        id=""
+                        className="primary-input"
+                        onChange={(e) => {
+                          setHotelData({
+                            ...hotelData,
+                            payment: {
+                              ...hotelData.payment,
+                              prepayment: e.target.value,
+                            },
+                          });
+                        }}
+                      >
+                        <option value="30">30%</option>
+                        <option value="40">40%</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="input_box">
-                <div className="input_title">Удобства</div>
-                <select
-                  name="foodType"
-                  id=""
-                  className="primary-input"
-                  onChange={(e) =>
-                    setHotelData({ ...hotelData, services: e.target.value })
-                  }
+              <div className="add_more-col categ-col shadowed_box">
+                <div className="gen_title">Услуги отеля</div>
+                {addedServices?.map((serv, idx) => {
+                  return (
+                    <ServiceCard
+                      number={idx + 1}
+                      allCategories={allCategories}
+                      allServices={allServices}
+                      addService={addService}
+                      deleteService={deleteService}
+                      optionList={servicesObjs}
+                      selectedOptions={selectedOptions}
+                      handleSelect={handleSelect}
+                    />
+                  );
+                })}
+                <button
+                  className="add_service-btn primary-btn"
+                  onClick={() => {
+                    if (addedServices.length < allCategories.length) {
+                      setAddedServices([...addedServices, {}]);
+                    }
+                  }}
                 >
-                  <option value="" disabled selected>
-                    Введите значение
-                  </option>
-                  <option value="Без питания">Без питания</option>
-                  <option value="Без питания">Без питания</option>
-                  <option value="Без питания">Без питания</option>
-                  <option value="Без питания">Без питания</option>
-                  <option value="Без питания">Без питания</option>
-                </select>
+                  Добавить услугу
+                </button>
               </div>
-              <div className="input_box">
-                <div className="input_title">Удобства</div>
-                <div className="input_row">
-                  <div className="service-input">
-                    <label htmlFor="paymentType">Оплата за</label>
-                    <select name="" id="" className="primary-input">
-                      <option value="Оплата за номер">Оплата за номер</option>
-                      <option value="Оплата за человека">
-                        Оплата за человека
-                      </option>
-                    </select>
-                  </div>
-                  <div className="service-input">
-                    <label htmlFor="paymentType">Предоплата</label>
-                    <select name="" id="" className="primary-input">
-                      <option value="30">30%</option>
-                      <option value="40">40%</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="add_more-col categ-col shadowed_box">
-              <div className="gen_title">Услуги отеля</div>
-              {newServices?.map((serv, idx) => {
-                return (
-                  <ServiceCard
-                    number={idx + 1}
-                    allCategories={allCategories}
-                    allServices={allServices}
-                    addService={addService}
-                    deleteService={deleteService}
-                  />
-                );
-              })}
-              <button
-                className="add_service-btn primary-btn"
-                onClick={() => {
-                  addService(serviceCount + 1, "64258af02ba7928f871a09cd");
-                  setServiceCount(serviceCount + 1);
-                }}
-              >
-                Добавить услугу
-              </button>
             </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </>
   );
 };
 
@@ -454,9 +584,18 @@ export const ServiceCard = ({
   allServices,
   addService,
   deleteService,
+  optionList,
+  selectedOptions,
+  handleSelect,
 }) => {
   const [currCateg, setCurrCateg] = useState("Питание");
   const [currServ, setCurrServ] = useState("64258af02ba7928f871a09cd");
+  const [thisCategServices, setThisCategServices] = useState();
+  useEffect(() => {
+    setThisCategServices(
+      selectedOptions.filter((serv) => serv.category === currCateg)
+    );
+  }, [currCateg]);
   return (
     <div className="service-card">
       <div className="service-title">
@@ -484,30 +623,14 @@ export const ServiceCard = ({
       </div>
       <div className="service-input full">
         <label htmlFor="service">Услуги и удобства</label>
-        <select
-          name="service"
-          id=""
-          className="primary-input"
-          onChange={(e) => {
-            e.preventDefault();
-            addService(number - 1, e.target.value);
-            setCurrServ(e.target.value);
-          }}
-        >
-          {allServices && allServices.length > 0
-            ? allServices
-                .filter(
-                  (service) => service.category.categoryName === currCateg
-                )
-                .map((serv, idx) => {
-                  return (
-                    <option value={serv._id} key={idx}>
-                      {serv.hotelServiceName}
-                    </option>
-                  );
-                })
-            : null}
-        </select>
+        <Select
+          options={optionList.filter((serv) => serv.category === currCateg)}
+          placeholder="Select color"
+          value={thisCategServices}
+          onChange={handleSelect}
+          isSearchable={true}
+          isMulti
+        />
       </div>
     </div>
   );

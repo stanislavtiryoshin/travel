@@ -10,17 +10,7 @@ const Hotel = require("../models/hotelModel");
 
 const addHotel = asyncHandler(async (req, res) => {
   const reqRooms = req.body.rooms;
-  const post = await Hotel.create({
-    name: req.body.name,
-    type: req.body.type,
-    location: req.body.location,
-    resort: req.body.resort,
-    discount: req.body.discount,
-    food: req.body.food,
-    rating: req.body.rating,
-    description: req.body.description,
-    rooms: req.body.rooms,
-  });
+  const post = await Hotel.create(req.body);
   res.status(200).json(post);
 });
 
@@ -72,7 +62,8 @@ const getAdminHotels = asyncHandler(async (req, res) => {
 const getSingleHotel = asyncHandler(async (req, res) => {
   const singleHotel = await Hotel.findById(req.params.id)
     .populate("locationId")
-    .populate("food.foodId");
+    .populate("food.foodId")
+    .populate("rooms");
   res.status(200).json(singleHotel);
 });
 

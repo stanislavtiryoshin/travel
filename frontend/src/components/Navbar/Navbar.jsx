@@ -119,49 +119,47 @@ const Navbar = () => {
           </div>
         </div>
       </header>
-      <div className="header_bot">
-        <div className="container">
-          <div className="header_bot-wrapper wrapper">
-            <div className="header_bot-left wrapper">
+      {!isDashboard ? (
+        <div className="header_bot">
+          <div className="container">
+            <div className="header_bot-wrapper wrapper">
+              <div className="header_bot-left wrapper">
+                {!isDashboard ? (
+                  <>
+                    <img src={photo} alt="" className="header_bot-photo" />
+                    <div className="header_bot-left-text">
+                      Хотите найти тур мечты?
+                    </div>
+                  </>
+                ) : null}
+              </div>
               {!isDashboard ? (
-                <>
-                  <img src={photo} alt="" className="header_bot-photo" />
-                  <div className="header_bot-left-text">
-                    Хотите найти тур мечты?
-                  </div>
-                </>
+                <form
+                  className="header_bot-right wrapper"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSendPhone();
+                  }}
+                >
+                  <PatternFormat
+                    className="header_bot-input"
+                    placeholder="+7 (...)"
+                    format="+7 (###) ### ## ##"
+                    allowEmptyFormatting={false}
+                    value={phone}
+                    mask="."
+                    required
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                  <button className="primary-btn yellow" type="submit">
+                    Заказать звонок
+                  </button>
+                </form>
               ) : null}
             </div>
-            {!isDashboard ? (
-              <form
-                className="header_bot-right wrapper"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSendPhone();
-                }}
-              >
-                <PatternFormat
-                  className="header_bot-input"
-                  placeholder="+7 (...)"
-                  format="+7 (###) ### ## ##"
-                  allowEmptyFormatting={false}
-                  value={phone}
-                  mask="."
-                  required
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-                <button className="primary-btn yellow" type="submit">
-                  Заказать звонок
-                </button>
-              </form>
-            ) : (
-              <button className="primary-btn yellow">
-                Сохранить изменения
-              </button>
-            )}
           </div>
         </div>
-      </div>
+      ) : null}
     </>
   );
 };
