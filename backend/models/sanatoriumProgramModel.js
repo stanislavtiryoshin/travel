@@ -2,7 +2,7 @@ const { Schema, model } = require("mongoose");
 
 const sanatoriumServiceSchema = Schema(
   {
-    sanatoriumServiceName: {
+    sanatoriumProgramName: {
       type: String,
     },
     description: {

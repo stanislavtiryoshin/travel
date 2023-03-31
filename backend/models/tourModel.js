@@ -85,6 +85,11 @@ const tourSchema = Schema({
       ],
     },
   ],
+  tourProgram: {
+    programId: {
+      type: Schema.Types.ObjectId,
+    },
+  },
 });
 
 module.exports = new model("Tour", tourSchema);
