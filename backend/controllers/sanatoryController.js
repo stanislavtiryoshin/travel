@@ -2,10 +2,6 @@ const Sanatorium = require("../models/sanatoriumModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-//@desc   Add new hotel
-//@route  POST /api/hotels
-//@access Private
-
 const addSanatorium = async (req, res) => {
   const { name, rating, description, rooms, mapLink, enterTime, leaveTime } =
     req.body;

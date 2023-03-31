@@ -64,6 +64,7 @@ const tourSchema = Schema({
   tourProgram: {
     programId: {
       type: Schema.Types.ObjectId,
+      ref: "Program",
     },
   },
 });

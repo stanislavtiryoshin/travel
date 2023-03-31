@@ -16,15 +16,15 @@ const {
 const { protect } = require("../middleware/authMiddleware");
 
 // Programs
-router.get("/", protect, getProgram);
+router.get("/", getProgram);
 router.post("/", protect, addProgram);
-router.patch("/:id", protect, updateProgram);
-router.delete("/:id", protect, deleteProgram);
+router.patch("/:id", updateProgram);
+router.delete("/:id", deleteProgram);
 
 // Sanatorium
-router.get("/sanatorium", protect, getSanatoriumProgram);
+router.get("/sanatorium", getSanatoriumProgram);
 router.post("/sanatorium", protect, addSanatoriumProgram);
-router.patch("/sanatorium/:id", protect, updateSanatoriumProgram);
-router.delete("/sanatorium/:id", protect, deleteSanatoriumProgram);
+router.patch("/sanatorium/:id", updateSanatoriumProgram);
+router.delete("/sanatorium/:id", deleteSanatoriumProgram);
 
 module.exports = router;
