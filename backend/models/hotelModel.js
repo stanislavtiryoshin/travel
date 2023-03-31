@@ -32,14 +32,41 @@ const hotelSchema = mongoose.Schema(
         ],
       },
     ],
-    food: [
-      {
-        foodId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Food",
+    food: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Food",
+    },
+    kidFoodPrice: {
+      type: Number,
+    },
+    adultFoodPrice: {
+      type: Number,
+    },
+    kids: {
+      babyMaxAge: {
+        type: Number,
+      },
+      kidMaxAge: {
+        type: Number,
+      },
+      kidDiscount: {
+        discountType: {
+          type: String,
+        },
+        discountValue: {
+          type: Number,
         },
       },
-    ],
+    },
+    comforts: [String],
+    payment: {
+      paymentType: {
+        type: String,
+      },
+      prepayment: {
+        type: Number,
+      },
+    },
     rating: {
       type: Number,
       default: 0,
@@ -66,60 +93,8 @@ const hotelSchema = mongoose.Schema(
     },
     rooms: [
       {
-        roomName: {
-          type: String,
-        },
-        roomType: {
-          type: String,
-        },
-        capacity: {
-          type: Number,
-        },
-        extraPlace: {
-          type: Number,
-        },
-        roomPrice: {
-          type: Number,
-        },
-        discount: {
-          type: Number,
-        },
-        area: {
-          type: Number,
-        },
-        prices: [
-          {
-            dateStart: {
-              day: {
-                type: Number,
-              },
-              month: {
-                type: Number,
-              },
-            },
-            dateEnd: {
-              day: {
-                type: Number,
-              },
-              month: {
-                type: Number,
-              },
-            },
-            price: {
-              type: Number,
-            },
-          },
-        ],
-        roomDescription: {
-          type: Number,
-        },
-        roomServices: [
-          {
-            serviceId: {
-              type: mongoose.Schema.Types.ObjectId,
-            },
-          },
-        ],
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Room",
       },
     ],
   },

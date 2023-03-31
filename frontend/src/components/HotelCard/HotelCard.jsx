@@ -20,10 +20,7 @@ const HotelCard = ({
   description,
   rating,
   totalPrice,
-  // amount,
-  // days,
-  // startDate,
-  // endDate,
+  oldPrice,
   rooms,
   hotelStars,
 }) => {
@@ -159,15 +156,11 @@ const HotelCard = ({
       <img src={line} alt="" />
       <div className="card_right card_col">
         <div className="card_right-top">
-          {cheapestRoom?.discount ? (
+          {oldPrice ? (
             <>
-              <div className="card_right-old-price">{totalPrice} тг</div>
+              <div className="card_right-old-price">{oldPrice} тг</div>
               <div className="card_right-price">
-                от{" "}
-                <span>
-                  {(totalPrice * (100 - cheapestRoom?.discount)) / 100}
-                </span>{" "}
-                тг
+                от <span>{totalPrice}</span> тг
               </div>
             </>
           ) : (

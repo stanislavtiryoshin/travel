@@ -14,7 +14,25 @@ const AddHotel = () => {
     mapLink: "",
     rating: null,
     description: "",
+    enterTime: "",
+    leaveTime: "",
+    food: null,
+    kidFoodPrice: null,
+    adultFoodPrice: null,
+    kids: {
+      babyMaxAge: null,
+      kidMaxAge: null,
+      kidDiscount: {
+        discountType: "",
+        discountValue: null,
+      },
+    },
+    payment: {
+      paymentType: "",
+      prepayment: null,
+    },
   });
+  console.log(hotelData);
   const [allLocations, setAllLocations] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [allServices, setAllServices] = useState([]);
@@ -25,7 +43,10 @@ const AddHotel = () => {
 
   const addService = (number, serviceId) => {
     let services = newServices;
-    if (services[number]) {
+    if (
+      services[number] &&
+      services.some((serv) => serv.serviceId === serviceId)
+    ) {
       services[number].serviceId = serviceId;
     } else {
       services.push({ serviceId: serviceId });
@@ -33,17 +54,14 @@ const AddHotel = () => {
     setNewServices(services);
   };
 
+  const deleteService = (serviceId) => {
+    let services = newServices.filter((serv) => serv.serviceId != serviceId);
+    setNewServices(services);
+  };
+
   useEffect(() => {
     setHotelData({ ...hotelData, services: newServices });
-    console.log(hotelData);
   }, [newServices]);
-
-  // useEffect(() => {
-  //   setHotelData({
-  //     ...hotelData,
-  //     services: [{ serviceId: "" }],
-  //   });
-  // }, []);
 
   useEffect(() => {
     axios
@@ -75,18 +93,17 @@ const AddHotel = () => {
   const [serviceCount, setServiceCount] = useState(1);
 
   const renderServices = () => {
-    const services = [];
-    for (let i = 0; i < serviceCount; i++) {
-      services.push(
+    newServices?.map((serv, idx) => {
+      return (
         <ServiceCard
-          number={i + 1}
+          number={idx + 1}
           allCategories={allCategories}
           allServices={allServices}
           addService={addService}
+          deleteService={deleteService}
         />
       );
-    }
-    return <>{services}</>;
+    });
   };
 
   return (
@@ -104,7 +121,7 @@ const AddHotel = () => {
                   type="text"
                   className="primary-input"
                   placeholder="Название"
-                  onChange={() =>
+                  onChange={(e) =>
                     setHotelData({ ...hotelData, name: e.target.value })
                   }
                 />
@@ -112,7 +129,7 @@ const AddHotel = () => {
                   type="text"
                   className="primary-input"
                   placeholder="Особенность местоположения"
-                  onChange={() =>
+                  onChange={(e) =>
                     setHotelData({ ...hotelData, locSpecialty: e.target.value })
                   }
                 />
@@ -125,7 +142,7 @@ const AddHotel = () => {
                   name="destination"
                   value={hotelData.locationId}
                   onChange={(e) => {
-                    setSearchTerms({
+                    setHotelData({
                       ...hotelData,
                       locationId: e.target.value,
                     });
@@ -147,7 +164,7 @@ const AddHotel = () => {
                   type="text"
                   className="primary-input"
                   placeholder="Ссылка на карту"
-                  onChange={() =>
+                  onChange={(e) =>
                     setHotelData({ ...hotelData, mapLink: e.target.value })
                   }
                 />
@@ -157,7 +174,7 @@ const AddHotel = () => {
                   type="text"
                   className="primary-input"
                   placeholder="Рейтинг отеля"
-                  onChange={() =>
+                  onChange={(e) =>
                     setHotelData({ ...hotelData, rating: e.target.value })
                   }
                 />
@@ -189,7 +206,7 @@ const AddHotel = () => {
                   cols="30"
                   rows="5"
                   placeholder="Описание"
-                  onChange={() =>
+                  onChange={(e) =>
                     setHotelData({ ...hotelData, description: e.target.value })
                   }
                 ></textarea>
@@ -201,15 +218,223 @@ const AddHotel = () => {
       <section className="add_more-section">
         <div className="container">
           <div className="add_more-wrapper wrapper">
-            <div className="add_more-col shadowed_box"></div>
+            <div className="add_more-col more-col shadowed_box">
+              <div className="gen_title">Подробнее</div>
+              <div className="input_box">
+                <div className="input_title">Время заезда</div>
+                <div className="input_row">
+                  <select
+                    name=""
+                    id=""
+                    className="primary-input"
+                    onChange={(e) =>
+                      setHotelData({ ...hotelData, enterTime: e.target.value })
+                    }
+                  >
+                    <option value="" disabled selected>
+                      Заезд с
+                    </option>
+                    <option value="07:00">07:00</option>
+                    <option value="07:00">08:00</option>
+                    <option value="07:00">09:00</option>
+                    <option value="07:00">10:00</option>
+                  </select>
+                  <select
+                    name=""
+                    id=""
+                    className="primary-input"
+                    onChange={(e) =>
+                      setHotelData({ ...hotelData, leaveTime: e.target.value })
+                    }
+                  >
+                    <option value="" disabled selected>
+                      Выезд с
+                    </option>
+                    <option value="07:00">07:00</option>
+                    <option value="07:00">08:00</option>
+                    <option value="07:00">09:00</option>
+                    <option value="07:00">10:00</option>
+                  </select>
+                </div>
+              </div>
+              <div className="input_box">
+                <div className="input_title">Дети</div>
+                <div className="input_row">
+                  <select
+                    name="babyMaxAge"
+                    id=""
+                    className="primary-input"
+                    onChange={(e) =>
+                      setHotelData({
+                        ...hotelData,
+                        kids: { ...hotelData.kids, babyMaxAge: e.target.value },
+                      })
+                    }
+                  >
+                    <option value="" disabled selected>
+                      Макс. возр. млад.
+                    </option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select>
+                  <select
+                    name="kidMaxAge"
+                    id=""
+                    className="primary-input"
+                    onChange={(e) =>
+                      setHotelData({
+                        ...hotelData,
+                        kids: { ...hotelData.kids, kidMaxAge: e.target.value },
+                      })
+                    }
+                  >
+                    <option value="" disabled selected>
+                      Макс. возр. реб.
+                    </option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                  </select>
+                </div>
+                <div className="input_row">
+                  <div className="service-input">
+                    <label htmlFor="discountType">Тип скидки для ребенка</label>
+
+                    <select
+                      name="discountType"
+                      id=""
+                      className="primary-input"
+                      onChange={(e) =>
+                        setHotelData({
+                          ...hotelData,
+                          kids: {
+                            ...hotelData.kids,
+                            kidDiscount: {
+                              ...hotelData.kids.kidDiscount,
+                              discountType: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                    >
+                      <option value="В тенге">В тенге</option>
+                      <option value="В процентах">В процентах</option>
+                    </select>
+                  </div>
+                  <div className="service-input">
+                    <label htmlFor="discount">Скидка</label>
+                    <input
+                      type="number"
+                      name="discount"
+                      className="primary-input"
+                      placeholder="2000"
+                      onChange={(e) =>
+                        setHotelData({
+                          ...hotelData,
+                          kids: {
+                            ...hotelData.kids,
+                            kidDiscount: {
+                              ...hotelData.kids.kidDiscount,
+                              discountValue: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="input_box">
+                <div className="input_title">Тип питания</div>
+                <select
+                  name="foodType"
+                  id=""
+                  className="primary-input"
+                  onChange={(e) =>
+                    setHotelData({ ...hotelData, food: e.target.value })
+                  }
+                >
+                  <option value="Без питания">Без питания</option>
+                  <option value="Без питания">Без питания</option>
+                  <option value="Без питания">Без питания</option>
+                  <option value="Без питания">Без питания</option>
+                  <option value="Без питания">Без питания</option>
+                </select>
+                <div className="input_row">
+                  <input
+                    type="text"
+                    className="primary-input"
+                    name="adultFoodPrice"
+                    placeholder="Цена за питание взрослого"
+                  />
+                  <input
+                    type="number"
+                    name="kidFoodPrice"
+                    className="primary-input"
+                    placeholder="Цена за детское питание"
+                  />
+                </div>
+              </div>
+              <div className="input_box">
+                <div className="input_title">Удобства</div>
+                <select
+                  name="foodType"
+                  id=""
+                  className="primary-input"
+                  onChange={(e) =>
+                    setHotelData({ ...hotelData, services: e.target.value })
+                  }
+                >
+                  <option value="" disabled selected>
+                    Введите значение
+                  </option>
+                  <option value="Без питания">Без питания</option>
+                  <option value="Без питания">Без питания</option>
+                  <option value="Без питания">Без питания</option>
+                  <option value="Без питания">Без питания</option>
+                  <option value="Без питания">Без питания</option>
+                </select>
+              </div>
+              <div className="input_box">
+                <div className="input_title">Удобства</div>
+                <div className="input_row">
+                  <div className="service-input">
+                    <label htmlFor="paymentType">Оплата за</label>
+                    <select name="" id="" className="primary-input">
+                      <option value="Оплата за номер">Оплата за номер</option>
+                      <option value="Оплата за человека">
+                        Оплата за человека
+                      </option>
+                    </select>
+                  </div>
+                  <div className="service-input">
+                    <label htmlFor="paymentType">Предоплата</label>
+                    <select name="" id="" className="primary-input">
+                      <option value="30">30%</option>
+                      <option value="40">40%</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="add_more-col categ-col shadowed_box">
               <div className="gen_title">Услуги отеля</div>
-              {renderServices()}
+              {newServices?.map((serv, idx) => {
+                return (
+                  <ServiceCard
+                    number={idx + 1}
+                    allCategories={allCategories}
+                    allServices={allServices}
+                    addService={addService}
+                    deleteService={deleteService}
+                  />
+                );
+              })}
               <button
                 className="add_service-btn primary-btn"
                 onClick={() => {
                   addService(serviceCount + 1, "64258af02ba7928f871a09cd");
-                  console.log(newServices);
                   setServiceCount(serviceCount + 1);
                 }}
               >
@@ -228,11 +453,16 @@ export const ServiceCard = ({
   allCategories,
   allServices,
   addService,
+  deleteService,
 }) => {
   const [currCateg, setCurrCateg] = useState("Питание");
+  const [currServ, setCurrServ] = useState("64258af02ba7928f871a09cd");
   return (
     <div className="service-card">
-      <div className="service-title">Категория {number}</div>
+      <div className="service-title">
+        Категория {number}{" "}
+        <button onClick={() => deleteService(currServ)}>X</button>
+      </div>
       <div className="service-input">
         <label htmlFor="category">Категория</label>
         <select
@@ -261,7 +491,7 @@ export const ServiceCard = ({
           onChange={(e) => {
             e.preventDefault();
             addService(number - 1, e.target.value);
-            console.log(e.target.value);
+            setCurrServ(e.target.value);
           }}
         >
           {allServices && allServices.length > 0

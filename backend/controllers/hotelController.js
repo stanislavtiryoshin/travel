@@ -31,7 +31,8 @@ const addHotel = asyncHandler(async (req, res) => {
 const getHotels = asyncHandler(async (req, res) => {
   const hotels = await Hotel.find()
     .populate("locationId")
-    .populate("food.foodId");
+    .populate("food.foodId")
+    .populate("rooms");
   res.status(200).json(hotels);
 });
 
@@ -58,7 +59,8 @@ const getAdminHotels = asyncHandler(async (req, res) => {
 
   const hotels = await Hotel.find(query)
     .populate("locationId")
-    .populate("food.foodId");
+    .populate("food.foodId")
+    .populate("rooms");
 
   res.status(200).json(hotels);
 });
@@ -130,9 +132,13 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
       locationId: locationId,
     })
       .populate("locationId")
-      .populate("food.foodId");
+      .populate("food.foodId")
+      .populate("rooms");
   } else {
-    hotels = await Hotel.find().populate("locationId").populate("food.foodId");
+    hotels = await Hotel.find()
+      .populate("locationId")
+      .populate("food.foodId")
+      .populate("rooms");
   }
 
   const updatedHotels = hotels.map((plainHotel) => {
@@ -155,6 +161,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
 
     if (cheapestRoom.discount && cheapestRoom.discount !== 0) {
       hotel.totalPrice = (costOfStay * (100 - cheapestRoom.discount)) / 100;
+      hotel.oldPrice = costOfStay;
     } else {
       hotel.totalPrice = costOfStay;
     }
