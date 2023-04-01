@@ -13,6 +13,17 @@ const getRooms = asyncHandler(async (req, res) => {
   res.status(200).send(rooms);
 });
 
+//@desc   Add new room
+//@route  POST /api/rooms
+//@access Private
+
+const addRoom = asyncHandler(async (req, res) => {
+  const room = await Room.create(req.body);
+
+  res.status(200).send(room);
+});
+
 module.exports = {
   getRooms,
+  addRoom,
 };

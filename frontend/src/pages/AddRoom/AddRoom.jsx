@@ -6,33 +6,7 @@ import addhotel from "../../assets/addhotel.png";
 import "./AddHotel.scss";
 
 const AddHotel = () => {
-  const [hotelData, setHotelData] = useState({
-    services: [{ serviceId: "64258af02ba7928f871a09cd" }],
-    locationId: null,
-    name: "",
-    locSpecialty: "",
-    mapLink: "",
-    rating: null,
-    description: "",
-    enterTime: "",
-    leaveTime: "",
-    food: null,
-    kidFoodPrice: null,
-    adultFoodPrice: null,
-    kids: {
-      babyMaxAge: null,
-      kidMaxAge: null,
-      kidDiscount: {
-        discountType: "",
-        discountValue: null,
-      },
-    },
-    payment: {
-      paymentType: "",
-      prepayment: null,
-    },
-  });
-  console.log(hotelData);
+  const [roomData, setRoomData] = useState();
   const [allLocations, setAllLocations] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [allServices, setAllServices] = useState([]);

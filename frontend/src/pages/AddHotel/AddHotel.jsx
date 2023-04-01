@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Select from "react-select";
 
 import addhotel from "../../assets/addhotel.png";
 
 import { useNavigate } from "react-router-dom";
-import { setNewHotelData } from "../../features/adminSlice";
-import { addHotel } from "../../features/hotel/hotelSlice";
+import { addHotel, updateHotel } from "../../features/hotel/hotelSlice";
 
 import "./AddHotel.scss";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import Selector from "./Select";
 
-const AddHotel = () => {
+const AddHotel = ({ fetchedHotelData, editMode }) => {
   const [hotelData, setHotelData] = useState({
     hotelServices: [{ serviceId: "64258af02ba7928f871a09cd" }],
     locationId: null,
@@ -37,11 +36,15 @@ const AddHotel = () => {
       paymentType: "",
       prepayment: null,
     },
+    comforts: "",
   });
 
-  const { currentHotel } = useSelector((state) => state.hotels);
+  useEffect(() => {
+    let newData = fetchedHotelData;
+    setHotelData(newData);
+  }, [fetchedHotelData, editMode]);
 
-  console.log(currentHotel);
+  console.log(hotelData);
 
   const dispatch = useDispatch();
 
@@ -51,8 +54,6 @@ const AddHotel = () => {
 
   const [servicesObjs, setServicesObjs] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
-
-  const { newHotelData } = useSelector((state) => state.admin);
 
   useEffect(() => {
     let services = [];
@@ -75,13 +76,10 @@ const AddHotel = () => {
     setNewServices(services);
   }, [selectedOptions]);
 
+  // For react-select
   function handleSelect(data) {
     setSelectedOptions(data);
   }
-
-  useEffect(() => {
-    dispatch(setNewHotelData(hotelData));
-  }, [hotelData]);
 
   const [newServices, setNewServices] = useState([
     { serviceId: "64258af02ba7928f871a09cd" },
@@ -95,6 +93,7 @@ const AddHotel = () => {
     setHotelData({ ...hotelData, hotelServices: newServices });
   }, [newServices]);
 
+  // Fetching all categories, services, locations
   useEffect(() => {
     axios
       .get(`http://localhost:3000/api/locations`)
@@ -124,6 +123,8 @@ const AddHotel = () => {
 
   const navigate = useNavigate();
 
+  console.log(hotelData);
+
   return (
     <>
       <div className="header_bot">
@@ -137,9 +138,11 @@ const AddHotel = () => {
               <button
                 className="primary-btn white"
                 onClick={() => {
-                  dispatch(addHotel(hotelData)).then((res) =>
-                    navigate(`/dashboard/hotel/${res.payload._id}`)
-                  );
+                  !editMode
+                    ? dispatch(addHotel(hotelData)).then((res) =>
+                        navigate(`/dashboard/hotel/${res.payload._id}`)
+                      )
+                    : dispatch(updateHotel(hotelData));
                 }}
               >
                 Сохранить изменения
@@ -161,6 +164,7 @@ const AddHotel = () => {
                   <input
                     type="text"
                     className="primary-input"
+                    value={hotelData.name}
                     placeholder="Название"
                     onChange={(e) =>
                       setHotelData({ ...hotelData, name: e.target.value })
@@ -170,6 +174,7 @@ const AddHotel = () => {
                     type="text"
                     className="primary-input"
                     placeholder="Особенность местоположения"
+                    value={hotelData.locSpecialty}
                     onChange={(e) =>
                       setHotelData({
                         ...hotelData,
@@ -207,6 +212,7 @@ const AddHotel = () => {
                   <input
                     type="text"
                     className="primary-input"
+                    value={hotelData.mapLink}
                     placeholder="Ссылка на карту"
                     onChange={(e) =>
                       setHotelData({ ...hotelData, mapLink: e.target.value })
@@ -215,8 +221,9 @@ const AddHotel = () => {
                 </div>
                 <div className="input_row">
                   <input
-                    type="text"
+                    type="number"
                     className="primary-input"
+                    value={hotelData.rating}
                     placeholder="Рейтинг отеля"
                     onChange={(e) =>
                       setHotelData({ ...hotelData, rating: e.target.value })
@@ -249,6 +256,7 @@ const AddHotel = () => {
                     id=""
                     cols="30"
                     rows="5"
+                    value={hotelData.description}
                     placeholder="Описание"
                     onChange={(e) =>
                       setHotelData({
@@ -274,6 +282,7 @@ const AddHotel = () => {
                       name=""
                       id=""
                       className="primary-input"
+                      value={hotelData.enterTime}
                       onChange={(e) =>
                         setHotelData({
                           ...hotelData,
@@ -293,6 +302,7 @@ const AddHotel = () => {
                       name=""
                       id=""
                       className="primary-input"
+                      value={hotelData.leaveTime}
                       onChange={(e) =>
                         setHotelData({
                           ...hotelData,
@@ -304,9 +314,9 @@ const AddHotel = () => {
                         Выезд с
                       </option>
                       <option value="07:00">07:00</option>
-                      <option value="07:00">08:00</option>
-                      <option value="07:00">09:00</option>
-                      <option value="07:00">10:00</option>
+                      <option value="08:00">08:00</option>
+                      <option value="09:00">09:00</option>
+                      <option value="10:00">10:00</option>
                     </select>
                   </div>
                 </div>
@@ -317,6 +327,7 @@ const AddHotel = () => {
                       name="babyMaxAge"
                       id=""
                       className="primary-input"
+                      value={hotelData.kids.babyMaxAge}
                       onChange={(e) =>
                         setHotelData({
                           ...hotelData,
@@ -330,14 +341,15 @@ const AddHotel = () => {
                       <option value="" disabled selected>
                         Макс. возр. млад.
                       </option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
+                      <option value={2}>2</option>
+                      <option value={3}>3</option>
+                      <option value={4}>4</option>
                     </select>
                     <select
                       name="kidMaxAge"
                       id=""
                       className="primary-input"
+                      value={hotelData.kids.kidMaxAge}
                       onChange={(e) =>
                         setHotelData({
                           ...hotelData,
@@ -351,9 +363,9 @@ const AddHotel = () => {
                       <option value="" disabled selected>
                         Макс. возр. реб.
                       </option>
-                      <option value="12">12</option>
-                      <option value="13">13</option>
-                      <option value="14">14</option>
+                      <option value={12}>12</option>
+                      <option value={13}>13</option>
+                      <option value={14}>14</option>
                     </select>
                   </div>
                   <div className="input_row">
@@ -366,6 +378,7 @@ const AddHotel = () => {
                         name="discountType"
                         id=""
                         className="primary-input"
+                        value={hotelData.kids.kidDiscount.discountType}
                         onChange={(e) =>
                           setHotelData({
                             ...hotelData,
@@ -390,6 +403,7 @@ const AddHotel = () => {
                         name="discount"
                         className="primary-input"
                         placeholder="2000"
+                        value={hotelData.kids.kidDiscount.discountValue}
                         onChange={(e) =>
                           setHotelData({
                             ...hotelData,
@@ -412,6 +426,7 @@ const AddHotel = () => {
                     name="foodType"
                     id=""
                     className="primary-input"
+                    value={hotelData.food}
                     onChange={(e) =>
                       setHotelData({ ...hotelData, food: e.target.value })
                     }
@@ -438,6 +453,7 @@ const AddHotel = () => {
                       className="primary-input"
                       name="adultFoodPrice"
                       placeholder="Цена за питание взрослого"
+                      value={hotelData.adultFoodPrice}
                       onChange={(e) => {
                         setHotelData({
                           ...hotelData,
@@ -450,6 +466,7 @@ const AddHotel = () => {
                       name="kidFoodPrice"
                       className="primary-input"
                       placeholder="Цена за детское питание"
+                      value={hotelData.kidFoodPrice}
                       onChange={(e) => {
                         setHotelData({
                           ...hotelData,
@@ -465,8 +482,9 @@ const AddHotel = () => {
                     name="foodType"
                     id=""
                     className="primary-input"
+                    value={hotelData.comforts}
                     onChange={(e) =>
-                      setHotelData({ ...hotelData, services: e.target.value })
+                      setHotelData({ ...hotelData, comforts: e.target.value })
                     }
                   >
                     <option value="" disabled selected>
@@ -495,6 +513,7 @@ const AddHotel = () => {
                         name=""
                         id=""
                         className="primary-input"
+                        value={hotelData.payment.paymentType}
                         onChange={(e) => {
                           setHotelData({
                             ...hotelData,
@@ -517,6 +536,7 @@ const AddHotel = () => {
                         name=""
                         id=""
                         className="primary-input"
+                        value={hotelData.payment.prepayment}
                         onChange={(e) => {
                           setHotelData({
                             ...hotelData,
@@ -551,9 +571,7 @@ const AddHotel = () => {
                 <button
                   className="add_service-btn primary-btn"
                   onClick={() => {
-                    if (addedServices.length < allCategories.length) {
-                      setAddedServices([...addedServices, {}]);
-                    }
+                    setAddedServices((prev) => [...prev, {}]);
                   }}
                 >
                   Добавить услугу
@@ -578,18 +596,20 @@ export const ServiceCard = ({
   const [currCateg, setCurrCateg] = useState("Питание");
   const [currServ, setCurrServ] = useState("64258af02ba7928f871a09cd");
   const [thisCategServices, setThisCategServices] = useState();
+
   useEffect(() => {
     setThisCategServices(
       selectedOptions.filter((serv) => serv.category === currCateg)
     );
   }, [currCateg]);
+
   return (
     <div className="service-card">
       <div className="service-title">
         Категория {number}{" "}
         <button onClick={() => deleteService(currServ)}>X</button>
       </div>
-      <div className="service-input">
+      {/* <div className="service-input">
         <label htmlFor="category">Категория</label>
         <select
           name="category"
@@ -600,7 +620,7 @@ export const ServiceCard = ({
           {allCategories && allCategories.length > 0
             ? allCategories?.map((categ, idx) => {
                 return (
-                  <option value={categ.categoryName} key={idx}>
+                  <option value={categ.categoryName} key={categ._id}>
                     {categ.categoryName}
                   </option>
                 );
@@ -618,7 +638,12 @@ export const ServiceCard = ({
           isSearchable={true}
           isMulti
         />
-      </div>
+      </div> */}
+      <Selector
+        allCategories={allCategories}
+        optionList={optionList}
+        thisCategServices={thisCategServices}
+      />
     </div>
   );
 };

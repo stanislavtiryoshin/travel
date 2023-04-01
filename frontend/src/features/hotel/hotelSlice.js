@@ -39,6 +39,26 @@ export const addHotel = createAsyncThunk(
   }
 );
 
+// Update hotel
+
+export const updateHotel = createAsyncThunk(
+  "hotels/update",
+  async (hotelData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await hotelService.updateHotel(hotelData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 // Get all hotels
 
 export const getHotels = createAsyncThunk(
@@ -173,6 +193,11 @@ export const hotelSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.hotels = action.payload;
+      })
+      .addCase(updateHotel.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.singleHotel = action.payload;
       });
   },
 });

@@ -13,12 +13,14 @@ const addHotel = asyncHandler(async (req, res) => {
   res.status(200).json(hotel);
 });
 
-//@desc   Add new hotel
-//@route  POST /api/hotels
+//@desc   Update hotel
+//@route  PATCH /api/hotels/:hotelId
 //@access Private
 
 const updateHotel = asyncHandler(async (req, res) => {
-  const hotel = await Hotel.findByIdAndUpdate();
+  const hotel = await Hotel.findByIdAndUpdate(req.params.hotelId, req.body, {
+    new: true,
+  });
   res.status(200).json(hotel);
 });
 
@@ -177,4 +179,5 @@ module.exports = {
   getSearchedHotels,
   getSingleHotel,
   getAdminHotels,
+  updateHotel,
 };

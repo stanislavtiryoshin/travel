@@ -1,21 +1,19 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Navbar from "./components/Navbar/Navbar";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Home from "./pages/Home/Home";
 import Register from "./pages/Register/Register";
 import Login from "./pages/Login/Login";
 import Hotel from "./pages/Hotel/Hotel";
-import Footer from "./components/Footer/Footer";
 import Order from "./pages/Order/Order";
 import AddHotel from "./pages/AddHotel/AddHotel";
+import Layout from "./components/Layout";
 import AdminHotel from "./pages/AddHotel/AdminHotel";
 
 function App() {
   return (
-    <div className="App">
-      <Router>
-        <Navbar />
+    <Router>
+      <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -25,10 +23,13 @@ function App() {
           <Route path="/orders/new-order" element={<Order />} />
           <Route path="/dashboard/add-hotel" element={<AddHotel />} />
           <Route path="/dashboard/hotel/:hotelId" element={<AdminHotel />} />
+          <Route
+            path="/dashboard/hotel/:hotelId/add-room"
+            element={<AdminHotel />}
+          />
         </Routes>
-        <Footer />
-      </Router>
-    </div>
+      </Layout>
+    </Router>
   );
 }
 
