@@ -41,6 +41,8 @@ const Hotel = () => {
     (state) => state.hotels
   );
 
+  console.log(singleHotel);
+
   useEffect(() => {
     if (isError) {
       console.log(message);

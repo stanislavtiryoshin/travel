@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
+import { useNavigate } from "react-router-dom";
+import { getSingleHotel, reset } from "../../features/hotel/hotelSlice";
 
 import addhotel from "../../assets/addhotel.png";
 
-import { useNavigate } from "react-router-dom";
 import { setNewHotelData } from "../../features/adminSlice";
 import { addHotel } from "../../features/hotel/hotelSlice";
+import { ServiceCard } from "./AddHotel";
 
 import "./AddHotel.scss";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
-const AddHotel = () => {
+const AdminHotel = () => {
+  const navigate = useNavigate();
   const [hotelData, setHotelData] = useState({
     hotelServices: [{ serviceId: "64258af02ba7928f871a09cd" }],
     locationId: null,
@@ -38,10 +42,6 @@ const AddHotel = () => {
       prepayment: null,
     },
   });
-
-  const { currentHotel } = useSelector((state) => state.hotels);
-
-  console.log(currentHotel);
 
   const dispatch = useDispatch();
 
@@ -122,11 +122,25 @@ const AddHotel = () => {
       });
   }, []);
 
-  const navigate = useNavigate();
+  const { hotelId } = useParams();
+  const { singleHotel, isLoading, isSuccess, isError, message } = useSelector(
+    (state) => state.hotels
+  );
+
+  useEffect(() => {
+    if (isError) {
+      console.log(message);
+    }
+    if (hotelId) dispatch(getSingleHotel(hotelId));
+    dispatch(reset());
+  }, [hotelId]);
+
+  console.log(singleHotel);
 
   return (
     <>
-      <div className="header_bot">
+      HOTEL
+      {/* <div className="header_bot">
         <div className="container">
           <div className="header_bot-wrapper wrapper">
             <div className="header_bot-left wrapper">
@@ -136,11 +150,7 @@ const AddHotel = () => {
               <button className="cancel-btn">Отмена</button>
               <button
                 className="primary-btn white"
-                onClick={() => {
-                  dispatch(addHotel(hotelData)).then((res) =>
-                    navigate(`/dashboard/hotel/${res.payload._id}`)
-                  );
-                }}
+                onClick={() => dispatch(addHotel(hotelData))}
               >
                 Сохранить изменения
               </button>
@@ -562,65 +572,9 @@ const AddHotel = () => {
             </div>
           </div>
         </section>
-      </div>
+      </div> */}
     </>
   );
 };
 
-export const ServiceCard = ({
-  number,
-  allCategories,
-  deleteService,
-  optionList,
-  selectedOptions,
-  handleSelect,
-}) => {
-  const [currCateg, setCurrCateg] = useState("Питание");
-  const [currServ, setCurrServ] = useState("64258af02ba7928f871a09cd");
-  const [thisCategServices, setThisCategServices] = useState();
-  useEffect(() => {
-    setThisCategServices(
-      selectedOptions.filter((serv) => serv.category === currCateg)
-    );
-  }, [currCateg]);
-  return (
-    <div className="service-card">
-      <div className="service-title">
-        Категория {number}{" "}
-        <button onClick={() => deleteService(currServ)}>X</button>
-      </div>
-      <div className="service-input">
-        <label htmlFor="category">Категория</label>
-        <select
-          name="category"
-          className="primary-input"
-          id=""
-          onChange={(e) => setCurrCateg(e.target.value)}
-        >
-          {allCategories && allCategories.length > 0
-            ? allCategories?.map((categ, idx) => {
-                return (
-                  <option value={categ.categoryName} key={idx}>
-                    {categ.categoryName}
-                  </option>
-                );
-              })
-            : null}
-        </select>
-      </div>
-      <div className="service-input full">
-        <label htmlFor="service">Услуги и удобства</label>
-        <Select
-          options={optionList.filter((serv) => serv.category === currCateg)}
-          placeholder="Select color"
-          value={selectedOptions}
-          onChange={handleSelect}
-          isSearchable={true}
-          isMulti
-        />
-      </div>
-    </div>
-  );
-};
-
-export default AddHotel;
+export default AdminHotel;

@@ -16,6 +16,7 @@ const initialState = {
   message: "",
   filteredHotels: [], // JSON array of hotels filtered by type
   filterType: null, // type of filter applied to hotels, null if no filter applied
+  currentHotel: {},
 };
 
 // Add hotel
@@ -151,6 +152,7 @@ export const hotelSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.hotels.push(action.payload);
+        state.currentHotel = action.payload;
       })
       .addCase(getHotels.fulfilled, (state, action) => {
         state.isLoading = false;
