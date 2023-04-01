@@ -9,6 +9,7 @@ import { addHotel } from "../../features/hotel/hotelSlice";
 
 import "./AddHotel.scss";
 import { useDispatch, useSelector } from "react-redux";
+import Selector from "./Select";
 
 const AddHotel = () => {
   const [hotelData, setHotelData] = useState({
@@ -562,9 +563,7 @@ const AddHotel = () => {
                 <button
                   className="add_service-btn primary-btn"
                   onClick={() => {
-                    if (addedServices.length < allCategories.length) {
-                      setAddedServices([...addedServices, {}]);
-                    }
+                    setAddedServices((prev) => [...prev, {}]);
                   }}
                 >
                   Добавить услугу
@@ -591,18 +590,20 @@ export const ServiceCard = ({
   const [currCateg, setCurrCateg] = useState("Питание");
   const [currServ, setCurrServ] = useState("64258af02ba7928f871a09cd");
   const [thisCategServices, setThisCategServices] = useState();
+
   useEffect(() => {
     setThisCategServices(
       selectedOptions.filter((serv) => serv.category === currCateg)
     );
   }, [currCateg]);
+
   return (
     <div className="service-card">
       <div className="service-title">
         Категория {number}{" "}
         <button onClick={() => deleteService(currServ)}>X</button>
       </div>
-      <div className="service-input">
+      {/* <div className="service-input">
         <label htmlFor="category">Категория</label>
         <select
           name="category"
@@ -613,7 +614,7 @@ export const ServiceCard = ({
           {allCategories && allCategories.length > 0
             ? allCategories?.map((categ, idx) => {
                 return (
-                  <option value={categ.categoryName} key={idx}>
+                  <option value={categ.categoryName} key={categ._id}>
                     {categ.categoryName}
                   </option>
                 );
@@ -631,7 +632,12 @@ export const ServiceCard = ({
           isSearchable={true}
           isMulti
         />
-      </div>
+      </div> */}
+      <Selector
+        allCategories={allCategories}
+        optionList={optionList}
+        thisCategServices={thisCategServices}
+      />
     </div>
   );
 };

@@ -16,5 +16,5 @@ export const store = configureStore({
     excursions: excursionReducer,
     admin: adminReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([]),
 });
