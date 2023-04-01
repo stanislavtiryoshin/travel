@@ -7,7 +7,7 @@ const campSchema = Schema({
     ref: "Location",
   },
   food: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Food",
   },
   locationFeature: {
