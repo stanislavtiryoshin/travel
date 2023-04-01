@@ -39,7 +39,6 @@ export default function Selector({
           value={options}
           onChange={(option) => {
             setOptions(option);
-            // console.log(option);
           }}
           isSearchable={true}
           isMulti

@@ -128,6 +128,7 @@ app.use("/api/programs", require("./routes/programRoutes"));
 app.use("/api/sanatorium", require("./routes/sanatoryRoutes"));
 app.use("/api/camps", require("./routes/campRoutes"));
 app.use("/api/tour", require("./routes/tourRoutes"));
+
 // Serve frontend
 // if (process.env.NODE_ENV === "production") {
 //   app.use(express.static(path.join(__dirname, "../frontend/build")));

@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Hotel = require("../models/hotelModel");
+const Room = require("../models/roomModel");
 
 //@desc   Add new hotel
 //@route  POST /api/hotels
@@ -29,10 +30,7 @@ const updateHotel = asyncHandler(async (req, res) => {
 //@access Public
 
 const getHotels = asyncHandler(async (req, res) => {
-  const hotels = await Hotel.find()
-    .populate("locationId")
-    .populate("food")
-    .populate("rooms");
+  const hotels = await Hotel.find().populate("locationId").populate("food");
   res.status(200).json(hotels);
 });
 

@@ -62,6 +62,7 @@ const Navbar = () => {
         <button
           className={`tab-btn ${isActive ? "active" : ""}`}
           onClick={() => dispatch(setCurrentTab(index))}
+          key={tab.label}
         >
           {tab.label}
         </button>
