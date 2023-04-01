@@ -51,7 +51,6 @@ const AddTour = () => {
   });
   const { data: hotels = [], isLoading: isHotelLoaded } = useGetHotelsQuery();
   const { data: allLocations = [], isLoading } = useGetLocationQuery();
-  // const { data: categories = [] } = useGetCategoryQuery();
   const { data: service, isLoading: isLoadService } = useGetHotelServiceQuery();
 
   const [allServices, setAllServices] = React.useState([]);
@@ -75,6 +74,8 @@ const AddTour = () => {
       setAllServices(services);
     }
   }, [isLoadService]);
+
+  let data = [];
 
   return (
     <>
@@ -298,7 +299,13 @@ const AddTour = () => {
                       <select
                         className="primary-input"
                         onChange={(e) => {
-                          setTourData({ ...tourData });
+                          data.push({
+                            day: idx + 1,
+                            time: e.target.value,
+                            pointName: "",
+                            pointDescription: "",
+                          });
+                          console.log(data);
                         }}
                       >
                         <option value="" selected disabled>
@@ -309,10 +316,47 @@ const AddTour = () => {
                         <option value="09:00">09:00</option>
                         <option value="10:00">10:00</option>
                       </select>
-                      <Input placeholder="Название пункта" />
+                      <Input
+                        placeholder="Название пункта"
+                        onChange={(e) => {
+                          data[idx].pointName = e.target.value;
+                          console.log(data);
+                        }}
+                      />
                     </div>
+                    <div className="input_row">
+                      <textarea
+                        className="primary-input"
+                        cols="30"
+                        rows="5"
+                        placeholder="Описание"
+                        onChange={(e) => {
+                          data[idx].pointDescription = e.target.value;
+                          console.log(data);
+                        }}
+                      />
+                    </div>
+                    <button
+                      className={`add_service-btn ${style.bordered_btn}`}
+                      onClick={() => {
+                        data.push({
+                          day: null,
+                          time: "",
+                          pointName: "",
+                          pointDescription: "",
+                        });
+                      }}
+                    >
+                      Добавить пункт
+                    </button>
                   </div>
                 ))}
+                <button
+                  onClick={() => setAddedServices((prev) => [...prev, {}])}
+                  className="primary-btn"
+                >
+                  Добавить день
+                </button>
               </div>
             </div>
           </div>
