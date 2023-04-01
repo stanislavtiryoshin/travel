@@ -6,6 +6,7 @@ import orderReducer from "../features/order/orderSlice";
 import clientReducer from "../features/clientSlice";
 import excursionReducer from "../features/excursion/excursionSlice";
 import adminReducer from "../features/adminSlice";
+import { baseApi } from "../features/services/base.service";
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,8 @@ export const store = configureStore({
     client: clientReducer,
     excursions: excursionReducer,
     admin: adminReducer,
+    [baseApi.reducerPath]: baseApi.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([]),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat([baseApi.middleware]),
 });

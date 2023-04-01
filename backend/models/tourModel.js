@@ -60,6 +60,12 @@ const tourSchema = Schema({
       type: Number,
     },
   },
+  hotel: {
+    hotelId: {
+      type: Schema.Types.ObjectId,
+      ref: "Hotel",
+    },
+  },
   comforts: [String],
   tourProgram: {
     programId: {

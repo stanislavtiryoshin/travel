@@ -8,6 +8,7 @@ import Hotel from "./pages/Hotel/Hotel";
 import Order from "./pages/Order/Order";
 import AddHotel from "./pages/AddHotel/AddHotel";
 import Layout from "./components/Layout";
+import AddTour from "./pages/AddTour/AddTour";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/hotels/:hotelId" element={<Hotel />} />
           <Route path="/orders/new-order" element={<Order />} />
           <Route path="/dashboard/add-hotel" element={<AddHotel />} />
+          <Route path="/dashboard/add-tour" element={<AddTour />} />
         </Routes>
       </Layout>
     </Router>
