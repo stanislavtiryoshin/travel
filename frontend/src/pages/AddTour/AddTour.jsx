@@ -1,16 +1,22 @@
-import React from "react";
-import { AdminHead } from "../../components/Admin";
-import axios from "axios";
+import React, { useEffect } from "react";
 
+import { AdminHead } from "../../components/Admin";
 import "../AddHotel/AddHotel.scss";
 import { AdminAddForm } from "../../components/Admin/AdminAddForm";
 import addhotel from "../../assets/addhotel.png";
 import { Input } from "../../components/Form";
 import Selector from "../AddHotel/Select";
 import {
+  // useGetCategoryQuery,
+  useGetHotelServiceQuery,
   useGetHotelsQuery,
   useGetLocationQuery,
 } from "../../features/services/base.service";
+
+const food = [
+  { label: "Без питания", value: "Без питания" },
+  { label: "3х дневное", value: "3х дневное" },
+];
 
 const AddTour = () => {
   const [tourData, setTourData] = React.useState({
@@ -44,12 +50,30 @@ const AddTour = () => {
     },
   });
   const { data: hotels = [], isLoading: isHotelLoaded } = useGetHotelsQuery();
-
   const { data: allLocations = [], isLoading } = useGetLocationQuery();
+  // const { data: categories = [] } = useGetCategoryQuery();
+  const { data: service, isLoading: isLoadService } = useGetHotelServiceQuery();
 
-  if (!isHotelLoaded) {
-    console.log(hotels);
-  }
+  const [allServices, setAllServices] = React.useState([]);
+  const [withKid, setWithKid] = React.useState(false);
+
+  useEffect(() => {
+    if (isLoadService) {
+      setAllServices([]);
+    } else {
+      let services = [];
+      service.map((serv) => {
+        services.push({
+          value: serv.hotelServiceName,
+          label: serv.hotelServiceName,
+          category: serv.category.categoryName,
+          servId: serv._id,
+        });
+      });
+      setAllServices(services);
+    }
+  }, [isLoadService]);
+
   return (
     <>
       <AdminHead text="Создание 1-3 тура" onClick={() => {}} />
@@ -163,23 +187,86 @@ const AddTour = () => {
                 <div className="input_box">
                   <div className="input_title">Отель</div>
 
-                  <select
-                    className="primary-input"
-                    // TODO!: Нужен сервис
-                  >
+                  <select className="primary-input">
                     <option value="" disabled selected>
                       Выбрать из списка
                     </option>
+                    {isHotelLoaded ? (
+                      <p>Hotels aren't loaded</p>
+                    ) : (
+                      <>
+                        {hotels.map((hotel) => (
+                          <option value={hotel._id} key={hotel._id}>
+                            {hotel.name}
+                          </option>
+                        ))}
+                      </>
+                    )}
                   </select>
 
                   <button
                     className="add_service-btn primary-btn"
                     onClick={() => {}}
                   >
-                    Добавить день
+                    Добавить отель
                   </button>
                   <div className="input_title">Тип питания</div>
-                  <div className="input_row">{/* <Selector /> */}</div>
+
+                  <Selector
+                    optionList={food}
+                    placeholder={`Введите значение`}
+                    styles={{
+                      control: (baseStyles) => ({
+                        ...baseStyles,
+                        width: `${550}px`,
+                      }),
+                    }}
+                  />
+
+                  <div className="input_title">Удобства</div>
+                  <Selector
+                    optionList={allServices}
+                    placeholder={`Введите значение`}
+                    styles={{
+                      control: (baseStyles) => ({
+                        ...baseStyles,
+                        width: `${550}px`,
+                      }),
+                    }}
+                  />
+                  <div className="input_title">Дети</div>
+                  <div className="input_row">
+                    <select
+                      className="primary-input"
+                      onChange={(e) => {
+                        setWithKid(Boolean(e.target.value));
+                      }}
+                    >
+                      <option value={false} selected>
+                        Можно с детьми
+                      </option>
+                      <option value={true}>Без детей</option>
+                    </select>
+
+                    <select disabled={withKid} className="primary-input">
+                      <option value="" disabled selected>
+                        Мин. возр.
+                      </option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                    </select>
+                    <select disabled={withKid} className="primary-input">
+                      <option value="" disabled selected>
+                        Макс. возр.
+                      </option>
+                      <option value="12">12</option>
+                      <option value="13">13</option>
+                      <option value="14">14</option>
+                    </select>
+                  </div>
+                  <div className="input_title">Оплата</div>
+                  <div className="input_row"></div>
                 </div>
               </div>
             </div>
