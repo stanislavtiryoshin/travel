@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import style from "./AddTour.module.scss";
 
 import { AdminHead } from "../../components/Admin";
 import "../AddHotel/AddHotel.scss";
@@ -30,8 +31,7 @@ const AddTour = () => {
     ratingVotes: 0,
     description: "",
     duration: "",
-    enterTime: "07:00",
-    leaveTime: "07:00",
+    days: [],
     food: null,
     kidFoodPrice: null,
     adultFoodPrice: null,
@@ -56,6 +56,8 @@ const AddTour = () => {
 
   const [allServices, setAllServices] = React.useState([]);
   const [withKid, setWithKid] = React.useState(false);
+
+  const [addedServices, setAddedServices] = React.useState([{}]);
 
   useEffect(() => {
     if (isLoadService) {
@@ -266,8 +268,51 @@ const AddTour = () => {
                     </select>
                   </div>
                   <div className="input_title">Оплата</div>
-                  <div className="input_row"></div>
+                  <div className="input_row">
+                    {/* TODO!Чисто для показа */}
+                    {/* <label className={style.info_label} htmlFor="payment">
+                      Оплата за
+                    </label> */}
+                    <select id="payment" className="primary-input">
+                      <option value="">Оплата за номер</option>
+                      <option value="">Оплата за человека</option>
+                    </select>
+                    {/* <label className={style.info_label} htmlFor="prepayment">
+                      Предоплата
+                    </label> */}
+                    <select id="prepayment" className="primary-input">
+                      {new Array(5).fill(10).map((a, idx) => (
+                        <option value={a * (idx + 1)}>{a * (idx + 1)}%</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
+              </div>
+              <div className="add_more-col categ-col shadowed_box">
+                <div className="gen_title">Программа тура</div>
+                {addedServices?.map((serv, idx) => (
+                  <div className="input_box">
+                    <div className={style.days}>День {idx + 1}</div>
+                    <div className="input_title">Пункт 1</div>
+                    <div className="input_row">
+                      <select
+                        className="primary-input"
+                        onChange={(e) => {
+                          setTourData({ ...tourData });
+                        }}
+                      >
+                        <option value="" selected disabled>
+                          Время
+                        </option>
+                        <option value="07:00">07:00</option>
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option>
+                      </select>
+                      <Input placeholder="Название пункта" />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

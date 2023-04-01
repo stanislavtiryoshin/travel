@@ -21,6 +21,17 @@ const tourSchema = Schema({
     type: Number,
     default: 0,
   },
+  days: [
+    {
+      day: {
+        type: Number,
+        default: 1,
+      },
+      pointName: String,
+      pointDescription: String,
+      time: String,
+    },
+  ],
   ratingVotes: {
     type: Number,
   },
@@ -67,12 +78,12 @@ const tourSchema = Schema({
     },
   },
   comforts: [String],
-  tourProgram: {
-    programId: {
-      type: Schema.Types.ObjectId,
-      ref: "Program",
-    },
-  },
+  // tourProgram: {
+  //   programId: {
+  //     type: Schema.Types.ObjectId,
+  //     ref: "Program",
+  //   },
+  // },
 });
 
 module.exports = new model("Tour", tourSchema);
