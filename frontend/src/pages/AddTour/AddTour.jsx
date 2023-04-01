@@ -75,7 +75,9 @@ const AddTour = () => {
     }
   }, [isLoadService]);
 
-  let data = [];
+  const [data, setData] = React.useState([
+    { day: null, time: "", pointName: "", pointDescription: "" },
+  ]);
 
   return (
     <>
@@ -294,61 +296,68 @@ const AddTour = () => {
                 {addedServices?.map((serv, idx) => (
                   <div className="input_box">
                     <div className={style.days}>День {idx + 1}</div>
-                    <div className="input_title">Пункт 1</div>
-                    <div className="input_row">
-                      <select
-                        className="primary-input"
-                        onChange={(e) => {
-                          data.push({
-                            day: idx + 1,
-                            time: e.target.value,
-                            pointName: "",
-                            pointDescription: "",
-                          });
-                          console.log(data);
-                        }}
-                      >
-                        <option value="" selected disabled>
-                          Время
-                        </option>
-                        <option value="07:00">07:00</option>
-                        <option value="08:00">08:00</option>
-                        <option value="09:00">09:00</option>
-                        <option value="10:00">10:00</option>
-                      </select>
-                      <Input
-                        placeholder="Название пункта"
-                        onChange={(e) => {
-                          data[idx].pointName = e.target.value;
-                          console.log(data);
-                        }}
-                      />
-                    </div>
-                    <div className="input_row">
-                      <textarea
-                        className="primary-input"
-                        cols="30"
-                        rows="5"
-                        placeholder="Описание"
-                        onChange={(e) => {
-                          data[idx].pointDescription = e.target.value;
-                          console.log(data);
-                        }}
-                      />
-                    </div>
-                    <button
-                      className={`add_service-btn ${style.bordered_btn}`}
-                      onClick={() => {
-                        data.push({
-                          day: null,
-                          time: "",
-                          pointName: "",
-                          pointDescription: "",
-                        });
-                      }}
-                    >
-                      Добавить пункт
-                    </button>
+                    {data.map((points, pointIdx) => (
+                      <>
+                        <div className="input_title">Пункт {pointIdx + 1}</div>
+                        <div className="input_row">
+                          <select
+                            className="primary-input"
+                            onChange={(e) => {
+                              data[pointIdx] = {
+                                day: idx + 1,
+                                time: e.target.value,
+                                pointName: "",
+                                pointDescription: "",
+                              };
+                              console.log(data);
+                            }}
+                          >
+                            <option value="" selected disabled>
+                              Время
+                            </option>
+                            <option value="07:00">07:00</option>
+                            <option value="08:00">08:00</option>
+                            <option value="09:00">09:00</option>
+                            <option value="10:00">10:00</option>
+                          </select>
+                          <Input
+                            placeholder="Название пункта"
+                            onChange={(e) => {
+                              data[pointIdx].pointName = e.target.value;
+                              console.log(data);
+                            }}
+                          />
+                        </div>
+                        <div className="input_row">
+                          <textarea
+                            className="primary-input"
+                            cols="30"
+                            rows="5"
+                            placeholder="Описание"
+                            onChange={(e) => {
+                              data[pointIdx].pointDescription = e.target.value;
+                              console.log(data);
+                            }}
+                          />
+                        </div>
+                        <button
+                          className={`add_service-btn ${style.bordered_btn}`}
+                          onClick={() => {
+                            setData((prev) => [
+                              ...prev,
+                              {
+                                day: null,
+                                time: "",
+                                pointName: "",
+                                pointDescription: "",
+                              },
+                            ]);
+                          }}
+                        >
+                          Добавить пункт
+                        </button>
+                      </>
+                    ))}
                   </div>
                 ))}
                 <button
