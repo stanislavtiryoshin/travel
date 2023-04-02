@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Select from "react-select";
 
 import addhotel from "../../assets/addhotel.png";
 
-import { setNewHotelData } from "../../features/adminSlice";
-import { addHotel } from "../../features/hotel/hotelSlice";
+import { useNavigate } from "react-router-dom";
+import { addHotel, updateHotel } from "../../features/hotel/hotelSlice";
 
 import "./AddHotel.scss";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Selector from "./Select";
 import { AdminHead } from "../../components/Admin";
 import { AdminAddForm } from "../../components/Admin/AdminAddForm";
 import { Input } from "../../components/Form";
 
-const AddHotel = () => {
+const AddHotel = ({ fetchedHotelData, editMode }) => {
   const [hotelData, setHotelData] = useState({
     hotelServices: [{ serviceId: "64258af02ba7928f871a09cd" }],
     locationId: null,
@@ -40,7 +39,15 @@ const AddHotel = () => {
       paymentType: "",
       prepayment: null,
     },
+    comforts: "",
   });
+
+  useEffect(() => {
+    let newData = fetchedHotelData;
+    setHotelData(newData);
+  }, [fetchedHotelData, editMode]);
+
+  console.log(hotelData);
 
   const dispatch = useDispatch();
 
@@ -50,8 +57,6 @@ const AddHotel = () => {
 
   const [servicesObjs, setServicesObjs] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
-
-  const { newHotelData } = useSelector((state) => state.admin);
 
   useEffect(() => {
     let services = [];
@@ -74,15 +79,10 @@ const AddHotel = () => {
     setNewServices(services);
   }, [selectedOptions]);
 
+  // For react-select
   function handleSelect(data) {
     setSelectedOptions(data);
   }
-
-  useEffect(() => {
-    dispatch(setNewHotelData(hotelData));
-  }, [hotelData]);
-
-  console.log(hotelData);
 
   const [newServices, setNewServices] = useState([
     { serviceId: "64258af02ba7928f871a09cd" },
@@ -92,28 +92,11 @@ const AddHotel = () => {
     { serviceId: "64258af02ba7928f871a09cd" },
   ]);
 
-  const addService = (number, serviceId) => {
-    let services = newServices;
-    if (
-      services[number] &&
-      services.some((serv) => serv.serviceId === serviceId)
-    ) {
-      services[number].serviceId = serviceId;
-    } else {
-      services.push({ serviceId: serviceId });
-    }
-    setNewServices(services);
-  };
-
-  const deleteService = (serviceId) => {
-    let services = newServices.filter((serv) => serv.serviceId != serviceId);
-    setNewServices(services);
-  };
-
   useEffect(() => {
     setHotelData({ ...hotelData, hotelServices: newServices });
   }, [newServices]);
 
+  // Fetching all categories, services, locations
   useEffect(() => {
     axios
       .get(`http://localhost:3000/api/locations`)
@@ -142,115 +125,153 @@ const AddHotel = () => {
       });
   }, []);
 
+  const navigate = useNavigate();
+
+  console.log(hotelData);
+
   return (
     <>
-      <AdminHead
-        text="Создание нового отеля"
-        onClick={() => dispatch(addHotel(hotelData))}
-      />
+      <div className="header_bot">
+        <div className="container">
+          <div className="header_bot-wrapper wrapper">
+            <div className="header_bot-left wrapper">
+              <div className="header_bot-left-text">Создание нового отеля</div>
+            </div>
+            <div className="header_bot-right wrapper">
+              <button className="cancel-btn">Отмена</button>
+              <button
+                className="primary-btn white"
+                onClick={() => {
+                  !editMode
+                    ? dispatch(addHotel(hotelData)).then((res) => {
+                        navigate(`/dashboard/hotel/${res.payload._id}`);
+                        console.log(res.payload);
+                      })
+                    : dispatch(updateHotel(hotelData));
+                }}
+              >
+                Сохранить изменения
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="add_hotel-page page">
         <section className="add_gen-section">
           <div className="container">
             <div className="add_gen-wrapper wrapper shadowed_box">
-              <AdminAddForm img={addhotel}>
-                <div className="gen_content-box">
-                  <div className="gen_title">Основное об отеле</div>
-                  <div className="input_row">
-                    <Input
-                      placeholder="Название"
-                      onChange={(e) => {
-                        setHotelData({ ...hotelData, name: e.target.value });
-                      }}
-                    />
-                    <Input
-                      placeholder="Особенность местоположения"
-                      onChange={(e) =>
-                        setHotelData({
-                          ...hotelData,
-                          locSpecialty: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="input_row">
-                    <select
-                      className="primary-input"
-                      type="text"
-                      placeholder="Местоположение"
-                      name="destination"
-                      value={hotelData.locationId}
-                      onChange={(e) => {
-                        setHotelData({
-                          ...hotelData,
-                          locationId: e.target.value,
-                        });
-                      }}
-                    >
-                      {allLocations && allLocations.length >= 0 ? (
-                        allLocations.map((location, idx) => {
-                          return (
-                            <option value={location._id} key={idx}>
-                              {location.locationName}
-                            </option>
-                          );
-                        })
-                      ) : (
-                        <p>Locations are loading</p>
-                      )}
-                    </select>
-                    <Input
-                      placeholder="Ссылка на карту"
-                      onChange={(e) =>
-                        setHotelData({ ...hotelData, mapLink: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="input_row">
-                    <Input
-                      placeholder="Рейтинг отеля"
-                      onChange={(e) =>
-                        setHotelData({ ...hotelData, rating: e.target.value })
-                      }
-                    />
-
-                    <select
-                      className="primary-input"
-                      type="number"
-                      placeholder="Звезды отеля"
-                      name="hotelStars"
-                      value={hotelData.hotelStars}
-                      onChange={(e) => {
-                        setHotelData({
-                          ...hotelData,
-                          hotelStars: e.target.value,
-                        });
-                      }}
-                    >
-                      <option value={5}>5</option>
-                      <option value={4}>4</option>
-                      <option value={3}>3</option>
-                      <option value={2}>2</option>
-                      <option value={1}>1</option>
-                    </select>
-                  </div>
-                  <div className="input_row">
-                    <textarea
-                      className="primary-input"
-                      name=""
-                      id=""
-                      cols="30"
-                      rows="5"
-                      placeholder="Описание"
-                      onChange={(e) =>
-                        setHotelData({
-                          ...hotelData,
-                          description: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
+              <div className="gen_img-box">
+                <img src={addhotel} alt="" />
+              </div>
+              <div className="gen_content-box">
+                <div className="gen_title">Основное об отеле</div>
+                <div className="input_row">
+                  <input
+                    type="text"
+                    className="primary-input"
+                    value={hotelData.name}
+                    placeholder="Название"
+                    onChange={(e) =>
+                      setHotelData({ ...hotelData, name: e.target.value })
+                    }
+                  />
+                  <input
+                    type="text"
+                    className="primary-input"
+                    placeholder="Особенность местоположения"
+                    value={hotelData.locSpecialty}
+                    onChange={(e) =>
+                      setHotelData({
+                        ...hotelData,
+                        locSpecialty: e.target.value,
+                      })
+                    }
+                  />
                 </div>
-              </AdminAddForm>
+                <div className="input_row">
+                  <select
+                    className="primary-input"
+                    type="text"
+                    placeholder="Местоположение"
+                    name="destination"
+                    value={hotelData.locationId}
+                    onChange={(e) => {
+                      setHotelData({
+                        ...hotelData,
+                        locationId: e.target.value,
+                      });
+                    }}
+                  >
+                    {allLocations && allLocations.length >= 0 ? (
+                      allLocations.map((location, idx) => {
+                        return (
+                          <option value={location._id} key={idx}>
+                            {location.locationName}
+                          </option>
+                        );
+                      })
+                    ) : (
+                      <p>Locations are loading</p>
+                    )}
+                  </select>
+                  <input
+                    type="text"
+                    className="primary-input"
+                    value={hotelData.mapLink}
+                    placeholder="Ссылка на карту"
+                    onChange={(e) =>
+                      setHotelData({ ...hotelData, mapLink: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="input_row">
+                  <input
+                    type="number"
+                    className="primary-input"
+                    value={hotelData.rating}
+                    placeholder="Рейтинг отеля"
+                    onChange={(e) =>
+                      setHotelData({ ...hotelData, rating: e.target.value })
+                    }
+                  />
+                  <select
+                    className="primary-input"
+                    type="number"
+                    placeholder="Местоположение"
+                    name="hotelStars"
+                    value={hotelData.hotelStars}
+                    onChange={(e) => {
+                      setHotelData({
+                        ...hotelData,
+                        hotelStars: e.target.value,
+                      });
+                    }}
+                  >
+                    <option value={5}>5</option>
+                    <option value={4}>4</option>
+                    <option value={3}>3</option>
+                    <option value={2}>2</option>
+                    <option value={1}>1</option>
+                  </select>
+                </div>
+                <div className="input_row">
+                  <textarea
+                    className="primary-input"
+                    name=""
+                    id=""
+                    cols="30"
+                    rows="5"
+                    value={hotelData.description}
+                    placeholder="Описание"
+                    onChange={(e) =>
+                      setHotelData({
+                        ...hotelData,
+                        description: e.target.value,
+                      })
+                    }
+                  ></textarea>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -266,6 +287,7 @@ const AddHotel = () => {
                       name=""
                       id=""
                       className="primary-input"
+                      value={hotelData.enterTime}
                       onChange={(e) =>
                         setHotelData({
                           ...hotelData,
@@ -285,6 +307,7 @@ const AddHotel = () => {
                       name=""
                       id=""
                       className="primary-input"
+                      value={hotelData.leaveTime}
                       onChange={(e) =>
                         setHotelData({
                           ...hotelData,
@@ -296,9 +319,9 @@ const AddHotel = () => {
                         Выезд с
                       </option>
                       <option value="07:00">07:00</option>
-                      <option value="07:00">08:00</option>
-                      <option value="07:00">09:00</option>
-                      <option value="07:00">10:00</option>
+                      <option value="08:00">08:00</option>
+                      <option value="09:00">09:00</option>
+                      <option value="10:00">10:00</option>
                     </select>
                   </div>
                 </div>
@@ -309,6 +332,7 @@ const AddHotel = () => {
                       name="babyMaxAge"
                       id=""
                       className="primary-input"
+                      value={hotelData.kids.babyMaxAge}
                       onChange={(e) =>
                         setHotelData({
                           ...hotelData,
@@ -322,14 +346,15 @@ const AddHotel = () => {
                       <option value="" disabled selected>
                         Макс. возр. млад.
                       </option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
+                      <option value={2}>2</option>
+                      <option value={3}>3</option>
+                      <option value={4}>4</option>
                     </select>
                     <select
                       name="kidMaxAge"
                       id=""
                       className="primary-input"
+                      value={hotelData.kids.kidMaxAge}
                       onChange={(e) =>
                         setHotelData({
                           ...hotelData,
@@ -343,9 +368,9 @@ const AddHotel = () => {
                       <option value="" disabled selected>
                         Макс. возр. реб.
                       </option>
-                      <option value="12">12</option>
-                      <option value="13">13</option>
-                      <option value="14">14</option>
+                      <option value={12}>12</option>
+                      <option value={13}>13</option>
+                      <option value={14}>14</option>
                     </select>
                   </div>
                   <div className="input_row">
@@ -358,6 +383,7 @@ const AddHotel = () => {
                         name="discountType"
                         id=""
                         className="primary-input"
+                        value={hotelData.kids.kidDiscount.discountType}
                         onChange={(e) =>
                           setHotelData({
                             ...hotelData,
@@ -382,6 +408,7 @@ const AddHotel = () => {
                         name="discount"
                         className="primary-input"
                         placeholder="2000"
+                        value={hotelData.kids.kidDiscount.discountValue}
                         onChange={(e) =>
                           setHotelData({
                             ...hotelData,
@@ -404,6 +431,7 @@ const AddHotel = () => {
                     name="foodType"
                     id=""
                     className="primary-input"
+                    value={hotelData.food}
                     onChange={(e) =>
                       setHotelData({ ...hotelData, food: e.target.value })
                     }
@@ -426,10 +454,11 @@ const AddHotel = () => {
                   </select>
                   <div className="input_row">
                     <input
-                      type="text"
+                      type="number"
                       className="primary-input"
                       name="adultFoodPrice"
                       placeholder="Цена за питание взрослого"
+                      value={hotelData.adultFoodPrice}
                       onChange={(e) => {
                         setHotelData({
                           ...hotelData,
@@ -442,6 +471,7 @@ const AddHotel = () => {
                       name="kidFoodPrice"
                       className="primary-input"
                       placeholder="Цена за детское питание"
+                      value={hotelData.kidFoodPrice}
                       onChange={(e) => {
                         setHotelData({
                           ...hotelData,
@@ -457,8 +487,9 @@ const AddHotel = () => {
                     name="foodType"
                     id=""
                     className="primary-input"
+                    value={hotelData.comforts}
                     onChange={(e) =>
-                      setHotelData({ ...hotelData, services: e.target.value })
+                      setHotelData({ ...hotelData, comforts: e.target.value })
                     }
                   >
                     <option value="" disabled selected>
@@ -487,6 +518,7 @@ const AddHotel = () => {
                         name=""
                         id=""
                         className="primary-input"
+                        value={hotelData.payment.paymentType}
                         onChange={(e) => {
                           setHotelData({
                             ...hotelData,
@@ -509,6 +541,7 @@ const AddHotel = () => {
                         name=""
                         id=""
                         className="primary-input"
+                        value={hotelData.payment.prepayment}
                         onChange={(e) => {
                           setHotelData({
                             ...hotelData,
@@ -534,8 +567,6 @@ const AddHotel = () => {
                       number={idx + 1}
                       allCategories={allCategories}
                       allServices={allServices}
-                      addService={addService}
-                      deleteService={deleteService}
                       optionList={servicesObjs}
                       selectedOptions={selectedOptions}
                       handleSelect={handleSelect}
@@ -562,8 +593,6 @@ const AddHotel = () => {
 export const ServiceCard = ({
   number,
   allCategories,
-  allServices,
-  addService,
   deleteService,
   optionList,
   selectedOptions,
@@ -585,7 +614,6 @@ export const ServiceCard = ({
         Категория {number}{" "}
         <button onClick={() => deleteService(currServ)}>X</button>
       </div>
-
       <Selector
         allCategories={allCategories}
         optionList={optionList}

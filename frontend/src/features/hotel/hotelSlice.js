@@ -16,6 +16,7 @@ const initialState = {
   message: "",
   filteredHotels: [], // JSON array of hotels filtered by type
   filterType: null, // type of filter applied to hotels, null if no filter applied
+  currentHotel: {},
 };
 
 // Add hotel
@@ -25,7 +26,28 @@ export const addHotel = createAsyncThunk(
   async (hotelData, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
+
       return await hotelService.addHotel(hotelData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Update hotel
+
+export const updateHotel = createAsyncThunk(
+  "hotels/update",
+  async (hotelData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await hotelService.updateHotel(hotelData, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -151,6 +173,7 @@ export const hotelSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.hotels.push(action.payload);
+        state.currentHotel = action.payload;
       })
       .addCase(getHotels.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -171,6 +194,11 @@ export const hotelSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.hotels = action.payload;
+      })
+      .addCase(updateHotel.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.singleHotel = action.payload;
       });
   },
 });

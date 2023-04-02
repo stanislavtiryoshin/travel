@@ -14,6 +14,7 @@ import {
   useGetHotelsQuery,
   useGetLocationQuery,
 } from "../../features/services/base.service";
+import { useSelector } from "react-redux";
 
 const food = [
   { label: "Без питания", value: "Без питания" },
@@ -68,6 +69,7 @@ const AddTour = () => {
   ]);
 
   const [createTour, { isLoading: addLoad }] = useAddTourMutation();
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (isLoadService) {
@@ -91,8 +93,7 @@ const AddTour = () => {
       ...tourData,
       program: [...addedServices],
       // !!Token Захардкодил
-      token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Mjg2OTBiYzJkNGJhM2VjMzllNDhiNiIsImlhdCI6MTY4MDQyMTQ4NCwiZXhwIjoxNjgzMDEzNDg0fQ.5akFjSJdDzc6eOeYUcA9mxlKUQEXBoNH1O2Wv81cTHo",
+      token: user.token,
     };
     console.log(values);
     await createTour(values);

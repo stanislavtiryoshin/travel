@@ -5,6 +5,7 @@ const roomSchema = mongoose.Schema(
     hotel: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Hotel",
+      required: true,
     },
     roomName: {
       type: String,
@@ -57,6 +58,16 @@ const roomSchema = mongoose.Schema(
       type: String,
     },
     bathroom: {
+      availablity: {
+        type: String,
+      },
+      type: {
+        type: String,
+      },
+      features: [String],
+    },
+    comforts: [String],
+    comment: {
       type: String,
     },
     prices: [
@@ -83,16 +94,10 @@ const roomSchema = mongoose.Schema(
       },
     ],
     roomDescription: {
-      type: Number,
+      type: String,
     },
-    roomServices: [
-      {
-        serviceId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "RoomService",
-        },
-      },
-    ],
+    roomServices: [String],
+    bathExtras: [String],
   },
   {
     timestamps: true,

@@ -14,6 +14,22 @@ const addHotel = async (hotelData, token) => {
   return response.data;
 };
 
+//  Update hotel
+
+const updateHotel = async (hotelData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.patch(
+    API_URL + hotelData._id,
+    hotelData,
+    config
+  );
+  return response.data;
+};
+
 // Get all hotels
 
 const getHotels = async () => {
@@ -60,6 +76,7 @@ const getAdminHotels = async (name, minAge, locationId) => {
 
 const hotelService = {
   addHotel,
+  updateHotel,
   getHotels,
   getSearchedHotels,
   getSingleHotel,

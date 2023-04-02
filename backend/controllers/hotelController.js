@@ -3,15 +3,26 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Hotel = require("../models/hotelModel");
+const Room = require("../models/roomModel");
 
 //@desc   Add new hotel
 //@route  POST /api/hotels
 //@access Private
 
 const addHotel = asyncHandler(async (req, res) => {
-  const reqRooms = req.body.rooms;
-  const post = await Hotel.create(req.body);
-  res.status(200).json(post);
+  const hotel = await Hotel.create(req.body);
+  res.status(200).json(hotel);
+});
+
+//@desc   Update hotel
+//@route  PATCH /api/hotels/:hotelId
+//@access Private
+
+const updateHotel = asyncHandler(async (req, res) => {
+  const hotel = await Hotel.findByIdAndUpdate(req.params.hotelId, req.body, {
+    new: true,
+  });
+  res.status(200).json(hotel);
 });
 
 //@desc   Get all hotels
@@ -19,10 +30,7 @@ const addHotel = asyncHandler(async (req, res) => {
 //@access Public
 
 const getHotels = asyncHandler(async (req, res) => {
-  const hotels = await Hotel.find()
-    .populate("locationId")
-    .populate("food.foodId")
-    .populate("rooms");
+  const hotels = await Hotel.find().populate("locationId").populate("food");
   res.status(200).json(hotels);
 });
 
@@ -49,7 +57,7 @@ const getAdminHotels = asyncHandler(async (req, res) => {
 
   const hotels = await Hotel.find(query)
     .populate("locationId")
-    .populate("food.foodId")
+    .populate("food")
     .populate("rooms");
 
   res.status(200).json(hotels);
@@ -62,7 +70,7 @@ const getAdminHotels = asyncHandler(async (req, res) => {
 const getSingleHotel = asyncHandler(async (req, res) => {
   const singleHotel = await Hotel.findById(req.params.id)
     .populate("locationId")
-    .populate("food.foodId")
+    .populate("food")
     .populate("rooms");
   res.status(200).json(singleHotel);
 });
@@ -123,12 +131,12 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
       locationId: locationId,
     })
       .populate("locationId")
-      .populate("food.foodId")
+      .populate("food")
       .populate("rooms");
   } else {
     hotels = await Hotel.find()
       .populate("locationId")
-      .populate("food.foodId")
+      .populate("food")
       .populate("rooms");
   }
 
@@ -169,4 +177,5 @@ module.exports = {
   getSearchedHotels,
   getSingleHotel,
   getAdminHotels,
+  updateHotel,
 };

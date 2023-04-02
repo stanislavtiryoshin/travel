@@ -10,6 +10,9 @@ import AddHotel from "./pages/AddHotel/AddHotel";
 import Layout from "./components/Layout";
 import AddTour from "./pages/AddTour/AddTour";
 
+import AdminHotel from "./pages/AddHotel/AdminHotel";
+import AddRoom from "./pages/AddRoom/AddRoom";
+
 function App() {
   return (
     <Router>
@@ -23,6 +26,11 @@ function App() {
           <Route path="/orders/new-order" element={<Order />} />
           <Route path="/dashboard/add-hotel" element={<AddHotel />} />
           <Route path="/dashboard/add-tour" element={<AddTour />} />
+          <Route path="/dashboard/hotel/:hotelId" element={<AdminHotel />} />
+          <Route
+            path="/dashboard/hotel/:hotelId/add-room"
+            element={<AddRoom />}
+          />
         </Routes>
       </Layout>
     </Router>
