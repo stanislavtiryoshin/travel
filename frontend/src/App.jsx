@@ -14,6 +14,7 @@ import AddRoom from "./pages/AddRoom/AddRoom";
 import AddCamp from "./pages/AddCamp/AddCamp";
 import EditCamp from "./pages/AddCamp/EditCamp";
 import EditTour from "./pages/AddTour/EditTour";
+import AdminRoom from "./pages/AddRoom/AdminRoom";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             path="/dashboard/hotel/:hotelId/add-room"
             element={<AddRoom />}
           />
+          <Route path="/dashboard/room/:roomId" element={<AdminRoom />} />
         </Routes>
       </Layout>
     </Router>

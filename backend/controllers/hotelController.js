@@ -85,47 +85,47 @@ const getSingleHotel = asyncHandler(async (req, res) => {
 const getSearchedHotels = asyncHandler(async (req, res) => {
   const { peopleAmount, daysAmount, startDate, locationId } = req.query;
 
-  const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
-    let daysArray = [];
-    const startingDate = new Date(start);
+  // const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
+  //   let daysArray = [];
+  //   const startingDate = new Date(start);
 
-    for (let i = 0; i < daysNum; i++) {
-      let date = new Date();
-      date.setDate(startingDate.getDate() + i);
-      daysArray.push(date);
-    }
+  //   for (let i = 0; i < daysNum; i++) {
+  //     let date = new Date();
+  //     date.setDate(startingDate.getDate() + i);
+  //     daysArray.push(date);
+  //   }
 
-    let sum = 0;
+  //   let sum = 0;
 
-    const findPriceByDate = (date) => {
-      if (pricesArray && pricesArray.length > 0) {
-        pricesArray.forEach((el) => {
-          if (
-            date.getMonth() + 1 >= el.dateStart.month &&
-            date.getMonth() + 1 <= el.dateEnd.month &&
-            date.getDate() >= el.dateStart.day &&
-            date.getDate() <= el.dateEnd.day &&
-            el.price
-          ) {
-            sum += el.price;
-          } else {
-            sum += basePrice;
-          }
-        });
-      } else {
-        sum += basePrice;
-      }
-      return;
-    };
+  //   const findPriceByDate = (date) => {
+  //     if (pricesArray && pricesArray.length > 0) {
+  //       pricesArray.forEach((el) => {
+  //         if (
+  //           date.getMonth() + 1 >= el.dateStart.month &&
+  //           date.getMonth() + 1 <= el.dateEnd.month &&
+  //           date.getDate() >= el.dateStart.day &&
+  //           date.getDate() <= el.dateEnd.day &&
+  //           el.price
+  //         ) {
+  //           sum += el.price;
+  //         } else {
+  //           sum += basePrice;
+  //         }
+  //       });
+  //     } else {
+  //       sum += basePrice;
+  //     }
+  //     return;
+  //   };
 
-    for (let i = 0; i < daysNum; i++) {
-      findPriceByDate(daysArray[i]);
-    }
+  //   for (let i = 0; i < daysNum; i++) {
+  //     findPriceByDate(daysArray[i]);
+  //   }
 
-    return sum;
-  };
+  //   return sum;
+  // };
 
-  let costArray = [];
+  // let costArray = [];
 
   let hotels = [];
 
@@ -143,35 +143,35 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
       .populate("rooms");
   }
 
-  const updatedHotels = hotels.map((plainHotel) => {
-    const hotel = plainHotel.toObject();
-    const rooms = hotel.rooms.filter((room) => room.capacity >= peopleAmount);
+  // const updatedHotels = hotels.map((plainHotel) => {
+  //   const hotel = plainHotel.toObject();
+  //   const rooms = hotel.rooms.filter((room) => room.capacity >= peopleAmount);
 
-    const cheapestRoom = rooms.reduce((prev, curr) =>
-      prev.roomPrice < curr.roomPrice ? prev : curr
-    );
+  //   const cheapestRoom = rooms.reduce((prev, curr) =>
+  //     prev.roomPrice < curr.roomPrice ? prev : curr
+  //   );
 
-    const basePrice = cheapestRoom.roomPrice;
-    const pricesArray = cheapestRoom.prices;
+  //   const basePrice = cheapestRoom.roomPrice;
+  //   const pricesArray = cheapestRoom.prices;
 
-    const costOfStay = calculatePrice(
-      startDate,
-      daysAmount,
-      basePrice,
-      pricesArray
-    );
+  //   const costOfStay = calculatePrice(
+  //     startDate,
+  //     daysAmount,
+  //     basePrice,
+  //     pricesArray
+  //   );
 
-    if (cheapestRoom.discount && cheapestRoom.discount !== 0) {
-      hotel.totalPrice = (costOfStay * (100 - cheapestRoom.discount)) / 100;
-      hotel.oldPrice = costOfStay;
-    } else {
-      hotel.totalPrice = costOfStay;
-    }
+  //   if (cheapestRoom.discount && cheapestRoom.discount !== 0) {
+  //     hotel.totalPrice = (costOfStay * (100 - cheapestRoom.discount)) / 100;
+  //     hotel.oldPrice = costOfStay;
+  //   } else {
+  //     hotel.totalPrice = costOfStay;
+  //   }
 
-    return hotel;
-  });
+  //   return hotel;
+  // });
 
-  res.status(200).send(updatedHotels);
+  res.status(200).send(hotels);
 });
 
 module.exports = {
