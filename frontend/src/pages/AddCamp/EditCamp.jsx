@@ -14,7 +14,10 @@ import {
   useGetFoodQuery,
 } from "../../features/services/base.service";
 
-import { useGetCampByIdQuery } from "../../features/services/edit.service";
+import {
+  useEditCampByIdMutation,
+  useGetCampByIdQuery,
+} from "../../features/services/edit.service";
 
 import { useSelector } from "react-redux";
 
@@ -24,7 +27,7 @@ const EditCamp = () => {
   const navigate = useNavigate();
   const { id } = useParams("id");
   const {
-    data: campById,
+    data: campById = [],
     isLoading: byIdLoaded,
     isSuccess,
   } = useGetCampByIdQuery(id);
@@ -49,7 +52,8 @@ const EditCamp = () => {
     },
   ]);
 
-  const [createCamp, { isLoading: addLoad, data: camp }] = useAddCampMutation();
+  const [createCamp, { isLoading: addLoad, data: camp }] =
+    useEditCampByIdMutation();
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -71,13 +75,15 @@ const EditCamp = () => {
 
   const handleSubmit = async () => {
     const values = {
+      id: id,
       ...campData,
       program: [...addedServices],
       token: user.token,
       comforts: [...JSON.parse(localStorage.getItem("comforts"))],
     };
+    console.log(values);
     await createCamp(values);
-    // console.log(values);
+
     if (!addLoad) {
       alert("Added");
       localStorage.removeItem("comforts");
@@ -100,12 +106,18 @@ const EditCamp = () => {
                     <div className="input_row">
                       <Input
                         placeholder="Название"
+                        value={campData && campData.name && campData.name}
                         onChange={(e) =>
                           setCampData({ ...campData, name: e.target.value })
                         }
                       />
                       <Input
                         placeholder="Особенность местоположения"
+                        value={
+                          campData &&
+                          campData.locationFeature &&
+                          campData.locationFeature
+                        }
                         onChange={(e) =>
                           setCampData({
                             ...campData,
@@ -122,7 +134,10 @@ const EditCamp = () => {
                         name="destination"
                         // value={campData.locationId ? campData.locationId : ""}
                         onChange={(e) => {
-                          setCampData({ ...campData, locationId });
+                          setCampData({
+                            ...campData,
+                            locationId: e.target.value,
+                          });
                         }}
                       >
                         {!isLoading ? (
@@ -140,6 +155,7 @@ const EditCamp = () => {
 
                       <Input
                         placeholder="Ссылка на карту"
+                        value={campData && campData.mapLink && campData.mapLink}
                         onChange={(e) =>
                           setCampData({ ...campData, mapLink: e.target.value })
                         }
@@ -148,6 +164,7 @@ const EditCamp = () => {
                     <div className="input_row">
                       <Input
                         placeholder="Рейтинг лагеря"
+                        value={campData && campData.rating && campData.rating}
                         onChange={(e) =>
                           setCampData({ ...campData, rating: e.target.value })
                         }
@@ -159,6 +176,11 @@ const EditCamp = () => {
                         cols="30"
                         rows="5"
                         placeholder="Описание"
+                        value={
+                          campData &&
+                          campData.description &&
+                          campData.description
+                        }
                         onChange={(e) =>
                           setCampData({
                             ...campData,

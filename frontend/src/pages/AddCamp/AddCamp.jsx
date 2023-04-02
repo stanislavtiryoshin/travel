@@ -27,12 +27,9 @@ const AddCamp = () => {
     rating: null,
     hotelName: "",
     hotelDescription: "",
-    ratingVotes: 0,
     description: "",
     program: [],
     food: null,
-    // kidFoodPrice: null,
-    // adultFoodPrice: null,
     comforts: [],
     kids: {
       forWho: "Для детей",
@@ -91,7 +88,7 @@ const AddCamp = () => {
       comforts: [...JSON.parse(localStorage.getItem("comforts"))],
       food: [...JSON.parse(localStorage.getItem("food"))],
     };
-    console.log(values);
+    console.table(values);
     await createCamp(values);
     if (!addLoad) {
       alert("Added");

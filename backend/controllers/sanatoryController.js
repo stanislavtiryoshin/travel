@@ -3,18 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 const addSanatorium = async (req, res) => {
-  const { name, rating, description, rooms, mapLink, enterTime, leaveTime } =
-    req.body;
-
-  const post = await Sanatorium.create({
-    name,
-    rating,
-    description,
-    rooms,
-    mapLink,
-    enterTime,
-    leaveTime,
-  });
+  const post = await Sanatorium.create(req.body);
 
   res.status(200).json(post);
 };

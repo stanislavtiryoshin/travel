@@ -19,39 +19,7 @@ const getCamps = (req, res) => {
 //@access Private
 
 const addCamp = (req, res) => {
-  const {
-    name,
-    locationId,
-    food,
-    locationFeature,
-    mapLink,
-    description,
-    kids,
-    comforts,
-    rating,
-    ratingVotes,
-    payment,
-    hotelName,
-    hotelDescription,
-    campProgram,
-  } = req.body;
-
-  Camp.create({
-    name,
-    locationId,
-    food,
-    locationFeature,
-    mapLink,
-    description,
-    kids,
-    comforts,
-    rating,
-    ratingVotes,
-    payment,
-    hotelName,
-    hotelDescription,
-    campProgram,
-  })
+  Camp.create(req.body)
     .then((response) => res.status(201).json(response))
     .catch(() => res.sendStatus(403));
 };
@@ -73,43 +41,12 @@ const deleteCamp = (req, res) => {
 };
 
 const updateCamp = (req, res) => {
-  const {
-    name,
-    locationId,
-    food,
-    locationFeature,
-    mapLink,
-    description,
-    kids,
-    comforts,
-    rating,
-    ratingVotes,
-    payment,
-    hotelName,
-    hotelDescription,
-    campProgram,
-  } = req.body;
   const id = req.params.id;
 
   Camp.updateOne(
     { _id: id },
     {
-      $set: {
-        name,
-        locationId,
-        food,
-        locationFeature,
-        mapLink,
-        description,
-        kids,
-        comforts,
-        rating,
-        ratingVotes,
-        payment,
-        hotelName,
-        hotelDescription,
-        campProgram,
-      },
+      $set: req.body,
     }
   )
     .then((response) => res.status(201).json(response))
