@@ -21,15 +21,18 @@ const tourSchema = Schema({
     type: Number,
     default: 0,
   },
-  days: [
+  program: [
     {
-      day: {
-        type: Number,
-        default: 1,
-      },
-      pointName: String,
-      pointDescription: String,
-      time: String,
+      days: [
+        {
+          points: {
+            day: Number,
+            time: String,
+            pointName: String,
+            pointDescription: String,
+          },
+        },
+      ],
     },
   ],
   ratingVotes: {
@@ -48,6 +51,7 @@ const tourSchema = Schema({
     },
   ],
   kids: {
+    withKids: Boolean,
     babyMaxAge: {
       type: Number,
     },

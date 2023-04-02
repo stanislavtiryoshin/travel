@@ -8,6 +8,7 @@ import addhotel from "../../assets/addhotel.png";
 import { Input } from "../../components/Form";
 import Selector from "../AddHotel/Select";
 import {
+  useAddTourMutation,
   // useGetCategoryQuery,
   useGetHotelServiceQuery,
   useGetHotelsQuery,
@@ -21,7 +22,6 @@ const food = [
 
 const AddTour = () => {
   const [tourData, setTourData] = React.useState({
-    tourProgram: { programId: "64258af02ba7928f871a09cd" },
     locationId: null,
     name: "",
     locationFeature: "",
@@ -31,12 +31,13 @@ const AddTour = () => {
     ratingVotes: 0,
     description: "",
     duration: "",
-    days: [],
+    program: [],
     food: null,
     kidFoodPrice: null,
     adultFoodPrice: null,
     comforts: [],
     kids: {
+      withKids: true,
       babyMaxAge: null,
       kidMaxAge: null,
       kidDiscount: {
@@ -56,7 +57,17 @@ const AddTour = () => {
   const [allServices, setAllServices] = React.useState([]);
   const [withKid, setWithKid] = React.useState(false);
 
-  const [addedServices, setAddedServices] = React.useState([{}]);
+  const [addedServices, setAddedServices] = React.useState([
+    {
+      days: [
+        {
+          points: { day: null, time: "", pointName: "", pointDescription: "" },
+        },
+      ],
+    },
+  ]);
+
+  const [createTour, { isLoading: addLoad }] = useAddTourMutation();
 
   useEffect(() => {
     if (isLoadService) {
@@ -75,13 +86,22 @@ const AddTour = () => {
     }
   }, [isLoadService]);
 
-  const [data, setData] = React.useState([
-    { day: null, time: "", pointName: "", pointDescription: "" },
-  ]);
+  const handleSubmit = async () => {
+    const values = {
+      ...tourData,
+      program: [...addedServices],
+      // !!Token Захардкодил
+      token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Mjg2OTBiYzJkNGJhM2VjMzllNDhiNiIsImlhdCI6MTY4MDQyMTQ4NCwiZXhwIjoxNjgzMDEzNDg0fQ.5akFjSJdDzc6eOeYUcA9mxlKUQEXBoNH1O2Wv81cTHo",
+    };
+    console.log(values);
+    await createTour(values);
+    alert("Added");
+  };
 
   return (
     <>
-      <AdminHead text="Создание 1-3 тура" onClick={() => {}} />
+      <AdminHead text="Создание 1-3 тура" onClick={() => handleSubmit()} />
       <div className="add_hotel-page page">
         <section className="add_gen-section">
           <div className="container">
@@ -245,6 +265,12 @@ const AddTour = () => {
                       className="primary-input"
                       onChange={(e) => {
                         setWithKid(Boolean(e.target.value));
+                        setTourData({
+                          ...tourData,
+                          kids: {
+                            withKids: !e.target.value,
+                          },
+                        });
                       }}
                     >
                       <option value={false} selected>
@@ -293,23 +319,22 @@ const AddTour = () => {
               </div>
               <div className="add_more-col categ-col shadowed_box">
                 <div className="gen_title">Программа тура</div>
-                {addedServices?.map((serv, idx) => (
+                {addedServices.map((serv, idx) => (
                   <div className="input_box">
                     <div className={style.days}>День {idx + 1}</div>
-                    {data.map((points, pointIdx) => (
+                    {serv.days.map((points, pointIdx) => (
                       <>
                         <div className="input_title">Пункт {pointIdx + 1}</div>
                         <div className="input_row">
                           <select
                             className="primary-input"
                             onChange={(e) => {
-                              data[pointIdx] = {
+                              serv.days[pointIdx].points = {
                                 day: idx + 1,
                                 time: e.target.value,
                                 pointName: "",
                                 pointDescription: "",
                               };
-                              console.log(data);
                             }}
                           >
                             <option value="" selected disabled>
@@ -323,8 +348,8 @@ const AddTour = () => {
                           <Input
                             placeholder="Название пункта"
                             onChange={(e) => {
-                              data[pointIdx].pointName = e.target.value;
-                              console.log(data);
+                              serv.days[pointIdx].points.pointName =
+                                e.target.value;
                             }}
                           />
                         </div>
@@ -335,23 +360,27 @@ const AddTour = () => {
                             rows="5"
                             placeholder="Описание"
                             onChange={(e) => {
-                              data[pointIdx].pointDescription = e.target.value;
-                              console.log(data);
+                              serv.days[pointIdx].points.pointDescription =
+                                e.target.value;
                             }}
                           />
                         </div>
                         <button
                           className={`add_service-btn ${style.bordered_btn}`}
                           onClick={() => {
-                            setData((prev) => [
-                              ...prev,
-                              {
-                                day: null,
-                                time: "",
-                                pointName: "",
-                                pointDescription: "",
-                              },
-                            ]);
+                            setAddedServices((prev) => {
+                              prev.map((d, id) => {
+                                d.days[id + 1] = {
+                                  points: {
+                                    day: id + 1,
+                                    time: "",
+                                    pointName: "",
+                                    pointDescription: "",
+                                  },
+                                };
+                              });
+                              return [...prev];
+                            });
                           }}
                         >
                           Добавить пункт
@@ -361,7 +390,25 @@ const AddTour = () => {
                   </div>
                 ))}
                 <button
-                  onClick={() => setAddedServices((prev) => [...prev, {}])}
+                  onClick={() =>
+                    setAddedServices((prev) => {
+                      return [
+                        ...prev,
+                        {
+                          days: [
+                            {
+                              points: {
+                                day: null,
+                                time: "",
+                                pointName: "",
+                                pointDescription: "",
+                              },
+                            },
+                          ],
+                        },
+                      ];
+                    })
+                  }
                   className="primary-btn"
                 >
                   Добавить день
