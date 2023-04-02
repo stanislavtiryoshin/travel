@@ -9,6 +9,9 @@ import { addHotel, updateHotel } from "../../features/hotel/hotelSlice";
 import "./AddHotel.scss";
 import { useDispatch } from "react-redux";
 import Selector from "./Select";
+import { AdminHead } from "../../components/Admin";
+import { AdminAddForm } from "../../components/Admin/AdminAddForm";
+import { Input } from "../../components/Form";
 
 const AddHotel = ({ fetchedHotelData, editMode }) => {
   const [hotelData, setHotelData] = useState({
@@ -139,9 +142,10 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
                 className="primary-btn white"
                 onClick={() => {
                   !editMode
-                    ? dispatch(addHotel(hotelData)).then((res) =>
-                        navigate(`/dashboard/hotel/${res.payload._id}`)
-                      )
+                    ? dispatch(addHotel(hotelData)).then((res) => {
+                        navigate(`/dashboard/hotel/${res.payload._id}`);
+                        console.log(res.payload);
+                      })
                     : dispatch(updateHotel(hotelData));
                 }}
               >
