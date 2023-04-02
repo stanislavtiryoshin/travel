@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Select from "react-select";
 
@@ -8,9 +8,22 @@ export default function Selector({
   thisCategServices,
   styles,
   placeholder,
+  queryOption,
+  foodOption,
 }) {
   const [options, setOptions] = useState([]);
   const [currCateg, setCurrCateg] = useState("Питание");
+
+  useEffect(() => {
+    if (foodOption) {
+      localStorage.setItem("food", JSON.stringify(options.map((o) => o._id)));
+    } else {
+      localStorage.setItem(
+        "comforts",
+        JSON.stringify(options.map((o) => o.value))
+      );
+    }
+  }, [options]);
 
   return (
     <>
@@ -44,6 +57,8 @@ export default function Selector({
           options={
             allCategories
               ? optionList.filter((serv) => serv.category === currCateg)
+              : foodOption
+              ? foodOption
               : optionList
           }
           placeholder={placeholder && placeholder}

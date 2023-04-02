@@ -1,59 +1,54 @@
 import React, { useEffect } from "react";
-import style from "./AddTour.module.scss";
+import style from "../AddTour/AddTour.module.scss";
 
 import { AdminHead } from "../../components/Admin";
 import "../AddHotel/AddHotel.scss";
 import { AdminAddForm } from "../../components/Admin/AdminAddForm";
-import addhotel from "../../assets/addhotel.png";
+import addhotel from "../../assets/campPhoto.png";
 import { Input } from "../../components/Form";
 import Selector from "../AddHotel/Select";
 import {
-  useAddTourMutation,
-  // useGetCategoryQuery,
+  useAddCampMutation,
   useGetHotelServiceQuery,
-  useGetHotelsQuery,
   useGetLocationQuery,
   useGetFoodQuery,
 } from "../../features/services/base.service";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-const AddTour = () => {
-  const { data: food = [], isLoading: isLoadFood } = useGetFoodQuery();
+const AddCamp = () => {
+  const navigate = useNavigate();
 
-  const [tourData, setTourData] = React.useState({
+  const [campData, setCampData] = React.useState({
     locationId: null,
     name: "",
     locationFeature: "",
-    departureCity: "",
     mapLink: "",
     rating: null,
-    ratingVotes: 0,
+    hotelName: "",
+    hotelDescription: "",
     description: "",
-    duration: "",
     program: [],
     food: null,
-    kidFoodPrice: null,
-    adultFoodPrice: null,
     comforts: [],
     kids: {
-      withKids: true,
-      babyMaxAge: null,
-      kidMaxAge: null,
-      kidDiscount: {
-        discountType: "В тенге",
-        discountValue: 2000,
-      },
+      forWho: "Для детей",
+      minCountInGroup: null,
+      maxCountInGroup: null,
+      minAgeInGroup: null,
+      maxAgeInGroup: null,
     },
     payment: {
       paymentType: "",
       prepayment: null,
     },
   });
-  const { data: hotels = [], isLoading: isHotelLoaded } = useGetHotelsQuery();
+
+  const { data: food = [], isLoading: isLoadFood } = useGetFoodQuery();
   const { data: allLocations = [], isLoading } = useGetLocationQuery();
   const { data: service, isLoading: isLoadService } = useGetHotelServiceQuery();
+
   const [allServices, setAllServices] = React.useState([]);
-  const [withKid, setWithKid] = React.useState(false);
 
   const [addedServices, setAddedServices] = React.useState([
     {
@@ -65,7 +60,7 @@ const AddTour = () => {
     },
   ]);
 
-  const [createTour, { isLoading: addLoad }] = useAddTourMutation();
+  const [createCamp, { isLoading: addLoad, data: camp }] = useAddCampMutation();
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -87,43 +82,50 @@ const AddTour = () => {
 
   const handleSubmit = async () => {
     const values = {
-      ...tourData,
+      ...campData,
       program: [...addedServices],
       token: user.token,
       comforts: [...JSON.parse(localStorage.getItem("comforts"))],
       food: [...JSON.parse(localStorage.getItem("food"))],
     };
-    await createTour(values);
-
+    console.table(values);
+    await createCamp(values);
     if (!addLoad) {
+      alert("Added");
       localStorage.removeItem("comforts");
       localStorage.removeItem("food");
-      alert("Added");
     }
   };
 
+  useEffect(() => {
+    if (camp) console.log(`/dashboard/camp/${camp._id}`);
+  }, [addLoad]);
+
+  if (isLoadFood) {
+    return <div> Loading...</div>;
+  }
   return (
     <>
-      <AdminHead text="Создание 1-3 тура" onClick={() => handleSubmit()} />
+      <AdminHead text="Создание лагеря" onClick={handleSubmit} />
       <div className="add_hotel-page page">
         <section className="add_gen-section">
           <div className="container">
             <div className="add_gen-wrapper wrapper shadow_box">
               <AdminAddForm img={addhotel}>
                 <div className="gen_content-box">
-                  <div className="gen_title">Основное о туре</div>
+                  <div className="gen_title">Основное о лагере</div>
                   <div className="input_row">
                     <Input
                       placeholder="Название"
                       onChange={(e) =>
-                        setTourData({ ...tourData, name: e.target.value })
+                        setCampData({ ...campData, name: e.target.value })
                       }
                     />
                     <Input
                       placeholder="Особенность местоположения"
                       onChange={(e) =>
-                        setTourData({
-                          ...tourData,
+                        setCampData({
+                          ...campData,
                           locationFeature: e.target.value,
                         })
                       }
@@ -135,57 +137,37 @@ const AddTour = () => {
                       type="text"
                       placeholder="Местоположение"
                       name="destination"
-                      value={tourData.locationId}
+                      value={campData.locationId}
                       onChange={(e) => {
-                        console.log(e.target.value);
-                        setTourData({
-                          ...tourData,
+                        setCampData({
+                          ...campData,
                           locationId: e.target.value,
                         });
                       }}
-                      // onSelect={(e) => console.log(e.target.value)}
                     >
-                      {allLocations.map((location, idx) => (
-                        <option value={location._id} key={location._id}>
-                          {location.locationName}
-                        </option>
-                      ))}
+                      {allLocations.map((location, idx) => {
+                        return (
+                          <option value={location._id} key={idx}>
+                            {location.locationName}
+                          </option>
+                        );
+                      })}
                     </select>
-                    <Input
-                      placeholder="Город вылета"
-                      onChange={(e) =>
-                        setTourData({
-                          ...tourData,
-                          departureCity: e.target.value,
-                        })
-                      }
-                    />
+
                     <Input
                       placeholder="Ссылка на карту"
                       onChange={(e) =>
-                        setTourData({ ...tourData, mapLink: e.target.value })
+                        setCampData({ ...campData, mapLink: e.target.value })
                       }
                     />
                   </div>
                   <div className="input_row">
                     <Input
-                      placeholder="Рейтинг тура"
+                      placeholder="Рейтинг лагеря"
                       onChange={(e) =>
-                        setTourData({ ...tourData, rating: e.target.value })
+                        setCampData({ ...campData, rating: e.target.value })
                       }
                     />
-                    <select
-                      className="primary-input"
-                      type="number"
-                      placeholder="Продолжительность тура"
-                      onChange={(e) =>
-                        setTourData({ ...tourData, duration: e.target.value })
-                      }
-                    >
-                      <option value={1}>1 день</option>
-                      <option value={2}>2 дня</option>
-                      <option value={3}>3 дня</option>
-                    </select>
                   </div>
                   <div className="input_row">
                     <textarea
@@ -194,8 +176,8 @@ const AddTour = () => {
                       rows="5"
                       placeholder="Описание"
                       onChange={(e) =>
-                        setTourData({
-                          ...tourData,
+                        setCampData({
+                          ...campData,
                           description: e.target.value,
                         })
                       }
@@ -213,30 +195,27 @@ const AddTour = () => {
                 <div className="gen_title">Подробнее</div>
                 <div className="input_box">
                   <div className="input_title">Отель</div>
-
-                  <select className="primary-input">
-                    <option value="" disabled selected>
-                      Выбрать из списка
-                    </option>
-                    {isHotelLoaded ? (
-                      <p>Hotels aren't loaded</p>
-                    ) : (
-                      <>
-                        {hotels.map((hotel) => (
-                          <option value={hotel._id} key={hotel._id}>
-                            {hotel.name}
-                          </option>
-                        ))}
-                      </>
-                    )}
-                  </select>
-
-                  <button
-                    className="add_service-btn primary-btn"
-                    onClick={() => {}}
-                  >
-                    Добавить отель
-                  </button>
+                  <Input
+                    placeholder="Название"
+                    onChange={(e) => {
+                      setCampData((prev) => ({
+                        ...prev,
+                        hotelName: e.target.value,
+                      }));
+                    }}
+                  />
+                  <textarea
+                    className="primary-input"
+                    cols="30"
+                    rows="8"
+                    placeholder="Описание"
+                    onChange={(e) => {
+                      setCampData((prev) => ({
+                        ...prev,
+                        hotelDescription: e.target.value,
+                      }));
+                    }}
+                  />
                   <div className="input_title">Тип питания</div>
 
                   <Selector
@@ -266,76 +245,112 @@ const AddTour = () => {
                     <select
                       className="primary-input"
                       onChange={(e) => {
-                        setWithKid(Boolean(e.target.value));
-                        setTourData({
-                          ...tourData,
+                        setCampData({
+                          ...campData,
                           kids: {
-                            withKids: !e.target.value,
+                            ...kids,
+                            forWho: e.target.value,
                           },
                         });
                       }}
                     >
-                      <option value={false} selected>
-                        Можно с детьми
+                      <option value={campData.kids.forWho} selected>
+                        {campData.kids.forWho}
                       </option>
-                      <option value={true}>Без детей</option>
+                      <option value={"Для вожатых"}>Для вожатых</option>
                     </select>
 
                     <select
-                      disabled={withKid}
                       className="primary-input"
                       onChange={(e) => {
-                        setTourData((prev) => ({
+                        setCampData((prev) => ({
                           ...prev,
                           kids: {
                             ...prev.kids,
-                            babyMaxAge: e.target.value,
+                            minCountInGroup: e.target.value,
                           },
                         }));
                       }}
                     >
                       <option value="" disabled selected>
-                        Мин. возр.
+                        Мин. кол-во в группе
                       </option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
+                      {new Array(20).fill(1).map((age, idx) => (
+                        <option value={age + idx}>{age + idx}</option>
+                      ))}
                     </select>
-
                     <select
-                      disabled={withKid}
                       className="primary-input"
                       onChange={(e) => {
-                        setTourData((prev) => ({
+                        setCampData((prev) => ({
                           ...prev,
                           kids: {
                             ...prev.kids,
-                            kidMaxAge: e.target.value,
+                            maxCountInGroup: e.target.value,
                           },
                         }));
                       }}
                     >
                       <option value="" disabled selected>
-                        Макс. возр.
+                        Макс. кол-во в группе
                       </option>
-                      <option value="12">12</option>
-                      <option value="13">13</option>
-                      <option value="14">14</option>
+                      {new Array(18).fill(3).map((age, idx) => (
+                        <option value={age + idx}>{age + idx}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="input_row">
+                    <select
+                      name=""
+                      id=""
+                      className="primary-input"
+                      onChange={(e) => {
+                        setCampData((prev) => ({
+                          ...prev,
+                          kids: {
+                            ...prev.kids,
+                            minAgeInGroup: e.target.value,
+                          },
+                        }));
+                      }}
+                    >
+                      <option selected disabled>
+                        Мин. возраст
+                      </option>
+                      {new Array(14).fill(1).map((age, idx) => (
+                        <option value={age + idx}>{age + idx}</option>
+                      ))}
+                    </select>
+
+                    <select
+                      name=""
+                      id=""
+                      className="primary-input"
+                      onChange={(e) => {
+                        setCampData((prev) => ({
+                          ...prev,
+                          kids: {
+                            ...prev.kids,
+                            maxAgeInGroup: e.target.value,
+                          },
+                        }));
+                      }}
+                    >
+                      <option selected disabled>
+                        Макс. возраст
+                      </option>
+                      {new Array(14).fill(1).map((age, idx) => (
+                        <option value={age + idx}>{age + idx}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="input_title">Оплата</div>
                   <div className="input_row">
-                    {/* TODO!Чисто для показа */}
-                    {/* <label className={style.info_label} htmlFor="payment">
-                      Оплата за
-                    </label> */}
                     <select id="payment" className="primary-input">
                       <option value="">Оплата за номер</option>
                       <option value="">Оплата за человека</option>
                     </select>
-                    {/* <label className={style.info_label} htmlFor="prepayment">
-                      Предоплата
-                    </label> */}
+
                     <select id="prepayment" className="primary-input">
                       {new Array(5).fill(10).map((a, idx) => (
                         <option value={a * (idx + 1)}>{a * (idx + 1)}%</option>
@@ -345,7 +360,7 @@ const AddTour = () => {
                 </div>
               </div>
               <div className="add_more-col categ-col shadowed_box">
-                <div className="gen_title">Программа тура</div>
+                <div className="gen_title">Программа лагеря</div>
                 {addedServices.map((serv, idx) => (
                   <div className="input_box">
                     <div className={style.days}>День {idx + 1}</div>
@@ -449,4 +464,4 @@ const AddTour = () => {
   );
 };
 
-export default AddTour;
+export default AddCamp;

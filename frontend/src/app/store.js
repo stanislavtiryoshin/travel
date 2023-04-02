@@ -8,6 +8,7 @@ import excursionReducer from "../features/excursion/excursionSlice";
 import adminReducer from "../features/adminSlice";
 
 import { baseApi } from "../features/services/base.service";
+import { editApi } from "../features/services/edit.service";
 
 import roomSlice from "../features/room/roomSlice";
 
@@ -21,9 +22,9 @@ export const store = configureStore({
     admin: adminReducer,
 
     [baseApi.reducerPath]: baseApi.reducer,
-
+    [editApi.reducerPath]: editApi.reducer,
     rooms: roomSlice,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat([baseApi.middleware]),
+    getDefaultMiddleware().concat([baseApi.middleware, editApi.middleware]),
 });

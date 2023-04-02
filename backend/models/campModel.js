@@ -6,10 +6,12 @@ const campSchema = Schema({
     type: Schema.Types.ObjectId,
     ref: "Location",
   },
-  food: {
-    type: Schema.Types.ObjectId,
-    ref: "Food",
-  },
+  food: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Food",
+    },
+  ],
   locationFeature: {
     type: String,
   },
@@ -41,9 +43,9 @@ const campSchema = Schema({
     type: Number,
     default: 0,
   },
-  ratingVotes: {
-    type: Number,
-  },
+  // ratingVotes: {
+  //   type: Number,
+  // },
   payment: {
     paymentType: {
       type: String,
@@ -58,12 +60,20 @@ const campSchema = Schema({
   hotelDescription: {
     type: String,
   },
-  campProgram: {
-    programId: {
-      type: Schema.Types.ObjectId,
-      ref: "Program",
+  program: [
+    {
+      days: [
+        {
+          points: {
+            day: Number,
+            time: String,
+            pointName: String,
+            pointDescription: String,
+          },
+        },
+      ],
     },
-  },
+  ],
 });
 
 module.exports = new model("Camp", campSchema);
