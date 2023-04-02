@@ -4,9 +4,7 @@ import { Link } from "react-router-dom";
 import eye from "../../assets/room/eye.svg";
 import roomphoto from "../../assets/room/room.png";
 import bed from "../../assets/room/bed.svg";
-import grncheck from "../../assets/grncheck.svg";
-
-console.log(room);
+import grncheck from "../../assets/room/greencheck.svg";
 
 const DashRoom = ({ room }) => {
   return (
