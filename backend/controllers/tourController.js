@@ -6,6 +6,7 @@ const getTour = (req, res) => {
   Tour.find({})
     .populate("rooms")
     .populate("locationId")
+    .populate("hotelId")
     // .populate("food")
     .then((response) => res.status(200).json(response))
     .catch(() => res.sendStatus(404));
@@ -20,9 +21,11 @@ const addTour = (req, res) => {
 const getSingleTour = (req, res) => {
   const id = req.params.id;
 
-  Tour.findById({ _id: id })
+  Tour.findById(id)
     .populate("rooms")
     .populate("locationId")
+    .populate("hotelId")
+
     .then((response) => res.status(200).json(response))
     .catch(() => res.sendStatus(404));
 };

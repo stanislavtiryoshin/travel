@@ -6,7 +6,7 @@ export const editApi = createApi({
     baseUrl: "http://localhost:3000/api",
     credentials: "include",
   }),
-  tagTypes: ["Camp"],
+  tagTypes: ["Camp", "Tour"],
   endpoints: (builder) => ({
     getCampById: builder.query({
       query: (id) => ({
@@ -29,8 +29,40 @@ export const editApi = createApi({
       query: (id) => ({
         url: `/camps/${id}`,
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${body.token}`,
+        },
       }),
       invalidatesTags: [{ type: "Camp", id: "LIST" }],
+    }),
+
+    //tour
+    getTourById: builder.query({
+      query: (id) => ({
+        url: `/tour/${id}`,
+      }),
+      providesTags: [{ type: "Tour", id: "LIST" }],
+    }),
+    editTourById: builder.mutation({
+      query: (body) => ({
+        url: `/tour/${body.id}`,
+        method: "PATCH",
+        body,
+        headers: {
+          Authorization: `Bearer ${body.token}`,
+        },
+      }),
+      invalidatesTags: [{ type: "Tour", id: "LIST" }],
+    }),
+    deleteTourById: builder.mutation({
+      query: (body) => ({
+        url: `/tour/${body.id}`,
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${body.token}`,
+        },
+      }),
+      invalidatesTags: [{ type: "Tour", id: "LIST" }],
     }),
   }),
 });
@@ -39,4 +71,9 @@ export const {
   useGetCampByIdQuery,
   useDeleteCampByIdMutation,
   useEditCampByIdMutation,
+
+  //tour
+  useDeleteTourByIdMutation,
+  useGetTourByIdQuery,
+  useEditTourByIdMutation,
 } = editApi;
