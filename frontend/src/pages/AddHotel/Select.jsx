@@ -35,11 +35,10 @@ export default function Selector({
         <label htmlFor="service">Услуги и удобства</label>
         <Select
           options={optionList.filter((serv) => serv.category === currCateg)}
-          placeholder="Select color"
+          placeholder="Введите значение"
           value={options}
           onChange={(option) => {
             setOptions(option);
-            // console.log(option);
           }}
           isSearchable={true}
           isMulti

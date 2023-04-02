@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const Room = require("../models/roomModel");
+const Hotel = require("../models/hotelModel");
 
 //@desc   Get all rooms
 //@route  GET /api/rooms
@@ -13,6 +14,21 @@ const getRooms = asyncHandler(async (req, res) => {
   res.status(200).send(rooms);
 });
 
+//@desc   Add new room
+//@route  POST /api/rooms
+//@access Private
+
+const addRoom = asyncHandler(async (req, res) => {
+  const room = await Room.create(req.body);
+  await Hotel.findByIdAndUpdate(
+    room._id,
+    { $push: { rooms: room._id } },
+    { new: true }
+  );
+  res.status(200).send(room);
+});
+
 module.exports = {
   getRooms,
+  addRoom,
 };
