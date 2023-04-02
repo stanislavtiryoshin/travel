@@ -6,9 +6,10 @@ import admhotel from "../../assets/admhotel.png";
 import check2 from "../../assets/check2.svg";
 import HotelStars from "../HotelStars/HotelStars";
 import tag from "../../assets/tag.svg";
+import { Link } from "react-router-dom";
 
 const DashHotelCard = ({ hotel }) => {
-  const { name, rating, stars, locationId, hotelStars } = hotel;
+  const { name, rating, stars, locationId, hotelStars, _id } = hotel;
   return (
     <div className="adm_hotel-card shadowed_box">
       <div className="adm_hotels-content">
@@ -19,9 +20,9 @@ const DashHotelCard = ({ hotel }) => {
           {locationId ? locationId.locationCountry : null}
         </div>
         <div className="adm_hotel-rating row">
-          <HotelStars number={hotelStars} />
+          {hotelStars ? <HotelStars number={hotelStars} /> : null}
 
-          <RatingBox rating={rating} />
+          {rating ? <RatingBox rating={rating} /> : null}
           <div className="extra_place-box">
             <img src={check2} alt="" /> Доп. места
           </div>
@@ -60,7 +61,9 @@ const DashHotelCard = ({ hotel }) => {
         </div>
       </div>
       <div className="adm_hotel-btns">
-        <button className="primary-btn clear">Редактировать</button>
+        <Link to={`/dashboard/hotel/${_id}`} className="primary-btn clear">
+          Редактировать
+        </Link>
         <button className="primary-btn">Открыть</button>
       </div>
     </div>

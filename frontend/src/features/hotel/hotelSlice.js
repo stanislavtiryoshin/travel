@@ -218,11 +218,11 @@ export const selectHotels = (state) => {
       (hotel) => hotel.totalPrice >= filterMinPrice
     );
   }
-  if (filterFood && filterFood.length > 0) {
-    filteredHotels = filteredHotels.filter((hotel) => {
-      return hotel.food.some((el) => filterFood.includes(el.foodId.foodName));
-    });
-  }
+  // if (filterFood && filterFood.length > 0) {
+  //   filteredHotels = filteredHotels.filter((hotel) => {
+  //     return hotel.food.some((el) => filterFood.includes(el.foodId.foodName));
+  //   });
+  // }
   // if (filterRating) {
   //   filteredHotels = filteredHotels.filter(
   //     (hotel) => hotel.rating === filterRating

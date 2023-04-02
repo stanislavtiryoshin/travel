@@ -3,7 +3,7 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import HotelCard from "../../components/HotelCard/HotelCard";
-import { login, reset } from "../../features/auth/authSlice";
+import { reset } from "../../features/auth/authSlice";
 import {
   getSearchedHotels,
   selectHotels,
@@ -33,8 +33,6 @@ const Home = () => {
 
   const selectedHotels = useSelector(selectHotels);
 
-  console.log(hotels);
-
   const { startDate, endDate, peopleAmount, daysAmount, destination } =
     useSelector((state) => state.client);
 
@@ -52,6 +50,8 @@ const Home = () => {
     );
     dispatch(reset());
   }, [isError, isSuccess, message, navigate, dispatch]);
+
+  console.log(hotels);
 
   // const handleSearch = (location) => {
   //   dispatch(getSearchedHotels({ location: location }));
@@ -77,168 +77,6 @@ const Home = () => {
       <section className="all_hotels_section">
         <div className="main_wrapper wrapper">
           <div className="main_side">
-            {/* <div className="filter_box">
-              <div className="filter_row">
-                <div className="filter_title">Ваш запрос</div>
-                <div className="icon_row row">
-                  <img src={plane} alt="" />
-                  {currentLocation?.locationName ? (
-                    <>
-                      {currentLocation?.locationName} &#183;{" "}
-                      {currentLocation?.locationCountry}
-                    </>
-                  ) : (
-                    "Весь Казахстан"
-                  )}
-                </div>
-                <div className="icon_row row">
-                  <img src={calendar} alt="" />
-                  {new Date(startDate).toLocaleString(undefined, {
-                    month: "numeric",
-                    day: "numeric",
-                  })}{" "}
-                  -{" "}
-                  {new Date(endDate).toLocaleString(undefined, {
-                    month: "numeric",
-                    day: "numeric",
-                  })}
-                </div>
-                <div className="icon_row row">
-                  <img src={person2} alt="" />
-                  {peopleAmount} взр.
-                </div>
-                <div className="icon_row row">
-                  <button className="check-btn"></button>
-                  Показывать с доп. местом
-                </div>
-              </div>
-              <div className="filter_row">
-                <div className="filter_title">Цена</div>
-                <div className="filter_content price_range">
-                  <RangeSlider
-                    onInput={setValue}
-                    min={0}
-                    max={100000}
-                    step={1000}
-                  />
-                  <div className="price-box">
-                    <div className="price-col left">
-                      <div className="price-col-title">от</div>
-                      <div className="price-col-text">{value[0]}</div>
-                    </div>
-                    <div className="price-col">
-                      <div className="price-col-title">до</div>
-                      <div className="price-col-text">{value[1]}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="filter_row">
-                <div className="filter_title">Вид отдыха</div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  Экскурсия
-                </div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  Конные туры
-                </div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  Пляжные туры
-                </div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  Пляжные туры
-                </div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  Необычные туры
-                </div>
-              </div>
-              <div className="filter_row">
-                <div className="filter_title">Питание</div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  Все включено
-                </div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  Только завтрак
-                </div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  Завтрак и ужин
-                </div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  3-х разовое
-                </div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  Без питания
-                </div>
-              </div>
-              <div className="filter_row">
-                <div className="filter_title">Количество звезд</div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  Любой класс
-                </div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  <img src={star} alt="" />
-                  <img src={star} alt="" />
-                  <img src={star} alt="" />
-                  <img src={star} alt="" />
-                  <img src={star} alt="" />
-                </div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  <img src={star} alt="" />
-                  <img src={star} alt="" />
-                  <img src={star} alt="" />
-                  <img src={star} alt="" />
-                </div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  <img src={star} alt="" />
-                  <img src={star} alt="" />
-                  <img src={star} alt="" />
-                </div>
-
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  <img src={star} alt="" />
-                  <img src={star} alt="" />
-                </div>
-              </div>
-              <div className="filter_row">
-                <div className="filter_title">Тип тура</div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  Индивидуальный
-                </div>
-                <div className="filter_content">
-                  <button className="check-btn"></button>
-                  Групповой
-                </div>
-              </div>
-              <div className="filter_row no-border">
-                <button
-                  className="primary-btn"
-                  onClick={() => handleFilter(from, to)}
-                >
-                  Отфильтровать
-                </button>
-                <button
-                  className="primary-btn yellow"
-                  onClick={() => dropFilter()}
-                >
-                  Сбросить фильтр
-                </button>
-              </div>
-            </div> */}
             <Filter />
           </div>
           <div className="container main_container">
@@ -253,30 +91,31 @@ const Home = () => {
                   Сортировать <img src={sort} alt="" />
                 </button>
               </div>
-              {selectedHotels &&
-                selectedHotels
-                  ?.filter((hotel, idx) => idx < hotelsToShow)
-                  .map((hotel, idx) => {
-                    return (
-                      <HotelCard
-                        key={idx}
-                        hotelId={hotel._id}
-                        name={hotel.name}
-                        locationId={hotel.locationId}
-                        price={hotel.price * peopleAmount}
-                        amount={peopleAmount}
-                        days={daysAmount}
-                        description={hotel.description}
-                        rating={hotel.rating}
-                        startDate={startDate}
-                        endDate={endDate}
-                        rooms={hotel.rooms}
-                        totalPrice={hotel.totalPrice}
-                        oldPrice={hotel.oldPrice}
-                        hotelStars={hotel.hotelStars}
-                      />
-                    );
-                  })}
+              {selectedHotels && selectedHotels.length > 0
+                ? selectedHotels
+                    .filter((hotel, idx) => idx < hotelsToShow)
+                    .map((hotel, idx) => {
+                      return (
+                        <HotelCard
+                          key={idx}
+                          hotelId={hotel._id}
+                          name={hotel.name}
+                          locationId={hotel.locationId}
+                          price={hotel.price * peopleAmount}
+                          amount={peopleAmount}
+                          days={daysAmount}
+                          description={hotel.description}
+                          rating={hotel.rating}
+                          startDate={startDate}
+                          endDate={endDate}
+                          rooms={hotel.rooms}
+                          totalPrice={hotel.totalPrice}
+                          oldPrice={hotel.oldPrice}
+                          hotelStars={hotel.hotelStars}
+                        />
+                      );
+                    })
+                : null}
               {selectedHotels.length >= hotelsToShow ? (
                 <button
                   className="more-hotels-btn"

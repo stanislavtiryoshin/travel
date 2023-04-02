@@ -145,6 +145,7 @@ const Filter = () => {
           ? allFoods.map((food, idx) => {
               return (
                 <div
+                  key={food._id}
                   className="filter_content"
                   onClick={() => {
                     if (filterObj.filterFood.includes(food._id)) {

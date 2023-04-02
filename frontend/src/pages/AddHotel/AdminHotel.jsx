@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 import AddHotel from "./AddHotel";
+import AdminRoom from "./AdminRoom";
 
 const AdminHotel = () => {
   const navigate = useNavigate();
@@ -46,9 +47,11 @@ const AdminHotel = () => {
               </Link>
             </div>
             <div className="admin_rooms-grid">
-              {singleHotel && singleHotel.rooms ? (
-                <div className="asdf"></div>
-              ) : null}
+              {singleHotel && singleHotel.rooms
+                ? singleHotel.rooms.map((room, idx) => {
+                    <AdminRoom room={room} />;
+                  })
+                : null}
             </div>
           </div>
         </div>

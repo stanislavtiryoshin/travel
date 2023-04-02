@@ -21,7 +21,7 @@ const getRooms = asyncHandler(async (req, res) => {
 const addRoom = asyncHandler(async (req, res) => {
   const room = await Room.create(req.body);
   await Hotel.findByIdAndUpdate(
-    room._id,
+    room.hotel,
     { $push: { rooms: room._id } },
     { new: true }
   );
