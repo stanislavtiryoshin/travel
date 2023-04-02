@@ -2,15 +2,22 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Select from "react-select";
-
+import { useNavigate } from "react-router-dom";
 import addhotel from "../../assets/addhotel.png";
 
 import "./AddRoom.scss";
-import { useDispatch } from "react-redux";
-import { addRoom } from "../../features/room/roomSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addRoom,
+  getSingleRoom,
+  updateRoom,
+} from "../../features/room/roomSlice";
+import { getSingleHotel } from "../../features/hotel/hotelSlice";
+import { AdminHead } from "../../components/Admin";
 
-const AddRoom = () => {
+const AddRoom = ({ fetchedRoomData, editMode }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { hotelId } = useParams();
 
   const [roomData, setRoomData] = useState({
@@ -48,6 +55,11 @@ const AddRoom = () => {
     bathExtras: "",
   });
 
+  useEffect(() => {
+    let newData = fetchedRoomData;
+    if (fetchedRoomData && editMode) setRoomData(newData);
+  }, [fetchedRoomData, editMode]);
+
   const [allLocations, setAllLocations] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [allServices, setAllServices] = useState([]);
@@ -78,8 +90,6 @@ const AddRoom = () => {
         console.log(error);
       });
   }, []);
-
-  console.log(roomData);
 
   const roomServiceOpts = [
     {
@@ -140,26 +150,24 @@ const AddRoom = () => {
     setRoomData({ ...roomData, bathExtras: bathExtras });
   }, [extras]);
 
+  const handleSubmit = () => {
+    editMode
+      ? dispatch(updateRoom(roomData))
+      : dispatch(addRoom(roomData)).then((res) =>
+          navigate(`/dashboard/room/${res.payload._id}`)
+        );
+  };
+
+  const { singleHotel } = useSelector((state) => state.hotels);
+
+  console.log(singleHotel);
+
   return (
     <>
-      <div className="header_bot">
-        <div className="container">
-          <div className="header_bot-wrapper wrapper">
-            <div className="header_bot-left wrapper">
-              <div className="header_bot-left-text">Создание нового номера</div>
-            </div>
-            <div className="header_bot-right wrapper">
-              <button className="cancel-btn">Отмена</button>
-              <button
-                className="primary-btn white"
-                onClick={() => dispatch(addRoom(roomData))}
-              >
-                Сохранить изменения
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <AdminHead
+        text={editMode ? "Редактирование номера" : "Создание нового номера"}
+        onClick={() => handleSubmit()}
+      />
       <div className="add_hotel-page page">
         <section className="add_gen-section">
           <div className="container">
@@ -177,6 +185,7 @@ const AddRoom = () => {
                       className="primary-input"
                       name="roomName"
                       placeholder="Например, 4-х местный люкс"
+                      value={roomData.roomName}
                       onChange={(e) =>
                         setRoomData({ ...roomData, roomName: e.target.value })
                       }
@@ -189,6 +198,7 @@ const AddRoom = () => {
                     <select
                       name="roomsNumber"
                       className="primary-input"
+                      value={roomData.roomsNumber}
                       onChange={(e) =>
                         setRoomData({
                           ...roomData,
@@ -206,6 +216,7 @@ const AddRoom = () => {
                     <select
                       name="roomsNumber"
                       className="primary-input"
+                      value={roomData.beds.bedsType}
                       onChange={(e) =>
                         setRoomData({
                           ...roomData,
@@ -235,6 +246,7 @@ const AddRoom = () => {
                     <select
                       name="roomsNumber"
                       className="primary-input"
+                      value={roomData.beds.largeBeds}
                       onChange={(e) =>
                         setRoomData({
                           ...roomData,
@@ -252,6 +264,7 @@ const AddRoom = () => {
                     <select
                       name="roomsNumber"
                       className="primary-input"
+                      value={roomData.beds.smallBeds}
                       onChange={(e) =>
                         setRoomData({
                           ...roomData,
@@ -271,6 +284,7 @@ const AddRoom = () => {
                       type="number"
                       className="primary-input"
                       placeholder="Размер номера в кв. метрах"
+                      value={roomData.area}
                       onChange={(e) =>
                         setRoomData({ ...roomData, area: e.target.value })
                       }
@@ -283,6 +297,7 @@ const AddRoom = () => {
                       name="roomsNumber"
                       className="primary-input"
                       placeholder="Макс. кол-во взрослых"
+                      value={roomData.people.adultMax}
                       onChange={(e) =>
                         setRoomData({
                           ...roomData,
@@ -306,6 +321,7 @@ const AddRoom = () => {
                       name="roomsNumber"
                       className="primary-input"
                       placeholder="Макс. кол-во взрослых"
+                      value={roomData.people.babyMax}
                       onChange={(e) =>
                         setRoomData({
                           ...roomData,
@@ -329,6 +345,7 @@ const AddRoom = () => {
                       name="roomsNumber"
                       className="primary-input"
                       placeholder="Макс. кол-во взрослых"
+                      value={roomData.people.kidsMax}
                       onChange={(e) =>
                         setRoomData({
                           ...roomData,
@@ -354,6 +371,7 @@ const AddRoom = () => {
                     <select
                       name="roomsNumber"
                       className="primary-input"
+                      value={roomData.extraPlace}
                       onChange={(e) =>
                         setRoomData({
                           ...roomData,
@@ -374,6 +392,7 @@ const AddRoom = () => {
                     <select
                       name="roomsNumber"
                       className="primary-input"
+                      value={roomData.smokingPolicy}
                       onChange={(e) =>
                         setRoomData({
                           ...roomData,
@@ -392,6 +411,7 @@ const AddRoom = () => {
                     <select
                       name="roomsNumber"
                       className="primary-input"
+                      value={roomData.restroom}
                       onChange={(e) =>
                         setRoomData({
                           ...roomData,
@@ -410,6 +430,7 @@ const AddRoom = () => {
                     <select
                       name="roomsNumber"
                       className="primary-input"
+                      value={roomData.bathroom.availablity}
                       onChange={(e) =>
                         setRoomData({
                           ...roomData,
@@ -435,6 +456,7 @@ const AddRoom = () => {
                     cols="30"
                     rows="5"
                     placeholder="Описание"
+                    value={roomData.roomDescription}
                     onChange={(e) =>
                       setRoomData({
                         ...roomData,
@@ -485,7 +507,21 @@ const AddRoom = () => {
                     <div className="service-input">
                       <div className="service-title">Содержимое ванной</div>
                       <label htmlFor="">Ванна или душ</label>
-                      <select name="" id="" className="primary-input">
+                      <select
+                        name=""
+                        id=""
+                        className="primary-input"
+                        value={roomData.bathroom.type}
+                        onChange={(e) => {
+                          setRoomData({
+                            ...roomData,
+                            bathroom: {
+                              ...roomData.bathroom,
+                              type: e.target.value,
+                            },
+                          });
+                        }}
+                      >
                         <option value="Душ">Душ</option>
                         <option value="Ванна">Ванна</option>
                       </select>
@@ -529,6 +565,7 @@ const AddRoom = () => {
                     cols="30"
                     rows="5"
                     placeholder="Примечание"
+                    value={roomData.comment}
                     onChange={(e) =>
                       setRoomData({
                         ...roomData,

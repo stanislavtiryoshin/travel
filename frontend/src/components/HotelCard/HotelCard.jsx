@@ -30,17 +30,17 @@ const HotelCard = ({
     (state) => state.client
   );
 
-  useEffect(() => {
-    if (rooms) {
-      setCheapestRoom(
-        rooms
-          .filter((room) => room.capacity >= peopleAmount)
-          .reduce(function (prev, current) {
-            return prev.roomPrice < current.roomPrice ? prev : current;
-          })
-      );
-    }
-  }, [rooms]);
+  // useEffect(() => {
+  //   if (rooms && rooms.length > 0) {
+  //     setCheapestRoom(
+  //       rooms
+  //         .filter((room) => room.capacity >= peopleAmount)
+  //         .reduce(function (prev, current) {
+  //           return prev.roomPrice < current.roomPrice ? prev : current;
+  //         })
+  //     );
+  //   }
+  // }, [rooms]);
 
   const [clientStartingDate, setClientStartingDate] = useState(new Date());
   const [clientEndingDate, setClientEndingDate] = useState(new Date());
@@ -135,8 +135,8 @@ const HotelCard = ({
           </div>
         </div>
         <div className="card_mid-rating">
-          <HotelStars number={hotelStars} />
-          <RatingBox rating={rating} />
+          {hotelStars ? <HotelStars number={hotelStars} /> : null}
+          {rating ? <RatingBox rating={rating} /> : null}
         </div>
         <div className="card_mid-desc">
           {description.slice(0, 100)}

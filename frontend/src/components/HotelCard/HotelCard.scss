@@ -43,8 +43,11 @@
   color: rgba(37, 52, 61, 0.5);
 }
 
-.card_mid-rating.row {
+.card_mid-rating {
   display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
   column-gap: 10px;
   font-family: GT Walsheim Pro;
   font-size: 12px;

@@ -34,6 +34,8 @@ const Dashboard = () => {
 
   const { user } = useSelector((state) => state.auth);
 
+  console.log(user);
+
   const { orders } = useSelector((state) => state.orders);
 
   const { hotels, isLoading, isSuccess, isError, message } = useSelector(
@@ -83,7 +85,7 @@ const Dashboard = () => {
     <div className="dashboard_page page">
       {currentTab === 1 && (
         <div className="hotels_tab tab">
-          <HotelSearch />
+          <HotelSearch hotelMode />
 
           <section className="dash_section">
             <div className="container">
