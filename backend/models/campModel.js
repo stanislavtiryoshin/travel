@@ -58,12 +58,20 @@ const campSchema = Schema({
   hotelDescription: {
     type: String,
   },
-  campProgram: {
-    programId: {
-      type: Schema.Types.ObjectId,
-      ref: "Program",
+  program: [
+    {
+      days: [
+        {
+          points: {
+            day: Number,
+            time: String,
+            pointName: String,
+            pointDescription: String,
+          },
+        },
+      ],
     },
-  },
+  ],
 });
 
 module.exports = new model("Camp", campSchema);

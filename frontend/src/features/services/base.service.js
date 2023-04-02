@@ -6,7 +6,16 @@ export const baseApi = createApi({
     baseUrl: "http://localhost:3000/api",
     credentials: "include",
   }),
-  tagTypes: ["category", "location", "Program", "hotels", "services"],
+  tagTypes: [
+    "category",
+    "location",
+    "Program",
+    "hotels",
+    "services",
+    "Camp",
+    "tour",
+    "Food",
+  ],
   endpoints: (builder) => ({
     getCategory: builder.query({
       query: () => ({
@@ -68,6 +77,43 @@ export const baseApi = createApi({
             ]
           : [{ type: "services", id: "LIST" }],
     }),
+    getTour: builder.query({
+      query: () => ({
+        url: "/tour",
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: "tour", _id })),
+              { type: "tour", id: "LIST" },
+            ]
+          : [{ type: "tour", id: "LIST" }],
+    }),
+    getCamp: builder.query({
+      query: () => ({
+        url: "/camps",
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: "Camp", _id })),
+              { type: "Camp", id: "LIST" },
+            ]
+          : [{ type: "Camp", id: "LIST" }],
+    }),
+    getFood: builder.query({
+      query: () => ({
+        url: "/foods",
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: "Food", _id })),
+              { type: "Food", id: "LIST" },
+            ]
+          : [{ type: "Food", id: "LIST" }],
+    }),
+    //Addition
     addTour: builder.mutation({
       query: (body) => ({
         url: "/tour",
@@ -77,7 +123,18 @@ export const baseApi = createApi({
           Authorization: `Bearer ${body.token}`,
         },
       }),
-      invalidatesTags: [{ id: "LIST", type: "Program" }],
+      invalidatesTags: [{ id: "LIST", type: "tour" }],
+    }),
+    addCamp: builder.mutation({
+      query: (body) => ({
+        url: "/camps",
+        method: "POST",
+        body,
+        headers: {
+          Authorization: `Bearer ${body.token}`,
+        },
+      }),
+      invalidatesTags: [{ id: "LIST", type: "Camp" }],
     }),
   }),
 });
@@ -89,4 +146,8 @@ export const {
   useGetHotelsQuery,
   useGetHotelServiceQuery,
   useAddTourMutation,
+  useAddCampMutation,
+  useGetCampQuery,
+  useGetTourQuery,
+  useGetFoodQuery,
 } = baseApi;

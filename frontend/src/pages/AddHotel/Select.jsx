@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Select from "react-select";
 
@@ -11,6 +11,15 @@ export default function Selector({
 }) {
   const [options, setOptions] = useState([]);
   const [currCateg, setCurrCateg] = useState("Питание");
+
+  // console.log(options);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "comforts",
+      JSON.stringify(options.map((o) => o.value))
+    );
+  }, [options]);
 
   return (
     <>
