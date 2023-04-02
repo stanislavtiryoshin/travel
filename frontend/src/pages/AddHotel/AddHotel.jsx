@@ -108,8 +108,9 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
       });
     axios
       .get(`http://localhost:3000/api/categories`)
-      .then((response) => {
-        setAllCategories(response.data);
+      .then(({ data }) => {
+        setAllCategories(data);
+        console.log(data);
       })
       .catch((error) => {
         console.log(error);

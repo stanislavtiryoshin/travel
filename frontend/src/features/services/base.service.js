@@ -6,7 +6,7 @@ export const baseApi = createApi({
     baseUrl: "http://localhost:3000/api",
     credentials: "include",
   }),
-  tagTypes: ["category", "location", "Program", "hotels"],
+  tagTypes: ["category", "location", "Program", "hotels", "services"],
   endpoints: (builder) => ({
     getCategory: builder.query({
       query: () => ({
@@ -56,6 +56,29 @@ export const baseApi = createApi({
             ]
           : [{ type: "hotels", id: "LIST" }],
     }),
+    getHotelService: builder.query({
+      query: () => ({
+        url: "/hotelServices",
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: "services", _id })),
+              { type: "services", id: "LIST" },
+            ]
+          : [{ type: "services", id: "LIST" }],
+    }),
+    addTour: builder.mutation({
+      query: (body) => ({
+        url: "/tour",
+        method: "POST",
+        body,
+        headers: {
+          Authorization: `Bearer ${body.token}`,
+        },
+      }),
+      invalidatesTags: [{ id: "LIST", type: "Program" }],
+    }),
   }),
 });
 
@@ -64,4 +87,6 @@ export const {
   useGetLocationQuery,
   useGetProgramQuery,
   useGetHotelsQuery,
+  useGetHotelServiceQuery,
+  useAddTourMutation,
 } = baseApi;

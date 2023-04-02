@@ -6,36 +6,47 @@ export default function Selector({
   allCategories,
   optionList,
   thisCategServices,
+  styles,
+  placeholder,
 }) {
   const [options, setOptions] = useState([]);
   const [currCateg, setCurrCateg] = useState("Питание");
 
   return (
     <>
-      <div className="service-input">
-        <label htmlFor="category">Категория</label>
-        <select
-          name="category"
-          className="primary-input"
-          id=""
-          onChange={(e) => setCurrCateg(e.target.value)}
-        >
-          {allCategories && allCategories.length > 0
-            ? allCategories?.map((categ, idx) => {
-                return (
-                  <option value={categ.categoryName} key={categ._id}>
-                    {categ.categoryName}
-                  </option>
-                );
-              })
-            : null}
-        </select>
-      </div>
+      {allCategories && (
+        <div className="service-input">
+          <label htmlFor="category">Категория</label>
+          <select
+            name="category"
+            className="primary-input"
+            id=""
+            onChange={(e) => setCurrCateg(e.target.value)}
+          >
+            {allCategories && allCategories.length > 0
+              ? allCategories?.map((categ, idx) => {
+                  return (
+                    <option value={categ.categoryName} key={categ._id}>
+                      {categ.categoryName}
+                    </option>
+                  );
+                })
+              : null}
+          </select>
+        </div>
+      )}
+
       <div className="service-input full">
-        <label htmlFor="service">Услуги и удобства</label>
+        {allCategories && <label htmlFor="service">Услуги и удобства</label>}
+
         <Select
-          options={optionList.filter((serv) => serv.category === currCateg)}
-          placeholder="Введите значение"
+          styles={styles && styles}
+          options={
+            allCategories
+              ? optionList.filter((serv) => serv.category === currCateg)
+              : optionList
+          }
+          placeholder={placeholder && placeholder}
           value={options}
           onChange={(option) => {
             setOptions(option);
