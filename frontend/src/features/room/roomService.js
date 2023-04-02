@@ -14,8 +14,34 @@ const addRoom = async (roomData, token) => {
   return response.data;
 };
 
+//  Get single room
+
+const getSingleRoom = async (roomId, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.get(API_URL + roomId, config);
+  return response.data;
+};
+
+// Update room
+
+const updateRoom = async (roomData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.patch(API_URL + roomData._id, roomData, config);
+  return response.data;
+};
+
 const roomService = {
   addRoom,
+  getSingleRoom,
+  updateRoom,
 };
 
 export default roomService;

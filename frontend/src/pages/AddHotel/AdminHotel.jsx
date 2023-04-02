@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 import AddHotel from "./AddHotel";
-import AdminRoom from "./AdminRoom";
+import DashRoom from "./DashRoom";
 
 const AdminHotel = () => {
   const navigate = useNavigate();
@@ -29,8 +29,6 @@ const AdminHotel = () => {
     dispatch(reset());
   }, [hotelId]);
 
-  console.log(singleHotel);
-
   return (
     <>
       <AddHotel fetchedHotelData={singleHotel} editMode />
@@ -38,20 +36,27 @@ const AdminHotel = () => {
         <div className="container">
           <div className="admin_rooms-wrapper wrapper ver shadowed_box">
             <div className="admin_rooms-top">
-              <div className="gen_title">Номера</div>
+              <div
+                className="gen_title"
+                onClick={() => console.log(singleHotel)}
+              >
+                Номера
+              </div>
               <Link
                 to={`/dashboard/hotel/${hotelId}/add-room`}
+                target={"_blank"}
                 className="primary-btn"
               >
                 Добавить номер
               </Link>
             </div>
             <div className="admin_rooms-grid">
-              {singleHotel && singleHotel.rooms
+              {singleHotel.rooms
                 ? singleHotel.rooms.map((room, idx) => {
-                    <AdminRoom room={room} />;
+                    return <DashRoom room={room} />;
                   })
                 : null}
+              {console.log(singleHotel.rooms)}
             </div>
           </div>
         </div>

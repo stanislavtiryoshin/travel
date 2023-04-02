@@ -15,7 +15,7 @@ import tag5 from "../../assets/tags/tag5.svg";
 
 import { getAdminHotels, reset } from "../../features/hotel/hotelSlice";
 
-const HotelSearch = () => {
+const HotelSearch = ({ hotelMode, tourMode, campMode, sanMode }) => {
   const dispatch = useDispatch();
 
   const [panelTag, setPanelTag] = useState("");
@@ -98,7 +98,7 @@ const HotelSearch = () => {
   };
 
   const handleSearch = () => {
-    dispatch(getAdminHotels(searchTerms));
+    if (hotelMode) dispatch(getAdminHotels(searchTerms));
     console.log(searchTerms);
   };
 

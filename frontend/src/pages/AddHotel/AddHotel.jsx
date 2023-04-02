@@ -47,8 +47,6 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
     setHotelData(newData);
   }, [fetchedHotelData, editMode]);
 
-  console.log(hotelData);
-
   const dispatch = useDispatch();
 
   const [allLocations, setAllLocations] = useState([]);
@@ -127,8 +125,6 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
 
   const navigate = useNavigate();
 
-  console.log(hotelData);
-
   return (
     <>
       <div className="header_bot">
@@ -145,7 +141,6 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
                   !editMode
                     ? dispatch(addHotel(hotelData)).then((res) => {
                         navigate(`/dashboard/hotel/${res.payload._id}`);
-                        console.log(res.payload);
                       })
                     : dispatch(updateHotel(hotelData));
                 }}
