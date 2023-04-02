@@ -479,7 +479,7 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
                 <div className="input_box">
                   <div className="input_title">Удобства</div>
                   <select
-                    name="foodType"
+                    name="comforts"
                     id=""
                     className="primary-input"
                     value={hotelData.comforts}

@@ -478,27 +478,51 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   <div className="input_row">
                     <div className="service-input full">
                       <label htmlFor="service">Удобства</label>
-                      <Select
-                        options={roomServiceOpts}
-                        placeholder="Введите значение"
-                        value={options}
-                        onChange={(option) => {
-                          setOptions(option);
-                        }}
-                        isSearchable={true}
-                        isMulti
-                        useDragHandle
-                        axis="xy"
-                        styles={{
-                          control: (baseStyles) => ({
-                            ...baseStyles,
-                            width: `${550}px`,
-                            border: "none",
-                            "background-color": "rgb(249, 249, 249)",
-                            outline: "none",
-                          }),
-                        }}
-                      />
+                      {!editMode ? (
+                        <Select
+                          options={roomServiceOpts}
+                          placeholder="Введите значение"
+                          value={options}
+                          onChange={(option) => {
+                            setOptions(option);
+                          }}
+                          isSearchable={true}
+                          isMulti
+                          useDragHandle
+                          axis="xy"
+                          styles={{
+                            control: (baseStyles) => ({
+                              ...baseStyles,
+                              width: `${550}px`,
+                              border: "none",
+                              "background-color": "rgb(249, 249, 249)",
+                              outline: "none",
+                            }),
+                          }}
+                        />
+                      ) : (
+                        <Select
+                          options={roomServiceOpts}
+                          placeholder="Введите значение"
+                          value={roomData.roomServices}
+                          onChange={(option) => {
+                            setOptions(option);
+                          }}
+                          isSearchable={true}
+                          isMulti
+                          useDragHandle
+                          axis="xy"
+                          styles={{
+                            control: (baseStyles) => ({
+                              ...baseStyles,
+                              width: `${550}px`,
+                              border: "none",
+                              "background-color": "rgb(249, 249, 249)",
+                              outline: "none",
+                            }),
+                          }}
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
