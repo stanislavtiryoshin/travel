@@ -8,48 +8,31 @@ import addhotel from "../../assets/addhotel.png";
 import { Input } from "../../components/Form";
 import Selector from "../AddHotel/Select";
 import {
-  useAddTourMutation,
-  // useGetCategoryQuery,
   useGetHotelServiceQuery,
   useGetHotelsQuery,
   useGetLocationQuery,
   useGetFoodQuery,
 } from "../../features/services/base.service";
 import { useSelector } from "react-redux";
+import {
+  useEditTourByIdMutation,
+  useGetTourByIdQuery,
+} from "../../features/services/edit.service";
 
-const AddTour = () => {
+import { useParams, useNavigate } from "react-router-dom";
+
+const EditTour = () => {
   const { data: food = [], isLoading: isLoadFood } = useGetFoodQuery();
 
-  const [tourData, setTourData] = React.useState({
-    locationId: null,
-    name: "",
-    locationFeature: "",
-    departureCity: "",
-    mapLink: "",
-    rating: null,
-    ratingVotes: 0,
-    description: "",
-    duration: "",
-    program: [],
-    food: null,
-    kidFoodPrice: null,
-    adultFoodPrice: null,
-    hotelId: null,
-    comforts: [],
-    kids: {
-      withKids: true,
-      babyMaxAge: null,
-      kidMaxAge: null,
-      kidDiscount: {
-        discountType: "В тенге",
-        discountValue: 2000,
-      },
-    },
-    payment: {
-      paymentType: "",
-      prepayment: null,
-    },
-  });
+  const { id } = useParams("id");
+
+  const { data: tourIdData, isLoading: IdTourLoaded } = useGetTourByIdQuery(id);
+  const [tourData, setTourData] = React.useState({});
+
+  useEffect(() => {
+    if (!IdTourLoaded) setTourData(tourIdData);
+  }, [IdTourLoaded]);
+
   const { data: hotels = [], isLoading: isHotelLoaded } = useGetHotelsQuery();
   const { data: allLocations = [], isLoading } = useGetLocationQuery();
   const { data: service, isLoading: isLoadService } = useGetHotelServiceQuery();
@@ -66,7 +49,7 @@ const AddTour = () => {
     },
   ]);
 
-  const [createTour, { isLoading: addLoad }] = useAddTourMutation();
+  const [editTour, { isLoading: addLoad }] = useEditTourByIdMutation();
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -93,8 +76,10 @@ const AddTour = () => {
       token: user.token,
       comforts: [...JSON.parse(localStorage.getItem("comforts"))],
       food: [...JSON.parse(localStorage.getItem("food"))],
+      id,
+      token: user.token,
     };
-    await createTour(values);
+    await editTour(values);
 
     if (!addLoad) {
       localStorage.removeItem("comforts");
@@ -116,12 +101,18 @@ const AddTour = () => {
                   <div className="input_row">
                     <Input
                       placeholder="Название"
+                      value={tourData && tourData.name && tourData.name}
                       onChange={(e) =>
                         setTourData({ ...tourData, name: e.target.value })
                       }
                     />
                     <Input
                       placeholder="Особенность местоположения"
+                      value={
+                        tourData &&
+                        tourData.locationFeature &&
+                        tourData.locationFeature
+                      }
                       onChange={(e) =>
                         setTourData({
                           ...tourData,
@@ -136,7 +127,9 @@ const AddTour = () => {
                       type="text"
                       placeholder="Местоположение"
                       name="destination"
-                      value={tourData.locationId}
+                      value={
+                        tourData && tourData.locationId && tourData.locationId
+                      }
                       onChange={(e) => {
                         console.log(e.target.value);
                         setTourData({
@@ -147,13 +140,27 @@ const AddTour = () => {
                       // onSelect={(e) => console.log(e.target.value)}
                     >
                       {allLocations.map((location, idx) => (
-                        <option value={location._id} key={location._id}>
+                        <option
+                          value={location._id}
+                          selected={
+                            tourIdData &&
+                            tourIdData.locationId &&
+                            tourIdData.locationId._id &&
+                            location._id === tourIdData.locationId._id
+                          }
+                          key={location._id}
+                        >
                           {location.locationName}
                         </option>
                       ))}
                     </select>
                     <Input
                       placeholder="Город вылета"
+                      value={
+                        tourData &&
+                        tourData.departureCity &&
+                        tourData.departureCity
+                      }
                       onChange={(e) =>
                         setTourData({
                           ...tourData,
@@ -163,6 +170,7 @@ const AddTour = () => {
                     />
                     <Input
                       placeholder="Ссылка на карту"
+                      value={tourData && tourData.mapLink && tourData.mapLink}
                       onChange={(e) =>
                         setTourData({ ...tourData, mapLink: e.target.value })
                       }
@@ -171,6 +179,8 @@ const AddTour = () => {
                   <div className="input_row">
                     <Input
                       placeholder="Рейтинг тура"
+                      value={tourData && tourData.rating && tourData.rating}
+                      type="number"
                       onChange={(e) =>
                         setTourData({ ...tourData, rating: e.target.value })
                       }
@@ -183,9 +193,30 @@ const AddTour = () => {
                         setTourData({ ...tourData, duration: e.target.value })
                       }
                     >
-                      <option value={1}>1 день</option>
-                      <option value={2}>2 дня</option>
-                      <option value={3}>3 дня</option>
+                      <option
+                        selected={
+                          tourIdData && 1 === Number(tourIdData.duration)
+                        }
+                        value={1}
+                      >
+                        1 день
+                      </option>
+                      <option
+                        selected={
+                          tourIdData && 2 === Number(tourIdData.duration)
+                        }
+                        value={2}
+                      >
+                        2 дня
+                      </option>
+                      <option
+                        selected={
+                          tourIdData && 3 === Number(tourIdData.duration)
+                        }
+                        value={3}
+                      >
+                        3 дня
+                      </option>
                     </select>
                   </div>
                   <div className="input_row">
@@ -193,6 +224,9 @@ const AddTour = () => {
                       className="primary-input"
                       cols="30"
                       rows="5"
+                      value={
+                        tourData && tourData.description && tourData.description
+                      }
                       placeholder="Описание"
                       onChange={(e) =>
                         setTourData({
@@ -215,15 +249,7 @@ const AddTour = () => {
                 <div className="input_box">
                   <div className="input_title">Отель</div>
 
-                  <select
-                    className="primary-input"
-                    onChange={(e) =>
-                      setTourData((prev) => ({
-                        ...prev,
-                        hotelId: e.target.value,
-                      }))
-                    }
-                  >
+                  <select className="primary-input">
                     <option value="" disabled selected>
                       Выбрать из списка
                     </option>
@@ -284,10 +310,28 @@ const AddTour = () => {
                         });
                       }}
                     >
-                      <option value={false} selected>
+                      <option
+                        selected={
+                          tourIdData &&
+                          tourIdData.kids &&
+                          tourIdData.kids.withKids &&
+                          false === tourIdData.kids.withKids
+                        }
+                        value={false}
+                      >
                         Можно с детьми
                       </option>
-                      <option value={true}>Без детей</option>
+                      <option
+                        selected={
+                          tourIdData &&
+                          tourIdData.kids &&
+                          tourIdData.kids.withKids &&
+                          true === tourIdData.kids.withKids
+                        }
+                        value={true}
+                      >
+                        Без детей
+                      </option>
                     </select>
 
                     <select
@@ -458,4 +502,4 @@ const AddTour = () => {
   );
 };
 
-export default AddTour;
+export default EditTour;

@@ -42,7 +42,7 @@ const tourSchema = Schema({
     type: String,
   },
   duration: {
-    type: String,
+    type: Number,
   },
   rooms: [
     {
@@ -75,12 +75,12 @@ const tourSchema = Schema({
       type: Number,
     },
   },
-  hotel: {
-    hotelId: {
-      type: Schema.Types.ObjectId,
-      ref: "Hotel",
-    },
+
+  hotelId: {
+    type: Schema.Types.ObjectId,
+    ref: "Hotel",
   },
+
   food: [
     {
       type: Schema.Types.ObjectId,

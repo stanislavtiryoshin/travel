@@ -13,6 +13,7 @@ import AdminHotel from "./pages/AddHotel/AdminHotel";
 import AddRoom from "./pages/AddRoom/AddRoom";
 import AddCamp from "./pages/AddCamp/AddCamp";
 import EditCamp from "./pages/AddCamp/EditCamp";
+import EditTour from "./pages/AddTour/EditTour";
 import AdminRoom from "./pages/AddRoom/AdminRoom";
 
 function App() {
@@ -27,7 +28,9 @@ function App() {
           <Route path="/hotels/:hotelId" element={<Hotel />} />
           <Route path="/orders/new-order" element={<Order />} />
           <Route path="/dashboard/add-hotel" element={<AddHotel />} />
+
           <Route path="/dashboard/add-tour" element={<AddTour />} />
+          <Route path="/dashboard/tour/:id" element={<EditTour />} />
 
           <Route path="/dashboard/add-camp" element={<AddCamp />} />
           <Route path="/dashboard/camp/:id" element={<EditCamp />} />
