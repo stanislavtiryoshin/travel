@@ -13,6 +13,7 @@ import {
   useGetHotelServiceQuery,
   useGetHotelsQuery,
   useGetLocationQuery,
+  useGetFoodQuery,
 } from "../../features/services/base.service";
 import { useSelector } from "react-redux";
 
