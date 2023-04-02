@@ -81,13 +81,14 @@ const tourSchema = Schema({
       ref: "Hotel",
     },
   },
+  food: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Food",
+    },
+  ],
+
   comforts: [String],
-  // tourProgram: {
-  //   programId: {
-  //     type: Schema.Types.ObjectId,
-  //     ref: "Program",
-  //   },
-  // },
 });
 
 module.exports = new model("Tour", tourSchema);

@@ -52,7 +52,6 @@ const AddTour = () => {
   const { data: hotels = [], isLoading: isHotelLoaded } = useGetHotelsQuery();
   const { data: allLocations = [], isLoading } = useGetLocationQuery();
   const { data: service, isLoading: isLoadService } = useGetHotelServiceQuery();
-
   const [allServices, setAllServices] = React.useState([]);
   const [withKid, setWithKid] = React.useState(false);
 
@@ -91,12 +90,14 @@ const AddTour = () => {
       ...tourData,
       program: [...addedServices],
       token: user.token,
-      comforts: [JSON.parse(localStorage.getItem("comforts"))],
+      comforts: [...JSON.parse(localStorage.getItem("comforts"))],
+      food: [...JSON.parse(localStorage.getItem("food"))],
     };
     await createTour(values);
 
     if (!addLoad) {
       localStorage.removeItem("comforts");
+      localStorage.removeItem("food");
       alert("Added");
     }
   };
@@ -136,20 +137,19 @@ const AddTour = () => {
                       name="destination"
                       value={tourData.locationId}
                       onChange={(e) => {
-                        setTourData({ ...tourData, locationId });
+                        console.log(e.target.value);
+                        setTourData({
+                          ...tourData,
+                          locationId: e.target.value,
+                        });
                       }}
+                      // onSelect={(e) => console.log(e.target.value)}
                     >
-                      {!isLoading ? (
-                        allLocations.map((location, idx) => {
-                          return (
-                            <option value={location._id} key={idx}>
-                              {location.locationName}
-                            </option>
-                          );
-                        })
-                      ) : (
-                        <p>Locations are loading</p>
-                      )}
+                      {allLocations.map((location, idx) => (
+                        <option value={location._id} key={location._id}>
+                          {location.locationName}
+                        </option>
+                      ))}
                     </select>
                     <Input
                       placeholder="Город вылета"
@@ -240,7 +240,7 @@ const AddTour = () => {
                   <div className="input_title">Тип питания</div>
 
                   <Selector
-                    optionList={food}
+                    foodOption={food}
                     placeholder={`Введите значение`}
                     styles={{
                       control: (baseStyles) => ({

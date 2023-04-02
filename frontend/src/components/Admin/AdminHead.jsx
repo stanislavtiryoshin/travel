@@ -1,6 +1,7 @@
 import React from "react";
 
 export const AdminHead = (props) => {
+  console.log(props);
   return (
     <div className="header_bot">
       <div className="container">

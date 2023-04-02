@@ -53,6 +53,7 @@ const Navbar = () => {
     { id: 0, label: "Заявки" },
     { id: 1, label: "Отели" },
     { id: 2, label: "1-3 туры" },
+    { id: 3, label: "Лагеря" },
   ];
 
   const renderTabs = () => {

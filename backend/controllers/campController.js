@@ -8,6 +8,8 @@ const bcrypt = require("bcryptjs");
 
 const getCamps = (req, res) => {
   Camp.find({})
+    .populate("food.foodId")
+    .populate("locationId")
     .then((response) => res.status(200).json(response))
     .catch(() => res.sendStatus(403));
 };
@@ -59,7 +61,6 @@ const getSingleCamp = (req, res) => {
   Camp.findById(id)
     .populate("food.foodId")
     .populate("locationId")
-    .populate("campProgram.programId")
     .then((response) => res.status(200).json(response))
     .catch(() => res.sendStatus(403));
 };

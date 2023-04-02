@@ -14,8 +14,11 @@ import {
   useGetFoodQuery,
 } from "../../features/services/base.service";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const AddCamp = () => {
+  const navigate = useNavigate();
+
   const [campData, setCampData] = React.useState({
     locationId: null,
     name: "",
@@ -28,8 +31,8 @@ const AddCamp = () => {
     description: "",
     program: [],
     food: null,
-    kidFoodPrice: null,
-    adultFoodPrice: null,
+    // kidFoodPrice: null,
+    // adultFoodPrice: null,
     comforts: [],
     kids: {
       forWho: "Для детей",
@@ -86,17 +89,19 @@ const AddCamp = () => {
       program: [...addedServices],
       token: user.token,
       comforts: [...JSON.parse(localStorage.getItem("comforts"))],
+      food: [...JSON.parse(localStorage.getItem("food"))],
     };
+    console.log(values);
     await createCamp(values);
-    // console.log(values);
     if (!addLoad) {
       alert("Added");
       localStorage.removeItem("comforts");
+      localStorage.removeItem("food");
     }
   };
 
   useEffect(() => {
-    console.log(camp);
+    if (camp) console.log(`/dashboard/camp/${camp._id}`);
   }, [addLoad]);
 
   if (isLoadFood) {
@@ -104,7 +109,7 @@ const AddCamp = () => {
   }
   return (
     <>
-      <AdminHead text="Создание лагеря" onClick={() => handleSubmit()} />
+      <AdminHead text="Создание лагеря" onClick={handleSubmit} />
       <div className="add_hotel-page page">
         <section className="add_gen-section">
           <div className="container">
@@ -137,20 +142,19 @@ const AddCamp = () => {
                       name="destination"
                       value={campData.locationId}
                       onChange={(e) => {
-                        setCampData({ ...campData, locationId });
+                        setCampData({
+                          ...campData,
+                          locationId: e.target.value,
+                        });
                       }}
                     >
-                      {!isLoading ? (
-                        allLocations.map((location, idx) => {
-                          return (
-                            <option value={location._id} key={idx}>
-                              {location.locationName}
-                            </option>
-                          );
-                        })
-                      ) : (
-                        <p>Locations are loading</p>
-                      )}
+                      {allLocations.map((location, idx) => {
+                        return (
+                          <option value={location._id} key={idx}>
+                            {location.locationName}
+                          </option>
+                        );
+                      })}
                     </select>
 
                     <Input
@@ -218,7 +222,7 @@ const AddCamp = () => {
                   <div className="input_title">Тип питания</div>
 
                   <Selector
-                    optionList={food}
+                    foodOption={food}
                     placeholder={`Введите значение`}
                     styles={{
                       control: (baseStyles) => ({
