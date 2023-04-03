@@ -1,8 +1,9 @@
 import React, { useMemo } from "react";
 
-import { useRowSelect, useSortBy, useTable } from "react-table";
+import { useSortBy, useTable } from "react-table";
 import styles from "./Requests.module.scss";
 import sortButton from "./button.svg";
+import trash from "./trash.svg";
 
 const fakeData = [
   {
@@ -45,6 +46,16 @@ const fakeData = [
 
 const fakeColumns = [
   {
+    id: "column0",
+    header: () => <input type="checkbox" />,
+    Cell: ({ row }) => (
+      <input
+        type="checkbox"
+        onChange={(e) => e.target.checked && console.log(row.original._id)}
+      />
+    ),
+  },
+  {
     id: "column1",
     header: "ID заявки",
     accessor: "_id",
@@ -77,7 +88,7 @@ const fakeColumns = [
   {
     id: "column7",
     header: "Подробности",
-    cell: (row) => <button>Открыть заказ</button>,
+    Cell: ({ row }) => <button>Открыть заказ</button>,
   },
   {
     id: "column8",
@@ -86,8 +97,8 @@ const fakeColumns = [
   },
   {
     id: "column9",
-    header: "...",
-    cell: (row) => <img src={`./trash.svg`} />,
+    header: () => <img src={trash} />,
+    Cell: ({ row }) => <button>...</button>,
   },
 ];
 
@@ -120,38 +131,35 @@ const RequestTable = ({ data, columns }) => {
     headerGroups,
     rows,
     prepareRow,
-    state: { selectedRowIds },
+    // state: { selectedRowIds },
   } = useTable(
     {
       columns: columnsData,
       data: datas,
     },
-    useSortBy,
-    useRowSelect,
-    (hooks) => {
-      hooks.visibleColumns.push((columns) => [
-        // Let's make a column for selection
-        {
-          id: "selection",
-          // The header can use the table's getToggleAllRowsSelectedProps method
-          // to render a checkbox
-          header: ({ getToggleAllRowsSelectedProps }) => (
-            <div>
-              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-            </div>
-          ),
-          // The cell can use the individual row's getToggleRowSelectedProps method
-          // to the render a checkbox
-          Cell: ({ row }) => (
-            <div>
-              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-            </div>
-          ),
-        },
-        ...columns,
-      ]);
-    }
+    useSortBy
+    // useRowSelect,
+    // (hooks) => {
+    //   hooks.visibleColumns.push((columns) => [
+    //     {
+    //       id: "selection",
+    //       header: ({ getToggleAllRowsSelectedProps }) => (
+    //         <div>
+    //           <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+    //         </div>
+    //       ),
+    //       Cell: ({ row }) => (
+    //         <div>
+    //           <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+    //         </div>
+    //       ),
+    //     },
+    //     ...columns,
+    //   ]);
+    // }
   );
+
+  // console.log(`selected row ids: ${Object.keys(selectedRowIds)}`);
 
   return (
     <div className="container">
