@@ -15,7 +15,7 @@ import tag5 from "../../assets/tags/tag5.svg";
 
 import { getAdminHotels, reset } from "../../features/hotel/hotelSlice";
 
-const HotelSearch = ({ hotelMode, tourMode, campMode, sanMode }) => {
+const HotelSearch = ({ hotelMode, tourMode, campMode, sanMode, reqMode }) => {
   const dispatch = useDispatch();
 
   const [panelTag, setPanelTag] = useState("");
@@ -106,15 +106,26 @@ const HotelSearch = ({ hotelMode, tourMode, campMode, sanMode }) => {
     <section className="dash_search_section">
       <div className="container">
         <div className="dash_search_wrapper wrapper ver">
-          <div className="dash_heading">Отели</div>
-          <div className="search_box">
+          <div className="dash_heading">{reqMode ? "Заявки" : "Отели"}</div>
+          <div
+            className="search_box"
+            style={
+              reqMode && {
+                width: "1000px",
+              }
+            }
+          >
             <div className="search_bot">
               <div className="search_col">
                 <div className="search_col-content">
                   <div className="search_col-bot">
                     <input
                       type="text"
-                      placeholder="Название или ID"
+                      placeholder={
+                        reqMode
+                          ? "Поиск по имени или названию"
+                          : "Название или ID"
+                      }
                       name="origin"
                       value={searchTerms.name}
                       onChange={(e) => {
@@ -127,6 +138,23 @@ const HotelSearch = ({ hotelMode, tourMode, campMode, sanMode }) => {
                   </div>
                 </div>
               </div>
+
+              {reqMode && (
+                <div className="search_col">
+                  <div className="search_col-content">
+                    <div className="search_col-top">Тип услуги</div>
+                    <div className="search_col-bot">
+                      <select type="text" name="services">
+                        <option selected>Отель</option>
+                        <option>Тур (если отель с туром)</option>
+                        <option>1-3 тур</option>
+                        <option>Санаторий</option>
+                        <option>Лагерь</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="search_col">
                 <div className="search_col-content">
@@ -161,27 +189,64 @@ const HotelSearch = ({ hotelMode, tourMode, campMode, sanMode }) => {
                   </div>
                 </div>
               </div>
-              <div className="search_col">
-                <div className="search_col-content">
-                  <div className="search_col-top">Мин. возраст</div>
-                  <div className="search_col-bot">
-                    <input
-                      type="number"
-                      placeholder="Любой"
-                      min={0}
-                      max={18}
-                      name="number"
-                      value={searchTerms.minAge}
-                      onChange={(e) => {
-                        setSearchTerms({
-                          ...searchTerms,
-                          minAge: e.target.value,
-                        });
-                      }}
-                    />
+
+              {reqMode && (
+                <div className="search_col">
+                  <div className="search_col-content">
+                    <div className="search_col-top">Статус</div>
+                    <div className="search_col-bot">
+                      <select type="text" name="status">
+                        <option selected>Любой статус</option>
+                        <option>Заявка</option>
+                        <option>Отклонен</option>
+                        <option>Оплачено</option>
+                        <option>На паузе</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
+
+              {reqMode ? (
+                <div className="search_col">
+                  <div className="search_col-content">
+                    <div className="search_col-top">Когда?</div>
+                    <div className="search_col-bot">
+                      <label htmlFor="dates">Любые даты</label>
+                      <input
+                        type="date"
+                        placeholder="Любые даты"
+                        hidden
+                        id="dates"
+                        name="dates"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="search_col">
+                  <div className="search_col-content">
+                    <div className="search_col-top">Мин. возраст</div>
+                    <div className="search_col-bot">
+                      <input
+                        type="number"
+                        placeholder="Любой"
+                        min={0}
+                        max={18}
+                        name="number"
+                        value={searchTerms.minAge}
+                        onChange={(e) => {
+                          setSearchTerms({
+                            ...searchTerms,
+                            minAge: e.target.value,
+                          });
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <button
                 className="primary-btn yellow"
                 onClick={() => {

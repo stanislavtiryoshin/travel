@@ -24,34 +24,34 @@ const Table = ({ data, isUploading }) => {
   return (
     <div className={style.container}>
       <table className={style.info}>
-        <tr>
-          <th>
+        <tr className={style.tr_th}>
+          <th className={style.tr_th}>
             <img src={calendar} alt="calendar" /> <span>Номера и периоды</span>
           </th>
         </tr>
-        <tr>
-          <th>Стандарт одноместный</th>
+        <tr className={style.tr_th}>
+          <th className={style.tr_th}>Стандарт одноместный</th>
         </tr>
-        <tr>
-          <th>Эконом 1 комн. 2-х мест.</th>
+        <tr className={style.tr_th}>
+          <th className={style.tr_th}>Эконом 1 комн. 2-х мест.</th>
         </tr>
-        <tr>
-          <th>Эконом 1 комн. 3-х мест.</th>
+        <tr className={style.tr_th}>
+          <th className={style.tr_th}>Эконом 1 комн. 3-х мест.</th>
         </tr>
-        <tr>
-          <th>Эконом 1 комн. 4-х мест.</th>
+        <tr className={style.tr_th}>
+          <th className={style.tr_th}>Эконом 1 комн. 4-х мест.</th>
         </tr>
-        <tr>
-          <th>Стандарт 1 комн. 2-х мест.</th>
+        <tr className={style.tr_th}>
+          <th className={style.tr_th}>Стандарт 1 комн. 2-х мест.</th>
         </tr>
-        <tr>
-          <th>Стандарт 1 комн. 3-х мест.</th>
+        <tr className={style.tr_th}>
+          <th className={style.tr_th}>Стандарт 1 комн. 3-х мест.</th>
         </tr>
-        <tr>
-          <th>Комфорт 1 комн. 3-х мест.</th>
+        <tr className={style.tr_th}>
+          <th className={style.tr_th}>Комфорт 1 комн. 3-х мест.</th>
         </tr>
-        <tr>
-          <th>Люкс</th>
+        <tr className={style.tr_th}>
+          <th className={style.tr_th}>Люкс</th>
         </tr>
       </table>
       {/* Period */}
@@ -65,35 +65,49 @@ const Table = ({ data, isUploading }) => {
           {prices.length > 0 ? (
             prices.map((price) => (
               <table className={style.period}>
-                <tr>
-                  <th>
+                <tr className={style.tr_th}>
+                  <th className={style.tr_th}>
                     {price.startDay}.{price.startMonth} - {price.endDay}.
                     {price.endMonth}
                   </th>
                 </tr>
-                <tr>
-                  <th>{format.format(price.stanOnePlace)}</th>
+                <tr className={style.tr_th}>
+                  <th className={style.tr_th}>
+                    {format.format(price.stanOnePlace)}
+                  </th>
                 </tr>
-                <tr>
-                  <th>{format.format(price.ecoOneRoomTwoPlace)}</th>
+                <tr className={style.tr_th}>
+                  <th className={style.tr_th}>
+                    {format.format(price.ecoOneRoomTwoPlace)}
+                  </th>
                 </tr>
-                <tr>
-                  <th>{format.format(price.ecoOneRoomThreePlace)}</th>
+                <tr className={style.tr_th}>
+                  <th className={style.tr_th}>
+                    {format.format(price.ecoOneRoomThreePlace)}
+                  </th>
                 </tr>
-                <tr>
-                  <th>{format.format(price.ecoOneRoomFourPlace)}</th>
+                <tr className={style.tr_th}>
+                  <th className={style.tr_th}>
+                    {format.format(price.ecoOneRoomFourPlace)}
+                  </th>
                 </tr>
-                <tr>
-                  <th>{format.format(price.stanOneRoomTwoPlace)}</th>
+                <tr className={style.tr_th}>
+                  <th className={style.tr_th}>
+                    {format.format(price.stanOneRoomTwoPlace)}
+                  </th>
                 </tr>
-                <tr>
-                  <th>{format.format(price.stanOneRoomThreePlace)}</th>
+                <tr className={style.tr_th}>
+                  <th className={style.tr_th}>
+                    {format.format(price.stanOneRoomThreePlace)}
+                  </th>
                 </tr>
-                <tr>
-                  <th>{format.format(price.comfOneRoomThreePlace)}</th>
+                <tr className={style.tr_th}>
+                  <th className={style.tr_th}>
+                    {format.format(price.comfOneRoomThreePlace)}
+                  </th>
                 </tr>
-                <tr>
-                  <th>{format.format(price.Luxe)}</th>
+                <tr className={style.tr_th}>
+                  <th className={style.tr_th}>{format.format(price.Luxe)}</th>
                 </tr>
               </table>
             ))

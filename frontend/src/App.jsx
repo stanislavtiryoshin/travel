@@ -16,6 +16,7 @@ import EditCamp from "./pages/AddCamp/EditCamp";
 import EditTour from "./pages/AddTour/EditTour";
 import AdminRoom from "./pages/AddRoom/AdminRoom";
 import Table from "./components/Table";
+import Requests from "./pages/Requests/Requests";
 
 function App() {
   return (
@@ -42,7 +43,7 @@ function App() {
             element={<AddRoom />}
           />
           <Route path="/dashboard/room/:roomId" element={<AdminRoom />} />
-          <Route path="/test" element={<Table />} />
+          <Route path="/dashboard/requests" element={<Requests />} />
         </Routes>
       </Layout>
     </Router>
