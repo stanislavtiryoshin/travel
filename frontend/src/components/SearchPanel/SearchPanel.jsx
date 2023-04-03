@@ -24,6 +24,8 @@ import tag3 from "../../assets/tags/tag3.svg";
 import tag4 from "../../assets/tags/tag4.svg";
 import tag5 from "../../assets/tags/tag5.svg";
 
+import line from "../../assets/hero/line.svg";
+
 import search1 from "../../assets/search/search1.svg";
 import search2 from "../../assets/search/search2.svg";
 import search3 from "../../assets/search/search3.svg";
@@ -34,28 +36,7 @@ import {
   reset,
 } from "../../features/hotel/hotelSlice";
 
-const tags = [
-  {
-    icon: tag1,
-    text: "Туры",
-  },
-  {
-    icon: tag2,
-    text: "1-3 дневные",
-  },
-  {
-    icon: tag3,
-    text: "Санатории",
-  },
-  {
-    icon: tag4,
-    text: "Лагеря",
-  },
-  {
-    icon: tag5,
-    text: "Отели",
-  },
-];
+import { tags } from "./tags";
 
 const SearchPanel = () => {
   const dispatch = useDispatch();
@@ -148,26 +129,24 @@ const SearchPanel = () => {
     daysAmount,
     startDate,
   }) => {
-    dispatch(
-      getSearchedHotels({ locationId, peopleAmount, daysAmount, startDate })
-    );
+    if (panelTag === "Отели") {
+      dispatch(
+        getSearchedHotels({ locationId, peopleAmount, daysAmount, startDate })
+      );
+    }
   };
-
-  // const onSearchClick = (locationId, peopleAmount, daysAmount, startDate) => {
-  //   handleSearch({ locationId, peopleAmount, daysAmount, startDate });
-  //   console.log({ locationId, peopleAmount, daysAmount, startDate });
-  // };
 
   return (
     <div className="search_box">
       <div className="search_top">
         {tags.map((tag, id) => {
+          const isActive = panelTag === tag.text;
           return (
             <SearchTag
               key={id}
               icon={tag.icon}
               text={tag.text}
-              active={panelTag === tag.text ? true : false}
+              active={isActive}
               handleTagChange={handleTagChange}
             />
           );
@@ -191,6 +170,7 @@ const SearchPanel = () => {
             </div>
           </div>
         </div>
+        <img src={line} className="line" alt="" />
         <div className="search_col">
           <img src={search2} alt="" className="search_bot-icon" />
           <div className="search_col-content">
@@ -227,6 +207,7 @@ const SearchPanel = () => {
             </div>
           </div>
         </div>
+        <img src={line} className="line" alt="" />
         <div className="search_col">
           <img src={search3} alt="" className="search_bot-icon" />
           <div className="search_col-content">
@@ -243,6 +224,7 @@ const SearchPanel = () => {
             </div>
           </div>
         </div>
+        <img src={line} className="line" alt="" />
         <div className="search_col">
           <img src={search4} alt="" className="search_bot-icon" />
           <div className="search_col-content">
@@ -266,6 +248,7 @@ const SearchPanel = () => {
             </div>
           </div>
         </div>
+        <img src={line} className="line" alt="" />
         <div className="search_col">
           <button
             className="primary-btn yellow"

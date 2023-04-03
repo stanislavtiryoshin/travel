@@ -12,6 +12,10 @@ import person2 from "../../assets/person2.svg";
 import calendar from "../../assets/calendar.svg";
 import plane from "../../assets/plane.svg";
 import star from "../../assets/star.svg";
+import check from "../../assets/filter/check.svg";
+
+import "./Filter.scss";
+import CheckBtn from "./CheckBtn";
 
 const Filter = () => {
   const selectedHotels = useSelector(selectHotels);
@@ -62,7 +66,9 @@ const Filter = () => {
       });
   }, []);
 
-  // console.log(filterData);
+  const [currentLocation, setCurrentLocation] = useState("");
+
+  const stars = [5, 4, 3, 2];
 
   return (
     <div className="filter_box">
@@ -70,7 +76,7 @@ const Filter = () => {
         <div className="filter_title">Ваш запрос</div>
         <div className="icon_row row">
           <img src={plane} alt="" />
-          {currentLocation?.locationName ? (
+          {currentLocation && currentLocation?.locationName ? (
             <>
               {currentLocation?.locationName} &#183;{" "}
               {currentLocation?.locationCountry}
@@ -143,28 +149,34 @@ const Filter = () => {
         <div className="filter_title">Питание</div>
         {allFoods
           ? allFoods.map((food, idx) => {
+              const isActive = filterObj.filterFood.includes(food._id);
               return (
                 <div
                   key={food._id}
                   className="filter_content"
                   onClick={() => {
-                    if (filterObj.filterFood.includes(food._id)) {
+                    console.log(food._id);
+                    if (isActive) {
                       setFilterObj((prevState) => ({
                         ...prevState,
                         filterFood: prevState.filterFood.filter(
-                          (el) => el !== food.foodName
+                          (el) => el !== food._id
                         ),
                       }));
                     } else {
-                      setFilterObj((prevState) => ({
-                        ...prevState,
-                        filterFood: [...prevState.filterFood, food.foodName],
-                      }));
+                      setFilterObj({
+                        ...filterObj,
+                        filterFood: [...filterObj.filterFood, food._id],
+                      });
                     }
                   }}
                 >
-                  <button className="check-btn"></button>
-                  {food.foodName}
+                  <button
+                    className={isActive ? "check-btn active" : "check-btn"}
+                  >
+                    {isActive ? <img src={check} alt="" /> : null}
+                  </button>
+                  {food.label}
                 </div>
               );
             })
@@ -176,38 +188,26 @@ const Filter = () => {
           className="filter_content"
           onClick={() => setFilterObj({ ...filterObj, filterStars: null })}
         >
-          <button className="check-btn"></button>
+          <CheckBtn isActive={filterObj.filterStars === null} />
           Любой класс
         </div>
-        <div
-          className="filter_content"
-          onClick={() => setFilterObj({ ...filterObj, filterStars: 5 })}
-        >
-          <button className="check-btn"></button>
-          <HotelStars number={5} />
-        </div>
-        <div
-          className="filter_content"
-          onClick={() => setFilterObj({ ...filterObj, filterStars: 4 })}
-        >
-          <button className="check-btn"></button>
-          <HotelStars number={4} />
-        </div>
-        <div
-          className="filter_content"
-          onClick={() => setFilterObj({ ...filterObj, filterStars: 3 })}
-        >
-          <button className="check-btn"></button>
-          <HotelStars number={3} />
-        </div>
-
-        <div
-          className="filter_content"
-          onClick={() => setFilterObj({ ...filterObj, filterStars: 2 })}
-        >
-          <button className="check-btn"></button>
-          <HotelStars number={2} />
-        </div>
+        {stars
+          ? stars.map((star, idx) => {
+              const isActive = filterObj.filterStars === star;
+              return (
+                <div
+                  key={star}
+                  className="filter_content"
+                  onClick={() =>
+                    setFilterObj({ ...filterObj, filterStars: star })
+                  }
+                >
+                  <CheckBtn isActive={isActive} />
+                  <HotelStars number={star} />
+                </div>
+              );
+            })
+          : null}
       </div>
       <div className="filter_row">
         <div className="filter_title">Тип тура</div>
@@ -221,7 +221,10 @@ const Filter = () => {
         </div>
       </div>
       <div className="filter_row no-border">
-        <button className="primary-btn" onClick={() => handleSetFilterData()}>
+        <button
+          className="primary-btn"
+          onClick={() => handleSetFilterData(filterObj)}
+        >
           Отфильтровать
         </button>
         <button

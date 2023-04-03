@@ -181,7 +181,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
 const insertPrices = asyncHandler(async (req, res) => {
   let totalRecords = [];
   try {
-    fs.createReadStream(__dirname + "/addresses.csv")
+    fs.createReadStream(req.file.path)
       .pipe(csv.parse({ headers: true }))
       .on("error", (error) => console.error(error))
       .on("data", (row) => {
@@ -195,7 +195,7 @@ const insertPrices = asyncHandler(async (req, res) => {
           ];
           // for each roomId, update a document
           for (const roomId of roomsArray) {
-            // filter out only records
+            // filter out only relevant records by roomId
             const relRecords = totalRecords.filter(
               (record) => record.roomId === roomId
             );
@@ -204,7 +204,6 @@ const insertPrices = asyncHandler(async (req, res) => {
               const { roomId, ...rest } = obj;
               return rest;
             });
-            console.log(newRecords);
             // update a Room doc
             const result = await Room.findByIdAndUpdate(
               roomId,

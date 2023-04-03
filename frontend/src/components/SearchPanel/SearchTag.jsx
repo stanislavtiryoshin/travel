@@ -6,7 +6,7 @@ const SearchTag = ({ icon, text, active, handleTagChange }) => {
       className={`search-btn ${active ? "active" : ""}`}
       onClick={() => handleTagChange(text)}
     >
-      <img src={icon} alt="" className="tag_icon" />
+      <div className="tag_icon">{icon}</div>
       {text}
     </button>
   );
