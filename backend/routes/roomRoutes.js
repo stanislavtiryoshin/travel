@@ -5,12 +5,14 @@ const {
   addRoom,
   getSingleRoom,
   updateRoom,
+  insertPrices,
 } = require("../controllers/roomController");
 const { protect } = require("../middleware/authMiddleware");
 
 router.get("/", getRooms);
 router.post("/", protect, addRoom);
 router.get("/:roomId", protect, getSingleRoom);
-router.patch("/:roomid", protect, updateRoom);
+router.patch("/:roomId", protect, updateRoom);
+router.patch("/:roomId/prices", protect, insertPrices);
 
 module.exports = router;

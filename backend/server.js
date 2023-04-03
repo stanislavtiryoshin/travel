@@ -9,6 +9,8 @@ const { errorHandler } = require("./middleware/errorMiddleware");
 const connectDB = require("./config/db");
 const port = process.env.PORT || 5000;
 const nodemailer = require("nodemailer");
+const { parse } = require("csv-parse");
+const fs = require("fs");
 
 connectDB();
 
@@ -17,6 +19,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// New consult request email to administrator
 app.post("/api/send-phone-email", (req, res) => {
   const { phone } = req.body;
 
@@ -47,6 +50,7 @@ app.post("/api/send-phone-email", (req, res) => {
   });
 });
 
+// New order email to administrator
 app.post("/api/send-order-email", (req, res) => {
   const { name, email, phone, hotel, room, sum, startDate, endDate } = req.body;
 
@@ -83,6 +87,7 @@ app.post("/api/send-order-email", (req, res) => {
   });
 });
 
+// Confirmation email to client
 app.post("/api/send-client-email", (req, res) => {
   const { name, email } = req.body;
 

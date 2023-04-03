@@ -72,25 +72,12 @@ const roomSchema = mongoose.Schema(
     },
     prices: [
       {
-        dateStart: {
-          day: {
-            type: Number,
-          },
-          month: {
-            type: Number,
-          },
-        },
-        dateEnd: {
-          day: {
-            type: Number,
-          },
-          month: {
-            type: Number,
-          },
-        },
-        price: {
-          type: Number,
-        },
+        startDay: Number,
+        startMonth: Number,
+        endDay: Number,
+        endMonth: Number,
+        kidPrice: Number,
+        adultPrice: Number,
       },
     ],
     roomDescription: {

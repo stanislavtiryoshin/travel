@@ -162,6 +162,19 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
 
   console.log(singleHotel);
 
+  const [servicesToRender, setServicesToRender] = useState([]);
+
+  useEffect(() => {
+    let services = [];
+    if (roomData.roomServices.length > 0)
+      roomData.roomServices.forEach((tag) =>
+        services.push({ value: tag, label: tag })
+      );
+    setServicesToRender(services);
+  }, [roomData.roomServices]);
+
+  console.log(servicesToRender);
+
   return (
     <>
       <AdminHead
@@ -504,7 +517,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                         <Select
                           options={roomServiceOpts}
                           placeholder="Введите значение"
-                          value={roomData.roomServices}
+                          value={servicesToRender}
                           onChange={(option) => {
                             setOptions(option);
                           }}

@@ -7,6 +7,7 @@ const {
   getSingleHotel,
   getAdminHotels,
   updateHotel,
+  insertPrices,
 } = require("../controllers/hotelController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -16,5 +17,6 @@ router.get("/searched", getSearchedHotels);
 router.get("/admin", getAdminHotels);
 router.patch("/:hotelId", protect, updateHotel);
 router.get("/:id", getSingleHotel);
+router.patch("/:hotelId/prices", protect, insertPrices);
 
 module.exports = router;

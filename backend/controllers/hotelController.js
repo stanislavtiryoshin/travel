@@ -4,6 +4,10 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Hotel = require("../models/hotelModel");
 const Room = require("../models/roomModel");
+const { parse } = require("csv-parse");
+const fs = require("fs");
+const path = require("path");
+const csv = require("fast-csv");
 
 //@desc   Add new hotel
 //@route  POST /api/hotels
@@ -174,6 +178,50 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
   res.status(200).send(hotels);
 });
 
+const insertPrices = asyncHandler(async (req, res) => {
+  let totalRecords = [];
+  try {
+    fs.createReadStream(__dirname + "/addresses.csv")
+      .pipe(csv.parse({ headers: true }))
+      .on("error", (error) => console.error(error))
+      .on("data", (row) => {
+        totalRecords.push(row);
+      })
+      .on("end", async (rowCount) => {
+        try {
+          // create an array of roomIds
+          const roomsArray = [
+            ...new Set(totalRecords.map((obj) => obj.roomId)),
+          ];
+          // for each roomId, update a document
+          for (const roomId of roomsArray) {
+            // filter out only records
+            const relRecords = totalRecords.filter(
+              (record) => record.roomId === roomId
+            );
+            // delete roomId field
+            const newRecords = relRecords.map((obj) => {
+              const { roomId, ...rest } = obj;
+              return rest;
+            });
+            console.log(newRecords);
+            // update a Room doc
+            const result = await Room.findByIdAndUpdate(
+              roomId,
+              { prices: newRecords },
+              { new: true }
+            );
+          }
+          res.status(200);
+        } catch (err) {
+          res.status(400).json({ error: err.message });
+        }
+      });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 module.exports = {
   addHotel,
   getHotels,
@@ -181,4 +229,5 @@ module.exports = {
   getSingleHotel,
   getAdminHotels,
   updateHotel,
+  insertPrices,
 };
