@@ -180,8 +180,9 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
 
 const insertPrices = asyncHandler(async (req, res) => {
   let totalRecords = [];
+  // res.send(req.file.path);
   try {
-    fs.createReadStream(__dirname + "/addresses.csv")
+    fs.createReadStream(req.file.path)
       .pipe(csv.parse({ headers: true }))
       .on("error", (error) => console.error(error))
       .on("data", (row) => {
@@ -212,7 +213,7 @@ const insertPrices = asyncHandler(async (req, res) => {
               { new: true }
             );
           }
-          res.status(200).send();
+          res.status(200).send(totalRecords);
         } catch (err) {
           res.status(400).json({ error: err.message });
         }
