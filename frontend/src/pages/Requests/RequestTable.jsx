@@ -5,6 +5,14 @@ import styles from "./Requests.module.scss";
 import sortButton from "./button.svg";
 import trash from "./trash.svg";
 
+const Statuses = {
+  1: "Заявка",
+  2: "Оплачено",
+  3: "Отклонено",
+  4: "На Паузе",
+  5: "Завершено",
+};
+
 const fakeData = [
   {
     _id: "#876123",
@@ -101,23 +109,6 @@ const fakeColumns = [
     Cell: ({ row }) => <button>...</button>,
   },
 ];
-
-const IndeterminateCheckbox = React.forwardRef(
-  ({ indeterminate, ...rest }, ref) => {
-    const defaultRef = React.useRef();
-    const resolvedRef = ref || defaultRef;
-
-    React.useEffect(() => {
-      resolvedRef.current.indeterminate = indeterminate;
-    }, [resolvedRef, indeterminate]);
-
-    return (
-      <>
-        <input type="checkbox" ref={resolvedRef} {...rest} />
-      </>
-    );
-  }
-);
 
 const RequestTable = ({ data, columns }) => {
   const datas = useMemo(() => (data ? data : fakeData), []);

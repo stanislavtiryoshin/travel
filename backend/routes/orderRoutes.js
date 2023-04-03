@@ -9,7 +9,7 @@ const {
 const { protect } = require("../middleware/authMiddleware");
 
 router.post("/", addOrder);
-router.get("/", getOrders);
+router.get("/", protect, getOrders);
 router.patch("/:id", updateOrder);
 router.get("/:orderId", getSingleOrder);
 

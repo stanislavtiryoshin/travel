@@ -15,6 +15,7 @@ export const baseApi = createApi({
     "Camp",
     "tour",
     "Food",
+    "Orders",
   ],
   endpoints: (builder) => ({
     getCategory: builder.query({
@@ -113,6 +114,21 @@ export const baseApi = createApi({
             ]
           : [{ type: "Food", id: "LIST" }],
     }),
+    getOrders: builder.query({
+      query: (token) => ({
+        url: "/orders",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: "Orders", _id })),
+              { type: "Orders", id: "LIST" },
+            ]
+          : [{ type: "Orders", id: "LIST" }],
+    }),
     //Addition
     addTour: builder.mutation({
       query: (body) => ({
@@ -150,4 +166,6 @@ export const {
   useGetCampQuery,
   useGetTourQuery,
   useGetFoodQuery,
+
+  useGetOrdersQuery,
 } = baseApi;
