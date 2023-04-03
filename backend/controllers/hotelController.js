@@ -227,6 +227,13 @@ const insertPrices = asyncHandler(async (req, res) => {
   }
 });
 
+const getRoomPrices = (req, res) => {
+  Hotel.findOne({ _id: req.params.hotelId })
+    .populate("rooms")
+    .then((response) => res.status(200).json(response.rooms))
+    .catch(() => res.sendStatus(400));
+};
+
 module.exports = {
   addHotel,
   getHotels,
@@ -235,4 +242,6 @@ module.exports = {
   getAdminHotels,
   updateHotel,
   insertPrices,
+  //test
+  getRoomPrices,
 };

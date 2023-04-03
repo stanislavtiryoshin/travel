@@ -8,6 +8,7 @@ const {
   getAdminHotels,
   updateHotel,
   insertPrices,
+  getRoomPrices,
 } = require("../controllers/hotelController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -33,5 +34,6 @@ router.get("/:id", getSingleHotel);
 
 //test
 router.patch("/:hotelId/prices", upload.single("file"), insertPrices);
+router.get("/hotelRoomPrices/:hotelId", getRoomPrices);
 
 module.exports = router;
