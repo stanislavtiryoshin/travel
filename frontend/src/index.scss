@@ -173,6 +173,26 @@ a {
   column-gap: 13px;
 }
 
+.import-btn {
+  padding: 12px 20px 12px 20px;
+  border-radius: 16px;
+  border: solid 2px #5eb215;
+  color: #5eb215;
+  font-family: GT Walsheim Pro;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: 0em;
+  text-align: left;
+  display: flex;
+  column-gap: 13px;
+
+  &:hover {
+    background-color: #5eb215;
+    color: #fff;
+  }
+}
+
 /* INPUTS */
 
 input,

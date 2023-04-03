@@ -180,6 +180,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
 
 const insertPrices = asyncHandler(async (req, res) => {
   let totalRecords = [];
+  // res.send(req.file.path);
   try {
     fs.createReadStream(req.file.path)
       .pipe(csv.parse({ headers: true }))
@@ -205,13 +206,17 @@ const insertPrices = asyncHandler(async (req, res) => {
               return rest;
             });
             // update a Room doc
-            const result = await Room.findByIdAndUpdate(
-              roomId,
-              { prices: newRecords },
-              { new: true }
-            );
+            try {
+              const result = await Room.findByIdAndUpdate(
+                roomId,
+                { prices: newRecords },
+                { new: true }
+              );
+            } catch (error) {
+              res.sendStatus(400);
+            }
           }
-          res.status(200).send();
+          res.status(200).send(totalRecords);
         } catch (err) {
           res.status(400).json({ error: err.message });
         }
@@ -221,6 +226,13 @@ const insertPrices = asyncHandler(async (req, res) => {
   }
 });
 
+const getRoomPrices = (req, res) => {
+  Hotel.findOne({ _id: req.params.hotelId })
+    .populate("rooms")
+    .then((response) => res.status(200).json(response.rooms))
+    .catch(() => res.sendStatus(400));
+};
+
 module.exports = {
   addHotel,
   getHotels,
@@ -229,4 +241,6 @@ module.exports = {
   getAdminHotels,
   updateHotel,
   insertPrices,
+  //test
+  getRoomPrices,
 };

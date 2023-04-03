@@ -8,8 +8,22 @@ const {
   getAdminHotels,
   updateHotel,
   insertPrices,
+  getRoomPrices,
 } = require("../controllers/hotelController");
 const { protect } = require("../middleware/authMiddleware");
+
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, `${__dirname}/public/uploads`);
+  },
+  filename: function (req, file, cb) {
+    cb(null, "addresses.csv");
+  },
+});
+
+const upload = multer({ storage: storage });
 
 router.post("/", protect, addHotel);
 router.get("/", getHotels);
@@ -17,6 +31,9 @@ router.get("/searched", getSearchedHotels);
 router.get("/admin", getAdminHotels);
 router.patch("/:hotelId", protect, updateHotel);
 router.get("/:id", getSingleHotel);
-router.patch("/:hotelId/prices", protect, insertPrices);
+
+//test
+router.patch("/:hotelId/prices", upload.single("file"), insertPrices);
+router.get("/hotelRoomPrices/:hotelId", getRoomPrices);
 
 module.exports = router;
