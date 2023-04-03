@@ -207,11 +207,15 @@ const insertPrices = asyncHandler(async (req, res) => {
             });
             console.log(newRecords);
             // update a Room doc
-            const result = await Room.findByIdAndUpdate(
-              roomId,
-              { prices: newRecords },
-              { new: true }
-            );
+            try {
+              const result = await Room.findByIdAndUpdate(
+                roomId,
+                { prices: newRecords },
+                { new: true }
+              );
+            } catch (error) {
+              res.sendStatus(400);
+            }
           }
           res.status(200).send(totalRecords);
         } catch (err) {
