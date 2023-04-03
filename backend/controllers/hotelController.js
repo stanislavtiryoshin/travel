@@ -212,7 +212,7 @@ const insertPrices = asyncHandler(async (req, res) => {
               { new: true }
             );
           }
-          res.status(200);
+          res.status(200).send();
         } catch (err) {
           res.status(400).json({ error: err.message });
         }
