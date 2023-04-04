@@ -6,6 +6,7 @@ const {
   getSingleTour,
   getTour,
   updateTour,
+  getSearchedTour,
   insertTourPrices,
 } = require("../controllers/tourController");
 
@@ -31,5 +32,6 @@ router.delete("/:id", protect, deleteTour);
 router.patch("/:id", protect, updateTour);
 
 router.patch("/:tourId/tourPrices", upload.single("file"), insertTourPrices);
+router.get("/searched/query", getSearchedTour);
 
 module.exports = router;

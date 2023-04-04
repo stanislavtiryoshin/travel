@@ -86,6 +86,38 @@ const insertTourPrices = expressAsyncHandler(async (req, res) => {
   }
 });
 
+const getSearchedTour = (req, res) => {
+  const { locationId, duration, rating, startDay, startMonth } = req.query;
+
+  let query = {};
+
+  if (locationId) {
+    query.locationId = locationId;
+  }
+
+  if (duration) {
+    query.duration = duration;
+  }
+
+  if (rating) {
+    query.rating = rating;
+  }
+
+  if (startDay) {
+    query.startDay = startDay;
+  }
+
+  if (startMonth) {
+    query.startMonth = startMonth;
+  }
+
+  // console.log(query);
+
+  Tour.find(query)
+    .then((response) => res.status(200).json(response))
+    .catch(() => res.sendStatus(404));
+};
+
 module.exports = {
   addTour,
   deleteTour,
@@ -93,4 +125,5 @@ module.exports = {
   getTour,
   updateTour,
   insertTourPrices,
+  getSearchedTour,
 };
