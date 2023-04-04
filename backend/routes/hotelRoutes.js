@@ -9,6 +9,7 @@ const {
   updateHotel,
   insertPrices,
   getRoomPrices,
+  insertTourPrices,
 } = require("../controllers/hotelController");
 const { protect } = require("../middleware/authMiddleware");
 

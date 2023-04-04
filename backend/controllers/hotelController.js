@@ -8,6 +8,7 @@ const { parse } = require("csv-parse");
 const fs = require("fs");
 const path = require("path");
 const csv = require("fast-csv");
+const Tour = require("../models/tourModel");
 
 //@desc   Add new hotel
 //@route  POST /api/hotels

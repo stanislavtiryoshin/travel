@@ -57,7 +57,7 @@ const Requests = () => {
         header: "Дата заявки",
         Cell: ({ row }) => {
           const date = new Date(+row.original.startDate);
-          return date.toLocaleDateString(undefined, {
+          return date.toLocaleString(undefined, {
             month: "numeric",
             day: "numeric",
             year: "numeric",
