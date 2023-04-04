@@ -5,7 +5,6 @@ const orderSchema = mongoose.Schema(
     hotel: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "Hotel",
     },
     peopleAmount: {
       type: Number,

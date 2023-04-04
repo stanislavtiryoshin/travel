@@ -96,7 +96,7 @@ const fakeColumns = [
   {
     id: "column7",
     header: "Подробности",
-    Cell: ({ row }) => <button>Открыть заказ</button>,
+    Cell: ({ row }) => <button className="order-btn">Открыть заказ</button>,
   },
   {
     id: "column8",
@@ -163,24 +163,26 @@ const RequestTable = ({ data, columns }) => {
                   className={styles.head}
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                 >
-                  {column.render("header")}
-                  <span>
-                    {column.isSorted ? (
-                      column.isSortedDesc ? (
-                        <img src={sortButton} />
+                  <div className="th-content">
+                    {column.render("header")}{" "}
+                    <span>
+                      {column.isSorted ? (
+                        column.isSortedDesc ? (
+                          <img src={sortButton} />
+                        ) : (
+                          <img src={sortButton} />
+                        )
                       ) : (
                         <img src={sortButton} />
-                      )
-                    ) : (
-                      <img src={sortButton} />
-                    )}
-                  </span>
+                      )}
+                    </span>
+                  </div>
                 </th>
               ))}
             </tr>
           ))}
         </thead>
-        <tbody {...getTableBodyProps()}>
+        <tbody {...getTableBodyProps()} className="shadowed_box">
           {rows.map((row) => {
             prepareRow(row);
             return (

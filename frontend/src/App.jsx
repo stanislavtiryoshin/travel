@@ -43,7 +43,7 @@ function App() {
             element={<AddRoom />}
           />
           <Route path="/dashboard/room/:roomId" element={<AdminRoom />} />
-          <Route path="/dashboard/requests" element={<Requests />} />
+          {/* <Route path="/dashboard/requests" element={<Requests />} /> */}
         </Routes>
       </Layout>
     </Router>

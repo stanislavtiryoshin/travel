@@ -107,14 +107,7 @@ const HotelSearch = ({ hotelMode, tourMode, campMode, sanMode, reqMode }) => {
       <div className="container">
         <div className="dash_search_wrapper wrapper ver">
           <div className="dash_heading">{reqMode ? "Заявки" : "Отели"}</div>
-          <div
-            className="search_box"
-            style={
-              reqMode && {
-                width: "1000px",
-              }
-            }
-          >
+          <div className={reqMode ? "search_box req" : "search_box"}>
             <div className="search_bot">
               <div className="search_col">
                 <div className="search_col-content">

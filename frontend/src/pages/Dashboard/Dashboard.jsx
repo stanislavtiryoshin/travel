@@ -7,6 +7,7 @@ import {
   addHotel,
   getHotels,
   getAdminHotels,
+  selectHotels,
 } from "../../features/hotel/hotelSlice";
 import { getOrders } from "../../features/order/orderSlice";
 
@@ -15,10 +16,13 @@ import OrderRow from "./OrderRow";
 import Filter from "../../components/Filter/Filter";
 import DashHotelCard from "../../components/HotelCard/DashHotelCard";
 import HotelSearch from "../../components/SearchPanel/HotelSearch";
+import Requests from "../Requests/Requests";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const selectedHotels = useSelector(selectHotels);
 
   const [hotelData, setHotelData] = useState({
     name: "",
@@ -94,8 +98,8 @@ const Dashboard = () => {
                   <Filter />
                 </div>
                 <div className="dash_main">
-                  {hotels && hotels.length > 0
-                    ? hotels?.map((hotel, idx) => {
+                  {selectedHotels && selectedHotels.length > 0
+                    ? selectedHotels?.map((hotel, idx) => {
                         return <DashHotelCard hotel={hotel} />;
                       })
                     : "is loading"}
@@ -103,6 +107,11 @@ const Dashboard = () => {
               </div>
             </div>
           </section>
+        </div>
+      )}
+      {currentTab === 0 && (
+        <div className="reqs_tab tab">
+          <Requests />
         </div>
       )}
     </div>

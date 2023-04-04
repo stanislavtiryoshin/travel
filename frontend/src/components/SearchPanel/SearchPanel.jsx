@@ -14,34 +14,23 @@ import {
 } from "../../features/clientSlice";
 
 import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
 
 import "./SearchPanel.scss";
-
-import tag1 from "../../assets/tags/tag1.svg";
-import tag2 from "../../assets/tags/tag2.svg";
-import tag3 from "../../assets/tags/tag3.svg";
-import tag4 from "../../assets/tags/tag4.svg";
-import tag5 from "../../assets/tags/tag5.svg";
 
 import line from "../../assets/hero/line.svg";
 
 import search1 from "../../assets/search/search1.svg";
 import search2 from "../../assets/search/search2.svg";
 import search3 from "../../assets/search/search3.svg";
-import search4 from "../../assets/search/search4.svg";
-import {
-  getSearchedHotels,
-  getHotels,
-  reset,
-} from "../../features/hotel/hotelSlice";
+import { getSearchedHotels, reset } from "../../features/hotel/hotelSlice";
 
 import { tags } from "./tags";
+import PeopleSelect from "./PeopleSelect";
 
 const SearchPanel = () => {
   const dispatch = useDispatch();
 
-  const [panelTag, setPanelTag] = useState("");
+  const [panelTag, setPanelTag] = useState("Отели");
 
   const [allLocations, setAllLocations] = useState(null);
 
@@ -136,6 +125,16 @@ const SearchPanel = () => {
     }
   };
 
+  const handlePeopleSelect = (e) => {
+    setSearchTerms({ ...searchTerms, number: e.target.value });
+    // changeAmount(e.target.value);
+    setClientData({
+      ...clientData,
+      peopleAmount: e.target.value,
+    });
+    dispatch(setPeopleAmount(e.target.value));
+  };
+
   return (
     <div className="search_box">
       <div className="search_top">
@@ -225,57 +224,32 @@ const SearchPanel = () => {
           </div>
         </div>
         <img src={line} className="line" alt="" />
-        <div className="search_col">
-          <img src={search4} alt="" className="search_bot-icon" />
-          <div className="search_col-content">
-            <div className="search_col-top">Кто?</div>
-            <div className="search_col-bot">
-              <input
-                type="number"
-                placeholder="1"
-                name="number"
-                value={searchTerms.number}
-                onChange={(e) => {
-                  setSearchTerms({ ...searchTerms, number: e.target.value });
-                  // changeAmount(e.target.value);
-                  setClientData({
-                    ...clientData,
-                    peopleAmount: e.target.value,
-                  });
-                  dispatch(setPeopleAmount(e.target.value));
-                }}
-              />
-            </div>
-          </div>
-        </div>
-        <img src={line} className="line" alt="" />
-        <div className="search_col">
-          <button
-            className="primary-btn yellow"
-            onClick={() => {
-              if (
-                searchTerms.destination &&
-                searchTerms.destination !== "Весь"
-              ) {
-                handleSearch({
-                  locationId: searchTerms.destination,
-                  peopleAmount: clientData.peopleAmount,
-                  daysAmount: clientData.daysAmount,
-                  startDate: clientData.startDate,
-                });
-              } else if (searchTerms.destination === "Весь") {
-                handleSearch({
-                  locationId: "",
-                  peopleAmount: clientData.peopleAmount,
-                  daysAmount: clientData.daysAmount,
-                  startDate: clientData.startDate,
-                });
-              }
-            }}
-          >
-            Найти
-          </button>
-        </div>
+        <PeopleSelect
+          handlePeopleSelect={handlePeopleSelect}
+          value={searchTerms.number}
+        />
+        <button
+          className="primary-btn yellow"
+          onClick={() => {
+            if (searchTerms.destination && searchTerms.destination !== "Весь") {
+              handleSearch({
+                locationId: searchTerms.destination,
+                peopleAmount: clientData.peopleAmount,
+                daysAmount: clientData.daysAmount,
+                startDate: clientData.startDate,
+              });
+            } else if (searchTerms.destination === "Весь") {
+              handleSearch({
+                locationId: "",
+                peopleAmount: clientData.peopleAmount,
+                daysAmount: clientData.daysAmount,
+                startDate: clientData.startDate,
+              });
+            }
+          }}
+        >
+          Найти
+        </button>
       </div>
     </div>
   );

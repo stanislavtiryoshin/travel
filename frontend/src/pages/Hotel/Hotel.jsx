@@ -100,15 +100,15 @@ const Hotel = () => {
   };
 
   useEffect(() => {
-    if (singleHotel.rooms) {
-      setClientRoom(
-        singleHotel.rooms
-          .filter((room) => room.capacity >= clientData.peopleAmount)
-          .reduce(function (prev, current) {
-            return prev.roomPrice < current.roomPrice ? prev : current;
-          })
-      );
-    }
+    // if (singleHotel?.rooms && singleHotel?.rooms.length > 0) {
+    //   setClientRoom(
+    //     singleHotel?.rooms
+    //       // .filter((room) => room.capacity >= clientData.peopleAmount)
+    //       ?.reduce(function (prev, current) {
+    //         return prev.roomPrice < current.roomPrice ? prev : current;
+    //       })
+    //   );
+    // }
   }, [singleHotel.rooms]);
 
   const calculatePrice = (start, daysNum, basePrice) => {
