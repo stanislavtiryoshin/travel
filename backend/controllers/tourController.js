@@ -1,6 +1,10 @@
 const Tour = require("../models/tourModel");
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
+const expressAsyncHandler = require("express-async-handler");
+
+const fs = require("fs");
+const csv = require("fast-csv");
 
 const getTour = (req, res) => {
   Tour.find({})
@@ -51,10 +55,42 @@ const deleteTour = (req, res) => {
     .catch(() => res.sendStatus(403));
 };
 
+const insertTourPrices = expressAsyncHandler(async (req, res) => {
+  let totalRecords = [];
+  try {
+    fs.createReadStream(req.file.path)
+      .pipe(csv.parse({ headers: true }))
+      .on("error", (error) => console.error(error))
+      .on("data", (row) => {
+        totalRecords.push(row);
+      })
+      .on("end", async (rowCount) => {
+        try {
+          await Tour.findByIdAndUpdate(
+            req.params.tourId,
+            {
+              price: totalRecords,
+            },
+            {
+              new: true,
+            }
+          );
+
+          res.status(200).send(totalRecords);
+        } catch (err) {
+          res.sendStatus(400);
+        }
+      });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 module.exports = {
   addTour,
   deleteTour,
   getSingleTour,
   getTour,
   updateTour,
+  insertTourPrices,
 };

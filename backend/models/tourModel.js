@@ -21,6 +21,17 @@ const tourSchema = Schema({
     type: Number,
     default: 0,
   },
+  price: [
+    {
+      startDay: Number,
+      startMonth: Number,
+      endDay: Number,
+      endMonth: Number,
+
+      kidPrice: Number,
+      adultPrice: Number,
+    },
+  ],
   program: [
     {
       days: [
