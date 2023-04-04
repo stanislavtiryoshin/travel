@@ -113,7 +113,7 @@ const fakeColumns = [
 const RequestTable = ({ data, columns }) => {
   const datas = useMemo(() => (data ? data : fakeData), []);
 
-  const columnsData = useMemo(() => (columns ? columns : fakeColumns), []);
+  const columnsData = columns ? columns : useMemo(() => fakeColumns, []);
 
   const {
     selectedFlatRows,
