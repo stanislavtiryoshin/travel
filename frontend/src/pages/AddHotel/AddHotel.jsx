@@ -48,7 +48,7 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
       paymentType: "",
       prepayment: null,
     },
-    comforts: "",
+    comforts: [],
     hotelStars: 5,
   });
 
@@ -137,6 +137,21 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
 
   const navigate = useNavigate();
 
+  // comforts: [...JSON.parse(localStorage.getItem("comforts"))],
+
+  const handleSubmit = () => {
+    const values = {
+      ...hotelData,
+      comforts: [...JSON.parse(localStorage.getItem("comforts"))],
+    };
+
+    console.log(values);
+
+    dispatch(addHotel(values)).then((res) => {
+      navigate(`/dashboard/hotel/${res.payload._id}`);
+    });
+  };
+
   return (
     <>
       <div className="header_bot">
@@ -150,11 +165,7 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
               <button
                 className="primary-btn white"
                 onClick={() => {
-                  !editMode
-                    ? dispatch(addHotel(hotelData)).then((res) => {
-                        navigate(`/dashboard/hotel/${res.payload._id}`);
-                      })
-                    : dispatch(updateHotel(hotelData));
+                  !editMode ? handleSubmit() : dispatch(updateHotel(hotelData));
                 }}
               >
                 Сохранить изменения

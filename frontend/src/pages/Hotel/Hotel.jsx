@@ -41,7 +41,7 @@ const Hotel = () => {
     (state) => state.hotels
   );
 
-  console.log(singleHotel);
+  console.log("Single hotel", singleHotel);
 
   useEffect(() => {
     if (isError) {
@@ -151,7 +151,6 @@ const Hotel = () => {
 
     return sum;
   };
-  console.log(singleHotel);
 
   const [clientStartingDate, setClientStartingDate] = useState(
     Date.parse(new Date())
@@ -164,8 +163,6 @@ const Hotel = () => {
     setClientStartingDate(new Date(+clientData.startDate));
     setClientEndingDate(new Date(+clientData.endDate));
   }, [clientData.startDate, clientData.endDate]);
-
-  console.log(clientData);
 
   const [sum, setSum] = useState(0);
 
@@ -207,8 +204,6 @@ const Hotel = () => {
         JSON.stringify(clientExcursions)
       );
   }, [sum, clientRoom, singleHotel, clientExcursions]);
-
-  console.log(singleHotel);
 
   return (
     <div className="hotel_page page">
@@ -292,8 +287,7 @@ const Hotel = () => {
                         Выбранный вами номер отображается здесь. Другие варианты
                         номеров и цены находятся{" "}
                         <a href="" className="hotel_anchor">
-                          {" "}
-                          здесь.{" "}
+                          здесь.
                         </a>
                       </div>
                     </div>
@@ -382,7 +376,7 @@ const Hotel = () => {
                         рассчитаем цену в блоке “Бронирование”
                       </div>
                     </div>
-                    {singleHotel.rooms &&
+                    {/* {singleHotel.rooms &&
                       clientRoom &&
                       singleHotel?.rooms
                         ?.filter(
@@ -391,7 +385,7 @@ const Hotel = () => {
                         .map((room, index) => {
                           return (
                             <Room
-                              key={index}
+                              key={room._id}
                               room={room}
                               chooseRoom={chooseRoom}
                               days={clientData?.daysAmount}
@@ -400,10 +394,22 @@ const Hotel = () => {
                               }
                             />
                           );
-                        })}
+                        })} */}
+                    {singleHotel.rooms &&
+                      singleHotel.rooms.map((room) => {
+                        return (
+                          <Room
+                            key={room._id}
+                            room={room}
+                            chooseRoom={chooseRoom}
+                            active={clientRoom?._id === room._id ? true : false}
+                          />
+                        );
+                      })}
                   </div>
                 </div>
               </div>
+
               <div className="hotel_side_wrapper wrapper ver">
                 <div className="hotel_side-top shadowed_box">
                   <div className="hotel_side-title">Бронирование</div>
@@ -451,8 +457,6 @@ const Hotel = () => {
                 ) : (
                   "Экскурсии загружаются"
                 )}
-
-                {console.log(singleHotel?.locationId)}
 
                 <ExpandableText text="Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum." />
 
