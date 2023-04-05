@@ -8,6 +8,7 @@ const initialStateValues = {
   destination: "64188de62648843412b12980",
   clientExcursions: [],
   excSum: 0,
+  tag: "Отели",
 };
 
 export const clientSlice = createSlice({
@@ -43,6 +44,9 @@ export const clientSlice = createSlice({
     removeExcSum: (state, action) => {
       state.excSum -= action.payload;
     },
+    setTag: (state, action) => {
+      state.tag = action.payload;
+    },
   },
 });
 
@@ -61,6 +65,7 @@ export const {
   setFilterMinPrice,
   setFilterMaxPrice,
   setFilterRating,
+  setTag,
 } = clientSlice.actions;
 
 export default clientSlice.reducer;

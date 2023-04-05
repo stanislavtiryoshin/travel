@@ -167,6 +167,28 @@ export const hotelSlice = createSlice({
         filterRating: null,
       };
     },
+    sortAlphAsc: (state) => {
+      state.hotels.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        } else if (a.name > b.name) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+    },
+    sortAlphDesc: (state) => {
+      state.hotels.sort((a, b) => {
+        if (a.name > b.name) {
+          return -1;
+        } else if (a.name < b.name) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -212,8 +234,10 @@ export const selectHotels = (state) => {
     filterRating,
     filterStars,
   } = state.hotels.filterData;
-  // Filter the hotels array based on the filter data
   let filteredHotels = state.hotels.hotels;
+
+  // Filter the hotels array based on the filter data
+
   // if (filterMaxPrice) {
   //   filteredHotels = filteredHotels.filter(
   //     (hotel) => hotel.totalPrice <= filterMaxPrice
@@ -237,5 +261,11 @@ export const selectHotels = (state) => {
   return filteredHotels;
 };
 
-export const { reset, setFilterData, clearFilterData } = hotelSlice.actions;
+export const {
+  reset,
+  setFilterData,
+  clearFilterData,
+  sortAlphAsc,
+  sortAlphDesc,
+} = hotelSlice.actions;
 export default hotelSlice.reducer;

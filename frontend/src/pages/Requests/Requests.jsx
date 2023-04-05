@@ -11,6 +11,25 @@ const Requests = () => {
 
   const { data: orders, isLoading } = useGetOrdersQuery(user.token);
 
+  const statuses = [
+    {
+      label: "В обработке",
+      style: "req-status",
+    },
+    {
+      label: "Отклонено",
+      style: "den-status",
+    },
+    {
+      label: "Оплачено",
+      style: "paid-status",
+    },
+    {
+      label: "На паузе",
+      style: "pause-status",
+    },
+  ];
+
   const columns = useMemo(
     () => [
       {
@@ -52,12 +71,23 @@ const Requests = () => {
       {
         id: "details",
         header: "Подробности",
-        Cell: ({ row }) => <button>Открыть заказ</button>,
+        Cell: ({ row }) => <button className="order-btn">Открыть заказ</button>,
       },
       {
         id: "status",
         header: "Статус",
         accessor: "status",
+        Cell: ({ row }) => (
+          <button
+            className={`${
+              statuses.filter((stat) =>
+                stat.label.includes(row.original.status)
+              )[0].style
+            } status-btn`}
+          >
+            {row.original.status}
+          </button>
+        ),
       },
     ],
     []
@@ -65,13 +95,11 @@ const Requests = () => {
 
   return (
     <>
-      <div className={style.search}>
-        <HotelSearch reqMode />
-      </div>
+      <HotelSearch reqMode />
 
       <section className="dash_section">
         {isLoading ? (
-          <div>LOADING...</div>
+          <div className="table-loader">Загрузка заявок...</div>
         ) : (
           <RequestTable columns={columns} data={orders} />
         )}

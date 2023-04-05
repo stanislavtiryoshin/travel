@@ -28,7 +28,7 @@ const Filter = () => {
   const { filterData } = useSelector((state) => state.hotels);
 
   const [filterObj, setFilterObj] = useState({
-    filterMaxPrice: 100000,
+    filterMaxPrice: 600000,
     filterMinPrice: 0,
     filterFood: [],
     filterRating: null,
@@ -41,6 +41,13 @@ const Filter = () => {
 
   const handleClearFilterData = () => {
     dispatch(clearFilterData());
+    setFilterObj({
+      filterMaxPrice: 600000,
+      filterMinPrice: 0,
+      filterFood: [],
+      filterRating: null,
+      filterStars: null,
+    });
   };
 
   const [value, setValue] = useState([0, 600000]);

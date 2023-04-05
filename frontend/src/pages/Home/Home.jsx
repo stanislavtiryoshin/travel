@@ -11,7 +11,6 @@ import {
 import "react-range-slider-input/dist/style.css";
 import Hero from "../../components/Hero/Hero";
 import banner from "../../assets/banner.png";
-import sort from "../../assets/sort.svg";
 import media from "../../assets/media.svg";
 import media1 from "../../assets/media1.svg";
 import media2 from "../../assets/media2.svg";
@@ -20,6 +19,7 @@ import ad from "../../assets/ad.png";
 import "./Home.scss";
 
 import Filter from "../../components/Filter/Filter";
+import SortBtn from "../../components/Filter/SortBtn";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -30,8 +30,16 @@ const Home = () => {
   const { hotels, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.hotels
   );
+  const { tag } = useSelector((state) => state.client);
+  console.log(tag);
 
   const selectedHotels = useSelector(selectHotels);
+
+  const [panelTag, setPanelTag] = useState("Отели");
+
+  const changeTag = (tag) => {
+    setPanelTag(tag);
+  };
 
   console.log(selectedHotels);
 
@@ -89,38 +97,38 @@ const Home = () => {
                 <div className="all_hotels-num">
                   Найдено: <span>{selectedHotels?.length}</span>
                 </div>
-                <button className="sort-btn">
-                  Сортировать <img src={sort} alt="" />
-                </button>
+                <SortBtn />
               </div>
-              {selectedHotels && selectedHotels.length > 0
-                ? selectedHotels
-                    .filter((hotel, idx) => idx < hotelsToShow)
-                    .map((hotel, idx) => {
-                      return (
-                        <HotelCard
-                          key={idx}
-                          hotelId={hotel._id}
-                          name={hotel.name}
-                          locationId={hotel.locationId}
-                          price={hotel.price * peopleAmount}
-                          amount={peopleAmount}
-                          days={daysAmount}
-                          description={hotel.description}
-                          rating={hotel.rating}
-                          startDate={startDate}
-                          endDate={endDate}
-                          rooms={hotel.rooms}
-                          totalPrice={hotel.totalPrice}
-                          oldPrice={hotel.oldPrice}
-                          hotelStars={hotel.hotelStars}
-                        />
-                      );
-                    })
-                : null}
+              {selectedHotels && selectedHotels.length > 0 ? (
+                selectedHotels
+                  .filter((hotel, idx) => idx < hotelsToShow)
+                  .map((hotel, idx) => {
+                    return (
+                      <HotelCard
+                        key={idx}
+                        hotelId={hotel._id}
+                        name={hotel.name}
+                        locationId={hotel.locationId}
+                        price={hotel.price * peopleAmount}
+                        amount={peopleAmount}
+                        days={daysAmount}
+                        description={hotel.description}
+                        rating={hotel.rating}
+                        startDate={startDate}
+                        endDate={endDate}
+                        rooms={hotel.rooms}
+                        totalPrice={hotel.totalPrice}
+                        oldPrice={hotel.oldPrice}
+                        hotelStars={hotel.hotelStars}
+                      />
+                    );
+                  })
+              ) : (
+                <div>😭 Ничего не найдено...</div>
+              )}
               {selectedHotels.length >= hotelsToShow ? (
                 <button
-                  className="more-hotels-btn"
+                  className="sort-btn"
                   onClick={() => setHotelsToShow(hotelsToShow + 5)}
                 >
                   Загрузить еще...

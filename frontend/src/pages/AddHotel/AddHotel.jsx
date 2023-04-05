@@ -19,7 +19,7 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
     hotelServices: [{ serviceId: "64258af02ba7928f871a09cd" }],
     locationId: null,
     name: "",
-    locSpecialty: "",
+    locationFeature: "",
     mapLink: "",
     rating: null,
     description: "",
@@ -177,11 +177,11 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
                     type="text"
                     className="primary-input"
                     placeholder="Особенность местоположения"
-                    value={hotelData.locSpecialty}
+                    value={hotelData.locationFeature}
                     onChange={(e) =>
                       setHotelData({
                         ...hotelData,
-                        locSpecialty: e.target.value,
+                        locationFeature: e.target.value,
                       })
                     }
                   />
@@ -666,6 +666,15 @@ export const ServiceCard = ({
         allCategories={allCategories}
         optionList={optionList}
         thisCategServices={thisCategServices}
+        styles={{
+          control: (baseStyles) => ({
+            ...baseStyles,
+            width: `${550}px`,
+            border: "none",
+            "background-color": "rgb(249, 249, 249)",
+            outline: "none",
+          }),
+        }}
       />
       <span onClick={() => setIsOpen(true)} className="additional-service">
         Добавить новую услугу

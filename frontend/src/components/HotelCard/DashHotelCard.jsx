@@ -8,24 +8,27 @@ import HotelStars from "../HotelStars/HotelStars";
 import tag from "../../assets/tag.svg";
 import { Link } from "react-router-dom";
 
-const DashHotelCard = ({ hotel }) => {
-  const { name, rating, stars, locationId, hotelStars, _id } = hotel;
+const DashHotelCard = ({ hotel, tour }) => {
+  const { name, rating, stars, locationId, hotelStars, _id, extraPlaces } =
+    hotel;
   return (
     <div className="adm_hotel-card shadowed_box">
       <div className="adm_hotels-content">
         <img src={admhotel} alt="" />
         <div className="adm_hotel-title">{name}</div>
         <div className="adm_hotel-loc">
-          {locationId ? locationId.locationName + ", " : "Место загружается"}
+          {locationId ? locationId?.locationName + ", " : "Место загружается"}
           {locationId ? locationId.locationCountry : null}
         </div>
         <div className="adm_hotel-rating row">
           {hotelStars ? <HotelStars number={hotelStars} /> : null}
 
           {rating ? <RatingBox rating={rating} /> : null}
-          <div className="extra_place-box">
-            <img src={check2} alt="" /> Доп. места
-          </div>
+          {extraPlaces ? (
+            <div className="extra_place-box">
+              <img src={check2} alt="" /> Доп. места
+            </div>
+          ) : null}
         </div>
         <div className="adm_hotel-feats">
           <div className="feats_col">

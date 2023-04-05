@@ -1,30 +1,60 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import search4 from "../../assets/search/search4.svg";
+import "./SearchPanel.scss";
 
-const PeopleSelect = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const PeopleSelect = ({ handlePeopleSelect, value }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [adults, setAdults] = useState(1);
+  const [kids, setKids] = useState(0);
   return (
-    <div className="search_col" onClick={() => setIsOpen(!isOpen)}>
+    <div className="search_col people_col">
       <img src={search4} alt="" className="search_bot-icon" />
-      <div className="search_col-content">
-        <div className="search_col-top">Кто?</div>
-        <div className="search_col-bot">
-          <input
+      <div className="people_select-box">
+        <button
+          className="people-btn"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          Кто?
+        </button>
+      </div>
+      {isExpanded ? (
+        <div className="people-dropdown">
+          <div className="people_title">Количество туристов</div>
+          <div className="adults_row row">
+            Взрослых
+            <div className="count_btns-box">
+              <button
+                className="count-btn"
+                onClick={() => setAdults(adults - 1)}
+              >
+                -
+              </button>
+              <input
+                type="text"
+                readOnly
+                value={adults}
+                className="count-box"
+                onChange={handlePeopleSelect}
+              />
+              <button
+                className="count-btn"
+                onClick={() => setAdults(adults + 1)}
+              >
+                +
+              </button>
+            </div>
+          </div>
+          {/* <input
             type="number"
             placeholder="1"
             name="number"
-            value={searchTerms.number}
+            value={value}
             onChange={(e) => {
-              setSearchTerms({ ...searchTerms, number: e.target.value });
-              // changeAmount(e.target.value);
-              setClientData({
-                ...clientData,
-                peopleAmount: e.target.value,
-              });
-              dispatch(setPeopleAmount(e.target.value));
+              handlePeopleSelect(e);
             }}
-          />
+          /> */}
         </div>
-      </div>
+      ) : null}
     </div>
   );
 };
