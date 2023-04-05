@@ -16,7 +16,7 @@ const getSanatoriums = (req, res) => {
     .catch((err) => res.sendStatus(403));
 };
 
-// TODO: Спросить у Стаса
+// TODO: Спросить у Стаса | спросил? не помню
 const getAdminSanatoriums = (req, res) => {
   const { name, locationId, minAge } = req.query;
 };

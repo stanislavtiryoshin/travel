@@ -7,6 +7,12 @@ const roomSchema = mongoose.Schema(
       ref: "Hotel",
       required: true,
     },
+    periodPrices: [
+      {
+        periodId: mongoose.Schema.Types.ObjectId,
+        price: Number,
+      },
+    ],
     roomName: {
       type: String,
     },
@@ -70,22 +76,6 @@ const roomSchema = mongoose.Schema(
     comment: {
       type: String,
     },
-    prices: [
-      {
-        startDay: Number,
-        startMonth: Number,
-        endDay: Number,
-        endMonth: Number,
-        stanOnePlace: Number,
-        ecoOneRoomTwoPlace: Number,
-        ecoOneRoomThreePlace: Number,
-        ecoOneRoomFourPlace: Number,
-        stanOneRoomTwoPlace: Number,
-        stanOneRoomThreePlace: Number,
-        comfOneRoomThreePlace: Number,
-        Luxe: Number,
-      },
-    ],
     roomDescription: {
       type: String,
     },
@@ -96,5 +86,11 @@ const roomSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+roomSchema.virtual("roomPeriods", {
+  ref: "Hotel",
+  localField: "periodsPrices",
+  foreignField: "periods._id",
+});
 
 module.exports = new mongoose.model("Room", roomSchema);

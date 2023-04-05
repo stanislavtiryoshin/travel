@@ -22,9 +22,13 @@ const getRooms = asyncHandler(async (req, res) => {
 //@access Private
 
 const getSingleRoom = asyncHandler(async (req, res) => {
-  const singleRoom = await Room.findById(req.params.roomId);
+  const singleRoom = await Room.findById(req.params.roomId).populate("hotel");
   res.status(200).send(singleRoom);
 });
+
+// const addRoomPrices = asyncHandler(async (req,res) => {
+//   const updatedRoom = await Room.findByIdAndUpdate(req.params.roomId, ).
+// })
 
 //@desc   Add new room
 //@route  POST /api/rooms

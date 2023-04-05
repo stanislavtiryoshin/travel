@@ -12,6 +12,9 @@ const hotelSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Location",
     },
+    locationFeature: {
+      type: String,
+    },
     resortId: {
       type: mongoose.Schema.Types.ObjectId,
     },
@@ -36,6 +39,18 @@ const hotelSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Food",
     },
+    periods: [
+      {
+        startDay: Number,
+        startMonth: Number,
+        endDay: Number,
+        endMonth: Number,
+        price: {
+          type: Number,
+          default: null,
+        },
+      },
+    ],
     kidFoodPrice: {
       type: Number,
     },
