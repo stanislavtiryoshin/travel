@@ -33,6 +33,17 @@ const Requests = () => {
   const columns = useMemo(
     () => [
       {
+        id: "checkbox",
+        header: "Checkbox",
+        Cell: ({ row }) => (
+          <input
+            type="checkbox"
+            value={row.original._id}
+            onChange={(e) => console.log(e.target.value)}
+          />
+        ),
+      },
+      {
         id: "order_id",
         header: "Order ID",
         accessor: "_id",

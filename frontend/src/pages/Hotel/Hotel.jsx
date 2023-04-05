@@ -99,17 +99,17 @@ const Hotel = () => {
     setClientRoom(chosenRoom);
   };
 
-  useEffect(() => {
-    // if (singleHotel?.rooms && singleHotel?.rooms.length > 0) {
-    //   setClientRoom(
-    //     singleHotel?.rooms
-    //       // .filter((room) => room.capacity >= clientData.peopleAmount)
-    //       ?.reduce(function (prev, current) {
-    //         return prev.roomPrice < current.roomPrice ? prev : current;
-    //       })
-    //   );
-    // }
-  }, [singleHotel.rooms]);
+  // useEffect(() => {
+  //   // if (singleHotel?.rooms && singleHotel?.rooms.length > 0) {
+  //   //   setClientRoom(
+  //   //     singleHotel?.rooms
+  //   //       // .filter((room) => room.capacity >= clientData.peopleAmount)
+  //   //       ?.reduce(function (prev, current) {
+  //   //         return prev.roomPrice < current.roomPrice ? prev : current;
+  //   //       })
+  //   //   );
+  //   // }
+  // }, [singleHotel.rooms]);
 
   const calculatePrice = (start, daysNum, basePrice) => {
     let daysArray = [];
@@ -171,31 +171,31 @@ const Hotel = () => {
 
   const { clientExcursions, excSum } = useSelector((state) => state.client);
 
-  useEffect(() => {
-    if (clientData && clientRoom) {
-      if (clientRoom?.discount) {
-        setSum(
-          (calculatePrice(
-            clientStartingDate,
-            clientData?.daysAmount,
-            clientRoom?.roomPrice
-          ) *
-            (100 - clientRoom?.discount)) /
-            100 +
-            excSum
-        );
-      } else {
-        setSum(
-          calculatePrice(
-            clientStartingDate,
-            clientData?.daysAmount,
-            clientRoom?.roomPrice
-          ) + excSum
-        );
-      }
-      window.localStorage.setItem("sum", sum);
-    }
-  }, [clientRoom, excSum]);
+  // useEffect(() => {
+  //   if (clientData && clientRoom) {
+  //     if (clientRoom?.discount) {
+  //       setSum(
+  //         (calculatePrice(
+  //           clientStartingDate,
+  //           clientData?.daysAmount,
+  //           clientRoom?.roomPrice
+  //         ) *
+  //           (100 - clientRoom?.discount)) /
+  //           100 +
+  //           excSum
+  //       );
+  //     } else {
+  //       setSum(
+  //         calculatePrice(
+  //           clientStartingDate,
+  //           clientData?.daysAmount,
+  //           clientRoom?.roomPrice
+  //         ) + excSum
+  //       );
+  //     }
+  //     window.localStorage.setItem("sum", sum);
+  //   }
+  // }, [clientRoom, excSum]);
 
   useEffect(() => {
     window.localStorage.setItem("sum", sum);

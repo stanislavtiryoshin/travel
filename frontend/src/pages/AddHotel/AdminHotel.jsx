@@ -86,7 +86,7 @@ const AdminHotel = () => {
         </div>
       </section>
 
-      <section className="room_price_table">
+      {/* <section className="room_price_table">
         <div className="container">
           <div className="admin_rooms-wrapper wrapper ver shadowed_box">
             <div className="admin_rooms-top">
@@ -104,7 +104,7 @@ const AdminHotel = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </>
   );
 };

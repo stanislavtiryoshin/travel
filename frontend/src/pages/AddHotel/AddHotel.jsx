@@ -6,6 +6,8 @@ import addhotel from "../../assets/addhotel.png";
 import { useNavigate } from "react-router-dom";
 import { addHotel, updateHotel } from "../../features/hotel/hotelSlice";
 
+import ShortUniqueId from "short-unique-id";
+
 import "./AddHotel.scss";
 import { useDispatch } from "react-redux";
 import Selector from "./Select";
@@ -15,7 +17,13 @@ import { Input } from "../../components/Form";
 import Modal from "../../components/Modal";
 
 const AddHotel = ({ fetchedHotelData, editMode }) => {
+  const uid = new ShortUniqueId({
+    dictionary: "number", // the default
+    length: 6,
+  });
+
   const [hotelData, setHotelData] = useState({
+    uid: uid(),
     hotelServices: [{ serviceId: "64258af02ba7928f871a09cd" }],
     locationId: null,
     name: "",
@@ -41,6 +49,7 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
       prepayment: null,
     },
     comforts: "",
+    hotelStars: 5,
   });
 
   useEffect(() => {
@@ -297,9 +306,9 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
                         Заезд с
                       </option>
                       <option value="07:00">07:00</option>
-                      <option value="07:00">08:00</option>
-                      <option value="07:00">09:00</option>
-                      <option value="07:00">10:00</option>
+                      <option value="08:00">08:00</option>
+                      <option value="09:00">09:00</option>
+                      <option value="10:00">10:00</option>
                     </select>
                     <select
                       name=""
