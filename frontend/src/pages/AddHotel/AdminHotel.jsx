@@ -75,8 +75,8 @@ const AdminHotel = () => {
               </Link>
             </div>
             <div className="admin_rooms-grid">
-              {singleHotel.rooms
-                ? singleHotel.rooms.map((room, idx) => {
+              {singleHotel?.rooms && singleHotel?.rooms?.length > 0
+                ? singleHotel?.rooms.map((room, idx) => {
                     return <DashRoom room={room} />;
                   })
                 : null}

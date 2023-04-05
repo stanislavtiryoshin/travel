@@ -30,8 +30,16 @@ const Home = () => {
   const { hotels, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.hotels
   );
+  const { tag } = useSelector((state) => state.client);
+  console.log(tag);
 
   const selectedHotels = useSelector(selectHotels);
+
+  const [panelTag, setPanelTag] = useState("Отели");
+
+  const changeTag = (tag) => {
+    setPanelTag(tag);
+  };
 
   console.log(selectedHotels);
 

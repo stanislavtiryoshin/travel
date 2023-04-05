@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import addhotel from "../../assets/addhotel.png";
 
 import "./AddRoom.scss";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addRoom,
-  getSingleRoom,
-  updateRoom,
-} from "../../features/room/roomSlice";
-import { getSingleHotel } from "../../features/hotel/hotelSlice";
+import { addRoom, updateRoom } from "../../features/room/roomSlice";
 import { AdminHead } from "../../components/Admin";
 
 const AddRoom = ({ fetchedRoomData, editMode }) => {
@@ -53,6 +48,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
     roomServices: [],
     roomDescription: "",
     bathExtras: "",
+    periodPrices: [],
   });
 
   useEffect(() => {
@@ -60,36 +56,27 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
     if (fetchedRoomData && editMode) setRoomData(newData);
   }, [fetchedRoomData, editMode]);
 
-  const [allLocations, setAllLocations] = useState([]);
-  const [allCategories, setAllCategories] = useState([]);
-  const [allServices, setAllServices] = useState([]);
+  // const [allCategories, setAllCategories] = useState([]);
+  // const [allServices, setAllServices] = useState([]);
 
-  useEffect(() => {
-    axios
-      .get(`http://localhost:3000/api/locations`)
-      .then((response) => {
-        setAllLocations(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    axios
-      .get(`http://localhost:3000/api/categories`)
-      .then((response) => {
-        setAllCategories(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    axios
-      .get(`http://localhost:3000/api/roomServices`)
-      .then((response) => {
-        setAllServices(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(`http://localhost:3000/api/categories`)
+  //     .then((response) => {
+  //       setAllCategories(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  //   axios
+  //     .get(`http://localhost:3000/api/roomServices`)
+  //     .then((response) => {
+  //       setAllServices(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, []);
 
   const roomServiceOpts = [
     {
@@ -158,10 +145,6 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
         );
   };
 
-  const { singleHotel } = useSelector((state) => state.hotels);
-
-  console.log(singleHotel);
-
   const [servicesToRender, setServicesToRender] = useState([]);
 
   useEffect(() => {
@@ -173,7 +156,37 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
     setServicesToRender(services);
   }, [roomData.roomServices]);
 
-  console.log(servicesToRender);
+  const [periods, setPeriods] = useState([]);
+  const [anotherPeriods, setAnotherPeriods] = useState([]);
+
+  useEffect(() => {
+    if (fetchedRoomData?.hotel?.periods)
+      setPeriods(fetchedRoomData.hotel.periods);
+  }, [fetchedRoomData]);
+
+  useEffect(() => {
+    setRoomData({ ...roomData, periodPrices: anotherPeriods });
+  }, [anotherPeriods]);
+
+  console.log(roomData);
+
+  //  const handlePriceChange = (e, idx) => {
+  //    const newPeriods = periods.map((period, i) => {
+  //      if (i === idx) {
+  //        // create a new period object with the price field inserted
+  //        return { ...period, price: event.target.value };
+  //      } else if ("price" in period) {
+  //        // delete the old period object which contained a price
+  //        const { price, ...rest } = period;
+  //        return rest;
+  //      } else {
+  //        return period;
+  //      }
+  //    });
+
+  //    // update the state with the new array of periods
+  //    setPeriods(newPeriods);
+  //  };
 
   return (
     <>
@@ -237,9 +250,6 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                         })
                       }
                     >
-                      двуспальные односпальные двуспальные и односпальные
-                      двухъярусные двуспальные и двухъярусные односпальная и
-                      двухъярусные
                       <option value="двуспальные">двуспальные</option>
                       <option value="односпальные">односпальные</option>
                       <option value="двуспальные и односпальные">
@@ -479,6 +489,37 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   ></textarea>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+        <section className="test_section">
+          <div className="container">
+            <div className="test_wrapper wrapper" style={{ columnGap: "10px" }}>
+              {periods && periods.length > 0
+                ? periods?.map((period, idx) => {
+                    let newPeriods = periods.map((per) => {
+                      return { ...per, price: 0 };
+                    });
+                    return (
+                      <div className="period-box">
+                        <div className="period-title">
+                          {period.startDay}.{period.startMonth} -{" "}
+                          {period.endDay}.{period.endMonth}
+                        </div>
+                        <input
+                          type="number"
+                          name=""
+                          id=""
+                          style={{ backgroundColor: "lightgrey" }}
+                          onChange={(e) => {
+                            newPeriods[idx].price = e.target.value;
+                            setAnotherPeriods(newPeriods);
+                          }}
+                        />
+                      </div>
+                    );
+                  })
+                : null}
             </div>
           </div>
         </section>

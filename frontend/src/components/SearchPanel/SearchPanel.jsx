@@ -4,7 +4,7 @@ import axios from "axios";
 import SearchTag from "./SearchTag";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import { useSelector, useDispatch } from "react-redux";
 import {
   setStartDate,
   setEndDate,
@@ -13,7 +13,7 @@ import {
   setDestination,
 } from "../../features/clientSlice";
 
-import { useDispatch } from "react-redux";
+import { getCamps } from "../../features/camps/campSlice";
 
 import "./SearchPanel.scss";
 
@@ -123,9 +123,12 @@ const SearchPanel = () => {
         getSearchedHotels({ locationId, peopleAmount, daysAmount, startDate })
       );
     }
+    if (panelTag === "Лагеря") {
+      dispatch(getCamps());
+    }
   };
 
-  const handlePeopleSelect = (e) => {
+  const handlePeopleSelect = (num) => {
     setSearchTerms({ ...searchTerms, number: e.target.value });
     // changeAmount(e.target.value);
     setClientData({

@@ -18,6 +18,8 @@ const Excursions = ({ locationId }) => {
     (state) => state.excursions
   );
 
+  console.log(excursions);
+
   const { clientExcursions, excSum } = useSelector((state) => state.client);
 
   useEffect(() => {

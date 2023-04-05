@@ -34,6 +34,7 @@ const PeopleSelect = ({ handlePeopleSelect, value }) => {
                 readOnly
                 value={adults}
                 className="count-box"
+                onChange={handlePeopleSelect}
               />
               <button
                 className="count-btn"

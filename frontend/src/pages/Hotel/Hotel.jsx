@@ -450,6 +450,8 @@ const Hotel = () => {
                   "Экскурсии загружаются"
                 )}
 
+                {console.log(singleHotel?.locationId)}
+
                 <ExpandableText text="Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum." />
 
                 <div className="kids_box">

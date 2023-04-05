@@ -99,7 +99,7 @@ const Requests = () => {
 
       <section className="dash_section">
         {isLoading ? (
-          <div>LOADING...</div>
+          <div className="table-loader">Загрузка заявок...</div>
         ) : (
           <RequestTable columns={columns} data={orders} />
         )}
