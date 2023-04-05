@@ -618,6 +618,10 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
           </div>
           <div className="modal-body">
             <span className="modal-select-text">Название новой услуги</span>
+            {/* <Input
+              style={{ width: "100%", marginTop: "22px" }}
+              placeholder="Категория"
+            /> */}
             <Input
               style={{ width: "100%", marginTop: "22px" }}
               placeholder="Услуга"

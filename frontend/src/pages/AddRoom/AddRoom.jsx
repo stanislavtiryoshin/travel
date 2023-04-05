@@ -157,7 +157,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
   }, [roomData.roomServices]);
 
   const [periods, setPeriods] = useState([]);
-  const [anotherPeriods, setAnotherPeriods] = useState([]);
+  const [newPeriods, setNewPeriods] = useState([]);
 
   useEffect(() => {
     if (fetchedRoomData?.hotel?.periods)
@@ -165,28 +165,18 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
   }, [fetchedRoomData]);
 
   useEffect(() => {
-    setRoomData({ ...roomData, periodPrices: anotherPeriods });
-  }, [anotherPeriods]);
+    setNewPeriods(
+      periods.map((per) => {
+        return { ...per, periodId: per._id, roomPrice: 0 };
+      })
+    );
+  }, [periods]);
+
+  useEffect(() => {
+    setRoomData({ ...roomData, periodPrices: newPeriods });
+  }, [newPeriods]);
 
   console.log(roomData);
-
-  //  const handlePriceChange = (e, idx) => {
-  //    const newPeriods = periods.map((period, i) => {
-  //      if (i === idx) {
-  //        // create a new period object with the price field inserted
-  //        return { ...period, price: event.target.value };
-  //      } else if ("price" in period) {
-  //        // delete the old period object which contained a price
-  //        const { price, ...rest } = period;
-  //        return rest;
-  //      } else {
-  //        return period;
-  //      }
-  //    });
-
-  //    // update the state with the new array of periods
-  //    setPeriods(newPeriods);
-  //  };
 
   return (
     <>
@@ -495,25 +485,22 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
         <section className="test_section">
           <div className="container">
             <div className="test_wrapper wrapper" style={{ columnGap: "10px" }}>
-              {periods && periods.length > 0
-                ? periods?.map((period, idx) => {
-                    let newPeriods = periods.map((per) => {
-                      return { ...per, price: 0 };
-                    });
+              {newPeriods && newPeriods.length > 0
+                ? newPeriods?.map((period, idx) => {
                     return (
                       <div className="period-box">
-                        <div className="period-title">
-                          {period.startDay}.{period.startMonth} -{" "}
-                          {period.endDay}.{period.endMonth}
-                        </div>
+                        <div className="period-title">{period._id}</div>
                         <input
                           type="number"
                           name=""
                           id=""
                           style={{ backgroundColor: "lightgrey" }}
                           onChange={(e) => {
-                            newPeriods[idx].price = e.target.value;
-                            setAnotherPeriods(newPeriods);
+                            newPeriods[idx].roomPrice = e.target.value;
+                            setRoomData({
+                              ...roomData,
+                              periodPrices: newPeriods,
+                            });
                           }}
                         />
                       </div>
