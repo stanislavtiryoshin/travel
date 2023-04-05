@@ -10,6 +10,7 @@ const {
   insertPrices,
   getRoomPrices,
   insertTourPrices,
+  getRoomsByLimit,
 } = require("../controllers/hotelController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -36,5 +37,5 @@ router.get("/:id", getSingleHotel);
 //test
 router.patch("/:hotelId/prices", upload.single("file"), insertPrices);
 router.get("/hotelRoomPrices/:hotelId", getRoomPrices);
-
+router.get("/:hotelId/room", getRoomsByLimit);
 module.exports = router;

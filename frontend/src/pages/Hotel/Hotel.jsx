@@ -31,6 +31,7 @@ import hotel from "../../assets/hotel.png";
 import "./Hotel.scss";
 import Room from "./Room";
 import Excursions from "../../components/Excursions/Excursions";
+import { useGetRoomByHotelIdLimitQuery } from "../../features/services/base.service";
 
 const Hotel = () => {
   const dispatch = useDispatch();
@@ -41,7 +42,11 @@ const Hotel = () => {
     (state) => state.hotels
   );
 
-  console.log("Single hotel", singleHotel);
+  const [roomCount, setRoomCount] = useState(1);
+  const { data, isLoading: roomIsLoading } = useGetRoomByHotelIdLimitQuery({
+    hotelId,
+    limit: roomCount,
+  });
 
   useEffect(() => {
     if (isError) {
@@ -205,6 +210,10 @@ const Hotel = () => {
       );
   }, [sum, clientRoom, singleHotel, clientExcursions]);
 
+  if (roomIsLoading) {
+    return <div>Loading...</div>;
+  }
+  console.log("singleHotel", data);
   return (
     <div className="hotel_page page">
       <section className="hotel_section">
@@ -395,8 +404,8 @@ const Hotel = () => {
                             />
                           );
                         })} */}
-                    {singleHotel.rooms &&
-                      singleHotel.rooms.map((room) => {
+                    {data &&
+                      data.map((room) => {
                         return (
                           <Room
                             key={room._id}
@@ -407,6 +416,12 @@ const Hotel = () => {
                         );
                       })}
                   </div>
+                  <button
+                    className="load-more-btn"
+                    onClick={() => setRoomCount((prev) => prev + 1)}
+                  >
+                    Показать остальные
+                  </button>
                 </div>
               </div>
 
