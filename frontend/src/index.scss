@@ -236,3 +236,40 @@ html,
 body {
   scroll-behavior: smooth;
 }
+
+.additional-service {
+  color: blue;
+  text-decoration: underline;
+}
+.modal-title {
+  text-align: center;
+  font-family: GT Walsheim Pro;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.modal-body {
+  line-height: 18px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 22px;
+  text-align: center;
+  color: #51555b;
+}
+
+.modal-select-text {
+  color: #e98715;
+}
+
+.del-btn {
+  margin-top: 34px;
+  background-color: #e74b3099;
+  width: 100%;
+  height: 42px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+}

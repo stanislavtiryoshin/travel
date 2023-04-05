@@ -12,6 +12,7 @@ import Selector from "./Select";
 import { AdminHead } from "../../components/Admin";
 import { AdminAddForm } from "../../components/Admin/AdminAddForm";
 import { Input } from "../../components/Form";
+import Modal from "../../components/Modal";
 
 const AddHotel = ({ fetchedHotelData, editMode }) => {
   const [hotelData, setHotelData] = useState({
@@ -55,6 +56,8 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
 
   const [servicesObjs, setServicesObjs] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     let services = [];
@@ -108,7 +111,7 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
       .get(`http://localhost:3000/api/categories`)
       .then(({ data }) => {
         setAllCategories(data);
-        console.log(data);
+        // console.log(data);
       })
       .catch((error) => {
         console.log(error);
@@ -559,6 +562,7 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
                 {addedServices?.map((serv, idx) => {
                   return (
                     <ServiceCard
+                      setIsOpen={setIsOpen}
                       number={idx + 1}
                       allCategories={allCategories}
                       allServices={allServices}
@@ -581,6 +585,54 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
           </div>
         </section>
       </div>
+      {/* <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <div className="modal-content">
+          <div className="modal-title">
+            Вы хотите удалить день из <br />
+            программы?
+          </div>
+          <div className="modal-body">
+            <span className="modal-select-text">При удалении дня</span>, будут
+            удалены пункты <br /> программы, хранящиеся в нем. Если вы <br />
+            точно хотите удалить день, то напишите
+            <br />
+            <span className="modal-select-text">“День 1”</span>
+          </div>
+
+          <Input
+            style={{ width: "100%", marginTop: "22px" }}
+            placeholder="День 1"
+          />
+
+          <div className="modal-button">
+            <button className="del-btn">
+              <span>Удалить день из программы</span>
+            </button>
+          </div>
+        </div>
+      </Modal> */}
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <div className="modal-content">
+          <div className="modal-title">
+            Хотите добавить новую <br /> услугу?
+          </div>
+          <div className="modal-body">
+            <span className="modal-select-text">Название новой услуги</span>
+            <Input
+              style={{ width: "100%", marginTop: "22px" }}
+              placeholder="Услуга"
+            />
+            <div className="modal-button">
+              <button
+                style={{ width: "100%", marginTop: "10px" }}
+                className="primary-btn"
+              >
+                <span>Добавить услугу</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };
@@ -592,6 +644,7 @@ export const ServiceCard = ({
   optionList,
   selectedOptions,
   handleSelect,
+  setIsOpen,
 }) => {
   const [currCateg, setCurrCateg] = useState("Питание");
   const [currServ, setCurrServ] = useState("64258af02ba7928f871a09cd");
@@ -623,6 +676,9 @@ export const ServiceCard = ({
           }),
         }}
       />
+      <span onClick={() => setIsOpen(true)} className="additional-service">
+        Добавить новую услугу
+      </span>
     </div>
   );
 };
