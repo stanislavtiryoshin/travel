@@ -208,6 +208,8 @@ const Hotel = () => {
       );
   }, [sum, clientRoom, singleHotel, clientExcursions]);
 
+  console.log(singleHotel);
+
   return (
     <div className="hotel_page page">
       <section className="hotel_section">

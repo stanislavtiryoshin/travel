@@ -16,6 +16,7 @@ import { PatternFormat } from "react-number-format";
 
 import "./Order.scss";
 import { useNavigate } from "react-router-dom";
+import { getSingleRoom } from "../../features/room/roomSlice";
 
 const Order = () => {
   const dispatch = useDispatch();
@@ -89,6 +90,16 @@ const Order = () => {
     if (clientData?.hotel) dispatch(getSingleHotel(clientData?.hotel));
     dispatch(reset());
   }, [clientData.hotel, isError, isSuccess, message, dispatch]);
+
+  const { singleRoom } = useSelector((state) => state.rooms);
+
+  useEffect(() => {
+    if (clientData?.room) {
+      dispatch(getSingleRoom(clientData?.room));
+    }
+  }, [dispatch, clientData]);
+
+  console.log(singleRoom);
 
   const handleSendOrderEmail = () => {
     if (orderTerms && singleHotel?.name && singleHotel?.rooms) {
