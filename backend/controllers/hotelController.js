@@ -262,6 +262,47 @@ const getRoomsByLimit = async (req, res) => {
   }
 };
 
+const getByTagRecommendation = async (req, res) => {
+  const { food, comforts } = req.body;
+  let query = {};
+  let or = [];
+
+  if (food) {
+    query.food = {
+      _id: food,
+    };
+    // query.food._id = food;
+
+    or.push(query);
+  }
+
+  if (comforts && comforts.length > 0) {
+    for (let i = 0; i < comforts.length; i++) {
+      let q = {};
+      if (comforts[i] !== "") {
+        q.comforts = {
+          $in: [comforts[i]],
+        };
+        or.push(q);
+      }
+    }
+  }
+
+  try {
+    const hotels = await Hotel.find({ $or: or })
+      .populate("locationId")
+      .populate("food");
+
+    if (hotels.length === 0) {
+      res.sendStatus(404);
+    } else {
+      res.status(200).json(hotels);
+    }
+  } catch (error) {
+    res.sendStatus(400);
+  }
+};
+
 module.exports = {
   addHotel,
   getHotels,
@@ -273,4 +314,5 @@ module.exports = {
   //test
   getRoomPrices,
   getRoomsByLimit,
+  getByTagRecommendation,
 };

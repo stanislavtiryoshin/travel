@@ -31,7 +31,11 @@ import hotel from "../../assets/hotel.png";
 import "./Hotel.scss";
 import Room from "./Room";
 import Excursions from "../../components/Excursions/Excursions";
-import { useGetRoomByHotelIdLimitQuery } from "../../features/services/base.service";
+import {
+  useGetHotelsByTagMutation,
+  useGetRoomByHotelIdLimitQuery,
+} from "../../features/services/base.service";
+import Card from "../../components/Card";
 
 const Hotel = () => {
   const dispatch = useDispatch();
@@ -49,7 +53,28 @@ const Hotel = () => {
       limit: roomCount,
     });
 
-  console.log(singleHotel.rooms);
+  // console.log(singleHotel.comforts, singleHotel.food._id);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  const [
+    getData,
+    {
+      data: recommendation,
+      isLoading: recommendationIsLoading,
+      isSuccess: recommendationSuccess,
+    },
+  ] = useGetHotelsByTagMutation();
+
+  const [rec, setRec] = useState([]);
+
+  useEffect(() => {
+    getData({
+      food: singleHotel && singleHotel.food && singleHotel.food._id,
+      comforts: singleHotel && singleHotel.comforts && singleHotel.comforts,
+    }).then((response) => console.log("recommendation", response));
+  }, [singleHotel]);
 
   useEffect(() => {
     if (isError) {
@@ -219,6 +244,10 @@ const Hotel = () => {
 
   console.log("singleHotel", roomsData);
 
+  if (recommendationIsLoading) {
+    return <div>Loading...</div>;
+  }
+  if (recommendationSuccess) console.log("recommendation", recommendation);
   return (
     <div className="hotel_page page">
       <section className="hotel_section">
@@ -486,6 +515,23 @@ const Hotel = () => {
               </div>
             </div>
           ) : null}
+        </div>
+        <div className="hotel_similar-wrapper">
+          <div className="hotel_similar-tour">Похожие туры</div>
+          <div className="hotel_similar_text">
+            Мы подобрали вам похожие туры. Взгляните, чтобы сравнить
+          </div>
+          <div className="hotel_similar-body">
+            {recommendation.map((recomm) => (
+              <Card
+                name={recomm.name}
+                description={recomm.description}
+                image={
+                  "https://www.state.gov/wp-content/uploads/2019/04/Kazakhstan-2426x1406.jpg"
+                }
+              />
+            ))}
+          </div>
         </div>
       </section>
     </div>

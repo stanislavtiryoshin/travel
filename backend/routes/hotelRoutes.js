@@ -11,6 +11,7 @@ const {
   getRoomPrices,
   insertTourPrices,
   getRoomsByLimit,
+  getByTagRecommendation,
 } = require("../controllers/hotelController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -38,4 +39,6 @@ router.get("/:id", getSingleHotel);
 router.patch("/:hotelId/prices", upload.single("file"), insertPrices);
 router.get("/hotelRoomPrices/:hotelId", getRoomPrices);
 router.get("/:hotelId/room", getRoomsByLimit);
+router.post("/hotelRecommendation/tags", getByTagRecommendation);
+
 module.exports = router;
