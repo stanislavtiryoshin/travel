@@ -128,3 +128,10 @@ header {
     text-align: left;
   }
 }
+
+.search-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(37, 105, 215, 1);
+}
