@@ -7,8 +7,6 @@ import bed from "../../assets/bed.svg";
 import food from "../../assets/food.svg";
 
 const Room = ({ room, chooseRoom, active, days, sum }) => {
-  console.log(room, "room");
-
   const [bedCount, setBedCount] = React.useState(
     room?.beds?.largeBeds + room?.beds?.smallBeds
   );

@@ -42,11 +42,14 @@ const Hotel = () => {
     (state) => state.hotels
   );
 
-  const [roomCount, setRoomCount] = useState(1);
-  const { data, isLoading: roomIsLoading } = useGetRoomByHotelIdLimitQuery({
-    hotelId,
-    limit: roomCount,
-  });
+  const [roomCount, setRoomCount] = useState(3);
+  const { data: roomsData, isLoading: roomIsLoading } =
+    useGetRoomByHotelIdLimitQuery({
+      hotelId,
+      limit: roomCount,
+    });
+
+  console.log(singleHotel.rooms);
 
   useEffect(() => {
     if (isError) {
@@ -213,7 +216,9 @@ const Hotel = () => {
   if (roomIsLoading) {
     return <div>Loading...</div>;
   }
-  console.log("singleHotel", data);
+
+  console.log("singleHotel", roomsData);
+
   return (
     <div className="hotel_page page">
       <section className="hotel_section">
@@ -404,8 +409,8 @@ const Hotel = () => {
                             />
                           );
                         })} */}
-                    {data &&
-                      data.map((room) => {
+                    {roomsData &&
+                      roomsData.map((room) => {
                         return (
                           <Room
                             key={room._id}

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { Period, Hotel } = require("./hotelModel");
 
 const roomSchema = mongoose.Schema(
   {
@@ -92,10 +93,11 @@ const roomSchema = mongoose.Schema(
   }
 );
 
-// roomSchema.virtual("roomPeriods", {
-//   ref: "Hotel",
-//   localField: "periodsPrices",
-//   foreignField: "periods._id",
-// });
+roomSchema.virtual("periods", {
+  ref: "Period",
+  localField: "periodPrices.periodId",
+  foreignField: "_id",
+  justOne: false,
+});
 
 module.exports = new mongoose.model("Room", roomSchema);
