@@ -234,6 +234,34 @@ const getRoomPrices = (req, res) => {
     .catch(() => res.sendStatus(400));
 };
 
+const getRoomsByLimit = async (req, res) => {
+  const { limit } = req.query;
+  const { hotelId } = req.params;
+  let roomData = [];
+
+  try {
+    const hotels = await Hotel.findOne({ _id: hotelId });
+    if (limit) {
+      hotels.rooms.length = limit;
+    }
+
+    try {
+      const rooms = await Room.find({
+        _id: {
+          $in: hotels.rooms,
+        },
+      });
+      res.status(200).json(rooms);
+    } catch (error) {
+      res.sendStatus(400);
+    }
+
+    console.log(roomData);
+  } catch (err) {
+    res.sendStatus(404);
+  }
+};
+
 module.exports = {
   addHotel,
   getHotels,
@@ -244,4 +272,5 @@ module.exports = {
   insertPrices,
   //test
   getRoomPrices,
+  getRoomsByLimit,
 };

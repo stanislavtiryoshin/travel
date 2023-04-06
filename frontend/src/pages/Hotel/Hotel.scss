@@ -483,3 +483,15 @@
   }
   border-left: solid 1px rgba(41, 45, 50, 0.08);
 }
+
+.additional_tag {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  color: #25343db2;
+
+  .room_food img,
+  .room_bed img {
+    margin-right: 10px;
+  }
+}

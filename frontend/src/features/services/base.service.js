@@ -16,6 +16,7 @@ export const baseApi = createApi({
     "tour",
     "Food",
     "Orders",
+    "Rooms",
   ],
   endpoints: (builder) => ({
     getCategory: builder.query({
@@ -152,6 +153,18 @@ export const baseApi = createApi({
       }),
       invalidatesTags: [{ id: "LIST", type: "Camp" }],
     }),
+    getRoomByHotelIdLimit: builder.query({
+      query: ({ limit, hotelId }) => ({
+        url: `/hotels/${hotelId}/room?limit=${limit}`,
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: "Rooms", _id })),
+              { type: "Rooms", id: "LIST" },
+            ]
+          : [{ type: "Rooms", id: "LIST" }],
+    }),
   }),
 });
 
@@ -168,4 +181,5 @@ export const {
   useGetFoodQuery,
 
   useGetOrdersQuery,
+  useGetRoomByHotelIdLimitQuery,
 } = baseApi;
