@@ -1,10 +1,18 @@
 const mongoose = require("mongoose");
 
+const periodSchema = mongoose.Schema({
+  startDay: Number,
+  startMonth: Number,
+  endDay: Number,
+  endMonth: Number,
+});
+
 const hotelSchema = mongoose.Schema(
   {
     name: {
       type: String,
     },
+    uid: String,
     typeId: {
       type: mongoose.Schema.Types.ObjectId,
     },
@@ -39,18 +47,7 @@ const hotelSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Food",
     },
-    periods: [
-      {
-        startDay: Number,
-        startMonth: Number,
-        endDay: Number,
-        endMonth: Number,
-        price: {
-          type: Number,
-          default: null,
-        },
-      },
-    ],
+    periods: [periodSchema],
     kidFoodPrice: {
       type: Number,
     },
@@ -120,4 +117,7 @@ const hotelSchema = mongoose.Schema(
   }
 );
 
-module.exports = new mongoose.model("Hotel", hotelSchema);
+const Period = new mongoose.model("Period", periodSchema);
+const Hotel = new mongoose.model("Hotel", hotelSchema);
+
+module.exports = { Period, Hotel };

@@ -99,7 +99,7 @@ const getSearchedTour = (req, res) => {
     query.duration = duration;
   }
 
-  if (rating) {
+  if (rating && rating !== "") {
     query.rating = rating;
   }
 

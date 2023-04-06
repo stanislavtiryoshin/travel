@@ -9,8 +9,13 @@ const roomSchema = mongoose.Schema(
     },
     periodPrices: [
       {
-        periodId: mongoose.Schema.Types.ObjectId,
-        price: Number,
+        periodId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Period",
+        },
+        roomPrice: Number,
+        adultPrice: Number,
+        kidPrice: Number,
       },
     ],
     roomName: {
@@ -87,10 +92,10 @@ const roomSchema = mongoose.Schema(
   }
 );
 
-roomSchema.virtual("roomPeriods", {
-  ref: "Hotel",
-  localField: "periodsPrices",
-  foreignField: "periods._id",
-});
+// roomSchema.virtual("roomPeriods", {
+//   ref: "Hotel",
+//   localField: "periodsPrices",
+//   foreignField: "periods._id",
+// });
 
 module.exports = new mongoose.model("Room", roomSchema);

@@ -49,7 +49,7 @@ const addRoom = asyncHandler(async (req, res) => {
 //@access Private
 
 const updateRoom = asyncHandler(async (req, res) => {
-  const room = await Hotel.findByIdAndUpdate(req.params.roomId, req.body, {
+  const room = await Room.findByIdAndUpdate(req.params.roomId, req.body, {
     new: true,
   });
   res.status(200).json(room);
