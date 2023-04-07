@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, lazy } from "react";
 import DatePicker from "react-datepicker";
 
 import style from "./Home.module.scss";
@@ -9,11 +9,12 @@ import tree from "../../../assets/tags/tag4.svg";
 import { tags } from "../../../components/SearchPanel/tags";
 import PeopleSelect from "../../../components/SearchPanel/PeopleSelect";
 import { Button } from "../../components/Layout";
-import Card from "../../components/Layout/Card";
+import Tour from "../../components/Tour/TourCard";
+import Hotel from "../../components/Hotel/Hotel";
 
 const MobileHome = () => {
-  const [searchTag, setSearchTag] = useState("");
-  const [isActive, setIsActive] = useState("");
+  const [searchTag, setSearchTag] = useState("Hotel");
+  const [isActive, setIsActive] = useState(4);
   const [startDate, setStartDate] = useState(
     localStorage.getItem("startDate") !== "NaN"
       ? new Date(+JSON.parse(localStorage.getItem("startDate")))
@@ -125,7 +126,13 @@ const MobileHome = () => {
           <Button btn="secondary">Найти тур</Button>
         </div>
         <div className={style.tag_content}>
-          <Card />
+          {searchTag === "Hotel" ? (
+            <Hotel />
+          ) : searchTag === "Tours" ? (
+            <Tour />
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </>

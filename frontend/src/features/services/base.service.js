@@ -186,6 +186,7 @@ export const {
   useGetHotelServiceQuery,
   useAddTourMutation,
   useAddCampMutation,
+  //Get
   useGetCampQuery,
   useGetTourQuery,
   useGetFoodQuery,

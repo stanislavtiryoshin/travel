@@ -7,7 +7,7 @@ import tag from "../../../assets/tag.svg";
 import line from "../../../assets/line.svg";
 import { Button } from "../Button/Button";
 
-const Card = ({ name, image, location, stars, rating, price }) => {
+const Card = ({ name, image, locationFeature, stars, rating, price }) => {
   const formatter = Intl.NumberFormat("ru-RU", {
     style: "currency",
     currency: "KZT",
@@ -28,7 +28,9 @@ const Card = ({ name, image, location, stars, rating, price }) => {
             />
           </div>
           <div className={style.card_location}>
-            {location ? location : "Алматинская область, Казахстан"}
+            {locationFeature
+              ? `${locationFeature}`
+              : "Алматинская область, Казахстан"}
           </div>
           <div className={style.card_title}>
             {name ? name : "Отель Каравансарай"}
