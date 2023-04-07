@@ -99,7 +99,7 @@ const Order = () => {
     }
   }, [dispatch, clientData]);
 
-  console.log(singleRoom);
+  console.log(clientData.room);
 
   const handleSendOrderEmail = () => {
     if (orderTerms && singleHotel?.name && singleHotel?.rooms) {

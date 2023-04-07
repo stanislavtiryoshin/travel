@@ -11,6 +11,8 @@ const {
   getRoomPrices,
   insertTourPrices,
   getRoomsByLimit,
+  updateHotelPeriods,
+  deletePeriod,
 } = require("../controllers/hotelController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -33,6 +35,8 @@ router.get("/searched", getSearchedHotels);
 router.get("/admin", getAdminHotels);
 router.patch("/:hotelId", protect, updateHotel);
 router.get("/:id", getSingleHotel);
+router.patch("/:hotelId/periods", protect, updateHotelPeriods);
+router.patch("/:hotelId/delete-period", protect, deletePeriod);
 
 //test
 router.patch("/:hotelId/prices", upload.single("file"), insertPrices);

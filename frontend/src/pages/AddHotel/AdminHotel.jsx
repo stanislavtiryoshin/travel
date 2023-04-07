@@ -53,6 +53,8 @@ const AdminHotel = () => {
     dispatch(reset());
   }, [hotelId]);
 
+  console.log(singleHotel);
+
   return (
     <>
       <AddHotel fetchedHotelData={singleHotel} editMode />

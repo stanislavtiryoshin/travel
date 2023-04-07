@@ -43,6 +43,7 @@ const Hotel = () => {
   );
 
   const [roomCount, setRoomCount] = useState(3);
+
   const { data: roomsData, isLoading: roomIsLoading } =
     useGetRoomByHotelIdLimitQuery({
       hotelId,

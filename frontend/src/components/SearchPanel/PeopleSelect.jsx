@@ -4,8 +4,6 @@ import "./SearchPanel.scss";
 
 const PeopleSelect = ({ handlePeopleSelect, value }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [adults, setAdults] = useState(1);
-  const [kids, setKids] = useState(0);
   return (
     <div className="search_col people_col">
       <img src={search4} alt="" className="search_bot-icon" />
