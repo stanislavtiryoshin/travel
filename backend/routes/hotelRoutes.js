@@ -13,6 +13,7 @@ const {
   getRoomsByLimit,
   updateHotelPeriods,
   deletePeriod,
+  getByTagRecommendation,
 } = require("../controllers/hotelController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -42,4 +43,6 @@ router.patch("/:hotelId/delete-period", protect, deletePeriod);
 router.patch("/:hotelId/prices", upload.single("file"), insertPrices);
 router.get("/hotelRoomPrices/:hotelId", getRoomPrices);
 router.get("/:hotelId/room", getRoomsByLimit);
+router.post("/hotelRecommendation/tags", getByTagRecommendation);
+
 module.exports = router;

@@ -165,6 +165,16 @@ export const baseApi = createApi({
             ]
           : [{ type: "Rooms", id: "LIST" }],
     }),
+    getHotelsByTag: builder.mutation({
+      query: (body) => {
+        console.log("body", body);
+        return {
+          url: "/hotels/hotelRecommendation/tags",
+          body,
+          method: "POST",
+        };
+      },
+    }),
   }),
 });
 
@@ -182,4 +192,5 @@ export const {
 
   useGetOrdersQuery,
   useGetRoomByHotelIdLimitQuery,
+  useGetHotelsByTagMutation,
 } = baseApi;

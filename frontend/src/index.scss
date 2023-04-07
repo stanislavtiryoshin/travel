@@ -282,3 +282,26 @@ body {
   color: white;
   font-weight: 500;
 }
+
+.hotel_similar-wrapper {
+  width: 1200px;
+  margin: 0 auto;
+  margin-top: 32px;
+}
+
+.hotel_similar-tour {
+  font-weight: 700;
+  font-family: GT Walsheim Pro;
+  font-size: 20px;
+}
+.hotel_similar_text {
+  font-family: GT Walsheim Pro;
+  font-size: 16px;
+  color: #51555b;
+}
+
+.hotel_similar-body {
+  display: grid;
+  grid-template-columns: 282px 282px 282px 282px;
+  column-gap: 12px;
+}

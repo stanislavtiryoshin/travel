@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -12,8 +12,9 @@ import phone from "../../assets/phone.svg";
 import photo from "../../assets/photo.png";
 
 import "./Navbar.scss";
+import SearchPanel from "../SearchPanel/SearchPanel";
 
-const Navbar = () => {
+const Navbar = ({ isSearch }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
@@ -74,7 +75,9 @@ const Navbar = () => {
   const location = useLocation();
 
   // Check if the current URL is "/dashboard"
-  const isDashboard = location.pathname.includes("/dashboard");
+  const isDashboard = location.pathname === "/dashboard";
+
+  const isHome = location.pathname === "/";
 
   return (
     <>
@@ -122,45 +125,55 @@ const Navbar = () => {
         </div>
       </header>
       {!isDashboard ? (
-        <div className="header_bot">
-          <div className="container">
-            <div className="header_bot-wrapper wrapper">
-              <div className="header_bot-left wrapper">
+        <>
+          <div className="header_bot">
+            <div className="container">
+              <div className="header_bot-wrapper wrapper">
+                <div className="header_bot-left wrapper">
+                  {!isDashboard ? (
+                    <>
+                      <img src={photo} alt="" className="header_bot-photo" />
+                      <div className="header_bot-left-text">
+                        Хотите найти тур мечты?
+                      </div>
+                    </>
+                  ) : null}
+                </div>
                 {!isDashboard ? (
-                  <>
-                    <img src={photo} alt="" className="header_bot-photo" />
-                    <div className="header_bot-left-text">
-                      Хотите найти тур мечты?
-                    </div>
-                  </>
+                  <form
+                    className="header_bot-right wrapper"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleSendPhone();
+                    }}
+                  >
+                    <PatternFormat
+                      className="header_bot-input"
+                      placeholder="+7 (...)"
+                      format="+7 (###) ### ## ##"
+                      allowEmptyFormatting={false}
+                      value={phone}
+                      mask="."
+                      required
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                    <button className="primary-btn yellow" type="submit">
+                      Заказать звонок
+                    </button>
+                  </form>
                 ) : null}
               </div>
-              {!isDashboard ? (
-                <form
-                  className="header_bot-right wrapper"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSendPhone();
-                  }}
-                >
-                  <PatternFormat
-                    className="header_bot-input"
-                    placeholder="+7 (...)"
-                    format="+7 (###) ### ## ##"
-                    allowEmptyFormatting={false}
-                    value={phone}
-                    mask="."
-                    required
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                  <button className="primary-btn yellow" type="submit">
-                    Заказать звонок
-                  </button>
-                </form>
-              ) : null}
             </div>
           </div>
-        </div>
+          <div className="search-panel">
+            {!isHome && (
+              <SearchPanel
+                style={{ marginBottom: "0px !important" }}
+                isUserLook
+              />
+            )}
+          </div>
+        </>
       ) : null}
     </>
   );

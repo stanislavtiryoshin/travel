@@ -27,7 +27,7 @@ import { getSearchedHotels, reset } from "../../features/hotel/hotelSlice";
 import { tags } from "./tags";
 import PeopleSelect from "./PeopleSelect";
 
-const SearchPanel = () => {
+const SearchPanel = ({ isUserLook, style }) => {
   const dispatch = useDispatch();
 
   const [panelTag, setPanelTag] = useState("Отели");
@@ -45,25 +45,30 @@ const SearchPanel = () => {
       });
   }, []);
 
+  const [startingDate, setStartingDate] = useState(
+    localStorage.getItem("startDate") !== "NaN"
+      ? new Date(+JSON.parse(localStorage.getItem("startDate")))
+      : new Date()
+  );
+  const [endingDate, setEndingDate] = useState(
+    localStorage.getItem("endDate") !== "NaN"
+      ? new Date(+JSON.parse(localStorage.getItem("endDate")))
+      : new Date(Date.now() + 3600 * 1000 * 24)
+  );
   const [searchTerms, setSearchTerms] = useState({
     tag: "Туры",
     origin: "Астана",
     destination: allLocations?._id ? allLocations[0]._id : null,
-    startDate: new Date(),
-    endDate: new Date(),
     number: 1,
   });
 
-  const [startingDate, setStartingDate] = useState(new Date());
-  const [endingDate, setEndingDate] = useState(
-    new Date(Date.now() + 3600 * 1000 * 24)
-  );
-
   const [clientData, setClientData] = useState({
-    endDate: Date.parse(new Date(Date.now() + 3600 * 1000 * 24)),
-    startDate: Date.parse(new Date()),
+    endDate: Date.parse(endingDate),
+    startDate: Date.parse(startingDate),
     peopleAmount: 1,
-    daysAmount: 2,
+    daysAmount: localStorage.getItem("daysAmount")
+      ? JSON.parse(localStorage.getItem("daysAmount"))
+      : 2,
     destination: "",
   });
 
@@ -93,18 +98,18 @@ const SearchPanel = () => {
   useEffect(() => {
     setClientData({
       ...clientData,
-      startDate: window.localStorage.getItem("startDate"),
-      endDate: window.localStorage.getItem("endDate"),
-      peopleAmount: window.localStorage.getItem("peopleAmount"),
-      daysAmount: window.localStorage.getItem("daysAmount"),
+      startDate: localStorage.getItem("startDate"),
+      endDate: localStorage.getItem("endDate"),
+      peopleAmount: localStorage.getItem("peopleAmount"),
+      daysAmount: localStorage.getItem("daysAmount"),
     });
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem("startDate", clientData.startDate);
-    window.localStorage.setItem("endDate", clientData.endDate);
-    window.localStorage.setItem("daysAmount", clientData.daysAmount);
-    window.localStorage.setItem("peopleAmount", clientData.peopleAmount);
+    localStorage.setItem("startDate", clientData.startDate);
+    localStorage.setItem("endDate", clientData.endDate);
+    localStorage.setItem("daysAmount", clientData.daysAmount);
+    localStorage.setItem("peopleAmount", clientData.peopleAmount);
   }, [clientData]);
 
   const handleTagChange = (text) => {
@@ -139,21 +144,24 @@ const SearchPanel = () => {
   };
 
   return (
-    <div className="search_box">
-      <div className="search_top">
-        {tags.map((tag, id) => {
-          const isActive = panelTag === tag.text;
-          return (
-            <SearchTag
-              key={id}
-              icon={tag.icon}
-              text={tag.text}
-              active={isActive}
-              handleTagChange={handleTagChange}
-            />
-          );
-        })}
-      </div>
+    <div className="search_box" style={style && { ...style }}>
+      {!isUserLook && (
+        <div className="search_top">
+          {tags.map((tag, id) => {
+            const isActive = panelTag === tag.text;
+            return (
+              <SearchTag
+                key={id}
+                icon={tag.icon}
+                text={tag.text}
+                active={isActive}
+                handleTagChange={handleTagChange}
+              />
+            );
+          })}
+        </div>
+      )}
+
       <div className="search_bot">
         <div className="search_col">
           <img src={search1} alt="" className="search_bot-icon" />
