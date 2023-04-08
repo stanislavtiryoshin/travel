@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addRoom, updateRoom } from "../../features/room/roomSlice";
 import { AdminHead } from "../../components/Admin";
 import Section from "../../components/Section";
+import RoomRow from "../AddHotel/RoomRow";
 
 const AddRoom = ({ fetchedRoomData, editMode }) => {
   const dispatch = useDispatch();
@@ -161,23 +162,33 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
   const [newPeriods, setNewPeriods] = useState([]);
 
   useEffect(() => {
-    if (fetchedRoomData?.hotel?.periods)
-      setPeriods(fetchedRoomData.hotel.periods);
+    if (
+      fetchedRoomData?.hotel?.periods &&
+      fetchedRoomData?.hotel?.periods?.length > 0
+    ) {
+      setPeriods(fetchedRoomData?.hotel?.periods);
+    }
+    // if (fetchedRoomData.periodPrices.length > 0) {
+    //   setPeriods(fetchedRoomData.periodPrices);
+    // }
   }, [fetchedRoomData]);
+  console.log(fetchedRoomData?.periodPrices);
 
   useEffect(() => {
-    setNewPeriods(
-      periods.map((per) => {
-        return { ...per, periodId: per._id, roomPrice: 0 };
-      })
-    );
+    if (fetchedRoomData && fetchedRoomData?.periodPrices?.length > 0) {
+      setNewPeriods(fetchedRoomData?.periodPrices);
+    } else {
+      setNewPeriods(
+        periods?.map((per) => {
+          return { ...per, periodId: per._id, roomPrice: 0 };
+        })
+      );
+    }
   }, [periods]);
 
   useEffect(() => {
     setRoomData({ ...roomData, periodPrices: newPeriods });
   }, [newPeriods]);
-
-  console.log(roomData.hotel);
 
   return (
     <>
@@ -483,28 +494,28 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
           </div>
         </Section>
         <Section section="test_section" wrapper="test_wrapper">
-          {newPeriods && newPeriods.length > 0
-            ? newPeriods?.map((period, idx) => {
-                return (
-                  <div className="period-box">
-                    <div className="period-title">{period._id}</div>
-                    <input
-                      type="number"
-                      name=""
-                      id=""
-                      style={{ backgroundColor: "lightgrey" }}
-                      onChange={(e) => {
-                        newPeriods[idx].roomPrice = e.target.value;
-                        setRoomData({
-                          ...roomData,
-                          periodPrices: newPeriods,
-                        });
-                      }}
-                    />
-                  </div>
-                );
-              })
-            : null}
+          <table className="periods_table">
+            <thead>
+              <tr>
+                <th>Room</th>
+                {fetchedRoomData &&
+                  fetchedRoomData?.hotel &&
+                  fetchedRoomData?.hotel.periods &&
+                  fetchedRoomData?.hotel?.periods?.map((period) => (
+                    <th key={period._id}>
+                      {period.startDay}/{period.startMonth} - {period.endDay}/
+                      {period.endMonth}
+                    </th>
+                  ))}
+              </tr>
+            </thead>
+            <tbody>
+              <RoomRow
+                room={fetchedRoomData}
+                periods={fetchedRoomData?.hotel?.periods}
+              />
+            </tbody>
+          </table>
         </Section>
         <Section section="add_more-section" wrapper="add_more-wrapper">
           <div className="add_more-col more-col shadowed_box">

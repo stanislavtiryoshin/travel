@@ -75,15 +75,16 @@ const updateHotelPeriods = asyncHandler(async (req, res) => {
     }
   );
   try {
-    hotel.rooms.forEach(
-      async (room) =>
-        await Room.findByIdAndUpdate(room, {
-          $pull: {
-            periodPrices: {
-              periodId: { $nin: req.body.periods.map((period) => period._id) },
+    hotel.rooms.forEach((room) =>
+      Room.findByIdAndUpdate(room, {
+        $pull: {
+          periodPrices: {
+            periodId: {
+              $nin: req.body.periods.map((period) => period.periodId),
             },
           },
-        })
+        },
+      })
     );
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -99,7 +100,8 @@ const getHotels = asyncHandler(async (req, res) => {
   const hotels = await Hotel.find()
     .populate("locationId")
     .populate("food")
-    .populate("rooms");
+    .populate("rooms")
+    .populate("hotelServices");
   res.status(200).json(hotels);
 });
 
@@ -141,7 +143,8 @@ const getSingleHotel = asyncHandler(async (req, res) => {
     .populate("locationId")
     .populate("food")
     .populate("rooms")
-    .populate("periods");
+    .populate("periods")
+    .populate("hotelServices.serviceId");
   res.status(200).json(singleHotel);
 });
 
@@ -202,12 +205,14 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     })
       .populate("locationId")
       .populate("food")
-      .populate("rooms");
+      .populate("rooms")
+      .populate("hotelServices");
   } else {
     hotels = await Hotel.find()
       .populate("locationId")
       .populate("food")
-      .populate("rooms");
+      .populate("rooms")
+      .populate("hotelServices");
   }
 
   // const updatedHotels = hotels.map((plainHotel) => {

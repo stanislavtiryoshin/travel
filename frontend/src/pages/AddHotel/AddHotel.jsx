@@ -25,7 +25,7 @@ import Modal from "../../components/Modal";
 import Section from "../../components/Section";
 import RoomRow from "./RoomRow";
 
-const AddHotel = ({ fetchedHotelData, editMode }) => {
+const AddHotel = ({ fetchedHotelData, editMode, updateHotelData }) => {
   const uid = new ShortUniqueId({
     dictionary: "number", // the default
     length: 6,
@@ -67,6 +67,7 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
   }, [fetchedHotelData, editMode]);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [allLocations, setAllLocations] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
@@ -74,6 +75,8 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
 
   const [servicesObjs, setServicesObjs] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
+
+  console.log(selectedOptions);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -111,6 +114,17 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
     { serviceId: "64258af02ba7928f871a09cd" },
   ]);
 
+  console.log(hotelData.hotelServices);
+
+  // If the hotel already has services, insert them into addedServices
+  useEffect(() => {
+    if (fetchedHotelData && fetchedHotelData?.hotelServices?.length > 0) {
+      setAddedServices(fetchedHotelData.hotelServices);
+      setNewServices(fetchedHotelData.hotelServices);
+    }
+  }, [fetchedHotelData]);
+  console.log(newServices);
+
   useEffect(() => {
     setHotelData({ ...hotelData, hotelServices: newServices });
   }, [newServices]);
@@ -144,25 +158,22 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
       });
   }, []);
 
-  const navigate = useNavigate();
-
   // comforts: [...JSON.parse(localStorage.getItem("comforts"))],
 
   const handleSubmit = () => {
-    const values = {
-      ...hotelData,
-      comforts: [...JSON.parse(localStorage.getItem("comforts"))],
-    };
+    // const values = {
+    //   ...hotelData,
+    //   comforts: [...JSON.parse(localStorage.getItem("comforts"))],
+    // };
 
-    console.log(values);
+    // console.log(values);
 
-    dispatch(addHotel(values)).then((res) => {
+    dispatch(addHotel(hotelData)).then((res) => {
       navigate(`/dashboard/hotel/${res.payload._id}`);
     });
   };
 
   const [prices, setPrices] = useState([]);
-  const [roomPrices, setRoomPrices] = useState([]);
 
   const handlePriceChange = (roomId, periodId, price) => {
     setPrices((prevPrices) => ({
@@ -174,46 +185,21 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
     }));
   };
 
-  const { user } = useSelector((state) => state.auth);
-  console.log(user);
-
-  const handlePriceSubmit = () => {
-    const pricesArray = [];
-    rooms.forEach((room) => {
-      periods.forEach((period) => {
-        const price = prices[room.id]?.[period.id];
-        if (price) {
-          pricesArray.push({
-            roomId: room.id,
-            periodId: period.id,
-            price,
-          });
-        }
-      });
-    });
-  };
-
   const [periods, setPeriods] = useState([]);
 
   useEffect(() => {
     setPeriods(hotelData.periods);
   }, [hotelData]);
 
-  // useEffect(() => {
-  //   setHotelData({ ...hotelData, periods: periods });
-  // }, [periods]);
-
-  console.log(hotelData.periods);
-
   return (
     <>
       <AdminHead
-        text="Создание нового отеля"
+        text={!editMode ? "Создание нового отеля" : "Редактирование отеля"}
         onClick={() => {
           !editMode ? handleSubmit() : dispatch(updateHotel(hotelData));
         }}
       />
-      <div className="add_hotel-page page">
+      <div className={!editMode ? "add_hotel-page page" : ""}>
         <Section
           section="add_gen-section"
           wrapper="add_gen-wrapper wrapper shadowed_box"
@@ -648,7 +634,7 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
                         hotelId: hotelData._id,
                         periods: periods,
                       })
-                    );
+                    ).then((response) => updateHotelData());
                   }}
                 >
                   <img src={check} alt="" />
@@ -664,14 +650,14 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
                           <div className="period_title">
                             {`Период #${idx + 1}`}
                             <button
-                              onClick={() =>
+                              onClick={() => {
                                 dispatch(
                                   deletePeriod({
                                     hotelId: hotelData._id,
                                     periodId: per._id,
                                   })
-                                )
-                              }
+                                ).then((response) => updateHotelData());
+                              }}
                             >
                               X
                             </button>
@@ -764,32 +750,7 @@ const AddHotel = ({ fetchedHotelData, editMode }) => {
           </>
         ) : null}
       </div>
-      {/* <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div className="modal-content">
-          <div className="modal-title">
-            Вы хотите удалить день из <br />
-            программы?
-          </div>
-          <div className="modal-body">
-            <span className="modal-select-text">При удалении дня</span>, будут
-            удалены пункты <br /> программы, хранящиеся в нем. Если вы <br />
-            точно хотите удалить день, то напишите
-            <br />
-            <span className="modal-select-text">“День 1”</span>
-          </div>
 
-          <Input
-            style={{ width: "100%", marginTop: "22px" }}
-            placeholder="День 1"
-          />
-
-          <div className="modal-button">
-            <button className="del-btn">
-              <span>Удалить день из программы</span>
-            </button>
-          </div>
-        </div>
-      </Modal> */}
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <div className="modal-content">
           <div className="modal-title">

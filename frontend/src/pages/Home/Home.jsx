@@ -81,6 +81,10 @@ const Home = () => {
         });
   }, [destination]);
 
+  const { user } = useSelector((state) => state.auth);
+
+  console.log(user);
+
   return (
     <div className="main_page">
       <Hero />

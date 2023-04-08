@@ -36,6 +36,7 @@ import {
   useGetRoomByHotelIdLimitQuery,
 } from "../../features/services/base.service";
 import Card from "../../components/Card";
+import Section from "../../components/Section";
 
 const Hotel = () => {
   const dispatch = useDispatch();
@@ -517,24 +518,24 @@ const Hotel = () => {
             </div>
           ) : null}
         </div>
-        <div className="hotel_similar-wrapper">
-          <div className="hotel_similar-tour">Похожие туры</div>
-          <div className="hotel_similar_text">
-            Мы подобрали вам похожие туры. Взгляните, чтобы сравнить
-          </div>
-          <div className="hotel_similar-body">
-            {recommendation.map((recomm) => (
-              <Card
-                name={recomm.name}
-                description={recomm.description}
-                image={
-                  "https://www.state.gov/wp-content/uploads/2019/04/Kazakhstan-2426x1406.jpg"
-                }
-              />
-            ))}
-          </div>
-        </div>
       </section>
+      <Section section="similar_section" wrapper="hotel_similar-wrapper ver">
+        <div className="hotel_similar-tour">Похожие туры</div>
+        <div className="hotel_similar_text">
+          Мы подобрали вам похожие туры. Взгляните, чтобы сравнить
+        </div>
+        <div className="hotel_similar-body">
+          {recommendation.map((recomm) => (
+            <Card
+              name={recomm.name}
+              description={recomm.description}
+              image={
+                "https://www.state.gov/wp-content/uploads/2019/04/Kazakhstan-2426x1406.jpg"
+              }
+            />
+          ))}
+        </div>
+      </Section>
     </div>
   );
 };

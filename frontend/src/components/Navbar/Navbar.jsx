@@ -74,9 +74,10 @@ const Navbar = ({ isSearch }) => {
 
   const location = useLocation();
 
-  // Check if the current URL is "/dashboard"
-  const isDashboard = location.pathname === "/dashboard";
-
+  // Check if the current url is "/dashboard"
+  const isDashboard =
+    location.pathname === "/dashboard" || location.pathname === "/dashboard/";
+  const isHotels = location.pathname.includes("/hotels/");
   const isHome = location.pathname === "/";
 
   return (
@@ -166,7 +167,7 @@ const Navbar = ({ isSearch }) => {
             </div>
           </div>
           <div className="search-panel">
-            {!isHome && (
+            {isHotels && (
               <SearchPanel
                 style={{ marginBottom: "0px !important" }}
                 isUserLook

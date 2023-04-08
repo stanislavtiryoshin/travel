@@ -19,13 +19,13 @@ const LoginPage = () => {
   );
 
   useEffect(() => {
-    if (isError) {
-      console.log(message);
-    }
+    // if (isError) {
+    //   console.log(message);
+    // }
 
-    if (isSuccess || user) {
-      navigate("/");
-    }
+    // if (isSuccess || user) {
+    //   navigate("/");
+    // }
 
     dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch]);

@@ -7,17 +7,16 @@ const RoomRow = ({ room, handlePriceChange, periods, prices }) => {
   const [periodPrices, setPeriodPrices] = useState([
     { periodId: "", roomPrice: 0 },
   ]);
+
   useEffect(() => {
     if (room.periodPrices && room.periodPrices.length > 0) {
       let newPeriodPrices = [...room.periodPrices];
-      periods.forEach((per, idx) => {
-        if (newPeriodPrices.length - 1 < idx) {
-          newPeriodPrices = [
-            ...newPeriodPrices,
-            { periodId: "", roomPrice: 0 },
-          ];
+      if (newPeriodPrices.length < periods.length) {
+        const diff = periods.length - newPeriodPrices.length;
+        for (let i = 0; i < diff; i++) {
+          newPeriodPrices.push({ periodId: "", roomPrice: 0 });
         }
-      });
+      }
       setPeriodPrices(newPeriodPrices);
     } else {
       setPeriodPrices((prevPeriodPrices) => {
@@ -25,12 +24,12 @@ const RoomRow = ({ room, handlePriceChange, periods, prices }) => {
           periodId: per._id,
           roomPrice: 0,
         }));
-        return [...prevPeriodPrices, ...newPeriodPrices];
+        return newPeriodPrices;
       });
     }
   }, [periods, room]);
 
-  console.log(periodPrices, periods);
+  console.log(periodPrices);
 
   return (
     <tr key={room._id} style={{ margin: "5px" }}>
@@ -56,6 +55,10 @@ const RoomRow = ({ room, handlePriceChange, periods, prices }) => {
       {periodPrices &&
         periodPrices?.map((period, idx) => {
           let newPrices = [...periodPrices];
+          // newPrices[idx] = {
+          //   ...newPrices[idx],
+          //   periodId: period._id,
+          // };
           return (
             <td key={period._id} style={{}}>
               <input
@@ -66,9 +69,7 @@ const RoomRow = ({ room, handlePriceChange, periods, prices }) => {
                   newPrices[idx] = {
                     ...newPrices[idx],
                     roomPrice: e.target.value,
-                    periodId: period._id,
                   };
-
                   setPeriodPrices(newPrices);
                 }}
               />
