@@ -11,6 +11,7 @@ import PeopleSelect from "../../../components/SearchPanel/PeopleSelect";
 import { Button } from "../../components/Layout";
 import Tour from "../../components/Tour/TourCard";
 import Hotel from "../../components/Hotel/Hotel";
+import Hot from "../../components/Hot/Hot";
 
 const MobileHome = () => {
   const [searchTag, setSearchTag] = useState("Hotel");
@@ -26,18 +27,25 @@ const MobileHome = () => {
       : new Date(Date.now() + 3600 * 1000 * 24)
   );
 
+  const [from, setFrom] = useState(
+    localStorage.getItem("from") ? localStorage.getItem("from") : ""
+  );
+  const [to, setTo] = useState(
+    localStorage.getItem("to") ? localStorage.getItem("to") : ""
+  );
+
   const handleFromChange = (e) => {
+    setFrom(e.target.value);
     localStorage.setItem("from", e.target.value);
   };
 
   const handleToChange = (e) => {
+    setTo(e.target.value);
     localStorage.setItem("to", e.target.value);
   };
   const handlePeopleSelect = (num) => {
     console.log(num);
   };
-
-  console.log(searchTag);
 
   return (
     <>
@@ -72,6 +80,7 @@ const MobileHome = () => {
                 <input
                   type="text"
                   placeholder="Откуда"
+                  value={from}
                   onChange={handleFromChange}
                 />
               </div>
@@ -90,6 +99,7 @@ const MobileHome = () => {
                 <input
                   type="text"
                   placeholder="Куда"
+                  value={to}
                   onChange={handleToChange}
                 />
               </div>

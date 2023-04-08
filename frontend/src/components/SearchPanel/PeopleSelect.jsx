@@ -25,7 +25,13 @@ const PeopleSelect = ({ handlePeopleSelect, value }) => {
             <div className="count_btns-box">
               <button
                 className="count-btn"
-                onClick={() => setAdults(adults - 1)}
+                onClick={() => {
+                  if (adults < 1) {
+                    setAdults(0);
+                  } else {
+                    setAdults(adults - 1);
+                  }
+                }}
               >
                 -
               </button>

@@ -2,6 +2,7 @@ import React from "react";
 import { useGetHotelsQuery } from "../../../features/services/base.service";
 import Loader from "../Loader/Loader";
 import Card from "../Layout/Card";
+import Hot from "../Hot/Hot";
 
 const Hotel = () => {
   const { data, isLoading, isSuccess } = useGetHotelsQuery();
@@ -12,6 +13,7 @@ const Hotel = () => {
   if (isSuccess)
     return (
       <>
+        <Hot count={data.length} />
         {data.map((hotel) => (
           <Card
             name={hotel.name}
