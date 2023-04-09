@@ -7,6 +7,8 @@ import { AdminAddForm } from "../../components/Admin/AdminAddForm";
 import addhotel from "../../assets/addhotel.png";
 import { Input } from "../../components/Form";
 import Selector from "../AddHotel/Select";
+import Selector2 from "../AddHotel/Selector";
+
 import {
   useAddTourMutation,
   // useGetCategoryQuery,
@@ -19,6 +21,8 @@ import { useSelector } from "react-redux";
 
 const AddTour = () => {
   const { data: food = [], isLoading: isLoadFood } = useGetFoodQuery();
+  const [foodData, setFoodData] = React.useState([]);
+  const [comforts, setComforts] = React.useState([]);
 
   const [tourData, setTourData] = React.useState({
     locationId: null,
@@ -91,14 +95,13 @@ const AddTour = () => {
       ...tourData,
       program: [...addedServices],
       token: user.token,
-      comforts: [...JSON.parse(localStorage.getItem("comforts"))],
-      food: [...JSON.parse(localStorage.getItem("food"))],
+      comforts: comforts.map(({ value }) => value),
+      food: foodData.map(({ _id }) => _id),
     };
+    console.table(values);
     await createTour(values);
 
     if (!addLoad) {
-      localStorage.removeItem("comforts");
-      localStorage.removeItem("food");
       alert("Added");
     }
   };
@@ -248,8 +251,21 @@ const AddTour = () => {
                   </button>
                   <div className="input_title">Тип питания</div>
 
-                  <Selector
+                  {/* <Selector
                     foodOption={food}
+                    placeholder={`Введите значение`}
+                    styles={{
+                      control: (baseStyles) => ({
+                        ...baseStyles,
+                        width: `${550}px`,
+                      }),
+                    }}
+                  /> */}
+
+                  <Selector2
+                    data={food}
+                    value={foodData}
+                    onChange={setFoodData}
                     placeholder={`Введите значение`}
                     styles={{
                       control: (baseStyles) => ({
@@ -260,8 +276,21 @@ const AddTour = () => {
                   />
 
                   <div className="input_title">Удобства</div>
-                  <Selector
+                  {/* <Selector
                     optionList={allServices}
+                    placeholder={`Введите значение`}
+                    styles={{
+                      control: (baseStyles) => ({
+                        ...baseStyles,
+                        width: `${550}px`,
+                      }),
+                    }}
+                  /> */}
+
+                  <Selector2
+                    data={allServices}
+                    value={comforts}
+                    onChange={setComforts}
                     placeholder={`Введите значение`}
                     styles={{
                       control: (baseStyles) => ({
@@ -275,7 +304,8 @@ const AddTour = () => {
                     <select
                       className="primary-input"
                       onChange={(e) => {
-                        setWithKid(Boolean(e.target.value));
+                        // console.log(e.target.value, "boolean");
+                        setWithKid(e.target.value);
                         setTourData({
                           ...tourData,
                           kids: {
@@ -284,53 +314,57 @@ const AddTour = () => {
                         });
                       }}
                     >
-                      <option value={false} selected>
-                        Можно с детьми
-                      </option>
+                      <option value={false}>Можно с детьми</option>
                       <option value={true}>Без детей</option>
                     </select>
+                    {/* {console.log(withKid)} */}
+                    {withKid ? (
+                      <></>
+                    ) : (
+                      <>
+                        <select
+                          disabled={withKid}
+                          className="primary-input"
+                          onChange={(e) => {
+                            setTourData((prev) => ({
+                              ...prev,
+                              kids: {
+                                ...prev.kids,
+                                babyMaxAge: e.target.value,
+                              },
+                            }));
+                          }}
+                        >
+                          <option value="" disabled selected>
+                            Мин. возр.
+                          </option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                        </select>
 
-                    <select
-                      disabled={withKid}
-                      className="primary-input"
-                      onChange={(e) => {
-                        setTourData((prev) => ({
-                          ...prev,
-                          kids: {
-                            ...prev.kids,
-                            babyMaxAge: e.target.value,
-                          },
-                        }));
-                      }}
-                    >
-                      <option value="" disabled selected>
-                        Мин. возр.
-                      </option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                    </select>
-
-                    <select
-                      disabled={withKid}
-                      className="primary-input"
-                      onChange={(e) => {
-                        setTourData((prev) => ({
-                          ...prev,
-                          kids: {
-                            ...prev.kids,
-                            kidMaxAge: e.target.value,
-                          },
-                        }));
-                      }}
-                    >
-                      <option value="" disabled selected>
-                        Макс. возр.
-                      </option>
-                      <option value="12">12</option>
-                      <option value="13">13</option>
-                      <option value="14">14</option>
-                    </select>
+                        <select
+                          disabled={withKid}
+                          className="primary-input"
+                          onChange={(e) => {
+                            setTourData((prev) => ({
+                              ...prev,
+                              kids: {
+                                ...prev.kids,
+                                kidMaxAge: e.target.value,
+                              },
+                            }));
+                          }}
+                        >
+                          <option value="" disabled selected>
+                            Макс. возр.
+                          </option>
+                          <option value="12">12</option>
+                          <option value="13">13</option>
+                          <option value="14">14</option>
+                        </select>
+                      </>
+                    )}
                   </div>
                   <div className="input_title">Оплата</div>
                   <div className="input_row">

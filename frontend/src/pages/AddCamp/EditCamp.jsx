@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import style from "../AddTour/AddTour.module.scss";
 
 import { AdminHead } from "../../components/Admin";
@@ -7,6 +7,8 @@ import { AdminAddForm } from "../../components/Admin/AdminAddForm";
 import addhotel from "../../assets/campPhoto.png";
 import { Input } from "../../components/Form";
 import Selector from "../AddHotel/Select";
+import Selector2 from "../AddHotel/Selector";
+
 import {
   useAddCampMutation,
   useGetHotelServiceQuery,
@@ -24,6 +26,8 @@ import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 
 const EditCamp = () => {
+  const [foodData, setFoodData] = useState([]);
+  const [comforts, setComforts] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams("id");
   const {
@@ -79,9 +83,10 @@ const EditCamp = () => {
       ...campData,
       program: [...addedServices],
       token: user.token,
-      comforts: [...JSON.parse(localStorage.getItem("comforts"))],
+      comforts: comforts.map(({ value }) => value),
+      food: foodData.map(({ _id }) => _id),
     };
-    console.log(values);
+    console.table(values);
     await createCamp(values);
 
     if (!addLoad) {
@@ -225,8 +230,7 @@ const EditCamp = () => {
                       }}
                     />
                     <div className="input_title">Тип питания</div>
-
-                    <Selector
+                    {/* <Selector
                       optionList={food}
                       placeholder={`Введите значение`}
                       styles={{
@@ -235,10 +239,33 @@ const EditCamp = () => {
                           width: `${550}px`,
                         }),
                       }}
+                    /> */}
+                    <Selector2
+                      data={food}
+                      value={foodData}
+                      placeholder={`Введите значение`}
+                      onChange={setFoodData}
+                      styles={{
+                        control: (baseStyles) => ({
+                          ...baseStyles,
+                          width: `${550}px`,
+                        }),
+                      }}
                     />
-
                     <div className="input_title">Удобства</div>
-                    <Selector
+                    <Selector2
+                      data={allServices}
+                      value={comforts}
+                      placeholder={`Введите значение`}
+                      onChange={setComforts}
+                      styles={{
+                        control: (baseStyles) => ({
+                          ...baseStyles,
+                          width: `${550}px`,
+                        }),
+                      }}
+                    />
+                    {/* <Selector
                       optionList={allServices}
                       placeholder={`Введите значение`}
                       queryOption={campById.comforts.map((c) => {
@@ -252,8 +279,8 @@ const EditCamp = () => {
                           ...baseStyles,
                           width: `${550}px`,
                         }),
-                      }}
-                    />
+                      }} */}
+                    {/* /> */}
                     <div className="input_title">Дети</div>
                     <div className="input_row">
                       <select

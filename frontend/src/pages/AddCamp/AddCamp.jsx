@@ -7,6 +7,8 @@ import { AdminAddForm } from "../../components/Admin/AdminAddForm";
 import addhotel from "../../assets/campPhoto.png";
 import { Input } from "../../components/Form";
 import Selector from "../AddHotel/Select";
+import Selector2 from "../AddHotel/Selector";
+
 import {
   useAddCampMutation,
   useGetHotelServiceQuery,
@@ -19,6 +21,9 @@ import { useNavigate } from "react-router-dom";
 const AddCamp = () => {
   const navigate = useNavigate();
 
+  const [foodData, setFoodData] = React.useState([]);
+  const [services, setServices] = React.useState([]);
+
   const [campData, setCampData] = React.useState({
     locationId: null,
     name: "",
@@ -30,7 +35,7 @@ const AddCamp = () => {
     description: "",
     program: [],
     food: null,
-    comforts: [],
+    comforts: services,
     kids: {
       forWho: "Для детей",
       minCountInGroup: null,
@@ -85,15 +90,13 @@ const AddCamp = () => {
       ...campData,
       program: [...addedServices],
       token: user.token,
-      comforts: [...JSON.parse(localStorage.getItem("comforts"))],
-      food: [...JSON.parse(localStorage.getItem("food"))],
+      food: foodData.map((food) => food._id),
+      comforts: services.map(({ value }) => value),
     };
     console.table(values);
     await createCamp(values);
     if (!addLoad) {
       alert("Added");
-      localStorage.removeItem("comforts");
-      localStorage.removeItem("food");
     }
   };
 
@@ -218,8 +221,9 @@ const AddCamp = () => {
                   />
                   <div className="input_title">Тип питания</div>
 
-                  <Selector
-                    foodOption={food}
+                  <Selector2
+                    data={food}
+                    onChange={setFoodData}
                     placeholder={`Введите значение`}
                     styles={{
                       control: (baseStyles) => ({
@@ -230,9 +234,11 @@ const AddCamp = () => {
                   />
 
                   <div className="input_title">Удобства</div>
-                  <Selector
-                    optionList={allServices}
+
+                  <Selector2
+                    data={allServices}
                     placeholder={`Введите значение`}
+                    onChange={setServices}
                     styles={{
                       control: (baseStyles) => ({
                         ...baseStyles,

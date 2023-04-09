@@ -18,6 +18,7 @@ import EditTour from "./pages/AddTour/EditTour";
 import AdminRoom from "./pages/AddRoom/AdminRoom";
 import Table from "./components/Table";
 import Requests from "./pages/Requests/Requests";
+import Test from "./pages/Test/Test";
 
 const DesktopRoute = () => {
   return (
@@ -44,6 +45,8 @@ const DesktopRoute = () => {
             element={<AddRoom />}
           />
           <Route path="/dashboard/room/:roomId" element={<AdminRoom />} />
+
+          <Route path="/test" element={<Test />} />
         </Routes>
       </Layout>
     </Router>

@@ -7,6 +7,8 @@ import { AdminAddForm } from "../../components/Admin/AdminAddForm";
 import addhotel from "../../assets/addhotel.png";
 import { Input } from "../../components/Form";
 import Selector from "../AddHotel/Select";
+import Selector2 from "../AddHotel/Selector";
+
 import {
   useGetHotelServiceQuery,
   useGetHotelsQuery,
@@ -38,6 +40,9 @@ const EditTour = () => {
   const { data: service, isLoading: isLoadService } = useGetHotelServiceQuery();
   const [allServices, setAllServices] = React.useState([]);
   const [withKid, setWithKid] = React.useState(false);
+
+  const [foodData, setFoodData] = React.useState([]);
+  const [comfortsData, setComfortsData] = React.useState([]);
 
   const [addedServices, setAddedServices] = React.useState([
     {
@@ -74,16 +79,15 @@ const EditTour = () => {
       ...tourData,
       program: [...addedServices],
       token: user.token,
-      comforts: [...JSON.parse(localStorage.getItem("comforts"))],
-      food: [...JSON.parse(localStorage.getItem("food"))],
+      comforts: comfortsData.map(({ value }) => value),
+      food: foodData.map(({ _id }) => _id),
       id,
       token: user.token,
     };
+    // console.table(values);
     await editTour(values);
 
     if (!addLoad) {
-      localStorage.removeItem("comforts");
-      localStorage.removeItem("food");
       alert("Added");
     }
   };
@@ -274,9 +278,22 @@ const EditTour = () => {
                   </button>
                   <div className="input_title">Тип питания</div>
 
-                  <Selector
+                  {/* <Selector
                     foodOption={food}
                     placeholder={`Введите значение`}
+                    styles={{
+                      control: (baseStyles) => ({
+                        ...baseStyles,
+                        width: `${550}px`,
+                      }),
+                    }}
+                  /> */}
+
+                  <Selector2
+                    data={food}
+                    value={foodData}
+                    placeholder={`Введите значение`}
+                    onChange={setFoodData}
                     styles={{
                       control: (baseStyles) => ({
                         ...baseStyles,
@@ -286,9 +303,21 @@ const EditTour = () => {
                   />
 
                   <div className="input_title">Удобства</div>
-                  <Selector
+                  {/* <Selector
                     optionList={allServices}
                     placeholder={`Введите значение`}
+                    styles={{
+                      control: (baseStyles) => ({
+                        ...baseStyles,
+                        width: `${550}px`,
+                      }),
+                    }}
+                  /> */}
+                  <Selector2
+                    data={allServices}
+                    placeholder={`Введите значение`}
+                    value={comfortsData}
+                    onChange={setComfortsData}
                     styles={{
                       control: (baseStyles) => ({
                         ...baseStyles,
