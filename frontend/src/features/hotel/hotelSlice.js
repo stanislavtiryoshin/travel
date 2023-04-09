@@ -15,8 +15,8 @@ const initialState = {
   isSuccess: false,
   isLoading: false,
   message: "",
-  filteredHotels: [], // JSON array of hotels filtered by type
-  filterType: null, // type of filter applied to hotels, null if no filter applied
+  filteredHotels: [],
+  filterType: null,
   currentHotel: {},
 };
 
@@ -49,6 +49,46 @@ export const updateHotel = createAsyncThunk(
     try {
       const token = thunkAPI.getState().auth.user.token;
       return await hotelService.updateHotel(hotelData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Update hotel periods
+
+export const updateHotelPeriods = createAsyncThunk(
+  "hotels/updatePeriods",
+  async (periodsData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await hotelService.updateHotelPeriods(periodsData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Delete hotel period
+
+export const deletePeriod = createAsyncThunk(
+  "hotels/deletePeriod",
+  async (periodData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await hotelService.deletePeriod(periodData, token);
     } catch (error) {
       const message =
         (error.response &&

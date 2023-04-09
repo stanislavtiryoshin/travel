@@ -91,6 +91,7 @@
 }
 
 .gen_title {
+  width: 100%;
   font-family: GT Walsheim Pro;
   font-size: 24px;
   font-weight: 700;
@@ -98,6 +99,32 @@
   letter-spacing: 1px;
   text-align: left;
   color: rgba(37, 52, 61, 1);
+}
+
+.periods_top {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.periods_box {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  column-gap: 20px;
+  row-gap: 20px;
+}
+
+.admin_hotel-page {
+}
+
+.period_card {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  border-radius: 8px;
+  border: solid 1px lightgrey;
 }
 
 .gen_content-box {

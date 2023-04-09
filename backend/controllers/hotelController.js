@@ -30,6 +30,68 @@ const updateHotel = asyncHandler(async (req, res) => {
   res.status(200).json(hotel);
 });
 
+//@desc   Delete period
+//@route  PATCH /api/hotels/:hotelId/delete-period
+//@access Private
+
+const deletePeriod = asyncHandler(async (req, res) => {
+  // Delete period from hotel
+  const hotel = await Hotel.findByIdAndUpdate(req.params.hotelId, {
+    $pull: {
+      periods: {
+        _id: req.body.periodId,
+      },
+    },
+  });
+
+  // Delete periodPrices with the recieved periodId from this hotel's rooms
+  try {
+    for (const room of hotel.rooms) {
+      await Room.findByIdAndUpdate(room, {
+        $pull: {
+          periodPrices: {
+            periodId: req.body.periodId,
+          },
+        },
+      });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+
+  res.status(200).json(hotel);
+});
+
+//@desc   Update hotel periods
+//@route  PATCH /api/hotels/:hotelId/periods
+//@access Private
+
+const updateHotelPeriods = asyncHandler(async (req, res) => {
+  const hotel = await Hotel.findByIdAndUpdate(
+    req.params.hotelId,
+    { periods: req.body.periods },
+    {
+      new: true,
+    }
+  );
+  try {
+    hotel.rooms.forEach((room) =>
+      Room.findByIdAndUpdate(room, {
+        $pull: {
+          periodPrices: {
+            periodId: {
+              $nin: req.body.periods.map((period) => period.periodId),
+            },
+          },
+        },
+      })
+    );
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+  res.status(200).json(hotel);
+});
+
 //@desc   Get all hotels
 //@route  GET /api/hotels
 //@access Public
@@ -38,7 +100,8 @@ const getHotels = asyncHandler(async (req, res) => {
   const hotels = await Hotel.find()
     .populate("locationId")
     .populate("food")
-    .populate("rooms");
+    .populate("rooms")
+    .populate("hotelServices");
   res.status(200).json(hotels);
 });
 
@@ -79,7 +142,9 @@ const getSingleHotel = asyncHandler(async (req, res) => {
   const singleHotel = await Hotel.findById(req.params.id)
     .populate("locationId")
     .populate("food")
-    .populate("rooms");
+    .populate("rooms")
+    .populate("periods")
+    .populate("hotelServices.serviceId");
   res.status(200).json(singleHotel);
 });
 
@@ -140,12 +205,14 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     })
       .populate("locationId")
       .populate("food")
-      .populate("rooms");
+      .populate("rooms")
+      .populate("hotelServices");
   } else {
     hotels = await Hotel.find()
       .populate("locationId")
       .populate("food")
-      .populate("rooms");
+      .populate("rooms")
+      .populate("hotelServices");
   }
 
   // const updatedHotels = hotels.map((plainHotel) => {
@@ -311,6 +378,8 @@ module.exports = {
   getAdminHotels,
   updateHotel,
   insertPrices,
+  updateHotelPeriods,
+  deletePeriod,
   //test
   getRoomPrices,
   getRoomsByLimit,
