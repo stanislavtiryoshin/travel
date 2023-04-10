@@ -28,7 +28,7 @@ const getLocationByLetter = (req, res) => {
     q.locationName = { $regex: query, $options: "i" };
   }
 
-  console.log(q);
+  // console.log(q);
 
   Location.find(q)
     .then((response) => res.status(200).json(response))

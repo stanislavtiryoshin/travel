@@ -1,6 +1,5 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
-// import PeopleSelect from "../../../components/SearchPanel/PeopleSelect";
 import DatePicker from "react-datepicker";
 import { Button } from "../../components/Layout";
 
