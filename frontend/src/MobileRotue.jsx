@@ -14,9 +14,10 @@ const MobileRotue = () => {
       <Router>
         <MobileLayout>
           <Routes>
-            <Route path="/" element={<MobileHome />} />
-            <Route path="/tours" element={<Tour />} />
-            <Route path="/hotels" element={<Hotel />} />
+            <Route path="/" element={<MobileHome />}>
+              <Route index path="/tours" element={<Tour />} />
+              <Route path="/hotel" element={<Hotel />} />
+            </Route>
           </Routes>
         </MobileLayout>
       </Router>

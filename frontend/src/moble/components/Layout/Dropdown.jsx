@@ -27,7 +27,7 @@ const Dropdown = () => {
                 <Link to="/">Санатории </Link>
               </li>
               <li>
-                <Link to="/hotels">Отели</Link>
+                <Link to="/hotel">Отели</Link>
               </li>
               <li>
                 <Link to="/">Лагери</Link>

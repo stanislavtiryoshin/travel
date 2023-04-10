@@ -17,6 +17,7 @@ export const tags = [
     ),
     text: "Туры",
     tag: "Tours",
+    path: "/tours",
   },
   {
     icon: (
@@ -49,6 +50,7 @@ export const tags = [
     ),
     text: "1-3 дневные",
     tag: "Tour1-3",
+    path: "/tours1_3",
   },
   {
     icon: (
@@ -68,6 +70,7 @@ export const tags = [
       </svg>
     ),
     text: "Санатории",
+    path: "/sanatoriums",
     tag: "Sanatorium",
   },
   {
@@ -89,6 +92,7 @@ export const tags = [
     ),
     text: "Лагеря",
     tag: "Camp",
+    path: "/camp",
   },
   {
     icon: (
@@ -161,5 +165,6 @@ export const tags = [
     ),
     text: "Отели",
     tag: "Hotel",
+    path: "/hotel",
   },
 ];
