@@ -13,6 +13,7 @@ import Tour from "../../components/Tour/TourCard";
 import Hotel from "../../components/Hotel/Hotel";
 import Hot from "../../components/Hot/Hot";
 import Routes from "./Routes";
+import { CitySelector } from "../../components/CitySelector/CitySelector";
 
 const MobileHome = () => {
   const [searchTag, setSearchTag] = useState("Hotel");
@@ -66,6 +67,7 @@ const MobileHome = () => {
           handlePeopleSelect={handlePeopleSelect}
         />
       </div>
+      <CitySelector />
     </>
   );
 };

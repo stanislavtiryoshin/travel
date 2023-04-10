@@ -175,6 +175,18 @@ export const baseApi = createApi({
         };
       },
     }),
+    getLocationByLetter: builder.query({
+      query: (letter) => ({
+        url: `/locations/query/find?query=${letter}`,
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: "location", _id })),
+              { type: "location", id: "LIST" },
+            ]
+          : [{ type: "location", id: "LIST" }],
+    }),
   }),
 });
 
@@ -194,4 +206,6 @@ export const {
   useGetOrdersQuery,
   useGetRoomByHotelIdLimitQuery,
   useGetHotelsByTagMutation,
+
+  useGetLocationByLetterQuery,
 } = baseApi;

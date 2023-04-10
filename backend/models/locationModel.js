@@ -8,6 +8,8 @@ const locationSchema = mongoose.Schema(
     locationCountry: {
       type: String,
     },
+    value: String,
+    label: String,
   },
   {
     timestamps: true,

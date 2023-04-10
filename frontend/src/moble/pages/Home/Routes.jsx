@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import PeopleSelect from "../../../components/SearchPanel/PeopleSelect";
+// import PeopleSelect from "../../../components/SearchPanel/PeopleSelect";
 import DatePicker from "react-datepicker";
 import { Button } from "../../components/Layout";
 
@@ -10,20 +10,50 @@ import search1 from "../../../assets/search/search1.svg";
 import search2 from "../../../assets/search/search2.svg";
 import tree from "../../../assets/tags/tag4.svg";
 
+import { useState } from "react";
+import { CitySelector } from "../../components/CitySelector/CitySelector";
+import { PeopleSelect } from "../../components/PeopleSelect/PeopleSelect";
+
 const Routes = ({
-  setIsActive,
-  setSearchTag,
   setStartDate,
   setEndDate,
-  isActive,
-  from,
-  to,
-  handleFromChange,
   startDate,
-  handleToChange,
   endDate,
   handlePeopleSelect,
 }) => {
+  const [isPeople, setIsPeopleOpen] = useState(false);
+  const [locationIdTo, setLocationId] = useState("");
+  const [locationNameTo, setLocationName] = useState(
+    localStorage.getItem("to") ? localStorage.getItem("to") : ""
+  );
+  const [isCityOpen, setIsCityOpen] = useState(false);
+  const [isCityOpenFrom, setIsCityOpenFrom] = useState(false);
+
+  const [locationNameFrom, setLocationNameFrom] = useState(
+    localStorage.getItem("from") ? localStorage.getItem("from") : ""
+  );
+  const [locationIdFrom, setLocationIdFrom] = useState("");
+
+  const handleClientCount = () => {
+    setIsCityOpen(false);
+    setIsCityOpenFrom(false);
+    setIsPeopleOpen(true);
+  };
+
+  const handleCitySelect = (_id, name) => {
+    setLocationId(_id);
+    setLocationName(name);
+    localStorage.setItem("to", name);
+    setIsCityOpen(false);
+  };
+
+  const handleCityFrom = (_id, name) => {
+    setLocationIdFrom(_id);
+    setLocationNameFrom(name);
+    localStorage.setItem("from", name);
+    setIsCityOpenFrom(false);
+  };
+
   return (
     <>
       <div className={style.tour_container}>
@@ -49,13 +79,12 @@ const Routes = ({
         <div className={style.inputs}>
           <div className={style.input}>
             <div className={style.field}>
-              <img src={search1} alt="From" />
-              <input
-                type="text"
-                placeholder="Откуда"
-                value={from}
-                onChange={handleFromChange}
-              />
+              <div>
+                <img src={search1} alt="From" />
+                <label onClick={() => setIsCityOpenFrom(true)}>
+                  {locationNameFrom.length === 0 ? "Откуда" : locationNameFrom}
+                </label>
+              </div>
             </div>
             <DatePicker
               selected={startDate}
@@ -68,13 +97,12 @@ const Routes = ({
           </div>
           <div className={style.input}>
             <div className={style.field}>
-              <img src={search2} alt="To" />
-              <input
-                type="text"
-                placeholder="Куда"
-                value={to}
-                onChange={handleToChange}
-              />
+              <div>
+                <img src={search2} alt="To" />
+                <label onClick={() => setIsCityOpen(true)}>
+                  {locationNameTo.length === 0 ? "Куда" : locationNameTo}
+                </label>
+              </div>
             </div>
             <DatePicker
               selected={endDate}
@@ -87,7 +115,7 @@ const Routes = ({
           </div>
         </div>
         <div className={style.input_who}>
-          <PeopleSelect handlePeopleSelect={handlePeopleSelect} />
+          <label onClick={() => setIsPeopleOpen(true)}>Кто поедет</label>
         </div>
         <div className={style.input_who}>
           <div>
@@ -108,6 +136,19 @@ const Routes = ({
         </div>
         <Button btn="secondary">Найти тур</Button>
       </div>
+      <CitySelector
+        isOpen={isCityOpen}
+        setIsCityOpen={setIsCityOpen}
+        setLocation={handleCitySelect}
+        next={handleClientCount}
+      />
+      <CitySelector
+        isOpen={isCityOpenFrom}
+        setIsCityOpen={setIsCityOpenFrom}
+        next={handleClientCount}
+        setLocation={handleCityFrom}
+      />
+      <PeopleSelect isPeople={isPeople} setIsPeopleOpen={setIsPeopleOpen} />
       <Outlet />
     </>
   );

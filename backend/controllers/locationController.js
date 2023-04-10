@@ -21,7 +21,22 @@ const getAllLocations = asyncHandler(async (req, res) => {
   res.status(200).json(locations);
 });
 
+const getLocationByLetter = (req, res) => {
+  const { query } = req.query;
+  let q = {};
+  if (query) {
+    q.locationName = { $regex: query, $options: "i" };
+  }
+
+  console.log(q);
+
+  Location.find(q)
+    .then((response) => res.status(200).json(response))
+    .catch(() => res.sendStatus(500));
+};
+
 module.exports = {
   getLocation,
   getAllLocations,
+  getLocationByLetter,
 };
