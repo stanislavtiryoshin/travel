@@ -2,8 +2,28 @@ import React, { useState, useEffect } from "react";
 import search4 from "../../assets/search/search4.svg";
 import "./SearchPanel.scss";
 
-const PeopleSelect = ({ handlePeopleSelect, value }) => {
+const PeopleSelect = ({
+  handlePeopleSelect,
+  handleKidsSelect,
+  handleAdultSelect,
+  kids,
+  adults,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const renderKidInputs = (kids) => {
+    let kidsArray = [];
+    for (let i = 0; i < kids; i++) {
+      kidsArray.push(
+        <div className="kid_input" key={i}>
+          Возр. {"     "}
+          <input type="number" value={10} readOnly />
+        </div>
+      );
+    }
+    return <div className="kids_inputs-box">{kidsArray}</div>;
+  };
+
   return (
     <div className="search_col people_col">
       <img src={search4} alt="" className="search_bot-icon" />
@@ -23,13 +43,7 @@ const PeopleSelect = ({ handlePeopleSelect, value }) => {
             <div className="count_btns-box">
               <button
                 className="count-btn"
-                onClick={() => {
-                  if (adults < 1) {
-                    setAdults(0);
-                  } else {
-                    setAdults(adults - 1);
-                  }
-                }}
+                onClick={() => handleAdultSelect(-1)}
               >
                 -
               </button>
@@ -38,25 +52,19 @@ const PeopleSelect = ({ handlePeopleSelect, value }) => {
                 readOnly
                 value={adults}
                 className="count-box"
-                onChange={handlePeopleSelect}
               />
               <button
                 className="count-btn"
-                onClick={() => setAdults(adults + 1)}
+                onClick={() => handleAdultSelect(+1)}
               >
                 +
               </button>
             </div>
           </div>
-          {/* <input
-            type="number"
-            placeholder="1"
-            name="number"
-            value={value}
-            onChange={(e) => {
-              handlePeopleSelect(e);
-            }}
-          /> */}
+          <div className="kids_box">
+            <button onClick={() => handleKidsSelect()}>Добавить ребенка</button>
+            {renderKidInputs(kids)}
+          </div>
         </div>
       ) : null}
     </div>

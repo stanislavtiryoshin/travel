@@ -16,11 +16,12 @@ const getHotelServices = asyncHandler(async (req, res) => {
 //@route  GET /api/hotelServices
 //@access Public
 
-const AddNewService = asyncHandler(async (req, res) => {
-  const hotelServices = await HotelService.find().populate("category");
-  res.status(200).send(hotelServices);
+const addNewService = asyncHandler(async (req, res) => {
+  const newService = await HotelService.create(req.body);
+  res.status(200).send(newService);
 });
 
 module.exports = {
   getHotelServices,
+  addNewService
 };

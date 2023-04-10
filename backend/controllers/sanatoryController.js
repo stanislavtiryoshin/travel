@@ -8,7 +8,17 @@ const addSanatorium = async (req, res) => {
   res.status(200).json(post);
 };
 
+//@desc   Get sanatoriums
+//@route  GET /api/sanatoriums
+//@access Private
+
 const getSanatoriums = (req, res) => {
+  const { locationId } = req.query;
+  const query = {};
+
+  if (locationId && locationId != "") {
+    query.locationId = locationId;
+  }
   Sanatorium.find()
     .populate("locationId")
     .populate("sanatoriumProgram.programId")

@@ -9,9 +9,9 @@ const RoomRow = ({ room, handlePriceChange, periods, prices }) => {
   ]);
 
   useEffect(() => {
-    if (room.periodPrices && room.periodPrices.length > 0) {
+    if (room && room?.periodPrices && room?.periodPrices.length > 0) {
       let newPeriodPrices = [...room.periodPrices];
-      if (newPeriodPrices.length < periods.length) {
+      if (newPeriodPrices?.length < periods?.length) {
         const diff = periods.length - newPeriodPrices.length;
         for (let i = 0; i < diff; i++) {
           newPeriodPrices.push({ periodId: "", roomPrice: 0 });
@@ -20,8 +20,12 @@ const RoomRow = ({ room, handlePriceChange, periods, prices }) => {
       setPeriodPrices(newPeriodPrices);
     } else {
       setPeriodPrices((prevPeriodPrices) => {
-        const newPeriodPrices = periods.map((per) => ({
+        const newPeriodPrices = periods?.map((per) => ({
           periodId: per._id,
+          startDay: per.startDay,
+          startMonth: per.startMonth,
+          endDay: per.endDay,
+          endMonth: per.endMonth,
           roomPrice: 0,
         }));
         return newPeriodPrices;
@@ -32,51 +36,52 @@ const RoomRow = ({ room, handlePriceChange, periods, prices }) => {
   console.log(periodPrices);
 
   return (
-    <tr key={room._id} style={{ margin: "5px" }}>
-      <td>
-        {room.roomName}{" "}
-        {room._id && (
-          <button
-            className="price-btn"
-            style={{ background: "lime" }}
-            onClick={() =>
-              dispatch(
-                updateRoom({
-                  _id: room._id,
-                  periodPrices: periodPrices,
-                })
-              )
-            }
-          >
-            изменить цены
-          </button>
-        )}
-      </td>
-      {periodPrices &&
-        periodPrices?.map((period, idx) => {
-          let newPrices = [...periodPrices];
-          // newPrices[idx] = {
-          //   ...newPrices[idx],
-          //   periodId: period._id,
-          // };
-          return (
-            <td key={period._id} style={{}}>
-              <input
-                style={{ background: "lightgrey", margin: "5px" }}
-                type="number"
-                value={newPrices[idx].roomPrice}
-                onChange={(e) => {
-                  newPrices[idx] = {
-                    ...newPrices[idx],
-                    roomPrice: e.target.value,
-                  };
-                  setPeriodPrices(newPrices);
-                }}
-              />
-            </td>
-          );
-        })}
-    </tr>
+    <>
+      {room ? (
+        <tr key={room._id} style={{ margin: "5px" }}>
+          <td className="first_col">
+            {room?.roomName}{" "}
+            {room._id && (
+              <button
+                className="price-btn"
+                style={{ background: "lime" }}
+                onClick={() =>
+                  dispatch(
+                    updateRoom({
+                      _id: room._id,
+                      periodPrices: periodPrices,
+                    })
+                  )
+                }
+              >
+                изменить цены
+              </button>
+            )}
+          </td>
+          {periodPrices &&
+            periodPrices?.map((period, idx) => {
+              let newPrices = [...periodPrices];
+              const corrPeriod = periods?.find((per) => per._id === period._id);
+              return (
+                <td key={period._id} style={{}}>
+                  <input
+                    style={{ background: "lightgrey", margin: "5px" }}
+                    type="number"
+                    value={newPrices[idx].roomPrice}
+                    onChange={(e) => {
+                      newPrices[idx] = {
+                        ...newPrices[idx],
+                        roomPrice: e.target.value,
+                      };
+                      setPeriodPrices(newPrices);
+                    }}
+                  />
+                </td>
+              );
+            })}
+        </tr>
+      ) : null}
+    </>
   );
 };
 

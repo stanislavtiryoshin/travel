@@ -44,9 +44,9 @@ const Requests = () => {
         ),
       },
       {
-        id: "order_id",
+        id: "uid",
         header: "Order ID",
-        accessor: "_id",
+        accessor: "uid",
       },
       {
         id: "name",

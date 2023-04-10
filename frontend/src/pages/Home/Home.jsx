@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import HotelCard from "../../components/HotelCard/HotelCard";
 import { reset } from "../../features/auth/authSlice";
 import {
   getSearchedHotels,
@@ -10,7 +9,6 @@ import {
 } from "../../features/hotel/hotelSlice";
 import "react-range-slider-input/dist/style.css";
 import Hero from "../../components/Hero/Hero";
-import banner from "../../assets/banner.png";
 import media from "../../assets/media.svg";
 import media1 from "../../assets/media1.svg";
 import media2 from "../../assets/media2.svg";
@@ -19,32 +17,24 @@ import ad from "../../assets/ad.png";
 import "./Home.scss";
 
 import Filter from "../../components/Filter/Filter";
-import SortBtn from "../../components/Filter/SortBtn";
+import Hotels from "./Hotels";
+import { getSanatoriums } from "../../features/sanatorium/sanatoriumSlice";
+import { getCamps } from "../../features/camps/campSlice";
+import { getTours } from "../../features/tour/tourSlice";
 
 const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [hotelsToShow, setHotelsToShow] = useState(5);
-
   const { hotels, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.hotels
   );
-  const { tag } = useSelector((state) => state.client);
-  console.log(tag);
-
-  const selectedHotels = useSelector(selectHotels);
-
-  const [panelTag, setPanelTag] = useState("Отели");
-
-  const changeTag = (tag) => {
-    setPanelTag(tag);
-  };
-
-  console.log(selectedHotels);
-
+  const { camps } = useSelector((state) => state.camps);
+  const { tours } = useSelector((state) => state.tour);
+  const { sanatoriums } = useSelector((state) => state.sanatoriums);
   const { startDate, endDate, peopleAmount, daysAmount, destination } =
     useSelector((state) => state.client);
+  const selectedHotels = useSelector(selectHotels);
 
   useEffect(() => {
     if (isError) {
@@ -58,6 +48,9 @@ const Home = () => {
         startDate: Date.parse(new Date()),
       })
     );
+    dispatch(getSanatoriums());
+    dispatch(getCamps());
+    dispatch(getTours());
     dispatch(reset());
   }, [isError, isSuccess, message, navigate, dispatch]);
 
@@ -68,6 +61,8 @@ const Home = () => {
   // };
 
   const [currentLocation, setCurrentLocation] = useState();
+
+  const { chosenTag } = useSelector((state) => state.client);
 
   useEffect(() => {
     if (destination)
@@ -81,10 +76,6 @@ const Home = () => {
         });
   }, [destination]);
 
-  const { user } = useSelector((state) => state.auth);
-
-  console.log(user);
-
   return (
     <div className="main_page">
       <Hero />
@@ -94,51 +85,18 @@ const Home = () => {
             <Filter />
           </div>
           <div className="container main_container">
-            <div className="all_hotels_wrapper wrapper ver">
-              <img src={banner} alt="" className="banner" />
-
-              <div className="all_hotels-top">
-                <div className="all_hotels-num">
-                  Найдено: <span>{selectedHotels?.length}</span>
-                </div>
-                <SortBtn />
-              </div>
-              {selectedHotels && selectedHotels.length > 0 ? (
-                selectedHotels
-                  .filter((hotel, idx) => idx < hotelsToShow)
-                  .map((hotel, idx) => {
-                    return (
-                      <HotelCard
-                        key={idx}
-                        hotelId={hotel._id}
-                        name={hotel.name}
-                        locationId={hotel.locationId}
-                        price={hotel.price * peopleAmount}
-                        amount={peopleAmount}
-                        days={daysAmount}
-                        description={hotel.description}
-                        rating={hotel.rating}
-                        startDate={startDate}
-                        endDate={endDate}
-                        rooms={hotel.rooms}
-                        totalPrice={hotel.totalPrice}
-                        oldPrice={hotel.oldPrice}
-                        hotelStars={hotel.hotelStars}
-                      />
-                    );
-                  })
-              ) : (
-                <div>😭 Ничего не найдено...</div>
-              )}
-              {selectedHotels.length >= hotelsToShow ? (
-                <button
-                  className="sort-btn"
-                  onClick={() => setHotelsToShow(hotelsToShow + 5)}
-                >
-                  Загрузить еще...
-                </button>
-              ) : null}
-            </div>
+            {chosenTag === "Отели" ? (
+              <Hotels selectedHotels={selectedHotels} hotelsMode />
+            ) : null}
+            {chosenTag === "Лагеря" ? (
+              <Hotels selectedHotels={camps} campsMode />
+            ) : null}
+            {chosenTag === "1-3 дневные" ? (
+              <Hotels selectedHotels={tours} toursMode />
+            ) : null}
+            {chosenTag === "Санатории" ? (
+              <Hotels selectedHotels={sanatoriums} sanatoriumsMode />
+            ) : null}
           </div>
           <div className="hotel_ad_wrapper wrapper ver">
             <div className="hotel_ad_top shadowed_box">

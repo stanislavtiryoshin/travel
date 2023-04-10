@@ -17,17 +17,23 @@ import { PatternFormat } from "react-number-format";
 import "./Order.scss";
 import { useNavigate } from "react-router-dom";
 import { getSingleRoom } from "../../features/room/roomSlice";
+import ShortUniqueId from "short-unique-id";
 
 const Order = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const uid = new ShortUniqueId({
+    dictionary: "number", // the default
+    length: 6,
+  });
   const [orderTerms, setOrderTerms] = useState({
+    uid: uid(),
     peopleAmount: 1,
     daysAmount: 1,
     startDate: null,
     endDate: null,
     hotel: null,
-    room: null,
+    rooms: [],
     sum: 0,
     clientName: "",
     clientEmail: "",
@@ -42,7 +48,7 @@ const Order = () => {
     peopleAmount: 1,
     daysAmount: 1,
     hotel: null,
-    room: null,
+    rooms: [],
     excursions: [],
   });
 
@@ -54,7 +60,7 @@ const Order = () => {
       peopleAmount: window.localStorage.getItem("peopleAmount"),
       daysAmount: window.localStorage.getItem("daysAmount"),
       hotel: window.localStorage.getItem("hotel"),
-      room: window.localStorage.getItem("room"),
+      rooms: JSON.parse(window.localStorage.getItem("room")),
       sum: window.localStorage.getItem("sum"),
       excursions: JSON.parse(window.localStorage.getItem("excursions")),
     });
@@ -69,12 +75,12 @@ const Order = () => {
       startDate: clientData.startDate,
       endDate: clientData.endDate,
       hotel: clientData.hotel,
-      room: clientData.room,
+      rooms: clientData.rooms.map((room) => room._id),
       sum: clientData.sum,
     });
   }, [clientData]);
 
-  console.log(clientData);
+  console.log(orderTerms);
 
   const [firstFull, setFirstFull] = useState(true);
   const [secondFull, setSecondFull] = useState(true);
@@ -93,25 +99,17 @@ const Order = () => {
 
   const { singleRoom } = useSelector((state) => state.rooms);
 
-  useEffect(() => {
-    if (clientData?.room) {
-      dispatch(getSingleRoom(clientData?.room));
-    }
-  }, [dispatch, clientData]);
-
-  console.log(clientData.room);
+  console.log(clientData.rooms);
 
   const handleSendOrderEmail = () => {
-    if (orderTerms && singleHotel?.name && singleHotel?.rooms) {
+    if (orderTerms) {
       axios
         .post("/api/send-order-email", {
           phone: orderTerms.clientPhone,
           email: orderTerms.clientEmail,
           name: orderTerms.clientName,
           hotel: singleHotel?.name,
-          room: singleHotel?.rooms?.filter(
-            (room) => room._id === clientData?.room
-          )[0],
+          rooms: orderTerms.rooms,
           sum: clientData?.sum,
           startDate: orderTerms?.startDate,
           endDate: orderTerms?.endDate,

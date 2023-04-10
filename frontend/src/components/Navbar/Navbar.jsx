@@ -55,6 +55,7 @@ const Navbar = ({ isSearch }) => {
     { id: 1, label: "Отели" },
     { id: 2, label: "1-3 туры" },
     { id: 3, label: "Лагеря" },
+    { id: 4, label: "Санатории" },
   ];
 
   const renderTabs = () => {

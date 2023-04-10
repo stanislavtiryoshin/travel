@@ -1,23 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import tourService from "./tourService";
+import sanatoriumService from "./sanatoriumServices";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
 const initialState = {
-  tours: [],
+  sanatoriums: [],
   isError: false,
   isSuccess: false,
   isLoading: false,
   message: "",
 };
 
-// Get all tours
+// Get all sanatoriums
 
-export const getTours = createAsyncThunk(
-  "tours/getAll",
+export const getSanatoriums = createAsyncThunk(
+  "sanatoriums/getAll",
   async (_, thunkAPI) => {
     try {
-      return await tourService.getTours();
+      return await sanatoriumService.getSanatoriums();
     } catch (error) {
       const message =
         (error.response &&
@@ -30,8 +30,8 @@ export const getTours = createAsyncThunk(
   }
 );
 
-export const tourSlice = createSlice({
-  name: "tour",
+export const sanatoriumSlice = createSlice({
+  name: "sanatorium",
   initialState,
   reducers: {
     reset: (state) => {
@@ -42,13 +42,13 @@ export const tourSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getTours.fulfilled, (state, action) => {
+    builder.addCase(getSanatoriums.fulfilled, (state, action) => {
       state.isLoading = false;
       state.isSuccess = true;
-      state.tours = action.payload;
+      state.sanatoriums = action.payload;
     });
   },
 });
 
-export const { reset } = tourSlice.actions;
-export default tourSlice.reducer;
+export const { reset } = sanatoriumSlice.actions;
+export default sanatoriumSlice.reducer;

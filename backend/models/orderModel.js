@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const orderSchema = mongoose.Schema(
   {
+    uid: String,
     hotel: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -26,10 +27,13 @@ const orderSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    room: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-    },
+    rooms: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Room",
+        required: true,
+      },
+    ],
     status: {
       type: String,
       default: "В обработке",

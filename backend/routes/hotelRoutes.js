@@ -40,7 +40,7 @@ router.patch("/:hotelId/periods", protect, updateHotelPeriods);
 router.patch("/:hotelId/delete-period", protect, deletePeriod);
 
 //test
-router.patch("/:hotelId/prices", upload.single("file"), insertPrices);
+// router.patch("/:hotelId/prices", upload.single("file"), insertPrices);
 router.get("/hotelRoomPrices/:hotelId", getRoomPrices);
 router.get("/:hotelId/room", getRoomsByLimit);
 router.post("/hotelRecommendation/tags", getByTagRecommendation);

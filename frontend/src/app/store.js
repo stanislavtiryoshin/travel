@@ -9,6 +9,7 @@ import adminReducer from "../features/adminSlice";
 import roomSlice from "../features/room/roomSlice";
 import tourReducer from "../features/tour/tourSlice";
 import campReducer from "../features/camps/campSlice";
+import sanatoriumReducer from "../features/sanatorium/sanatoriumSlice";
 
 import { baseApi } from "../features/services/base.service";
 import { editApi } from "../features/services/edit.service";
@@ -24,6 +25,7 @@ export const store = configureStore({
     admin: adminReducer,
     tour: tourReducer,
     camps: campReducer,
+    sanatoriums: sanatoriumReducer,
     [csvApi.reducerPath]: csvApi.reducer,
     [baseApi.reducerPath]: baseApi.reducer,
     [editApi.reducerPath]: editApi.reducer,

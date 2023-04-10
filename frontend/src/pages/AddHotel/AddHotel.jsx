@@ -16,6 +16,7 @@ import ShortUniqueId from "short-unique-id";
 import check from "../../assets/check.svg";
 
 import "./AddHotel.scss";
+import "./Table.scss";
 import { useDispatch, useSelector } from "react-redux";
 import Selector from "./Select";
 import { AdminHead } from "../../components/Admin";
@@ -720,13 +721,13 @@ const AddHotel = ({ fetchedHotelData, editMode, updateHotelData }) => {
               <table className="periods_table">
                 <thead>
                   <tr>
-                    <th>Room</th>
+                    <th>Номера и периоды</th>
                     {hotelData &&
                       hotelData.periods &&
                       hotelData?.periods?.map((period) => (
                         <th key={period._id}>
-                          {period.startDay}/{period.startMonth} -{" "}
-                          {period.endDay}/{period.endMonth}
+                          {period.startDay}.{period.startMonth} -{" "}
+                          {period.endDay}.{period.endMonth}
                         </th>
                       ))}
                   </tr>
@@ -737,12 +738,7 @@ const AddHotel = ({ fetchedHotelData, editMode, updateHotelData }) => {
                     hotelData.periods &&
                     prices &&
                     hotelData?.rooms?.map((room) => (
-                      <RoomRow
-                        room={room}
-                        periods={hotelData.periods}
-                        handlePriceChange={handlePriceChange}
-                        prices={prices}
-                      />
+                      <RoomRow room={room} periods={hotelData.periods} />
                     ))}
                 </tbody>
               </table>

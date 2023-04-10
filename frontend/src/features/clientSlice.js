@@ -3,12 +3,17 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialStateValues = {
   startDate: new Date(),
   endDate: new Date(Date.now() + 3600 * 1000 * 24),
-  peopleAmount: 1,
   daysAmount: 2,
   destination: "64188de62648843412b12980",
   clientExcursions: [],
+  clientRooms: [],
   excSum: 0,
-  tag: "Отели",
+  chosenTag: "Отели",
+  searchOptions: {
+    peopleAmount: 1,
+    adultAmount: 1,
+    kidsAmount: 0,
+  },
 };
 
 export const clientSlice = createSlice({
@@ -20,9 +25,6 @@ export const clientSlice = createSlice({
     },
     setEndDate: (state, action) => {
       state.endDate = action.payload;
-    },
-    setPeopleAmount: (state, action) => {
-      state.peopleAmount = action.payload;
     },
     setDaysAmount: (state, action) => {
       state.daysAmount = action.payload;
@@ -38,6 +40,14 @@ export const clientSlice = createSlice({
         (excId) => excId != action.payload
       );
     },
+    addClientRoom: (state, action) => {
+      state.clientRooms = [...state.clientRooms, action.payload];
+    },
+    removeClientRoom: (state, action) => {
+      state.clientRooms = state.clientRooms.filter(
+        (room) => room._id != action.payload
+      );
+    },
     addExcSum: (state, action) => {
       state.excSum += action.payload;
     },
@@ -45,7 +55,13 @@ export const clientSlice = createSlice({
       state.excSum -= action.payload;
     },
     setTag: (state, action) => {
-      state.tag = action.payload;
+      state.chosenTag = action.payload;
+    },
+    setSearchOptions: (state, action) => {
+      state.searchOptions = {
+        ...state.searchOptions,
+        ...action.payload,
+      };
     },
   },
 });
@@ -66,6 +82,9 @@ export const {
   setFilterMaxPrice,
   setFilterRating,
   setTag,
+  setSearchOptions,
+  addClientRoom,
+  removeClientRoom,
 } = clientSlice.actions;
 
 export default clientSlice.reducer;

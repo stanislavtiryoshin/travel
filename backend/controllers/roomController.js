@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const Room = require("../models/roomModel");
 const { Hotel } = require("../models/hotelModel");
-const { Period } = require("../models/hotelModel");
 const { parse } = require("csv-parse");
 const fs = require("fs");
 const path = require("path");
@@ -26,9 +25,12 @@ const getSingleRoom = asyncHandler(async (req, res) => {
   const singleRoom = await Room.findById(req.params.roomId)
     .populate("hotel")
     .populate({
-      path: "periodPrices.periodId",
-      model: "Period",
-      select: "-_id startDay startMonth endDay endMonth",
+      path: "hotel",
+      select: "name periods",
+      populate: {
+        path: "periods",
+        select: "startDay startMonth endDay endMonth",
+      },
     });
   res.status(200).send(singleRoom);
 });
