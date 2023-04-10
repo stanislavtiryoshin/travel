@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { Period, Hotel } = require("./hotelModel");
 
 const roomSchema = mongoose.Schema(
   {
@@ -12,8 +11,11 @@ const roomSchema = mongoose.Schema(
       {
         periodId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Period",
         },
+        startDay: Number,
+        startMonth: Number,
+        endDay: Number,
+        endMonth: Number,
         roomPrice: Number,
         adultPrice: Number,
         kidPrice: Number,
@@ -94,10 +96,14 @@ const roomSchema = mongoose.Schema(
 );
 
 roomSchema.virtual("periods", {
-  ref: "Period",
-  localField: "periodPrices.periodId",
+  ref: "Hotel",
+  localField: "hotel",
   foreignField: "_id",
-  justOne: false,
+  justOne: true,
+  populate: {
+    path: "periods",
+    select: "startDay startMonth endDay endMonth",
+  },
 });
 
 module.exports = new mongoose.model("Room", roomSchema);

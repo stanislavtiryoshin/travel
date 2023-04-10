@@ -10,22 +10,8 @@ const nodemailer = require("nodemailer");
 //@access Public
 
 const addOrder = asyncHandler(async (req, res) => {
-  const post = await Order.create({
-    hotel: req.body.hotel,
-    daysAmount: req.body.daysAmount,
-    startDate: req.body.startDate,
-    endDate: req.body.endDate,
-    sum: req.body.sum,
-    peopleAmount: req.body.peopleAmount,
-    room: req.body.room,
-    clientName: req.body.clientName,
-    clientEmail: req.body.clientEmail,
-    clientPhone: req.body.clientPhone,
-    clientOtherPhone: req.body.clientOtherPhone,
-    extraInfo: req.body.extraInfo,
-    excursions: req.body.excursions,
-  });
-  res.status(200).json(post);
+  const order = await Order.create(req.body);
+  res.status(200).json(order);
 });
 
 //@desc   Get all orders

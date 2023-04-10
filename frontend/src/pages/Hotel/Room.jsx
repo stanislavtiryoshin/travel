@@ -5,8 +5,12 @@ import { RoomTags } from "../AddHotel/DashRoom";
 
 import bed from "../../assets/bed.svg";
 import food from "../../assets/food.svg";
+import { addClientRoom, removeClientRoom } from "../../features/clientSlice";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
-const Room = ({ room, chooseRoom, active, days, sum }) => {
+const Room = ({ room, active, days, sum }) => {
+  const dispatch = useDispatch();
   const [bedCount, setBedCount] = React.useState(
     room?.beds?.largeBeds + room?.beds?.smallBeds
   );
@@ -17,10 +21,18 @@ const Room = ({ room, chooseRoom, active, days, sum }) => {
     room.roomServices,
   ]);
 
+  const { clientExcursions, clientRooms, excSum } = useSelector(
+    (state) => state.client
+  );
+
   return (
     <div
       className={`room_box ${active ? "active" : ""}`}
-      onClick={() => chooseRoom(room)}
+      onClick={() => {
+        active
+          ? dispatch(removeClientRoom(room._id))
+          : dispatch(addClientRoom(room));
+      }}
     >
       <div className="rooms_top">
         <img src={roompic} pic alt="" />

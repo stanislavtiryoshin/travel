@@ -19,6 +19,7 @@ import HotelSearch from "../../components/SearchPanel/HotelSearch";
 import Requests from "../Requests/Requests";
 import { getTours } from "../../features/tour/tourSlice";
 import { getCamps } from "../../features/camps/campSlice";
+import { getSanatoriums } from "../../features/sanatorium/sanatoriumSlice";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -26,21 +27,7 @@ const Dashboard = () => {
 
   const selectedHotels = useSelector(selectHotels);
 
-  const [hotelData, setHotelData] = useState({
-    name: "",
-    location: "",
-    resort: "",
-    type: "",
-    discount: 0,
-    price: 0,
-    food: "",
-    description: "",
-    rooms: [],
-  });
-
   const { user } = useSelector((state) => state.auth);
-
-  console.log(user);
 
   const { orders } = useSelector((state) => state.orders);
 
@@ -50,8 +37,7 @@ const Dashboard = () => {
 
   const { tours } = useSelector((state) => state.tour);
   const { camps } = useSelector((state) => state.camps);
-
-  console.log(tours);
+  const { sanatoriums } = useSelector((state) => state.sanatoriums);
 
   useEffect(() => {
     if (isError) {
@@ -64,31 +50,9 @@ const Dashboard = () => {
     dispatch(getTours());
     dispatch(getCamps());
     dispatch(getOrders());
+    dispatch(getSanatoriums());
     dispatch(reset());
   }, [user, getAdminHotels, isError, isSuccess, message, navigate, dispatch]);
-
-  console.log(hotels);
-
-  const handleAddHotel = (e) => {
-    e.preventDefault();
-    dispatch(addHotel(hotelData));
-  };
-
-  const [addedRooms, setAddedRooms] = useState(0);
-  const [roomObj, setRoomObj] = useState({});
-
-  const handleAddRoom = (e) => {
-    e.preventDefault();
-    let newHotelData = hotelData;
-    newHotelData.rooms.push(roomObj);
-    setHotelData(newHotelData);
-    setRoomObj({});
-  };
-
-  const handleRoomInput = (e) => {
-    e.preventDefault();
-    setRoomObj({ ...roomObj, [e.target.name]: e.target.value });
-  };
 
   const { currentTab } = useSelector((state) => state.admin);
 
@@ -156,6 +120,33 @@ const Dashboard = () => {
                     ? camps?.map((camp, idx) => {
                         return (
                           <DashHotelCard hotel={camp} key={camp._id} camp />
+                        );
+                      })
+                    : "is loading"}
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      )}
+      {currentTab === 4 && (
+        <div className="tours_tab tab">
+          <HotelSearch />
+          <section className="dash_section">
+            <div className="container">
+              <div className="dash_wrapper wrapper">
+                <div className="dash_side">
+                  <Filter />
+                </div>
+                <div className="dash_main">
+                  {sanatoriums && sanatoriums.length > 0
+                    ? sanatoriums?.map((sanatorium, idx) => {
+                        return (
+                          <DashHotelCard
+                            hotel={sanatorium}
+                            key={sanatorium._id}
+                            camp
+                          />
                         );
                       })
                     : "is loading"}

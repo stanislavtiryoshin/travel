@@ -55,8 +55,6 @@ const Hotel = () => {
       limit: roomCount,
     });
 
-  // console.log(singleHotel.comforts, singleHotel.food._id);
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -69,13 +67,11 @@ const Hotel = () => {
     },
   ] = useGetHotelsByTagMutation();
 
-  const [rec, setRec] = useState([]);
-
   useEffect(() => {
     getData({
       food: singleHotel && singleHotel.food && singleHotel.food._id,
       comforts: singleHotel && singleHotel.comforts && singleHotel.comforts,
-    }).then((response) => console.log("recommendation", response));
+    });
   }, [singleHotel]);
 
   useEffect(() => {
@@ -128,64 +124,17 @@ const Hotel = () => {
     });
   }, [clientData]);
 
-  const [clientRoom, setClientRoom] = useState();
-
-  const chooseRoom = (chosenRoom) => {
-    setClientRoom(chosenRoom);
-  };
-
   // useEffect(() => {
-  //   // if (singleHotel?.rooms && singleHotel?.rooms.length > 0) {
-  //   //   setClientRoom(
-  //   //     singleHotel?.rooms
-  //   //       // .filter((room) => room.capacity >= clientData.peopleAmount)
-  //   //       ?.reduce(function (prev, current) {
-  //   //         return prev.roomPrice < current.roomPrice ? prev : current;
-  //   //       })
-  //   //   );
-  //   // }
+  //   if (singleHotel?.rooms && singleHotel?.rooms.length > 0) {
+  //     setClientRoom(
+  //       singleHotel?.rooms
+  //         // .filter((room) => room.capacity >= clientData.peopleAmount)
+  //         ?.reduce(function (prev, current) {
+  //           return prev.roomPrice < current.roomPrice ? prev : current;
+  //         })
+  //     );
+  //   }
   // }, [singleHotel.rooms]);
-
-  const calculatePrice = (start, daysNum, basePrice) => {
-    let daysArray = [];
-
-    const pricesArray = clientRoom.prices;
-
-    for (let i = 0; i < daysNum; i++) {
-      let date = new Date();
-      date.setDate(start.getDate() + i);
-      daysArray.push(date);
-    }
-
-    let sum = 0;
-
-    const findPriceByDate = (date) => {
-      if (pricesArray && pricesArray.length > 0) {
-        pricesArray.forEach((el) => {
-          if (
-            date.getMonth() + 1 >= el.dateStart.month &&
-            date.getMonth() + 1 <= el.dateEnd.month &&
-            date.getDate() >= el.dateStart.day &&
-            date.getDate() <= el.dateEnd.day &&
-            el.price
-          ) {
-            sum += el.price;
-          } else {
-            sum += basePrice;
-          }
-        });
-      } else {
-        sum += basePrice;
-      }
-      return;
-    };
-
-    for (let i = 0; i < daysNum; i++) {
-      findPriceByDate(daysArray[i]);
-    }
-
-    return sum;
-  };
 
   const [clientStartingDate, setClientStartingDate] = useState(
     Date.parse(new Date())
@@ -201,55 +150,29 @@ const Hotel = () => {
 
   const [sum, setSum] = useState(0);
 
-  const { clientExcursions, excSum } = useSelector((state) => state.client);
-
-  // useEffect(() => {
-  //   if (clientData && clientRoom) {
-  //     if (clientRoom?.discount) {
-  //       setSum(
-  //         (calculatePrice(
-  //           clientStartingDate,
-  //           clientData?.daysAmount,
-  //           clientRoom?.roomPrice
-  //         ) *
-  //           (100 - clientRoom?.discount)) /
-  //           100 +
-  //           excSum
-  //       );
-  //     } else {
-  //       setSum(
-  //         calculatePrice(
-  //           clientStartingDate,
-  //           clientData?.daysAmount,
-  //           clientRoom?.roomPrice
-  //         ) + excSum
-  //       );
-  //     }
-  //     window.localStorage.setItem("sum", sum);
-  //   }
-  // }, [clientRoom, excSum]);
+  const { clientExcursions, clientRooms, excSum } = useSelector(
+    (state) => state.client
+  );
 
   useEffect(() => {
     window.localStorage.setItem("sum", sum);
-    if (clientRoom) window.localStorage.setItem("room", clientRoom?._id);
+    if (clientRooms && clientRooms.length > 0)
+      window.localStorage.setItem("rooms", JSON.stringify(clientRooms));
     if (singleHotel) window.localStorage.setItem("hotel", singleHotel?._id);
     if (clientExcursions)
       window.localStorage.setItem(
         "excursions",
         JSON.stringify(clientExcursions)
       );
-  }, [sum, clientRoom, singleHotel, clientExcursions]);
+  }, [sum, clientRooms, singleHotel, clientExcursions]);
 
   if (roomIsLoading) {
     return <div>Loading...</div>;
   }
 
-  console.log("singleHotel", roomsData);
-
   if (recommendationIsLoading) {
     return <div>Loading...</div>;
   }
-  if (recommendationSuccess) console.log("recommendation", recommendation);
   return (
     <div className="hotel_page page">
       <section className="hotel_section">
@@ -337,13 +260,15 @@ const Hotel = () => {
                       </div>
                     </div>
                     <div className="chosen_room-box">
-                      {clientRoom && (
-                        <Room
-                          room={clientRoom}
-                          days={clientData?.daysAmount}
-                          active={true}
-                        />
-                      )}
+                      {clientRooms &&
+                        clientRooms?.map((room) => {
+                          <Room
+                            key={room._id}
+                            room={room}
+                            days={clientData?.daysAmount}
+                            active={true}
+                          />;
+                        })}
                     </div>
                   </div>
                   <div className="gen_info-row">
@@ -421,33 +346,16 @@ const Hotel = () => {
                         рассчитаем цену в блоке “Бронирование”
                       </div>
                     </div>
-                    {/* {singleHotel.rooms &&
-                      clientRoom &&
-                      singleHotel?.rooms
-                        ?.filter(
-                          (room) => room.capacity >= clientData.peopleAmount
-                        )
-                        .map((room, index) => {
-                          return (
-                            <Room
-                              key={room._id}
-                              room={room}
-                              chooseRoom={chooseRoom}
-                              days={clientData?.daysAmount}
-                              active={
-                                clientRoom?._id === room._id ? true : false
-                              }
-                            />
-                          );
-                        })} */}
+
                     {roomsData &&
                       roomsData.map((room) => {
                         return (
                           <Room
                             key={room._id}
                             room={room}
-                            chooseRoom={chooseRoom}
-                            active={clientRoom?._id === room._id ? true : false}
+                            active={clientRooms.some(
+                              (clientRoom) => clientRoom._id === room._id
+                            )}
                           />
                         );
                       })}
@@ -525,7 +433,7 @@ const Hotel = () => {
           Мы подобрали вам похожие туры. Взгляните, чтобы сравнить
         </div>
         <div className="hotel_similar-body">
-          {recommendation.map((recomm) => (
+          {recommendation?.map((recomm) => (
             <Card
               name={recomm.name}
               description={recomm.description}
@@ -563,3 +471,90 @@ export const ExpandableText = ({ text }) => {
 };
 
 export default Hotel;
+
+// const calculatePrice = (start, daysNum, basePrice) => {
+//   let daysArray = [];
+
+//   const pricesArray = clientRoom.prices;
+
+//   for (let i = 0; i < daysNum; i++) {
+//     let date = new Date();
+//     date.setDate(start.getDate() + i);
+//     daysArray.push(date);
+//   }
+
+//   let sum = 0;
+
+//   const findPriceByDate = (date) => {
+//     if (pricesArray && pricesArray.length > 0) {
+//       pricesArray.forEach((el) => {
+//         if (
+//           date.getMonth() + 1 >= el.dateStart.month &&
+//           date.getMonth() + 1 <= el.dateEnd.month &&
+//           date.getDate() >= el.dateStart.day &&
+//           date.getDate() <= el.dateEnd.day &&
+//           el.price
+//         ) {
+//           sum += el.price;
+//         } else {
+//           sum += basePrice;
+//         }
+//       });
+//     } else {
+//       sum += basePrice;
+//     }
+//     return;
+//   };
+
+//   for (let i = 0; i < daysNum; i++) {
+//     findPriceByDate(daysArray[i]);
+//   }
+
+//   return sum;
+// };
+
+// useEffect(() => {
+//   if (clientData && clientRoom) {
+//     if (clientRoom?.discount) {
+//       setSum(
+//         (calculatePrice(
+//           clientStartingDate,
+//           clientData?.daysAmount,
+//           clientRoom?.roomPrice
+//         ) *
+//           (100 - clientRoom?.discount)) /
+//           100 +
+//           excSum
+//       );
+//     } else {
+//       setSum(
+//         calculatePrice(
+//           clientStartingDate,
+//           clientData?.daysAmount,
+//           clientRoom?.roomPrice
+//         ) + excSum
+//       );
+//     }
+//     window.localStorage.setItem("sum", sum);
+//   }
+// }, [clientRoom, excSum]);
+
+/* {singleHotel.rooms &&
+                      clientRoom &&
+                      singleHotel?.rooms
+                        ?.filter(
+                          (room) => room.capacity >= clientData.peopleAmount
+                        )
+                        .map((room, index) => {
+                          return (
+                            <Room
+                              key={room._id}
+                              room={room}
+                              chooseRoom={chooseRoom}
+                              days={clientData?.daysAmount}
+                              active={
+                                clientRoom?._id === room._id ? true : false
+                              }
+                            />
+                          );
+                        })} */

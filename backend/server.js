@@ -52,7 +52,8 @@ app.post("/api/send-phone-email", (req, res) => {
 
 // New order email to administrator
 app.post("/api/send-order-email", (req, res) => {
-  const { name, email, phone, hotel, room, sum, startDate, endDate } = req.body;
+  const { name, email, phone, hotel, rooms, sum, startDate, endDate } =
+    req.body;
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -67,9 +68,7 @@ app.post("/api/send-order-email", (req, res) => {
     to: "stanislav.tiryoshin@gmail.com",
     subject: "Новый заказ",
     // text: `Поступил новый заказ. Телефон: ${phone}, email: ${email}, имя: ${name}, hotel: ${hotel}, room: ${room.roomName}, sum: ${sum}, startDate: ${startDate}, endDate: ${endDate}`,
-    html: `Поступил новый заказ. <br> <div> Телефон: <a href="tel:${phone}">${phone}</a>, <br> email: <a href="mailto:${email}">${email}</a>, <br> имя: ${name}, <br> hotel: ${hotel}, <br> room: ${
-      room.roomName
-    }, <br> sum: ${sum}, <br> startDate: ${new Date(
+    html: `Поступил новый заказ. <br> <div> Телефон: <a href="tel:${phone}">${phone}</a>, <br> email: <a href="mailto:${email}">${email}</a>, <br> имя: ${name}, <br> hotel: ${hotel}, <br> room: , <br> sum: ${sum}, <br> startDate: ${new Date(
       +startDate
     ).toLocaleDateString()}, <br> endDate: ${new Date(
       +endDate
@@ -130,7 +129,7 @@ app.use("/api/hotelServices", require("./routes/hotelServiceRoutes"));
 app.use("/api/rooms", require("./routes/roomRoutes"));
 
 app.use("/api/programs", require("./routes/programRoutes"));
-app.use("/api/sanatorium", require("./routes/sanatoryRoutes"));
+app.use("/api/sanatoriums", require("./routes/sanatoryRoutes"));
 app.use("/api/camps", require("./routes/campRoutes"));
 app.use("/api/tour", require("./routes/tourRoutes"));
 

@@ -1,14 +1,5 @@
 const mongoose = require("mongoose");
 
-const periodSchema = mongoose.Schema({
-  startDay: Number,
-  startMonth: Number,
-  endDay: Number,
-  endMonth: Number,
-});
-
-const Period = new mongoose.model("Period", periodSchema);
-
 const hotelSchema = mongoose.Schema(
   {
     name: {
@@ -128,4 +119,4 @@ const hotelSchema = mongoose.Schema(
 
 const Hotel = new mongoose.model("Hotel", hotelSchema);
 
-module.exports = { Period, Hotel };
+module.exports = { Hotel };

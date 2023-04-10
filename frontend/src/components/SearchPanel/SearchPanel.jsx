@@ -11,6 +11,7 @@ import {
   setDaysAmount,
   setPeopleAmount,
   setDestination,
+  setSearchOptions,
 } from "../../features/clientSlice";
 
 import { getCamps } from "../../features/camps/campSlice";
@@ -26,11 +27,12 @@ import { getSearchedHotels, reset } from "../../features/hotel/hotelSlice";
 
 import { tags } from "./tags";
 import PeopleSelect from "./PeopleSelect";
+import { getTours } from "../../features/tour/tourSlice";
 
 const SearchPanel = ({ isUserLook, style }) => {
   const dispatch = useDispatch();
 
-  const [panelTag, setPanelTag] = useState("Отели");
+  const { chosenTag } = useSelector((state) => state.client);
 
   const [allLocations, setAllLocations] = useState(null);
 
@@ -59,13 +61,17 @@ const SearchPanel = ({ isUserLook, style }) => {
     tag: "Туры",
     origin: "Астана",
     destination: allLocations?._id ? allLocations[0]._id : null,
-    number: 1,
+    peopleAmount: 1,
+    adultAmount: 1,
+    kidsAmount: 0,
   });
 
   const [clientData, setClientData] = useState({
     endDate: Date.parse(endingDate),
     startDate: Date.parse(startingDate),
     peopleAmount: 1,
+    adultAmount: 1,
+    kidsAmount: 0,
     daysAmount: localStorage.getItem("daysAmount")
       ? JSON.parse(localStorage.getItem("daysAmount"))
       : 2,
@@ -100,22 +106,21 @@ const SearchPanel = ({ isUserLook, style }) => {
       ...clientData,
       startDate: localStorage.getItem("startDate"),
       endDate: localStorage.getItem("endDate"),
-      peopleAmount: localStorage.getItem("peopleAmount"),
-      daysAmount: localStorage.getItem("daysAmount"),
+      peopleAmount: +localStorage.getItem("peopleAmount"),
+      kidsAmount: +localStorage.getItem("kidsAmount"),
+      adultAmount: +localStorage.getItem("adultAmount"),
+      daysAmount: +localStorage.getItem("daysAmount"),
     });
   }, []);
 
   useEffect(() => {
     localStorage.setItem("startDate", clientData.startDate);
     localStorage.setItem("endDate", clientData.endDate);
-    localStorage.setItem("daysAmount", clientData.daysAmount);
-    localStorage.setItem("peopleAmount", clientData.peopleAmount);
+    localStorage.setItem("daysAmount", +clientData.daysAmount);
+    localStorage.setItem("peopleAmount", +clientData.peopleAmount);
+    localStorage.setItem("kidsAmount", +clientData.kidsAmount);
+    localStorage.setItem("adultAmount", +clientData.adultAmount);
   }, [clientData]);
-
-  const handleTagChange = (text) => {
-    setPanelTag(text);
-    setSearchTerms({ ...searchTerms, tag: text });
-  };
 
   const handleSearch = ({
     locationId,
@@ -123,39 +128,70 @@ const SearchPanel = ({ isUserLook, style }) => {
     daysAmount,
     startDate,
   }) => {
-    if (panelTag === "Отели") {
+    if (chosenTag == "Отели") {
       dispatch(
         getSearchedHotels({ locationId, peopleAmount, daysAmount, startDate })
       );
     }
-    if (panelTag === "Лагеря") {
+    if (chosenTag == "Лагеря") {
       dispatch(getCamps());
+    }
+    if (chosenTag == "1-3 дневные") {
+      dispatch(getTours());
     }
   };
 
-  const handlePeopleSelect = (num) => {
-    setSearchTerms({ ...searchTerms, number: e.target.value });
-    // changeAmount(e.target.value);
+  const handleAdultSelect = (num) => {
+    const parsedNum = Number(num);
+    setSearchTerms({
+      ...searchTerms,
+      adultAmount: searchTerms.adultAmount + parsedNum,
+      peopleAmount: searchTerms.peopleAmount + parsedNum,
+    });
     setClientData({
       ...clientData,
-      peopleAmount: e.target.value,
+      adultAmount: clientData.adultAmount + parsedNum,
+      peopleAmount: clientData.peopleAmount + parsedNum,
     });
-    dispatch(setPeopleAmount(e.target.value));
   };
+
+  const handleKidsSelect = (num) => {
+    setSearchTerms({
+      ...searchTerms,
+      kidsAmount: searchTerms.kidsAmount + 1,
+      peopleAmount: searchTerms.peopleAmount + 1,
+    });
+    setClientData({
+      ...clientData,
+      kidsAmount: clientData.kidsAmount + 1,
+      peopleAmount: clientData.peopleAmount + 1,
+    });
+  };
+
+  useEffect(() => {
+    dispatch(
+      setSearchOptions({
+        peopleAmount: clientData.peopleAmount,
+        kidsAmount: clientData.kidsAmount,
+        adultAmount: clientData.adultAmount,
+      })
+    );
+  }, [clientData]);
+
+  console.log(chosenTag);
 
   return (
     <div className="search_box" style={style && { ...style }}>
       {!isUserLook && (
         <div className="search_top">
           {tags.map((tag, id) => {
-            const isActive = panelTag === tag.text;
+            const isActive = chosenTag === tag.text;
             return (
               <SearchTag
                 key={id}
                 icon={tag.icon}
                 text={tag.text}
                 active={isActive}
-                handleTagChange={handleTagChange}
               />
             );
           })}
@@ -236,12 +272,16 @@ const SearchPanel = ({ isUserLook, style }) => {
         </div>
         <img src={line} className="line" alt="" />
         <PeopleSelect
-          handlePeopleSelect={handlePeopleSelect}
-          value={searchTerms.number}
+          handleAdultSelect={handleAdultSelect}
+          handleKidsSelect={handleKidsSelect}
+          value={searchTerms.peopleAmount}
+          kids={searchTerms.kidsAmount}
+          adults={searchTerms.adultAmount}
         />
         <button
           className="primary-btn yellow"
           onClick={() => {
+            console.log("adf");
             if (searchTerms.destination && searchTerms.destination !== "Весь") {
               handleSearch({
                 locationId: searchTerms.destination,

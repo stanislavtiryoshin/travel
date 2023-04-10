@@ -1,4 +1,5 @@
 const Camp = require("../models/campModel");
+const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
@@ -7,7 +8,14 @@ const bcrypt = require("bcryptjs");
 //@access Public
 
 const getCamps = (req, res) => {
-  Camp.find({})
+  const { locationId } = req.query;
+  const query = {};
+
+  if (locationId && locationId != "") {
+    query.locationId = locationId;
+  }
+
+  Camp.find(query)
     .populate("food.foodId")
     .populate("locationId")
     .then((response) => res.status(200).json(response))
