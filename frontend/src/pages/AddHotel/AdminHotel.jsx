@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { getSingleHotel, reset } from "../../features/hotel/hotelSlice";
+import {
+  getSingleHotel,
+  updateHotel,
+  reset,
+} from "../../features/hotel/hotelSlice";
 
 import { setNewHotelData } from "../../features/adminSlice";
 
 import "./AddHotel.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { AdminHead } from "../../components/Admin";
 
 import AddHotel from "./AddHotel";
 import DashRoom from "./DashRoom";
@@ -53,40 +58,57 @@ const AdminHotel = () => {
     dispatch(reset());
   }, [hotelId]);
 
+  console.log(singleHotel);
+
+  const updateHotelData = () => {
+    dispatch(getSingleHotel(hotelId));
+  };
+
   return (
     <>
-      <AddHotel fetchedHotelData={singleHotel} editMode />
-      <section className="admin_rooms-section">
-        <div className="container">
-          <div className="admin_rooms-wrapper wrapper ver shadowed_box">
-            <div className="admin_rooms-top">
-              <div
-                className="gen_title"
-                onClick={() => console.log(singleHotel)}
-              >
-                Номера
+      {/* <AdminHead
+        text="Редактирование отеля"
+        onClick={() => {
+          dispatch(updateHotel(hotelData));
+        }}
+      /> */}
+      <div className="admin_hotel-page page">
+        <AddHotel
+          fetchedHotelData={singleHotel}
+          editMode
+          updateHotelData={updateHotelData}
+        />
+        <section className="admin_rooms-section">
+          <div className="container">
+            <div className="admin_rooms-wrapper wrapper ver shadowed_box">
+              <div className="admin_rooms-top">
+                <div
+                  className="gen_title"
+                  onClick={() => console.log(singleHotel)}
+                >
+                  Номера
+                </div>
+                <Link
+                  to={`/dashboard/hotel/${hotelId}/add-room`}
+                  target={"_blank"}
+                  className="primary-btn"
+                >
+                  Добавить номер
+                </Link>
               </div>
-              <Link
-                to={`/dashboard/hotel/${hotelId}/add-room`}
-                target={"_blank"}
-                className="primary-btn"
-              >
-                Добавить номер
-              </Link>
-            </div>
-            <div className="admin_rooms-grid">
-              {singleHotel?.rooms && singleHotel?.rooms?.length > 0
-                ? singleHotel?.rooms.map((room, idx) => {
-                    return <DashRoom room={room} />;
-                  })
-                : null}
-              {/* {console.log("rooms", singleHotel.rooms)} */}
+              <div className="admin_rooms-grid">
+                {singleHotel?.rooms && singleHotel?.rooms?.length > 0
+                  ? singleHotel?.rooms.map((room, idx) => {
+                      return <DashRoom room={room} />;
+                    })
+                  : null}
+                {/* {console.log("rooms", singleHotel.rooms)} */}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* <section className="room_price_table">
+        {/* <section className="room_price_table">
         <div className="container">
           <div className="admin_rooms-wrapper wrapper ver shadowed_box">
             <div className="admin_rooms-top">
@@ -105,6 +127,7 @@ const AdminHotel = () => {
           </div>
         </div>
       </section> */}
+      </div>
     </>
   );
 };

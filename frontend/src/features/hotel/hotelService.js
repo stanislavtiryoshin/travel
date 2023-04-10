@@ -14,6 +14,38 @@ const addHotel = async (hotelData, token) => {
   return response.data;
 };
 
+// Update hotel periods
+
+const updateHotelPeriods = async (periodsData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.patch(
+    API_URL + periodsData.hotelId + "/periods",
+    periodsData,
+    config
+  );
+  return response.data;
+};
+
+// Delete period
+
+const deletePeriod = async (periodData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.patch(
+    API_URL + periodData.hotelId + "/delete-period",
+    periodData,
+    config
+  );
+  return response.data;
+};
+
 //  Update hotel
 
 const updateHotel = async (hotelData, token) => {
@@ -81,6 +113,8 @@ const hotelService = {
   getSearchedHotels,
   getSingleHotel,
   getAdminHotels,
+  updateHotelPeriods,
+  deletePeriod,
 };
 
 export default hotelService;

@@ -49,7 +49,14 @@ const hotelSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Food",
     },
-    periods: [{ type: mongoose.Schema.Types.ObjectId, ref: "Period" }],
+    periods: [
+      {
+        startDay: Number,
+        startMonth: Number,
+        endDay: Number,
+        endMonth: Number,
+      },
+    ],
     kidFoodPrice: {
       type: Number,
     },
