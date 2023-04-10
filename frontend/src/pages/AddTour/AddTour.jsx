@@ -16,9 +16,12 @@ import {
   useGetFoodQuery,
 } from "../../features/services/base.service";
 import { useSelector } from "react-redux";
+import Modal from "../../components/Modal";
 
 const AddTour = () => {
   const { data: food = [], isLoading: isLoadFood } = useGetFoodQuery();
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [dayIDX, setDayIdx] = React.useState(0);
 
   const [tourData, setTourData] = React.useState({
     locationId: null,
@@ -101,6 +104,23 @@ const AddTour = () => {
       localStorage.removeItem("food");
       alert("Added");
     }
+  };
+
+  const handleDelPoint = (idx, dayIdx) => {
+    let newProgram = [...addedServices];
+    if (idx !== 0) {
+      newProgram[dayIdx].days.splice(idx, 1);
+      setAddedServices(newProgram);
+    }
+  };
+
+  const handleDelDay = () => {
+    let newProgram = [...addedServices];
+    if (newProgram.length > 1) {
+      newProgram.splice(dayIDX, 1);
+      setAddedServices(newProgram);
+    }
+    setIsOpen(false);
   };
 
   return (
@@ -355,12 +375,24 @@ const AddTour = () => {
               </div>
               <div className="add_more-col categ-col shadowed_box">
                 <div className="gen_title">Программа тура</div>
+
                 {addedServices.map((serv, idx) => (
                   <div className="input_box">
                     <div className={style.days}>День {idx + 1}</div>
+                    <button
+                      onClick={() => {
+                        setDayIdx(idx);
+                        setIsOpen(true);
+                      }}
+                    >
+                      ...
+                    </button>
                     {serv.days.map((points, pointIdx) => (
                       <>
                         <div className="input_title">Пункт {pointIdx + 1}</div>
+                        <button onClick={() => handleDelPoint(pointIdx, idx)}>
+                          X
+                        </button>
                         <div className="input_row">
                           <select
                             className="primary-input"
@@ -454,6 +486,27 @@ const AddTour = () => {
           </div>
         </section>
       </div>
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <div className="modal-content">
+          <div className="modal-title">
+            Вы хотите удалить день из <br />
+            программы?
+          </div>
+          <div className="modal-body">
+            <span className="modal-select-text">При удалении дня</span>, будут
+            удалены пункты <br /> программы, хранящиеся в нем. Если вы <br />
+            точно хотите удалить день, то напишите
+            <br />
+            <span className="modal-select-text">“День {dayIDX + 1}”</span>
+          </div>
+
+          <div className="modal-button">
+            <button onClick={() => handleDelDay()} className="del-btn">
+              <span>Удалить день из программы</span>
+            </button>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };
