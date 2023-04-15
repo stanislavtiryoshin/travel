@@ -267,7 +267,7 @@ const EditCamp = () => {
                         }));
                       }}
                     />
-                    <div className="input_title">Тип питания</div>
+                    {/* <div className="input_title">Тип питания</div> */}
                     {/* <Selector
                       optionList={food}
                       placeholder={`Введите значение`}
@@ -278,7 +278,7 @@ const EditCamp = () => {
                         }),
                       }}
                     /> */}
-                    <Selector2
+                    {/* <Selector2
                       data={food}
                       value={foodData}
                       placeholder={`Введите значение`}
@@ -289,8 +289,8 @@ const EditCamp = () => {
                           width: `${550}px`,
                         }),
                       }}
-                    />
-                    <div className="input_title">Удобства</div>
+                    /> */}
+                    {/* <div className="input_title">Удобства</div>
                     <Selector2
                       data={allServices}
                       value={comforts}
@@ -302,7 +302,7 @@ const EditCamp = () => {
                           width: `${550}px`,
                         }),
                       }}
-                    />
+                    /> */}
                     {/* <Selector
                       optionList={allServices}
                       placeholder={`Введите значение`}

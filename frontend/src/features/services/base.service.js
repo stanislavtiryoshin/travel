@@ -192,6 +192,17 @@ export const baseApi = createApi({
         url: "/tour/" + id,
       }),
     }),
+    addHotelService: builder.mutation({
+      query: (body) => ({
+        url: "/hotelServices",
+        method: "POST",
+        body,
+        headers: {
+          Authorization: `Bearer ${body.token}`,
+        },
+      }),
+      invalidatesTags: [{ id: "LIST", type: "services" }],
+    }),
   }),
 });
 
@@ -207,7 +218,7 @@ export const {
   useGetCampQuery,
   useGetTourQuery,
   useGetFoodQuery,
-
+  useAddHotelServiceMutation,
   useGetOrdersQuery,
   useGetRoomByHotelIdLimitQuery,
   useGetHotelsByTagMutation,

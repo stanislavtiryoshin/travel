@@ -219,7 +219,7 @@ const AddCamp = () => {
                       }));
                     }}
                   />
-                  <div className="input_title">Тип питания</div>
+                  {/* <div className="input_title">Тип питания</div>
 
                   <Selector2
                     data={food}
@@ -245,7 +245,7 @@ const AddCamp = () => {
                         width: `${550}px`,
                       }),
                     }}
-                  />
+                  /> */}
                   <div className="input_title">Дети</div>
                   <div className="input_row">
                     <select

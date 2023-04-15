@@ -16,6 +16,7 @@ import {
   useGetHotelsQuery,
   useGetLocationQuery,
   useGetFoodQuery,
+  useAddHotelServiceMutation,
 } from "../../features/services/base.service";
 import { useSelector } from "react-redux";
 import Modal from "../../components/Modal";
@@ -27,6 +28,7 @@ const AddTour = () => {
   const [foodValue, setFoodValue] = React.useState([]);
   const [comfortsValue, setComfortsValue] = React.useState([]);
 
+  const [isOpenModal, setIsOpenModal] = React.useState(false);
   const [tourData, setTourData] = React.useState({
     locationId: null,
     name: "",
@@ -59,7 +61,13 @@ const AddTour = () => {
   });
   const { data: hotels = [], isLoading: isHotelLoaded } = useGetHotelsQuery();
   const { data: allLocations = [], isLoading } = useGetLocationQuery();
-  const { data: service, isLoading: isLoadService } = useGetHotelServiceQuery();
+  const {
+    data: service,
+    isLoading: isLoadService,
+    refetch,
+  } = useGetHotelServiceQuery();
+  const [addHotelService, { isLoading: serviceIsLoad }] =
+    useAddHotelServiceMutation();
   const [allServices, setAllServices] = React.useState([]);
   const [withKid, setWithKid] = React.useState(false);
 
@@ -76,6 +84,8 @@ const AddTour = () => {
   const [createTour, { isLoading: addLoad }] = useAddTourMutation();
   const { user } = useSelector((state) => state.auth);
 
+  const [serviceName, setServiceName] = React.useState("");
+
   useEffect(() => {
     if (isLoadService) {
       setAllServices([]);
@@ -91,7 +101,7 @@ const AddTour = () => {
       });
       setAllServices(services);
     }
-  }, [isLoadService]);
+  }, [isLoadService, serviceIsLoad]);
 
   const handleSubmit = async () => {
     const values = {
@@ -125,6 +135,22 @@ const AddTour = () => {
       setAddedServices(newProgram);
     }
     setIsOpen(false);
+  };
+
+  const addService = async () => {
+    // console.log(serviceName);
+    const values = {
+      token: user.token,
+      category: "642587032ba7928f871a09ca",
+      hotelServiceName: serviceName,
+    };
+    if (serviceName.length > 0)
+      await addHotelService(values)
+        .then(setServiceName(""))
+        .finally(() => {
+          refetch();
+        });
+    else alert("Вы не ввели новые удобства");
   };
 
   return (
@@ -309,6 +335,12 @@ const AddTour = () => {
                       }),
                     }}
                   />
+                  <span
+                    className={style.newComforts}
+                    onClick={() => setIsOpenModal(true)}
+                  >
+                    Добавить новые удобства
+                  </span>
                   {/* <Selector
                     optionList={allServices}
                     placeholder={`Введите значение`}
@@ -533,6 +565,31 @@ const AddTour = () => {
             <button onClick={() => handleDelDay()} className="del-btn">
               <span>Удалить день из программы</span>
             </button>
+          </div>
+        </div>
+      </Modal>
+      <Modal isOpen={isOpenModal} setIsOpen={setIsOpenModal}>
+        <div className="modal-content">
+          <div className="modal-title">
+            Хотите добавить новую <br /> услугу?
+          </div>
+          <div className="modal-body">
+            <span className="modal-select-text">Название новой услуги</span>
+
+            <Input
+              style={{ width: "100%", marginTop: "22px" }}
+              placeholder="Услуга"
+              onChange={(e) => setServiceName(e.target.value)}
+            />
+            <div className="modal-button">
+              <button
+                style={{ width: "100%", marginTop: "10px" }}
+                className="primary-btn"
+                onClick={addService}
+              >
+                Добавить услугу
+              </button>
+            </div>
           </div>
         </div>
       </Modal>
