@@ -29,6 +29,7 @@ import { useSelector } from "react-redux";
 import {
   useEditTourByIdMutation,
   useGetTourByIdQuery,
+  useLazyGetTourByIdQuery,
 } from "../../features/services/edit.service";
 
 import { useParams, useNavigate } from "react-router-dom";
@@ -53,18 +54,22 @@ const EditTour = () => {
   const { id } = useParams("id");
   const [dayIDX, setDayIdx] = React.useState(0);
 
-  const { data: tourIdData, isLoading: IdTourLoaded } = useGetTourByIdQuery(id);
+  // const { data: tourIdData, isLoading: IdTourLoaded } = useGetTourByIdQuery(id);
   const [tourData, setTourData] = React.useState({});
   const [isOpen, setIsOpen] = React.useState(false);
 
-  console.log(tourIdData?.img);
+  const [fetchTourById, { isLoading: IdTourLoaded }] =
+    useLazyGetTourByIdQuery();
+
+  // console.log(tourIdData?.img);
 
   const [uploadImage, { isLoading: uploadLoading, isError }] =
     useUploadImageMutation();
 
   useEffect(() => {
-    if (!IdTourLoaded) setTourData(tourIdData);
-  }, [IdTourLoaded]);
+    fetchTourById(id).then(({ data }) => setTourData(data));
+  }, []);
+
   const handleDelPoint = (idx, dayIdx) => {
     let newProgram = [...addedServices];
     if (idx !== 0) {
@@ -123,19 +128,23 @@ const EditTour = () => {
   const handleSubmit = async () => {
     const values = {
       ...tourData,
-      program: [...addedServices],
+      // program: [...addedServices],
       token: user.token,
-      comforts: comfortsData.map(({ servId }) => servId),
+      comforts: comfortsData.map(({ value }) => value),
       food: foodData.map(({ _id }) => _id),
       id,
       token: user.token,
+      img: tourData?.img ? tourData?.img : [],
+      price: tourData?.price ? tourData?.price : [],
+      rooms: tourData?.rooms ? tourData?.rooms : [],
+      locationId: tourData?.locationId,
     };
-    // console.table(values);
+    console.table(values);
     await editTour(values);
 
-    if (!addLoad) {
-      alert("Added");
-    }
+    // if (!addLoad) {
+    //   alert("Added");
+    // }
   };
 
   const fileRef = React.useRef(null);
@@ -153,16 +162,16 @@ const EditTour = () => {
     };
     await uploadImage(values)
       .then((response) => console.log(response))
-      .then((fileRef.current = null))
+      .finally((fileRef.current = null))
       .catch((err) => console.error(err));
   };
 
   const [sources, setSources] = useState([]);
   useEffect(() => {
-    setSources(tourIdData?.img);
-  }, [tourIdData]);
+    setSources(tourData.img ? tourData.img : []);
+  }, []);
 
-  console.log(tourIdData?.img);
+  console.log(comfortsData);
 
   return (
     <>
@@ -265,12 +274,12 @@ const EditTour = () => {
                           {allLocations.map((location, idx) => (
                             <option
                               value={location._id}
-                              selected={
-                                tourIdData &&
-                                tourIdData.locationId &&
-                                tourIdData.locationId._id &&
-                                location._id === tourIdData.locationId._id
-                              }
+                              // selected={
+                              //   tourIdData &&
+                              //   tourIdData.locationId &&
+                              //   tourIdData.locationId._id &&
+                              //   location._id === tourIdData.locationId._id
+                              // }
                               key={location._id}
                             >
                               {location.locationName}
@@ -325,25 +334,25 @@ const EditTour = () => {
                           }
                         >
                           <option
-                            selected={
-                              tourIdData && 1 === Number(tourIdData.duration)
-                            }
+                            // selected={
+                            //   tourIdData && 1 === Number(tourIdData.duration)
+                            // }
                             value={1}
                           >
                             1 день
                           </option>
                           <option
-                            selected={
-                              tourIdData && 2 === Number(tourIdData.duration)
-                            }
+                            // selected={
+                            //   tourIdData && 2 === Number(tourIdData.duration)
+                            // }
                             value={2}
                           >
                             2 дня
                           </option>
                           <option
-                            selected={
-                              tourIdData && 3 === Number(tourIdData.duration)
-                            }
+                            // selected={
+                            //   tourIdData && 3 === Number(tourIdData.duration)
+                            // }
                             value={3}
                           >
                             3 дня
@@ -397,7 +406,15 @@ const EditTour = () => {
                 <div className="input_box">
                   <div className="input_title">Отель</div>
 
-                  <select className="primary-input">
+                  <select
+                    className="primary-input"
+                    onChange={(e) =>
+                      setTourData((prev) => ({
+                        ...prev,
+                        hotelId: e.target.value,
+                      }))
+                    }
+                  >
                     <option value="" disabled selected>
                       Выбрать из списка
                     </option>
@@ -406,7 +423,14 @@ const EditTour = () => {
                     ) : (
                       <>
                         {hotels.map((hotel) => (
-                          <option value={hotel._id} key={hotel._id}>
+                          <option
+                            selected={
+                              tourData.hotelId &&
+                              hotel._id === tourData.hotelId._id
+                            }
+                            value={hotel._id}
+                            key={hotel._id}
+                          >
                             {hotel.name}
                           </option>
                         ))}
@@ -422,17 +446,6 @@ const EditTour = () => {
                   </button>
                   <div className="input_title">Тип питания</div>
 
-                  {/* <Selector
-                    foodOption={food}
-                    placeholder={`Введите значение`}
-                    styles={{
-                      control: (baseStyles) => ({
-                        ...baseStyles,
-                        width: `${550}px`,
-                      }),
-                    }}
-                  /> */}
-
                   <Selector2
                     data={food}
                     value={foodData}
@@ -447,16 +460,7 @@ const EditTour = () => {
                   />
 
                   <div className="input_title">Удобства</div>
-                  {/* <Selector
-                    optionList={allServices}
-                    placeholder={`Введите значение`}
-                    styles={{
-                      control: (baseStyles) => ({
-                        ...baseStyles,
-                        width: `${550}px`,
-                      }),
-                    }}
-                  /> */}
+
                   <Selector2
                     data={allServices}
                     placeholder={`Введите значение`}
@@ -484,23 +488,23 @@ const EditTour = () => {
                       }}
                     >
                       <option
-                        selected={
-                          tourIdData &&
-                          tourIdData.kids &&
-                          tourIdData.kids.withKids &&
-                          false === tourIdData.kids.withKids
-                        }
+                        // selected={
+                        //   tourIdData &&
+                        //   tourIdData.kids &&
+                        //   tourIdData.kids.withKids &&
+                        //   false === tourIdData.kids.withKids
+                        // }
                         value={false}
                       >
                         Можно с детьми
                       </option>
                       <option
-                        selected={
-                          tourIdData &&
-                          tourIdData.kids &&
-                          tourIdData.kids.withKids &&
-                          true === tourIdData.kids.withKids
-                        }
+                        // selected={
+                        //   tourIdData &&
+                        //   tourIdData.kids &&
+                        //   tourIdData.kids.withKids &&
+                        //   true === tourIdData.kids.withKids
+                        // }
                         value={true}
                       >
                         Без детей
@@ -572,87 +576,154 @@ const EditTour = () => {
               </div>
               <div className="add_more-col categ-col shadowed_box">
                 <div className="gen_title">Программа тура</div>
-                {addedServices.map((serv, idx) => (
-                  <div className="input_box">
-                    <div className={style.days}>День {idx + 1}</div>
-                    <button
-                      onClick={() => {
-                        setDayIdx(idx);
-                        setIsOpen(true);
-                      }}
-                    >
-                      ...
-                    </button>
-                    {serv.days.map((points, pointIdx) => (
-                      <>
-                        <div className="input_title">Пункт {pointIdx + 1}</div>
-                        <button onClick={() => handleDelPoint(pointIdx, idx)}>
-                          X
-                        </button>
-                        <div className="input_row">
-                          <select
-                            className="primary-input"
-                            onChange={(e) => {
-                              serv.days[pointIdx].points = {
-                                day: idx + 1,
-                                time: e.target.value,
-                                pointName: "",
-                                pointDescription: "",
-                              };
+                {tourData.program &&
+                  tourData.program.map((serv, idx) => (
+                    <div className="input_box">
+                      <div className={style.days}>День {idx + 1}</div>
+                      <button
+                        onClick={() => {
+                          setDayIdx(idx);
+                          setIsOpen(true);
+                        }}
+                      >
+                        ...
+                      </button>
+                      {serv.days.map((points, pointIdx) => (
+                        <>
+                          <div className="input_title">
+                            Пункт {pointIdx + 1}
+                          </div>
+                          <button onClick={() => handleDelPoint(pointIdx, idx)}>
+                            X
+                          </button>
+                          <div className="input_row">
+                            <select
+                              className="primary-input"
+                              onChange={(e) => {
+                                serv.days[pointIdx].points = {
+                                  day: idx + 1,
+                                  time: e.target.value,
+                                  pointName: "",
+                                  pointDescription: "",
+                                };
+                              }}
+                            >
+                              <option value="" selected disabled>
+                                Время
+                              </option>
+                              <option value="07:00">07:00</option>
+                              <option value="08:00">08:00</option>
+                              <option value="09:00">09:00</option>
+                              <option value="10:00">10:00</option>
+                            </select>
+                            {/* {console.log(points.points.pointName)} */}
+                            <Input
+                              placeholder="Название пункта"
+                              value={
+                                serv.days[pointIdx] &&
+                                serv.days[pointIdx].points &&
+                                serv.days[pointIdx].points.pointName
+                              }
+                              onChange={(e) => {
+                                setTourData((prev) => ({
+                                  ...prev,
+                                  program: [
+                                    ...prev.program.map((d, id) => {
+                                      if (id === idx) {
+                                        return {
+                                          ...d,
+
+                                          days: [
+                                            ...d.days.map((p, pIdx) => {
+                                              if (pIdx === pointIdx) {
+                                                return {
+                                                  ...p,
+                                                  points: {
+                                                    ...p.points,
+                                                    pointName: e.target.value,
+                                                  },
+                                                };
+                                              }
+                                              return p;
+                                            }),
+                                          ],
+                                        };
+                                      }
+                                      return d;
+                                    }),
+                                  ],
+                                }));
+                              }}
+                            />
+                          </div>
+                          <div className="input_row">
+                            <textarea
+                              className="primary-input"
+                              cols="30"
+                              rows="5"
+                              value={
+                                serv.days[pointIdx] &&
+                                serv.days[pointIdx].points &&
+                                serv.days[pointIdx].points.pointDescription
+                              }
+                              placeholder="Описание"
+                              onChange={(e) => {
+                                setTourData((prev) => ({
+                                  ...prev,
+                                  program: [
+                                    ...prev.program.map((d, id) => {
+                                      if (id === idx) {
+                                        return {
+                                          ...d,
+
+                                          days: [
+                                            ...d.days.map((p, pIdx) => {
+                                              if (pIdx === pointIdx) {
+                                                return {
+                                                  ...p,
+                                                  points: {
+                                                    ...p.points,
+                                                    pointDescription:
+                                                      e.target.value,
+                                                  },
+                                                };
+                                              }
+                                              return p;
+                                            }),
+                                          ],
+                                        };
+                                      }
+                                      return d;
+                                    }),
+                                  ],
+                                }));
+                              }}
+                            />
+                          </div>
+                          <button
+                            className={`add_service-btn ${style.bordered_btn}`}
+                            onClick={() => {
+                              setAddedServices((prev) => {
+                                prev.map((d, id) => {
+                                  d.days[id + 1] = {
+                                    points: {
+                                      day: id + 1,
+                                      time: "",
+                                      pointName: "",
+                                      pointDescription: "",
+                                    },
+                                  };
+                                });
+                                return [...prev];
+                              });
                             }}
                           >
-                            <option value="" selected disabled>
-                              Время
-                            </option>
-                            <option value="07:00">07:00</option>
-                            <option value="08:00">08:00</option>
-                            <option value="09:00">09:00</option>
-                            <option value="10:00">10:00</option>
-                          </select>
-                          <Input
-                            placeholder="Название пункта"
-                            onChange={(e) => {
-                              serv.days[pointIdx].points.pointName =
-                                e.target.value;
-                            }}
-                          />
-                        </div>
-                        <div className="input_row">
-                          <textarea
-                            className="primary-input"
-                            cols="30"
-                            rows="5"
-                            placeholder="Описание"
-                            onChange={(e) => {
-                              serv.days[pointIdx].points.pointDescription =
-                                e.target.value;
-                            }}
-                          />
-                        </div>
-                        <button
-                          className={`add_service-btn ${style.bordered_btn}`}
-                          onClick={() => {
-                            setAddedServices((prev) => {
-                              prev.map((d, id) => {
-                                d.days[id + 1] = {
-                                  points: {
-                                    day: id + 1,
-                                    time: "",
-                                    pointName: "",
-                                    pointDescription: "",
-                                  },
-                                };
-                              });
-                              return [...prev];
-                            });
-                          }}
-                        >
-                          Добавить пункт
-                        </button>
-                      </>
-                    ))}
-                  </div>
-                ))}
+                            Добавить пункт
+                          </button>
+                        </>
+                      ))}
+                    </div>
+                  ))}
                 <button
                   onClick={() =>
                     setAddedServices((prev) => {

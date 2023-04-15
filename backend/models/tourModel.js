@@ -98,10 +98,7 @@ const tourSchema = Schema({
       ref: "Food",
     },
   ],
-  comforts: {
-    type: Schema.Types.ObjectId,
-    ref: "HotelService",
-  },
+  comforts: [String],
   img: [String],
 });
 

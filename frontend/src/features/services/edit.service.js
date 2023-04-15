@@ -69,11 +69,13 @@ export const editApi = createApi({
 
 export const {
   useGetCampByIdQuery,
+  useLazyGetCampByIdQuery,
   useDeleteCampByIdMutation,
   useEditCampByIdMutation,
 
   //tour
   useDeleteTourByIdMutation,
   useGetTourByIdQuery,
+  useLazyGetTourByIdQuery,
   useEditTourByIdMutation,
 } = editApi;

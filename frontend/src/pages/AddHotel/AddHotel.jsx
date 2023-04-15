@@ -118,8 +118,6 @@ const AddHotel = ({ fetchedHotelData, editMode, updateHotelData }) => {
     { serviceId: "64258af02ba7928f871a09cd" },
   ]);
 
-  console.log(hotelData.hotelServices);
-
   // If the hotel already has services, insert them into addedServices
   useEffect(() => {
     if (fetchedHotelData && fetchedHotelData?.hotelServices?.length > 0) {
@@ -205,8 +203,6 @@ const AddHotel = ({ fetchedHotelData, editMode, updateHotelData }) => {
     hotelServiceName: null,
     category: null,
   });
-
-  console.log(newService);
 
   return (
     <>

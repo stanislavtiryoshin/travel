@@ -21,12 +21,12 @@ const campSchema = Schema({
       ],
     },
   ],
-  food: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Food",
-    },
-  ],
+  // food: [
+  //   {
+  //     type: Schema.Types.ObjectId,
+  //     ref: "Food",
+  //   },
+  // ],
   locationFeature: {
     type: String,
   },
@@ -53,18 +53,13 @@ const campSchema = Schema({
       default: 14,
     },
   },
-  comforts: {
-    type: Schema.Types.ObjectId,
-    ref: "HotelService",
-  },
+
   img: [String],
   rating: {
     type: Number,
     default: 0,
   },
-  // ratingVotes: {
-  //   type: Number,
-  // },
+
   payment: {
     paymentType: {
       type: String,

@@ -34,8 +34,8 @@ const AddCamp = () => {
     hotelDescription: "",
     description: "",
     program: [],
-    food: null,
-    comforts: services,
+    // food: null,
+    // comforts: services,
     kids: {
       forWho: "Для детей",
       minCountInGroup: null,
@@ -90,18 +90,15 @@ const AddCamp = () => {
       ...campData,
       program: [...addedServices],
       token: user.token,
-      food: foodData.map((food) => food._id),
-      comforts: services.map(({ servId }) => servId),
+      // food: foodData.map((food) => food._id),
+      // comforts: services.map(({ servId }) => servId),
     };
     console.table(values);
     await createCamp(values);
-    if (!addLoad) {
-      alert("Added");
-    }
   };
 
   useEffect(() => {
-    if (camp) console.log(`/dashboard/camp/${camp._id}`);
+    if (camp) navigate(`/dashboard/camp/${camp._id}`);
   }, [addLoad]);
 
   if (isLoadFood) {

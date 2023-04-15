@@ -16,9 +16,9 @@ const getCamps = (req, res) => {
   }
 
   Camp.find(query)
-    .populate("food.foodId")
+    // .populate("food.foodId")
     .populate("locationId")
-    .populate("comforts")
+    // .populate("comforts")
     .then((response) => res.status(200).json(response))
     .catch(() => res.sendStatus(403));
 };
@@ -36,9 +36,9 @@ const addCamp = (req, res) => {
 const getSingleCamp = (req, res) => {
   const id = req.params.id;
   Camp.findById(id)
-    .populate("food.foodId")
+    // .populate("food.foodId")
     .populate("locationId")
-    .populate("comforts")
+    // .populate("comforts")
     .then((response) => res.status(200).json(response))
     .catch(() => res.sendStatus(403));
 };

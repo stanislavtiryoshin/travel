@@ -10,7 +10,6 @@ import Selector from "../AddHotel/Select";
 import Selector2 from "../AddHotel/Selector";
 
 import {
-  useAddCampMutation,
   useGetHotelServiceQuery,
   useGetLocationQuery,
   useGetFoodQuery,
@@ -19,6 +18,7 @@ import {
 import {
   useEditCampByIdMutation,
   useGetCampByIdQuery,
+  useLazyGetCampByIdQuery,
 } from "../../features/services/edit.service";
 
 import { useSelector } from "react-redux";
@@ -31,15 +31,21 @@ const EditCamp = () => {
   const [comforts, setComforts] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams("id");
-  const {
-    data: campById = [],
-    isLoading: byIdLoaded,
-    isSuccess,
-  } = useGetCampByIdQuery(id);
-  const [campData, setCampData] = React.useState({});
+  // const {
+  //   data: campById = [],
+  //   isLoading: byIdLoaded,
+  //   isSuccess,
+  // } = useGetCampByIdQuery(id);
+
+  const [campData, setCampByData] = useState([]);
+  const [fetchCampById, { isLoading: byIdLoaded }] = useLazyGetCampByIdQuery();
+
+  // const [campData, setCampData] = React.useState({});
   useEffect(() => {
-    if (!byIdLoaded) setCampData(campById);
-  }, [byIdLoaded]);
+    fetchCampById(id)
+      .then(({ data }) => setCampByData(data))
+      .catch((err) => console.error(err));
+  }, []);
 
   const [upload, { isLoading: imageIsLoading }] = useUploadImageMutation();
 
@@ -84,18 +90,10 @@ const EditCamp = () => {
     const values = {
       id: id,
       ...campData,
-      program: [...addedServices],
       token: user.token,
-      comforts: comforts.map(({ servId }) => servId),
-      food: foodData.map(({ _id }) => _id),
     };
     console.table(values);
     await createCamp(values);
-
-    if (!addLoad) {
-      alert("Added");
-      localStorage.removeItem("comforts");
-    }
   };
 
   const imageRef = React.useRef(null);
@@ -122,153 +120,152 @@ const EditCamp = () => {
 
   if (byIdLoaded && !campData) {
     return <div> Loading...</div>;
-  } else if (isSuccess)
-    return (
-      <>
-        <AdminHead text="Создание лагеря" onClick={() => handleSubmit()} />
-        <div className="add_hotel-page page">
-          <section className="add_gen-section">
-            <div className="container">
-              <div className="add_gen-wrapper wrapper shadow_box">
-                <AdminAddForm img={addhotel}>
-                  <div className="gen_content-box">
-                    <div className="gen_title">Основное о лагере</div>
-                    <div className="input_row">
-                      <Input
-                        placeholder="Название"
-                        value={campData && campData.name && campData.name}
-                        onChange={(e) =>
-                          setCampData({ ...campData, name: e.target.value })
-                        }
-                      />
-                      <Input
-                        placeholder="Особенность местоположения"
-                        value={
-                          campData &&
-                          campData.locationFeature &&
-                          campData.locationFeature
-                        }
-                        onChange={(e) =>
-                          setCampData({
-                            ...campData,
-                            locationFeature: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="input_row">
-                      <select
-                        className="primary-input"
-                        type="text"
-                        placeholder="Местоположение"
-                        name="destination"
-                        // value={campData.locationId ? campData.locationId : ""}
-                        onChange={(e) => {
-                          setCampData({
-                            ...campData,
-                            locationId: e.target.value,
-                          });
-                        }}
-                      >
-                        {!isLoading ? (
-                          allLocations.map((location, idx) => {
-                            return (
-                              <option value={location._id} key={idx}>
-                                {location.locationName}
-                              </option>
-                            );
-                          })
-                        ) : (
-                          <p>Locations are loading</p>
-                        )}
-                      </select>
+  }
 
-                      <Input
-                        placeholder="Ссылка на карту"
-                        value={campData && campData.mapLink && campData.mapLink}
-                        onChange={(e) =>
-                          setCampData({ ...campData, mapLink: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="input_row">
-                      <Input
-                        placeholder="Рейтинг лагеря"
-                        value={campData && campData.rating && campData.rating}
-                        onChange={(e) =>
-                          setCampData({ ...campData, rating: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="input_row">
-                      <textarea
-                        className="primary-input"
-                        cols="30"
-                        rows="5"
-                        placeholder="Описание"
-                        value={
-                          campData &&
-                          campData.description &&
-                          campData.description
-                        }
-                        onChange={(e) =>
-                          setCampData({
-                            ...campData,
-                            description: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <input
-                      onChange={handleUpload}
-                      hidden
-                      type="file"
-                      ref={imageRef}
-                      multiple
-                    />
-                    <button
-                      className={`primary-btn`}
-                      onClick={() => imageRef.current.click()}
-                    >
-                      Изменить фото
-                    </button>
-                  </div>
-                </AdminAddForm>
-              </div>
-            </div>
-          </section>
-          <section className="add_more-section">
-            <div className="container">
-              <div className="add_more-wrapper wrapper">
-                <div className="add_more-col more-col shadowed_box">
-                  <div className="gen_title">Подробнее</div>
-                  <div className="input_box">
-                    <div className="input_title">Отель</div>
+  return (
+    <>
+      <AdminHead text="Создание лагеря" onClick={() => handleSubmit()} />
+      <div className="add_hotel-page page">
+        <section className="add_gen-section">
+          <div className="container">
+            <div className="add_gen-wrapper wrapper shadow_box">
+              <AdminAddForm img={addhotel}>
+                <div className="gen_content-box">
+                  <div className="gen_title">Основное о лагере</div>
+                  <div className="input_row">
                     <Input
                       placeholder="Название"
-                      value={campData.hotelName}
-                      onChange={(e) => {
-                        setCampData((prev) => ({
-                          ...prev,
-                          hotelName: e.target.value,
-                        }));
-                      }}
+                      value={campData && campData.name && campData.name}
+                      onChange={(e) =>
+                        setCampByData({ ...campData, name: e.target.value })
+                      }
                     />
+                    <Input
+                      placeholder="Особенность местоположения"
+                      value={
+                        campData &&
+                        campData.locationFeature &&
+                        campData.locationFeature
+                      }
+                      onChange={(e) =>
+                        setCampByData({
+                          ...campData,
+                          locationFeature: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="input_row">
+                    <select
+                      className="primary-input"
+                      type="text"
+                      placeholder="Местоположение"
+                      name="destination"
+                      // value={campData.locationId ? campData.locationId : ""}
+                      onChange={(e) => {
+                        setCampByData({
+                          ...campData,
+                          locationId: e.target.value,
+                        });
+                      }}
+                    >
+                      {!isLoading ? (
+                        allLocations.map((location, idx) => {
+                          return (
+                            <option value={location._id} key={idx}>
+                              {location.locationName}
+                            </option>
+                          );
+                        })
+                      ) : (
+                        <p>Locations are loading</p>
+                      )}
+                    </select>
+
+                    <Input
+                      placeholder="Ссылка на карту"
+                      value={campData && campData.mapLink && campData.mapLink}
+                      onChange={(e) =>
+                        setCampByData({ ...campData, mapLink: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="input_row">
+                    <Input
+                      placeholder="Рейтинг лагеря"
+                      value={campData && campData.rating && campData.rating}
+                      onChange={(e) =>
+                        setCampByData({ ...campData, rating: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="input_row">
                     <textarea
                       className="primary-input"
                       cols="30"
-                      rows="8"
+                      rows="5"
                       placeholder="Описание"
-                      value={campData.hotelDescription}
-                      onChange={(e) => {
-                        setCampData((prev) => ({
-                          ...prev,
-                          hotelDescription: e.target.value,
-                        }));
-                      }}
+                      value={
+                        campData && campData.description && campData.description
+                      }
+                      onChange={(e) =>
+                        setCampByData({
+                          ...campData,
+                          description: e.target.value,
+                        })
+                      }
                     />
-                    {/* <div className="input_title">Тип питания</div> */}
-                    {/* <Selector
+                  </div>
+                  <input
+                    onChange={handleUpload}
+                    hidden
+                    type="file"
+                    ref={imageRef}
+                    multiple
+                  />
+                  <button
+                    className={`primary-btn`}
+                    onClick={() => imageRef.current.click()}
+                  >
+                    Изменить фото
+                  </button>
+                </div>
+              </AdminAddForm>
+            </div>
+          </div>
+        </section>
+        <section className="add_more-section">
+          <div className="container">
+            <div className="add_more-wrapper wrapper">
+              <div className="add_more-col more-col shadowed_box">
+                <div className="gen_title">Подробнее</div>
+                <div className="input_box">
+                  <div className="input_title">Отель</div>
+                  <Input
+                    placeholder="Название"
+                    value={campData && campData.hotelName}
+                    onChange={(e) => {
+                      setCampByData((prev) => ({
+                        ...prev,
+                        hotelName: e.target.value,
+                      }));
+                    }}
+                  />
+                  <textarea
+                    className="primary-input"
+                    cols="30"
+                    rows="8"
+                    placeholder="Описание"
+                    value={campData && campData.hotelDescription}
+                    onChange={(e) => {
+                      setCampByData((prev) => ({
+                        ...prev,
+                        hotelDescription: e.target.value,
+                      }));
+                    }}
+                  />
+                  {/* <div className="input_title">Тип питания</div> */}
+                  {/* <Selector
                       optionList={food}
                       placeholder={`Введите значение`}
                       styles={{
@@ -278,7 +275,7 @@ const EditCamp = () => {
                         }),
                       }}
                     /> */}
-                    {/* <Selector2
+                  {/* <Selector2
                       data={food}
                       value={foodData}
                       placeholder={`Введите значение`}
@@ -290,7 +287,7 @@ const EditCamp = () => {
                         }),
                       }}
                     /> */}
-                    {/* <div className="input_title">Удобства</div>
+                  {/* <div className="input_title">Удобства</div>
                     <Selector2
                       data={allServices}
                       value={comforts}
@@ -303,7 +300,7 @@ const EditCamp = () => {
                         }),
                       }}
                     /> */}
-                    {/* <Selector
+                  {/* <Selector
                       optionList={allServices}
                       placeholder={`Введите значение`}
                       queryOption={campById.comforts.map((c) => {
@@ -318,197 +315,196 @@ const EditCamp = () => {
                           width: `${550}px`,
                         }),
                       }} */}
-                    {/* /> */}
-                    <div className="input_title">Дети</div>
-                    <div className="input_row">
-                      <select
-                        className="primary-input"
-                        onChange={(e) => {
-                          setCampData({
-                            ...campData,
-                            kids: {
-                              ...kids,
-                              forWho: e.target.value,
-                            },
-                          });
-                        }}
-                      >
-                        <option value={"Для детей"}>Для детей</option>
-                        <option value={"Для вожатых"}>Для вожатых</option>
-                      </select>
+                  {/* /> */}
+                  <div className="input_title">Дети</div>
+                  <div className="input_row">
+                    <select
+                      className="primary-input"
+                      onChange={(e) => {
+                        setCampByData({
+                          ...campData,
+                          kids: {
+                            ...kids,
+                            forWho: e.target.value,
+                          },
+                        });
+                      }}
+                    >
+                      <option value={"Для детей"}>Для детей</option>
+                      <option value={"Для вожатых"}>Для вожатых</option>
+                    </select>
 
-                      <select
-                        className="primary-input"
-                        onChange={(e) => {
-                          setCampData((prev) => ({
-                            ...prev,
-                            kids: {
-                              ...prev.kids,
-                              minCountInGroup: e.target.value,
-                            },
-                          }));
-                        }}
-                      >
-                        <option value="" disabled>
-                          Мин. кол-во в группе
-                        </option>
-                        {new Array(20).fill(1).map((age, idx) => (
-                          <>
-                            {campData &&
-                            campData.kids &&
-                            campData.kids.minCountInGroup ? (
-                              campData.kids.minCountInGroup === age + idx && (
-                                <option
-                                  value={
-                                    campData.kids.minCountInGroup
-                                      ? campData.kids.minCountInGroup
-                                      : 1
-                                  }
-                                  selected
-                                >
-                                  {campData.kids.minCountInGroup
+                    <select
+                      className="primary-input"
+                      onChange={(e) => {
+                        setCampByData((prev) => ({
+                          ...prev,
+                          kids: {
+                            ...prev.kids,
+                            minCountInGroup: e.target.value,
+                          },
+                        }));
+                      }}
+                    >
+                      <option value="" disabled>
+                        Мин. кол-во в группе
+                      </option>
+                      {new Array(20).fill(1).map((age, idx) => (
+                        <>
+                          {campData &&
+                          campData.kids &&
+                          campData.kids.minCountInGroup ? (
+                            campData.kids.minCountInGroup === age + idx && (
+                              <option
+                                value={
+                                  campData.kids.minCountInGroup
                                     ? campData.kids.minCountInGroup
-                                    : 1}
-                                </option>
-                              )
-                            ) : (
-                              <></>
-                            )}
-                            <option value={age + idx}>{age + idx}</option>
-                          </>
-                        ))}
-                      </select>
-                      <select
-                        className="primary-input"
-                        onChange={(e) => {
-                          setCampData((prev) => ({
-                            ...prev,
-                            kids: {
-                              ...prev.kids,
-                              maxCountInGroup: e.target.value,
-                            },
-                          }));
-                        }}
-                      >
-                        <option value="" disabled>
-                          Макс. кол-во в группе
-                        </option>
-                        {new Array(20).fill(1).map((age, idx) => (
-                          <>
-                            {campData &&
-                            campData.kids &&
-                            campData.kids.maxCountInGroup ? (
-                              campData.kids.maxCountInGroup === age + idx && (
-                                <option
-                                  value={
-                                    campData.kids.maxCountInGroup
-                                      ? campData.kids.maxCountInGroup
-                                      : 1
-                                  }
-                                  selected
-                                >
-                                  {campData.kids.maxCountInGroup
+                                    : 1
+                                }
+                                selected
+                              >
+                                {campData.kids.minCountInGroup
+                                  ? campData.kids.minCountInGroup
+                                  : 1}
+                              </option>
+                            )
+                          ) : (
+                            <></>
+                          )}
+                          <option value={age + idx}>{age + idx}</option>
+                        </>
+                      ))}
+                    </select>
+                    <select
+                      className="primary-input"
+                      onChange={(e) => {
+                        setCampByData((prev) => ({
+                          ...prev,
+                          kids: {
+                            ...prev.kids,
+                            maxCountInGroup: e.target.value,
+                          },
+                        }));
+                      }}
+                    >
+                      <option value="" disabled>
+                        Макс. кол-во в группе
+                      </option>
+                      {new Array(20).fill(1).map((age, idx) => (
+                        <>
+                          {campData &&
+                          campData.kids &&
+                          campData.kids.maxCountInGroup ? (
+                            campData.kids.maxCountInGroup === age + idx && (
+                              <option
+                                value={
+                                  campData.kids.maxCountInGroup
                                     ? campData.kids.maxCountInGroup
-                                    : 1}
-                                </option>
-                              )
-                            ) : (
-                              <></>
+                                    : 1
+                                }
+                                selected
+                              >
+                                {campData.kids.maxCountInGroup
+                                  ? campData.kids.maxCountInGroup
+                                  : 1}
+                              </option>
+                            )
+                          ) : (
+                            <></>
+                          )}
+                          <option value={age + idx}>{age + idx}</option>
+                        </>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="input_row">
+                    <select
+                      name=""
+                      id=""
+                      className="primary-input"
+                      onChange={(e) => {
+                        setCampByData((prev) => ({
+                          ...prev,
+                          kids: {
+                            ...prev.kids,
+                            minAgeInGroup: e.target.value,
+                          },
+                        }));
+                      }}
+                    >
+                      <option disabled>Мин. возраст</option>
+                      {new Array(14).fill(1).map((age, idx) => (
+                        <>
+                          {campData &&
+                            campData.kids &&
+                            campData.kids.minAgeInGroup &&
+                            campData.kids.minAgeInGroup === age + idx && (
+                              <option
+                                selected
+                                value={campData.kids.minAgeInGroup}
+                              >
+                                {campData.kids.minAgeInGroup}
+                              </option>
                             )}
-                            <option value={age + idx}>{age + idx}</option>
-                          </>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="input_row">
-                      <select
-                        name=""
-                        id=""
-                        className="primary-input"
-                        onChange={(e) => {
-                          setCampData((prev) => ({
-                            ...prev,
-                            kids: {
-                              ...prev.kids,
-                              minAgeInGroup: e.target.value,
-                            },
-                          }));
-                        }}
-                      >
-                        <option disabled>Мин. возраст</option>
-                        {new Array(14).fill(1).map((age, idx) => (
-                          <>
-                            {campData &&
-                              campData.kids &&
-                              campData.kids.minAgeInGroup &&
-                              campData.kids.minAgeInGroup === age + idx && (
-                                <option
-                                  selected
-                                  value={campData.kids.minAgeInGroup}
-                                >
-                                  {campData.kids.minAgeInGroup}
-                                </option>
-                              )}
-                            <option value={age + idx}>{age + idx}</option>
-                          </>
-                        ))}
-                      </select>
+                          <option value={age + idx}>{age + idx}</option>
+                        </>
+                      ))}
+                    </select>
 
-                      <select
-                        name=""
-                        id=""
-                        className="primary-input"
-                        onChange={(e) => {
-                          setCampData((prev) => ({
-                            ...prev,
-                            kids: {
-                              ...prev.kids,
-                              maxAgeInGroup: e.target.value,
-                            },
-                          }));
-                        }}
-                      >
-                        <option selected disabled>
-                          Макс. возраст
-                        </option>
-                        {new Array(14).fill(1).map((age, idx) => (
-                          <>
-                            {campData &&
-                              campData.kids &&
-                              campData.kids.maxAgeInGroup &&
-                              campData.kids.maxAgeInGroup === age + idx && (
-                                <option
-                                  selected
-                                  value={campData.kids.maxAgeInGroup}
-                                >
-                                  {campData.kids.maxAgeInGroup}
-                                </option>
-                              )}
-                            <option value={age + idx}>{age + idx}</option>
-                          </>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="input_title">Оплата</div>
-                    <div className="input_row">
-                      <select id="payment" className="primary-input">
-                        <option value="">Оплата за номер</option>
-                        <option value="">Оплата за человека</option>
-                      </select>
+                    <select
+                      name=""
+                      id=""
+                      className="primary-input"
+                      onChange={(e) => {
+                        setCampByData((prev) => ({
+                          ...prev,
+                          kids: {
+                            ...prev.kids,
+                            maxAgeInGroup: e.target.value,
+                          },
+                        }));
+                      }}
+                    >
+                      <option selected disabled>
+                        Макс. возраст
+                      </option>
+                      {new Array(14).fill(1).map((age, idx) => (
+                        <>
+                          {campData &&
+                            campData.kids &&
+                            campData.kids.maxAgeInGroup &&
+                            campData.kids.maxAgeInGroup === age + idx && (
+                              <option
+                                selected
+                                value={campData.kids.maxAgeInGroup}
+                              >
+                                {campData.kids.maxAgeInGroup}
+                              </option>
+                            )}
+                          <option value={age + idx}>{age + idx}</option>
+                        </>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="input_title">Оплата</div>
+                  <div className="input_row">
+                    <select id="payment" className="primary-input">
+                      <option value="">Оплата за номер</option>
+                      <option value="">Оплата за человека</option>
+                    </select>
 
-                      <select id="prepayment" className="primary-input">
-                        {new Array(5).fill(10).map((a, idx) => (
-                          <option value={a * (idx + 1)}>
-                            {a * (idx + 1)}%
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <select id="prepayment" className="primary-input">
+                      {new Array(5).fill(10).map((a, idx) => (
+                        <option value={a * (idx + 1)}>{a * (idx + 1)}%</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
-                <div className="add_more-col categ-col shadowed_box">
-                  <div className="gen_title">Программа лагеря</div>
-                  {addedServices.map((serv, idx) => (
+              </div>
+              <div className="add_more-col categ-col shadowed_box">
+                <div className="gen_title">Программа лагеря</div>
+                {campData?.program &&
+                  campData?.program.map((serv, idx) => (
                     <div className="input_box">
                       <div className={style.days}>День {idx + 1}</div>
                       {serv.days.map((points, pointIdx) => (
@@ -538,9 +534,39 @@ const EditCamp = () => {
                             </select>
                             <Input
                               placeholder="Название пункта"
+                              value={
+                                serv.days[pointIdx] &&
+                                serv.days[pointIdx].points &&
+                                serv.days[pointIdx].points.pointName
+                              }
                               onChange={(e) => {
-                                serv.days[pointIdx].points.pointName =
-                                  e.target.value;
+                                setCampByData((prev) => ({
+                                  ...prev,
+                                  program: [
+                                    ...prev.program.map((d, id) => {
+                                      if (id === idx) {
+                                        return {
+                                          ...d,
+                                          days: [
+                                            ...d.days.map((p, pIdx) => {
+                                              if (pIdx === pointIdx) {
+                                                return {
+                                                  ...p,
+                                                  points: {
+                                                    ...p.points,
+                                                    pointName: e.target.value,
+                                                  },
+                                                };
+                                              }
+                                              return p;
+                                            }),
+                                          ],
+                                        };
+                                      }
+                                      return d;
+                                    }),
+                                  ],
+                                }));
                               }}
                             />
                           </div>
@@ -549,10 +575,41 @@ const EditCamp = () => {
                               className="primary-input"
                               cols="30"
                               rows="5"
+                              value={
+                                serv.days[pointIdx] &&
+                                serv.days[pointIdx].points &&
+                                serv.days[pointIdx].points.pointDescription
+                              }
                               placeholder="Описание"
                               onChange={(e) => {
-                                serv.days[pointIdx].points.pointDescription =
-                                  e.target.value;
+                                setCampByData((prev) => ({
+                                  ...prev,
+                                  program: [
+                                    ...prev.program.map((d, id) => {
+                                      if (id === idx) {
+                                        return {
+                                          ...d,
+                                          days: [
+                                            ...d.days.map((p, pIdx) => {
+                                              if (pIdx === pointIdx) {
+                                                return {
+                                                  ...p,
+                                                  points: {
+                                                    ...p.points,
+                                                    pointDescription:
+                                                      e.target.value,
+                                                  },
+                                                };
+                                              }
+                                              return p;
+                                            }),
+                                          ],
+                                        };
+                                      }
+                                      return d;
+                                    }),
+                                  ],
+                                }));
                               }}
                             />
                           </div>
@@ -580,37 +637,37 @@ const EditCamp = () => {
                       ))}
                     </div>
                   ))}
-                  <button
-                    onClick={() =>
-                      setAddedServices((prev) => {
-                        return [
-                          ...prev,
-                          {
-                            days: [
-                              {
-                                points: {
-                                  day: null,
-                                  time: "",
-                                  pointName: "",
-                                  pointDescription: "",
-                                },
+                <button
+                  onClick={() =>
+                    setAddedServices((prev) => {
+                      return [
+                        ...prev,
+                        {
+                          days: [
+                            {
+                              points: {
+                                day: null,
+                                time: "",
+                                pointName: "",
+                                pointDescription: "",
                               },
-                            ],
-                          },
-                        ];
-                      })
-                    }
-                    className="primary-btn"
-                  >
-                    Добавить день
-                  </button>
-                </div>
+                            },
+                          ],
+                        },
+                      ];
+                    })
+                  }
+                  className="primary-btn"
+                >
+                  Добавить день
+                </button>
               </div>
             </div>
-          </section>
-        </div>
-      </>
-    );
+          </div>
+        </section>
+      </div>
+    </>
+  );
 };
 
 export default EditCamp;

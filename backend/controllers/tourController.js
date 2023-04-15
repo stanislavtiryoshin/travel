@@ -46,7 +46,7 @@ const updateTour = (req, res) => {
     }
   )
     .then((response) => res.status(201).json(response))
-    .catch(() => res.sendStatus(403));
+    .catch((err) => res.status(403).json(err));
 };
 
 const deleteTour = (req, res) => {
