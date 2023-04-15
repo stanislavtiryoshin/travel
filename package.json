@@ -1,0 +1,40 @@
+{
+  "dependencies": {
+    "@types/react-responsive": "^8.0.5",
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "cors": "^2.8.5",
+    "csv-parse": "^5.3.6",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "fast-csv": "^4.3.6",
+    "fs": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.1",
+    "react-responsive": "^9.0.2",
+    "react-select": "^5.7.2",
+    "react-table": "^7.8.0",
+    "short-unique-id": "^4.4.4"
+  },
+  "name": "travel",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js",
+    "client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+  },
+  "author": "Stanislav Tiryoshin",
+  "license": "MIT",
+  "description": "",
+  "devDependencies": {
+    "@types/multer": "^1.4.7",
+    "concurrently": "^7.6.0",
+    "nodemon": "^2.0.21"
+  }
+}

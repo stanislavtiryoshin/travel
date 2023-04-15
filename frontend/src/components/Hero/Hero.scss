@@ -1,0 +1,30 @@
+.hero_section {
+  background: url(../../assets/hero.png);
+  background-size: cover;
+  background-position-y: center;
+  background-repeat: no-repeat;
+  height: 70vh;
+  position: relative;
+}
+
+.hero_wrapper.wrapper.ver {
+  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.hero_img {
+  position: absolute;
+  top: -3%;
+  left: 17%;
+  z-index: 0;
+}
+
+.bottom {
+  position: absolute;
+  width: 100%;
+  bottom: -40px;
+  right: 0;
+  left: 0;
+  z-index: 0;
+}
