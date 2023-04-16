@@ -4,4 +4,14 @@
 
 .gal_slider {
   width: 100%;
+  .swiper-scrollbar {
+    position: absolute;
+  }
+}
+.primary_img {
+  border-radius: 16px;
+}
+
+.swiper {
+  position: relative;
 }

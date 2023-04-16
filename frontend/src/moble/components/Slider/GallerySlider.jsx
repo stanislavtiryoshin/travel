@@ -62,6 +62,7 @@ const GallerySlider = ({ sources }) => {
                         style={{
                           objectFit: "cover",
                           height: "100%",
+                          borderRadius: "8px",
                         }}
                       />
                     </div>

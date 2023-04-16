@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import style from "./AddTour.module.scss";
+import "./AddTour.scss";
 
 import { AdminHead } from "../../components/Admin";
 import "../AddHotel/AddHotel.scss";
@@ -8,17 +9,6 @@ import addhotel from "../../assets/addhotel.png";
 import { Input } from "../../components/Form";
 import Selector2 from "../AddHotel/Selector";
 import Section from "../../components/Section";
-
-import FsLightbox from "fslightbox-react";
-import { Navigation, Pagination, A11y, Scrollbar } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/react";
-
-// Import Swiper styles
-import "swiper/swiper.min.css";
-import "swiper/css/navigation";
-
-import "swiper/css/pagination";
-import "swiper/css/scrollbar";
 
 import {
   useGetHotelServiceQuery,
@@ -36,21 +26,9 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal";
 import { useUploadImageMutation } from "../../features/services/upload.service";
-import GallerySlider from "../../moble/components/Slider/GallerySlider";
+import GalleryBox from "../../moble/components/Slider/GalleryBox";
 
 const EditTour = () => {
-  const [lightboxController, setLightboxController] = useState({
-    toggler: false,
-    slide: 1,
-  });
-
-  const openLightboxOnSlide = (number) => {
-    setLightboxController({
-      toggler: !lightboxController.toggler,
-      slide: number,
-    });
-  };
-
   const { data: food = [], isLoading: isLoadFood } = useGetFoodQuery();
 
   const { id } = useParams("id");
@@ -175,26 +153,13 @@ const EditTour = () => {
 
   return (
     <>
-      {/* {sources && (
-        <FsLightbox
-          toggler={lightboxController.toggler}
-          sources={sources}
-          slide={lightboxController.slide}
-        />
-      )} */}
       <AdminHead text="Создание 1-3 тура" onClick={() => handleSubmit()} />
       <div className="add_hotel-page page">
-        <Section section="add_gen-section" wrapper="ass_gen-wrapper shadow_box">
-          <div className="gen_img-box">
-            {sources && (
-              <img
-                src={sources[0]}
-                alt=""
-                onClick={() => openLightboxOnSlide(1)}
-              />
-            )}
-            <GallerySlider sources={sources} />
-          </div>
+        <Section
+          section="add_gen-section"
+          wrapper="ass_gen-wrapper shadowed_box"
+        >
+          <GalleryBox sources={sources} />
           <div className="gen_content-box">
             <div className="gen_title">Основное о туре</div>
             <div className="input_row">
