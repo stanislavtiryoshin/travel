@@ -260,7 +260,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
       newHotel.totalPrice = 22800;
     }
 
-    return cheapestRoom.name;
+    return newHotel;
   });
 
   res.status(200).send(newHotels);
