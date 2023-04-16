@@ -114,7 +114,7 @@ const EditCamp = () => {
 
     upload(values)
       .then((response) => console.log(response))
-      .then((imageRef.current = null))
+      .then((imageRef.current.value = null))
       .catch((err) => console.error(err));
   };
 

@@ -38,17 +38,16 @@ router.patch("/:hotelId/upload", upload.array("images", 5), (req, res) => {
   const filePath = req.files.map(
     (file) => `http://localhost:5000/images/${file.filename}`
   );
-  res.send(filePath);
-  // Hotel.updateOne(
-  //   { _id: req.params.hotelId },
-  //   {
-  //     $set: {
-  //       img: filePath,
-  //     },
-  //   }
-  // )
-  //   .then((response) => res.status(201).json(response))
-  //   .catch(() => res.sendStatus(500));
+  Hotel.updateOne(
+    { _id: req.params.hotelId },
+    {
+      $set: {
+        img: filePath,
+      },
+    }
+  )
+    .then((response) => res.status(201).json(filePath))
+    .catch(() => res.sendStatus(500));
 });
 
 module.exports = router;
