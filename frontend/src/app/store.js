@@ -35,7 +35,9 @@ export const store = configureStore({
     rooms: roomSlice,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat([
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }).concat([
       baseApi.middleware,
       editApi.middleware,
       csvApi.middleware,

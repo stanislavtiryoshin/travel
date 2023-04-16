@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import sanatoriumService from "./sanatoriumServices";
+import sanatoriumService from "./sanatoriumService";
 
 const user = JSON.parse(localStorage.getItem("user"));
 

@@ -18,6 +18,7 @@ const getSanatoriums = (req, res) => {
   if (locationId && locationId != "") {
     query.locationId = locationId;
   }
+
   Sanatorium.find()
     .populate("locationId")
     .populate("sanatoriumProgram.programId")

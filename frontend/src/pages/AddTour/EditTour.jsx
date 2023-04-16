@@ -7,6 +7,7 @@ import { AdminAddForm } from "../../components/Admin/AdminAddForm";
 import addhotel from "../../assets/addhotel.png";
 import { Input } from "../../components/Form";
 import Selector2 from "../AddHotel/Selector";
+import Section from "../../components/Section";
 
 import FsLightbox from "fslightbox-react";
 import { Navigation, Pagination, A11y, Scrollbar } from "swiper";
@@ -35,6 +36,7 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal";
 import { useUploadImageMutation } from "../../features/services/upload.service";
+import GallerySlider from "../../moble/components/Slider/GallerySlider";
 
 const EditTour = () => {
   const [lightboxController, setLightboxController] = useState({
@@ -60,8 +62,6 @@ const EditTour = () => {
 
   const [fetchTourById, { isLoading: IdTourLoaded }] =
     useLazyGetTourByIdQuery();
-
-  // console.log(tourIdData?.img);
 
   const [uploadImage, { isLoading: uploadLoading, isError }] =
     useUploadImageMutation();
@@ -169,235 +169,190 @@ const EditTour = () => {
   const [sources, setSources] = useState([]);
   useEffect(() => {
     setSources(tourData.img ? tourData.img : []);
-  }, []);
+  }, [tourData]);
 
-  console.log(comfortsData);
+  console.log(sources);
 
   return (
     <>
-      {sources && (
+      {/* {sources && (
         <FsLightbox
           toggler={lightboxController.toggler}
           sources={sources}
           slide={lightboxController.slide}
         />
-      )}
+      )} */}
       <AdminHead text="Создание 1-3 тура" onClick={() => handleSubmit()} />
       <div className="add_hotel-page page">
-        <section className="add_gen-section">
-          <div className="container">
-            <div className="add_gen-wrapper wrapper shadow_box">
-              <section className="add_gen-section">
-                <div className="container">
-                  <div className="add_gen-wrapper wrapper shadowed_box">
-                    <div className="gen_img-box">
-                      <div className="gal_slider" style={{ width: "100%" }}>
-                        <Swiper
-                          modules={[Navigation, Pagination, A11y, Scrollbar]}
-                          spaceBetween={15}
-                          slidesPerView={1.2}
-                          scrollbar={{ draggable: true }}
-                          breakpoints={{
-                            600: {
-                              slidesPerView: 1,
-                            },
-                            1024: {
-                              spaceBetween: 27,
-                              slidesPerView: 2,
-                            },
-                          }}
-                        >
-                          {sources
-                            ? sources.map((slide, index) => {
-                                return (
-                                  <SwiperSlide key={index}>
-                                    <div
-                                      className="gal_slide"
-                                      onClick={() =>
-                                        openLightboxOnSlide(index + 1)
-                                      }
-                                    >
-                                      <img src={slide} alt="" />
-                                    </div>
-                                  </SwiperSlide>
-                                );
-                              })
-                            : null}
-                        </Swiper>
-                      </div>
-                    </div>
-                    <div className="gen_content-box">
-                      <div className="gen_title">Основное о туре</div>
-                      <div className="input_row">
-                        <Input
-                          placeholder="Название"
-                          value={tourData && tourData.name && tourData.name}
-                          onChange={(e) =>
-                            setTourData({ ...tourData, name: e.target.value })
-                          }
-                        />
-                        <Input
-                          placeholder="Особенность местоположения"
-                          value={
-                            tourData &&
-                            tourData.locationFeature &&
-                            tourData.locationFeature
-                          }
-                          onChange={(e) =>
-                            setTourData({
-                              ...tourData,
-                              locationFeature: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div className="input_row">
-                        <select
-                          className="primary-input"
-                          type="text"
-                          placeholder="Местоположение"
-                          name="destination"
-                          value={
-                            tourData &&
-                            tourData.locationId &&
-                            tourData.locationId
-                          }
-                          onChange={(e) => {
-                            console.log(e.target.value);
-                            setTourData({
-                              ...tourData,
-                              locationId: e.target.value,
-                            });
-                          }}
-                          // onSelect={(e) => console.log(e.target.value)}
-                        >
-                          {allLocations.map((location, idx) => (
-                            <option
-                              value={location._id}
-                              // selected={
-                              //   tourIdData &&
-                              //   tourIdData.locationId &&
-                              //   tourIdData.locationId._id &&
-                              //   location._id === tourIdData.locationId._id
-                              // }
-                              key={location._id}
-                            >
-                              {location.locationName}
-                            </option>
-                          ))}
-                        </select>
-                        <Input
-                          placeholder="Город вылета"
-                          value={
-                            tourData &&
-                            tourData.departureCity &&
-                            tourData.departureCity
-                          }
-                          onChange={(e) =>
-                            setTourData({
-                              ...tourData,
-                              departureCity: e.target.value,
-                            })
-                          }
-                        />
-                        <Input
-                          placeholder="Ссылка на карту"
-                          value={
-                            tourData && tourData.mapLink && tourData.mapLink
-                          }
-                          onChange={(e) =>
-                            setTourData({
-                              ...tourData,
-                              mapLink: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div className="input_row">
-                        <Input
-                          placeholder="Рейтинг тура"
-                          value={tourData && tourData.rating && tourData.rating}
-                          type="number"
-                          onChange={(e) =>
-                            setTourData({ ...tourData, rating: e.target.value })
-                          }
-                        />
-                        <select
-                          className="primary-input"
-                          type="number"
-                          placeholder="Продолжительность тура"
-                          onChange={(e) =>
-                            setTourData({
-                              ...tourData,
-                              duration: e.target.value,
-                            })
-                          }
-                        >
-                          <option
-                            // selected={
-                            //   tourIdData && 1 === Number(tourIdData.duration)
-                            // }
-                            value={1}
-                          >
-                            1 день
-                          </option>
-                          <option
-                            // selected={
-                            //   tourIdData && 2 === Number(tourIdData.duration)
-                            // }
-                            value={2}
-                          >
-                            2 дня
-                          </option>
-                          <option
-                            // selected={
-                            //   tourIdData && 3 === Number(tourIdData.duration)
-                            // }
-                            value={3}
-                          >
-                            3 дня
-                          </option>
-                        </select>
-                      </div>
-                      <div className="input_row">
-                        <textarea
-                          className="primary-input"
-                          cols="30"
-                          rows="5"
-                          value={
-                            tourData &&
-                            tourData.description &&
-                            tourData.description
-                          }
-                          placeholder="Описание"
-                          onChange={(e) =>
-                            setTourData({
-                              ...tourData,
-                              description: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <input
-                        onChange={handleUpload}
-                        type="file"
-                        hidden
-                        ref={fileRef}
-                        multiple
-                      />
-                      <button
-                        className={`primary-btn`}
-                        onClick={() => fileRef.current.click()}
-                      >
-                        Изменить фото
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
+        <Section section="add_gen-section" wrapper="ass_gen-wrapper shadow_box">
+          <div className="gen_img-box">
+            {sources && (
+              <img
+                src={sources[0]}
+                alt=""
+                onClick={() => openLightboxOnSlide(1)}
+              />
+            )}
+            <GallerySlider sources={sources} />
           </div>
-        </section>
+          <div className="gen_content-box">
+            <div className="gen_title">Основное о туре</div>
+            <div className="input_row">
+              <Input
+                placeholder="Название"
+                value={tourData && tourData.name && tourData.name}
+                onChange={(e) =>
+                  setTourData({ ...tourData, name: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Особенность местоположения"
+                value={
+                  tourData &&
+                  tourData.locationFeature &&
+                  tourData.locationFeature
+                }
+                onChange={(e) =>
+                  setTourData({
+                    ...tourData,
+                    locationFeature: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="input_row">
+              <select
+                className="primary-input"
+                type="text"
+                placeholder="Местоположение"
+                name="destination"
+                value={tourData && tourData.locationId && tourData.locationId}
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  setTourData({
+                    ...tourData,
+                    locationId: e.target.value,
+                  });
+                }}
+                // onSelect={(e) => console.log(e.target.value)}
+              >
+                {allLocations.map((location, idx) => (
+                  <option
+                    value={location._id}
+                    // selected={
+                    //   tourIdData &&
+                    //   tourIdData.locationId &&
+                    //   tourIdData.locationId._id &&
+                    //   location._id === tourIdData.locationId._id
+                    // }
+                    key={location._id}
+                  >
+                    {location.locationName}
+                  </option>
+                ))}
+              </select>
+              <Input
+                placeholder="Город вылета"
+                value={
+                  tourData && tourData.departureCity && tourData.departureCity
+                }
+                onChange={(e) =>
+                  setTourData({
+                    ...tourData,
+                    departureCity: e.target.value,
+                  })
+                }
+              />
+              <Input
+                placeholder="Ссылка на карту"
+                value={tourData && tourData.mapLink && tourData.mapLink}
+                onChange={(e) =>
+                  setTourData({
+                    ...tourData,
+                    mapLink: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="input_row">
+              <Input
+                placeholder="Рейтинг тура"
+                value={tourData && tourData.rating && tourData.rating}
+                type="number"
+                onChange={(e) =>
+                  setTourData({
+                    ...tourData,
+                    rating: e.target.value,
+                  })
+                }
+              />
+              <select
+                className="primary-input"
+                type="number"
+                placeholder="Продолжительность тура"
+                onChange={(e) =>
+                  setTourData({
+                    ...tourData,
+                    duration: e.target.value,
+                  })
+                }
+              >
+                <option
+                  // selected={
+                  //   tourIdData && 1 === Number(tourIdData.duration)
+                  // }
+                  value={1}
+                >
+                  1 день
+                </option>
+                <option
+                  // selected={
+                  //   tourIdData && 2 === Number(tourIdData.duration)
+                  // }
+                  value={2}
+                >
+                  2 дня
+                </option>
+                <option
+                  // selected={
+                  //   tourIdData && 3 === Number(tourIdData.duration)
+                  // }
+                  value={3}
+                >
+                  3 дня
+                </option>
+              </select>
+            </div>
+            <div className="input_row">
+              <textarea
+                className="primary-input"
+                cols="30"
+                rows="5"
+                value={tourData && tourData.description && tourData.description}
+                placeholder="Описание"
+                onChange={(e) =>
+                  setTourData({
+                    ...tourData,
+                    description: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <input
+              onChange={handleUpload}
+              type="file"
+              hidden
+              ref={fileRef}
+              multiple
+            />
+            <button
+              className={`primary-btn`}
+              onClick={() => fileRef.current.click()}
+            >
+              Изменить фото
+            </button>
+          </div>
+        </Section>
         <section className="add_more-section">
           <div className="container">
             <div className="add_more-wrapper wrapper">
