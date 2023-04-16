@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
 import addhotel from "../../assets/addhotel.png";
@@ -29,11 +29,20 @@ import RoomRow from "./RoomRow";
 import Selector2 from "./Selector";
 import hotelService from "../../features/hotel/hotelService";
 
-const AddHotel = ({ fetchedHotelData, editMode, updateHotelData }) => {
+import { useUploadImageMutation } from "../../features/services/upload.service";
+
+const AddHotel = ({
+  fetchedHotelData,
+  editMode,
+  updateHotelData,
+  handleUploadImage,
+}) => {
   const uid = new ShortUniqueId({
     dictionary: "number", // the default
     length: 6,
   });
+
+  const imageRef = useRef(null);
 
   const [hotelData, setHotelData] = useState({
     uid: uid(),
@@ -73,6 +82,9 @@ const AddHotel = ({ fetchedHotelData, editMode, updateHotelData }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [upload, { data: uploadedImage, isLoading: uploadIsLoading }] =
+    useUploadImageMutation();
+
   const [allLocations, setAllLocations] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [allServices, setAllServices] = useState([]);
@@ -80,7 +92,7 @@ const AddHotel = ({ fetchedHotelData, editMode, updateHotelData }) => {
   const [servicesObjs, setServicesObjs] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
 
-  console.log(selectedOptions);
+  // console.log(selectedOptions);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -125,7 +137,7 @@ const AddHotel = ({ fetchedHotelData, editMode, updateHotelData }) => {
       setNewServices(fetchedHotelData.hotelServices);
     }
   }, [fetchedHotelData]);
-  console.log(newServices);
+  // console.log(newServices);
 
   useEffect(() => {
     setHotelData({ ...hotelData, hotelServices: newServices });
@@ -226,7 +238,7 @@ const AddHotel = ({ fetchedHotelData, editMode, updateHotelData }) => {
               <input
                 type="text"
                 className="primary-input"
-                value={hotelData.name}
+                value={hotelData && hotelData.name}
                 placeholder="Название"
                 onChange={(e) =>
                   setHotelData({ ...hotelData, name: e.target.value })
@@ -327,6 +339,22 @@ const AddHotel = ({ fetchedHotelData, editMode, updateHotelData }) => {
                   })
                 }
               ></textarea>
+              {editMode && (
+                <>
+                  <input
+                    type="file"
+                    hidden
+                    ref={imageRef}
+                    onChange={handleUploadImage}
+                  />
+                  <button
+                    onClick={() => imageRef.current.click()}
+                    className={`primary-btn`}
+                  >
+                    Изменить фото
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </Section>

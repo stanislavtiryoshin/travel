@@ -43,6 +43,14 @@ export const editApi = createApi({
       }),
       providesTags: [{ type: "Tour", id: "LIST" }],
     }),
+    getTourByTag: builder.mutation({
+      query: (body) => ({
+        url: `/tour/recommendation`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "Tour", id: "LIST" }],
+    }),
     editTourById: builder.mutation({
       query: (body) => ({
         url: `/tour/${body.id}`,
@@ -77,5 +85,6 @@ export const {
   useDeleteTourByIdMutation,
   useGetTourByIdQuery,
   useLazyGetTourByIdQuery,
+  useGetTourByTagMutation,
   useEditTourByIdMutation,
 } = editApi;

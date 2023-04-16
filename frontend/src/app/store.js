@@ -14,6 +14,7 @@ import sanatoriumReducer from "../features/sanatorium/sanatoriumSlice";
 import { baseApi } from "../features/services/base.service";
 import { editApi } from "../features/services/edit.service";
 import { csvApi } from "../features/services/csv.service";
+import { campApi } from "../features/services/camp.service";
 
 import { uploadApi } from "../features/services/upload.service";
 
@@ -33,6 +34,7 @@ export const store = configureStore({
     [editApi.reducerPath]: editApi.reducer,
     [uploadApi.reducerPath]: uploadApi.reducer,
     rooms: roomSlice,
+    [campApi.reducerPath]: campApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -42,5 +44,6 @@ export const store = configureStore({
       editApi.middleware,
       csvApi.middleware,
       uploadApi.middleware,
+      campApi.middleware,
     ]),
 });

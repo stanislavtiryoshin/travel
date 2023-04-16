@@ -302,7 +302,7 @@ const getRoomsByLimit = async (req, res) => {
 };
 
 const getByTagRecommendation = async (req, res) => {
-  const { food, comforts } = req.body;
+  const { food, comforts, hotelServices } = req.body;
   let query = {};
   let or = [];
 
@@ -310,9 +310,19 @@ const getByTagRecommendation = async (req, res) => {
     query.food = {
       _id: food,
     };
-    // query.food._id = food;
 
     or.push(query);
+  }
+  if (hotelServices && hotelServices.length > 0) {
+    for (let i = 0; i < hotelServices.length; i++) {
+      let q = {};
+      if (hotelServices[i] !== "") {
+        q.hotelServices = {
+          $in: [hotelServices[i]],
+        };
+        or.push(q);
+      }
+    }
   }
 
   if (comforts && comforts.length > 0) {
@@ -329,8 +339,10 @@ const getByTagRecommendation = async (req, res) => {
 
   try {
     const hotels = await Hotel.find({ $or: or })
+      .limit(4)
       .populate("locationId")
       .populate("food");
+    // .populate("hotelServices._id");
 
     if (hotels.length === 0) {
       res.sendStatus(404);

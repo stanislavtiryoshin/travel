@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { AdminHead } from "../../components/Admin";
 
+import { useUploadImageMutation } from "../../features/services/upload.service";
+
 import AddHotel from "./AddHotel";
 import DashRoom from "./DashRoom";
 import Table from "../../components/Table";
@@ -35,6 +37,9 @@ const EditHotel = () => {
 
   const [upload, { isLoading: isUploading }] = useUploadCsvMutation();
 
+  const [uploadImage, { data: imageUrls, isLoading: imgIsLoading }] =
+    useUploadImageMutation();
+
   const handleFile = async (e) => {
     let formData = new FormData();
     formData.append("file", e.target.files[0]);
@@ -48,6 +53,26 @@ const EditHotel = () => {
       .finally(() => (importRef.current.value = null));
   };
 
+  const handleUpload = (e) => {
+    const files = e.target.files;
+
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append("images", files[i]);
+    }
+
+    const values = {
+      id: hotelId,
+      formData,
+      name: "hotels",
+    };
+
+    upload(values)
+      .then((response) => console.log(response))
+      .then((importRef.current.value = null))
+      .catch((err) => console.error(err));
+  };
+
   const importRef = useRef(null);
 
   useEffect(() => {
@@ -58,7 +83,26 @@ const EditHotel = () => {
     dispatch(reset());
   }, [hotelId]);
 
-  console.log(singleHotel);
+  // console.log(singleHotel);
+
+  const handleUploadImage = (e) => {
+    const files = e.target.files;
+
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append("images", files[i]);
+    }
+
+    const values = {
+      id: hotelId,
+      formData,
+      name: "hotels",
+    };
+
+    uploadImage(values)
+      .then((response) => console.log(response))
+      .catch((err) => console.error(err));
+  };
 
   const updateHotelData = () => {
     dispatch(getSingleHotel(hotelId));
@@ -77,6 +121,7 @@ const EditHotel = () => {
           fetchedHotelData={singleHotel}
           editMode
           updateHotelData={updateHotelData}
+          handleUploadImage={handleUploadImage}
         />
         <section className="admin_rooms-section">
           <div className="container">

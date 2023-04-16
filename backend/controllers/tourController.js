@@ -120,6 +120,54 @@ const getSearchedTour = (req, res) => {
     .catch(() => res.sendStatus(404));
 };
 
+const tourByTagRecommendation = async (req, res) => {
+  const { food, locationId, duration } = req.body;
+  const query = {};
+  const or = [];
+
+  if (locationId) {
+    query.locationId = {
+      _id: locationId,
+    };
+    or.push(query);
+  }
+
+  if (duration) {
+    query.duration = duration;
+    or.push(query);
+  }
+
+  if (food && food.length > 0) {
+    for (let i = 0; i < food.length; i++) {
+      let q = {};
+      if (food[i] !== "") {
+        q.food = {
+          $in: [food[i]],
+        };
+        or.push(q);
+      }
+    }
+  }
+  console.log(JSON.stringify(or, null, 2));
+  try {
+    const tours = await Tour.find({ $or: or })
+      .limit(4)
+      .populate("rooms")
+      .populate("locationId")
+      .populate("hotelId")
+      .populate("food")
+      .populate("comforts");
+
+    if (tours.length === 0) {
+      return res.sendStatus(404);
+    } else {
+      return res.status(200).json(tours);
+    }
+  } catch (error) {
+    res.sendStatus(400);
+  }
+};
+
 module.exports = {
   addTour,
   deleteTour,
@@ -128,4 +176,6 @@ module.exports = {
   updateTour,
   insertTourPrices,
   getSearchedTour,
+
+  tourByTagRecommendation,
 };

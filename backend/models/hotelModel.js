@@ -106,6 +106,7 @@ const hotelSchema = mongoose.Schema(
       {
         serviceId: {
           type: mongoose.Schema.Types.ObjectId,
+          ref: "HotelService",
         },
       },
     ],

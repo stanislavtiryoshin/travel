@@ -63,10 +63,29 @@ const updateCamp = (req, res) => {
     .catch(() => res.sendStatus(405));
 };
 
+const getCampByTags = async (req, res) => {
+  const { location } = req.query;
+  const query = {};
+  if (location) {
+    query.location = location;
+  }
+  try {
+    const camps = await Camp.find(query).limit(4);
+    if (camps.length === 0) {
+      res.sendStatus(404);
+    } else {
+      res.status(200).json(camps);
+    }
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
 module.exports = {
   addCamp,
   deleteCamp,
   getSingleCamp,
   getCamps,
   updateCamp,
+  getCampByTags,
 };
