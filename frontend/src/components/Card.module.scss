@@ -6,6 +6,10 @@
   border-radius: 16px;
   cursor: pointer;
 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
   .card_body {
     padding: 16px;
 
@@ -20,6 +24,54 @@
       font-size: 12px;
       color: #51555b;
       margin-top: 8px;
+    }
+  }
+  .card_stars_body {
+    width: 100%;
+    .card_stars {
+      font-weight: 400;
+      font-size: 12px;
+    }
+  }
+
+  .card_button {
+    padding: 16px;
+    .price {
+      color: rgba(239, 178, 21, 1);
+      margin-bottom: 12px;
+      font-size: 20px;
+      font-weight: 500;
+    }
+  }
+
+  .card_info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .food {
+      width: 109px;
+      height: 28px;
+      display: flex;
+      font-size: 12px;
+      align-items: center;
+      img {
+        width: 18px;
+        height: 18px;
+        object-fit: cover;
+      }
+    }
+
+    .periods {
+      font-size: 12px;
+      color: #51555b;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      img {
+        width: 18px;
+        height: 18px;
+      }
     }
   }
 }

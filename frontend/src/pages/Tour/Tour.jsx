@@ -38,6 +38,9 @@ import {
 } from "../../features/services/base.service";
 import Card from "../../components/Card";
 import Section from "../../components/Section";
+import Room from "../Hotel/Room";
+import Hotels from "./Hotels";
+import { useGetTourByTagMutation } from "../../features/services/edit.service";
 
 const Tour = () => {
   // const dispatch = useDispatch();
@@ -49,6 +52,19 @@ const Tour = () => {
   const { data: singleTour, isLoading, isError } = useGetTourByIdQuery(tourId);
 
   const [roomCount, setRoomCount] = useState(3);
+
+  const [recommendation, setRecommendation] = useState([]);
+  const [getTour, { isLoading: recommendationIsLoading }] =
+    useGetTourByTagMutation();
+
+  useEffect(() => {
+    if (!isLoading)
+      getTour({
+        food: singleTour.food && singleTour.food,
+        locationId: singleTour.locationId && singleTour.locationId._id,
+        duration: singleTour.duration && singleTour.duration,
+      }).then(({ data }) => setRecommendation(data));
+  }, [isLoading]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -292,7 +308,7 @@ const Tour = () => {
                   </div>
                   <div className="gen_info-row">
                     <div className="body_title-box">
-                      <div className="body_title">Об отеле</div>
+                      <div className="body_title">Об туре</div>
                       <div className="body_title-text">
                         Расположение: {singleTour?.locationId?.locationName},{" "}
                         {singleTour?.locationId?.locationCountry}
@@ -316,7 +332,7 @@ const Tour = () => {
                   </div>
                   <div className="hotel_services-row">
                     <div className="body_title-box">
-                      <div className="body_title">Услуги отеля</div>
+                      <div className="body_title">Услуги тура</div>
                     </div>
                     <div className="services_box">
                       <div className="services_col">
@@ -385,6 +401,9 @@ const Tour = () => {
                     </div>
                   ))}
 
+                  {/* <div className="hotel_page-rooms">
+                    <Hotels hotel={singleTour.hotelId} />
+                  </div> */}
                   {/* <div className="hotel_page-rooms">
                     <div className="body_title-box">
                       <div className="body_title">Варианты номеров</div>
@@ -479,17 +498,29 @@ const Tour = () => {
         <div className="hotel_similar_text">
           Мы подобрали вам похожие туры. Взгляните, чтобы сравнить
         </div>
-        {/* <div className="hotel_similar-body">
+        <div className="hotel_similar-body">
           {recommendation?.map((recomm) => (
-            <Card
-              name={recomm.name}
-              description={recomm.description}
-              image={
-                "https://www.state.gov/wp-content/uploads/2019/04/Kazakhstan-2426x1406.jpg"
-              }
-            />
+            <>
+              {recomm._id !== singleTour._id && (
+                <Card
+                  id={recomm._id}
+                  isTour
+                  key={recomm._id}
+                  name={recomm.name}
+                  // description={recomm.description}
+                  location={`${
+                    recomm.locationId && recomm.locationId.locationName
+                  }, ${recomm.locationId && recomm.locationId.locationCountry}`}
+                  duration={recomm.duration}
+                  image={
+                    "https://www.state.gov/wp-content/uploads/2019/04/Kazakhstan-2426x1406.jpg"
+                  }
+                  food={recomm.food[0] && recomm.food[0].label}
+                />
+              )}
+            </>
           ))}
-        </div> */}
+        </div>
       </Section>
     </div>
   );

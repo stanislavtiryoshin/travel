@@ -7,6 +7,7 @@ const {
   getSingleCamp,
   updateCamp,
   getCamps,
+  getCampByTags,
 } = require("../controllers/campController");
 const Camp = require("../models/campModel");
 const { protect } = require("../middleware/authMiddleware");
@@ -26,5 +27,7 @@ router.patch("/:id/upload", upload.array("images", 5), (req, res) => {
     .then((response) => res.status(201).json(response))
     .catch(() => res.sendStatus(500));
 });
+
+router.post("/recommendation", getCampByTags);
 
 module.exports = router;

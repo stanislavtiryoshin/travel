@@ -8,6 +8,7 @@ const {
   updateTour,
   getSearchedTour,
   insertTourPrices,
+  tourByTagRecommendation,
 } = require("../controllers/tourController");
 const Tour = require("../models/tourModel");
 const { protect } = require("../middleware/authMiddleware");
@@ -21,6 +22,8 @@ router.patch("/:id", protect, updateTour);
 
 // router.patch("/:tourId/tourPrices", upload.single("file"), insertTourPrices);
 router.get("/searched/query", getSearchedTour);
+
+router.post("/recommendation", tourByTagRecommendation);
 
 router.patch("/:tourId/upload", upload.array("images", 5), (req, res) => {
   const filePath = req.files.map(

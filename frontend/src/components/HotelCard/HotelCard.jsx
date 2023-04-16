@@ -207,7 +207,13 @@ const HotelCard = ({
         </div>
         <Link
           className="primary-btn yellow"
-          to={mode === "tour" ? `/tour/${hotelId}` : `/hotels/${hotelId}`}
+          to={
+            mode === "tour"
+              ? `/tour/${hotelId}`
+              : mode === "camps"
+              ? `/camp/${hotelId}`
+              : `/hotels/${hotelId}`
+          }
         >
           Подробнее
         </Link>

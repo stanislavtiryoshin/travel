@@ -167,7 +167,7 @@ export const baseApi = createApi({
     }),
     getHotelsByTag: builder.mutation({
       query: (body) => {
-        console.log("body", body);
+        // console.log("body", body);
         return {
           url: "/hotels/hotelRecommendation/tags",
           body,
