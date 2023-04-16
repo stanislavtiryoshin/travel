@@ -346,6 +346,7 @@ const AddHotel = ({
                     hidden
                     ref={imageRef}
                     onChange={handleUploadImage}
+                    multiple
                   />
                   <button
                     onClick={() => imageRef.current.click()}
