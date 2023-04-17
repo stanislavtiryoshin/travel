@@ -63,8 +63,6 @@ const Home = () => {
 
   const { chosenTag } = useSelector((state) => state.client);
 
-  console.log(selectedTours);
-
   useEffect(() => {
     if (destination)
       axios

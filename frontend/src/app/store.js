@@ -17,6 +17,7 @@ import { csvApi } from "../features/services/csv.service";
 import { campApi } from "../features/services/camp.service";
 
 import { uploadApi } from "../features/services/upload.service";
+import { filterApi } from "../features/services/filter.service";
 
 export const store = configureStore({
   reducer: {
@@ -35,6 +36,7 @@ export const store = configureStore({
     [uploadApi.reducerPath]: uploadApi.reducer,
     rooms: roomSlice,
     [campApi.reducerPath]: campApi.reducer,
+    [filterApi.reducerPath]: filterApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -45,5 +47,6 @@ export const store = configureStore({
       csvApi.middleware,
       uploadApi.middleware,
       campApi.middleware,
+      filterApi.middleware,
     ]),
 });

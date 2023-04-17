@@ -89,31 +89,32 @@ const insertTourPrices = expressAsyncHandler(async (req, res) => {
 });
 
 const getSearchedTour = (req, res) => {
-  const { locationId, duration, rating, startDay, startMonth } = req.query;
+  const { locationId, duration, rating, paymentType, food } = req.query;
 
   let query = {};
 
-  if (locationId) {
+  if (food && food.length > 0) {
+    query.food = {
+      $in: food,
+    };
+  }
+
+  if (locationId && locationId !== "") {
     query.locationId = locationId;
   }
 
-  if (duration) {
+  if (duration && duration !== "") {
     query.duration = duration;
   }
 
   if (rating && rating !== "") {
     query.rating = rating;
   }
-
-  if (startDay) {
-    query.startDay = startDay;
+  if (paymentType && paymentType !== "") {
+    query.payment = {
+      paymentType: paymentType,
+    };
   }
-
-  if (startMonth) {
-    query.startMonth = startMonth;
-  }
-
-  // console.log(query);
 
   Tour.find(query)
     .then((response) => res.status(200).json(response))

@@ -23,9 +23,14 @@ import check from "../../assets/filter/check.svg";
 
 import "./Filter.scss";
 import CheckBtn from "./CheckBtn";
+import {
+  useGetTourByFilterQuery,
+  useLazyGetTourByFilterQuery,
+} from "../../features/services/filter.service";
 
 const Filter = ({ mode }) => {
   const selectedHotels = useSelector(selectHotels);
+  const selectedTours = useSelector(selectTours);
   const dispatch = useDispatch();
 
   const { hotels, isLoading, isSuccess, isError, message } = useSelector(
@@ -33,6 +38,16 @@ const Filter = ({ mode }) => {
   );
 
   const { filterData } = useSelector((state) => state.tour);
+  const [tourFilter, setTourFilter] = useState({
+    locationId: "",
+    duration: "",
+    rating: "",
+    food: "",
+    paymentType: "",
+  });
+
+  const [filterTours, { isLoading: tourIsLoading }] =
+    useLazyGetTourByFilterQuery();
 
   const [filterObj, setFilterObj] = useState({
     filterMaxPrice: 600000,
@@ -84,7 +99,14 @@ const Filter = ({ mode }) => {
 
   const stars = [5, 4, 3, 2];
 
-  console.log(filterData);
+  const applyFilter = () => {
+    filterTours(tourFilter).then(({ data }) => {
+      dispatch(setTourFilterData(data));
+      console.log(data, "new Data");
+    });
+  };
+
+  console.log(selectedTours, "selectedTours");
 
   return (
     <div className="filter_box">
@@ -138,29 +160,54 @@ const Filter = ({ mode }) => {
           </div>
         </div>
       </div>
-      <div className="filter_row">
-        <div className="filter_title">Вид отдыха</div>
-        <div className="filter_content">
-          <button className="check-btn"></button>
-          Экскурсия
+      {mode === "tour" ? (
+        <div className="filter_row">
+          <div className="filter_title">Длительность тура</div>
+          <div
+            className="filter_content"
+            onClick={() => setTourFilter((prev) => ({ ...prev, duration: 3 }))}
+          >
+            <button className="check-btn"></button>3 дня
+          </div>
+          <div
+            className="filter_content"
+            onClick={() => setTourFilter((prev) => ({ ...prev, duration: 2 }))}
+          >
+            <button className="check-btn"></button>2 дня
+          </div>
+          <div
+            className="filter_content"
+            onClick={() => setTourFilter((prev) => ({ ...prev, duration: 1 }))}
+          >
+            <button className="check-btn"></button>1 день
+          </div>
         </div>
-        <div className="filter_content">
-          <button className="check-btn"></button>
-          Конные туры
+      ) : (
+        <div className="filter_row">
+          <div className="filter_title">Вид отдыха</div>
+          <div className="filter_content">
+            <button className="check-btn"></button>
+            Экскурсия
+          </div>
+          <div className="filter_content">
+            <button className="check-btn"></button>
+            Конные туры
+          </div>
+          <div className="filter_content">
+            <button className="check-btn"></button>
+            Пляжные туры
+          </div>
+          <div className="filter_content">
+            <button className="check-btn"></button>
+            Пляжные туры
+          </div>
+          <div className="filter_content">
+            <button className="check-btn"></button>
+            Необычные туры
+          </div>
         </div>
-        <div className="filter_content">
-          <button className="check-btn"></button>
-          Пляжные туры
-        </div>
-        <div className="filter_content">
-          <button className="check-btn"></button>
-          Пляжные туры
-        </div>
-        <div className="filter_content">
-          <button className="check-btn"></button>
-          Необычные туры
-        </div>
-      </div>
+      )}
+
       <div className="filter_row">
         <div className="filter_title">Питание</div>
         {allFoods
@@ -172,18 +219,25 @@ const Filter = ({ mode }) => {
                   className="filter_content"
                   onClick={() => {
                     console.log(food._id);
-                    if (isActive) {
-                      setFilterObj((prevState) => ({
-                        ...prevState,
-                        filterFood: prevState.filterFood.filter(
-                          (el) => el !== food._id
-                        ),
+                    if (mode === "tour") {
+                      setTourFilter((prev) => ({
+                        ...prev,
+                        food: food._id,
                       }));
                     } else {
-                      setFilterObj({
-                        ...filterObj,
-                        filterFood: [...filterObj.filterFood, food._id],
-                      });
+                      if (isActive) {
+                        setFilterObj((prevState) => ({
+                          ...prevState,
+                          filterFood: prevState.filterFood.filter(
+                            (el) => el !== food._id
+                          ),
+                        }));
+                      } else {
+                        setFilterObj({
+                          ...filterObj,
+                          filterFood: [...filterObj.filterFood, food._id],
+                        });
+                      }
                     }
                   }}
                 >
@@ -202,7 +256,14 @@ const Filter = ({ mode }) => {
         <div className="filter_title">Количество звезд</div>
         <div
           className="filter_content"
-          onClick={() => setFilterObj({ ...filterObj, filterStars: null })}
+          onClick={() => {
+            mode === "tour"
+              ? setTourFilter((prev) => ({
+                  ...prev,
+                  rating: "",
+                }))
+              : setFilterObj({ ...filterObj, filterStars: null });
+          }}
         >
           <CheckBtn isActive={filterObj.filterStars === null} />
           Любой класс
@@ -215,7 +276,9 @@ const Filter = ({ mode }) => {
                   key={star}
                   className="filter_content"
                   onClick={() =>
-                    setFilterObj({ ...filterObj, filterStars: star })
+                    mode === "tour"
+                      ? setTourFilter((prev) => ({ ...prev, rating: star }))
+                      : setFilterObj({ ...filterObj, filterStars: star })
                   }
                 >
                   <CheckBtn isActive={isActive} />
@@ -241,8 +304,9 @@ const Filter = ({ mode }) => {
           className="primary-btn"
           onClick={() =>
             mode === "tour"
-              ? dispatch(setTourFilterData(filterObj))
-              : handleSetFilterData(filterObj)
+              ? applyFilter()
+              : // dispatch(setTourFilterData(filterObj))
+                handleSetFilterData(filterObj)
           }
         >
           Отфильтровать

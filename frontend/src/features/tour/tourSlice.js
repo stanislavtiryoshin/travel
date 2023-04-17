@@ -50,7 +50,7 @@ export const tourSlice = createSlice({
       state.message = "";
     },
     setFilterData: (state, action) => {
-      state.filterData = action.payload;
+      state.tours = action.payload;
     },
     clearFilterData: (state) => {
       state.filterData = {
