@@ -253,6 +253,9 @@ export const hotelSlice = createSlice({
         state.isSuccess = true;
         state.singleHotel = action.payload;
       })
+      .addCase(getSingleHotel.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(getAdminHotels.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;

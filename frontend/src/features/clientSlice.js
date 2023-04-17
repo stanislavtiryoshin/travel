@@ -6,7 +6,7 @@ const initialStateValues = {
   daysAmount: 2,
   destination: "64188de62648843412b12980",
   clientExcursions: [],
-  clientRooms: [],
+  clientRoom: {},
   excSum: 0,
   chosenTag: "Отели",
   searchOptions: {
@@ -41,12 +41,10 @@ export const clientSlice = createSlice({
       );
     },
     addClientRoom: (state, action) => {
-      state.clientRooms = [...state.clientRooms, action.payload];
+      state.clientRoom = action.payload;
     },
     removeClientRoom: (state, action) => {
-      state.clientRooms = state.clientRooms.filter(
-        (room) => room._id != action.payload
-      );
+      state.clientRoom = {};
     },
     addExcSum: (state, action) => {
       state.excSum += action.payload;

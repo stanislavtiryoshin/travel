@@ -16,14 +16,10 @@ const Room = ({ room, active, days, sum }) => {
   );
 
   const [tags] = React.useState([
-    `${room.bathroom.type === "Ванна" ? "Ванна" : "Душ"}`,
+    `${room?.bathroom?.type === "Ванна" ? "Ванна" : "Душ"}`,
     room.bathExtras,
     room.roomServices,
   ]);
-
-  const { clientExcursions, clientRooms, excSum } = useSelector(
-    (state) => state.client
-  );
 
   return (
     <div

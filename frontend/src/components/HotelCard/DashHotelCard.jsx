@@ -9,14 +9,7 @@ import tag from "../../assets/tag.svg";
 import { Link } from "react-router-dom";
 import declOfNum from "../DayConfig";
 
-const DashHotelCard = ({
-  hotel,
-  tour,
-  hotelMode,
-  tourMode,
-  campMode,
-  sanMode,
-}) => {
+const DashHotelCard = ({ hotel, tour, mode }) => {
   const { name, rating, stars, locationId, hotelStars, _id, extraPlaces } =
     hotel;
 
@@ -24,7 +17,7 @@ const DashHotelCard = ({
 
   useEffect(() => {
     const uniqueDays = {};
-    if (tourMode && hotel) {
+    if (mode === "tour" && hotel) {
       hotel?.program.forEach((item) => {
         item.days.forEach((day) => {
           uniqueDays[day.points.day] = true;
@@ -32,7 +25,7 @@ const DashHotelCard = ({
       });
     }
     setTourDays(Object.keys(uniqueDays).length);
-  }, [tourMode]);
+  }, [mode]);
   return (
     <div className="adm_hotel-card shadowed_box">
       <div className="adm_hotels-content">
@@ -53,7 +46,7 @@ const DashHotelCard = ({
           ) : null}
         </div>
 
-        {hotelMode ? (
+        {mode === "hotel" ? (
           <div className="adm_hotel-feats">
             <div className="feats_col">
               <div className="feats_title">Номера</div>
@@ -70,7 +63,7 @@ const DashHotelCard = ({
           </div>
         ) : null}
         <div className="card_mid-tags">
-          {tourMode ? (
+          {mode === "tour" ? (
             <div className="card_tag">
               <img src={tag} alt="" />
               {`${tourDays} ${declOfNum(tourDays)}`}

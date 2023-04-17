@@ -130,7 +130,13 @@ const getAdminHotels = asyncHandler(async (req, res) => {
     .populate("locationId")
     .populate("food")
     .populate("rooms")
-    .populate("hotelServices");
+    .populate({
+      path: "hotelServices",
+      populate: {
+        path: "category",
+        model: "Category",
+      },
+    });
 
   res.status(200).json(hotels);
 });
@@ -143,7 +149,14 @@ const getSingleHotel = asyncHandler(async (req, res) => {
   const singleHotel = await Hotel.findById(req.params.id)
     .populate("locationId")
     .populate("food")
-    .populate("rooms");
+    .populate("rooms")
+    .populate({
+      path: "hotelServices",
+      populate: {
+        path: "category",
+        model: "Category",
+      },
+    });
   res.status(200).json(singleHotel);
 });
 

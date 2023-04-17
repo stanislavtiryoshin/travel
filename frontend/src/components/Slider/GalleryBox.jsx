@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import "./Slider.scss";
 
@@ -26,25 +26,32 @@ const GalleryBox = ({ sources }) => {
       slide: number,
     });
   };
+
+  const [imgSources, setImgSources] = useState([]);
+
+  useEffect(() => {
+    setImgSources(sources);
+  }, [sources]);
+
   return (
     <>
       {sources && (
         <FsLightbox
           toggler={lightboxController.toggler}
-          sources={sources}
+          sources={imgSources}
           slide={lightboxController.slide}
         />
       )}
       <div className="gen_img-box">
         {sources && (
           <img
-            src={sources[0]}
+            src={imgSources[0]}
             alt=""
             onClick={() => openLightboxOnSlide(1)}
             className="primary_img"
           />
         )}
-        <GallerySlider sources={sources} />
+        <GallerySlider sources={imgSources} />
       </div>
     </>
   );

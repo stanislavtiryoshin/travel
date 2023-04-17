@@ -20,7 +20,7 @@ import Filter from "../../components/Filter/Filter";
 import Hotels from "./Hotels";
 import { getSanatoriums } from "../../features/sanatorium/sanatoriumSlice";
 import { getCamps } from "../../features/camps/campSlice";
-import { getTours, selectTours } from "../../features/tour/tourSlice";
+import { getTours } from "../../features/tour/tourSlice";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -35,7 +35,7 @@ const Home = () => {
   const { startDate, endDate, peopleAmount, daysAmount, destination } =
     useSelector((state) => state.client);
   const selectedHotels = useSelector(selectHotels);
-  const selectedTours = useSelector(selectTours);
+  // const selectedTours = useSelector(selectTours);
 
   useEffect(() => {
     if (isError) {
@@ -62,8 +62,6 @@ const Home = () => {
   const [currentLocation, setCurrentLocation] = useState();
 
   const { chosenTag } = useSelector((state) => state.client);
-
-  console.log(selectedTours);
 
   useEffect(() => {
     if (destination)
@@ -97,7 +95,7 @@ const Home = () => {
               <Hotels mode={"camps"} selectedHotels={camps} campsMode />
             ) : null}
             {chosenTag === "Туры" ? (
-              <Hotels mode={"tour"} selectedHotels={selectedTours} toursMode />
+              <Hotels mode={"tour"} selectedHotels={tours} toursMode />
             ) : null}
             {chosenTag === "Санатории" ? (
               <Hotels

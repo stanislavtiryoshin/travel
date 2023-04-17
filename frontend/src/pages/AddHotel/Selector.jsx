@@ -1,37 +1,66 @@
 import React, { useState, useEffect } from "react";
-
 import Select from "react-select";
 
-export default function Selector2({
+export default function ServiceSelector({
   styles,
+  allCategories,
   placeholder,
   onChange,
   data,
-  value,
 }) {
+  const [options, setOptions] = useState([]);
+  const [currCateg, setCurrCateg] = useState("Питание");
+
+  useEffect(() => {
+    if (allCategories && allCategories.length > 0) {
+      const filteredOptions = data.filter(
+        (el) => el.category.categoryName === currCateg
+      );
+      setOptions(filteredOptions);
+    }
+  }, [allCategories, currCateg, data]);
+
+  console.log(valu);
+
   return (
-    <div className="service-input full">
-      <Select
-        options={data}
-        placeholder={placeholder && placeholder}
-        value={value}
-        onChange={(option) => {
-          onChange(option);
-        }}
-        styles={{
-          control: (baseStyles) => ({
-            ...baseStyles,
-            width: `${550}px`,
-            border: "none",
-            "background-color": "rgb(249, 249, 249)",
-            outline: "none",
-          }),
-        }}
-        isSearchable={true}
-        isMulti
-        useDragHandle
-        axis="xy"
-      />
-    </div>
+    <>
+      {allCategories && (
+        <div className="service-input">
+          <label htmlFor="category">Категория</label>
+          <select
+            name="category"
+            className="primary-input"
+            id=""
+            onChange={(e) => setCurrCateg(e.target.value)}
+          >
+            {allCategories.map((categ) => (
+              <option value={categ.categoryName} key={categ._id}>
+                {categ.categoryName}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+      <div className="service-input full">
+        <Select
+          options={options}
+          placeholder={placeholder}
+          onChange={onChange}
+          styles={{
+            control: (baseStyles) => ({
+              ...baseStyles,
+              width: `${550}px`,
+              border: "none",
+              backgroundColor: "rgb(249, 249, 249)",
+              outline: "none",
+            }),
+          }}
+          isSearchable
+          isMulti
+          useDragHandle
+          axis="xy"
+        />
+      </div>
+    </>
   );
 }

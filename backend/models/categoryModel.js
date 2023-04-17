@@ -5,6 +5,9 @@ const categorySchema = mongoose.Schema(
     categoryName: {
       type: String,
     },
+    iconSvg: {
+      type: String,
+    },
   },
   {
     timestamps: true,

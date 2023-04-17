@@ -26,7 +26,7 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal";
 import { useUploadImageMutation } from "../../features/services/upload.service";
-import GalleryBox from "../../moble/components/Slider/GalleryBox";
+import GalleryBox from "../../components/Slider/GalleryBox";
 
 const EditTour = () => {
   const { data: food = [], isLoading: isLoadFood } = useGetFoodQuery();

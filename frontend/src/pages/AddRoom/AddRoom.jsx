@@ -494,29 +494,31 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
           </div>
         </Section>
         {editMode ? (
-          <Section section="test_section" wrapper="test_wrapper">
-            <table className="periods_table">
-              <thead>
-                <tr>
-                  <th>Room</th>
-                  {fetchedRoomData &&
-                    fetchedRoomData?.hotel &&
-                    fetchedRoomData?.hotel.periods &&
-                    fetchedRoomData?.hotel?.periods?.map((period) => (
-                      <th key={period._id}>
-                        {period.startDay}/{period.startMonth} - {period.endDay}/
-                        {period.endMonth}
-                      </th>
-                    ))}
-                </tr>
-              </thead>
-              <tbody>
-                <RoomRow
-                  room={fetchedRoomData}
-                  periods={fetchedRoomData?.hotel?.periods}
-                />
-              </tbody>
-            </table>
+          <Section section="test_section" wrapper="test_wrapper shadowed_box">
+            <div className="table_wrapper">
+              <table className="periods_table">
+                <thead>
+                  <tr>
+                    <th>Room</th>
+                    {fetchedRoomData &&
+                      fetchedRoomData?.hotel &&
+                      fetchedRoomData?.hotel.periods &&
+                      fetchedRoomData?.hotel?.periods?.map((period) => (
+                        <th key={period._id}>
+                          {period.startDay}/{period.startMonth} -{" "}
+                          {period.endDay}/{period.endMonth}
+                        </th>
+                      ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <RoomRow
+                    room={fetchedRoomData}
+                    periods={fetchedRoomData?.hotel?.periods}
+                  />
+                </tbody>
+              </table>
+            </div>
           </Section>
         ) : null}
         <Section section="add_more-section" wrapper="add_more-wrapper">

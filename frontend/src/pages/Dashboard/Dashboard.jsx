@@ -3,16 +3,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import HotelCard from "../../components/HotelCard/HotelCard";
 import { login, reset } from "../../features/auth/authSlice";
-import {
-  addHotel,
-  getHotels,
-  getAdminHotels,
-  selectHotels,
-} from "../../features/hotel/hotelSlice";
+import { getAdminHotels, selectHotels } from "../../features/hotel/hotelSlice";
 import { getOrders } from "../../features/order/orderSlice";
+import Section from "../../components/Section";
 
 import "./Dashboard.scss";
-import OrderRow from "./OrderRow";
 import Filter from "../../components/Filter/Filter";
 import DashHotelCard from "../../components/HotelCard/DashHotelCard";
 import HotelSearch from "../../components/SearchPanel/HotelSearch";
@@ -26,6 +21,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const selectedHotels = useSelector(selectHotels);
+  // const selectedTours = useSelector(selectTours);
 
   const { user } = useSelector((state) => state.auth);
 
@@ -38,6 +34,8 @@ const Dashboard = () => {
   const { tours } = useSelector((state) => state.tour);
   const { camps } = useSelector((state) => state.camps);
   const { sanatoriums } = useSelector((state) => state.sanatoriums);
+
+  console.log(tours);
 
   useEffect(() => {
     if (isError) {
@@ -61,23 +59,18 @@ const Dashboard = () => {
       {currentTab === 1 && (
         <div className="hotels_tab tab">
           <HotelSearch hotelMode />
-
-          <section className="dash_section">
-            <div className="container">
-              <div className="dash_wrapper wrapper">
-                <div className="dash_side">
-                  <Filter hotelMode />
-                </div>
-                <div className="dash_main">
-                  {selectedHotels && selectedHotels.length > 0
-                    ? selectedHotels?.map((hotel, idx) => {
-                        return <DashHotelCard hotel={hotel} />;
-                      })
-                    : "is loading"}
-                </div>
-              </div>
+          <Section section="dash_section" wrapper="dash_wrapper">
+            <div className="dash_side">
+              <Filter hotelMode />
             </div>
-          </section>
+            <div className="dash_main">
+              {selectedHotels && selectedHotels.length > 0
+                ? selectedHotels?.map((hotel, idx) => {
+                    return <DashHotelCard hotel={hotel} mode="hotel" />;
+                  })
+                : "is loading"}
+            </div>
+          </Section>
         </div>
       )}
       {currentTab === 0 && (
@@ -88,74 +81,62 @@ const Dashboard = () => {
       {currentTab === 2 && (
         <div className="tours_tab tab">
           <HotelSearch tourMode />
-          <section className="dash_section">
-            <div className="container">
-              <div className="dash_wrapper wrapper">
-                <div className="dash_side">
-                  <Filter tourMode />
-                </div>
-                <div className="dash_main">
-                  {tours && tours.length > 0
-                    ? tours?.map((tour, idx) => {
-                        return (
-                          <DashHotelCard hotel={tour} key={tour._id} tourMode />
-                        );
-                      })
-                    : "is loading"}
-                </div>
-              </div>
+          <Section section="dash_section" wrapper="dash_wrapper">
+            <div className="dash_side">
+              <Filter tourMode />
             </div>
-          </section>
+            <div className="dash_main">
+              {tours && tours.length > 0
+                ? tours?.map((tour, idx) => {
+                    return (
+                      <DashHotelCard hotel={tour} key={tour._id} mode="tour" />
+                    );
+                  })
+                : "is loading"}
+            </div>
+          </Section>
         </div>
       )}
       {currentTab === 3 && (
         <div className="tours_tab tab">
           <HotelSearch campMode />
-          <section className="dash_section">
-            <div className="container">
-              <div className="dash_wrapper wrapper">
-                <div className="dash_side">
-                  <Filter campMode />
-                </div>
-                <div className="dash_main">
-                  {camps && camps.length > 0
-                    ? camps?.map((camp, idx) => {
-                        return (
-                          <DashHotelCard hotel={camp} key={camp._id} camp />
-                        );
-                      })
-                    : "is loading"}
-                </div>
-              </div>
+          <Section section="dash_section" wrapper="dash_wrapper">
+            <div className="dash_side">
+              <Filter campMode />
             </div>
-          </section>
+            <div className="dash_main">
+              {camps && camps.length > 0
+                ? camps?.map((camp, idx) => {
+                    return (
+                      <DashHotelCard hotel={camp} key={camp._id} mode="camp" />
+                    );
+                  })
+                : "is loading"}
+            </div>
+          </Section>
         </div>
       )}
       {currentTab === 4 && (
         <div className="tours_tab tab">
           <HotelSearch sanMode />
-          <section className="dash_section">
-            <div className="container">
-              <div className="dash_wrapper wrapper">
-                <div className="dash_side">
-                  <Filter sanMode />
-                </div>
-                <div className="dash_main">
-                  {sanatoriums && sanatoriums.length > 0
-                    ? sanatoriums?.map((sanatorium, idx) => {
-                        return (
-                          <DashHotelCard
-                            hotel={sanatorium}
-                            key={sanatorium._id}
-                            camp
-                          />
-                        );
-                      })
-                    : "is loading"}
-                </div>
-              </div>
+          <Section section="dash_section" wrapper="dash_wrapper">
+            <div className="dash_side">
+              <Filter sanMode />
             </div>
-          </section>
+            <div className="dash_main">
+              {sanatoriums && sanatoriums.length > 0
+                ? sanatoriums?.map((sanatorium, idx) => {
+                    return (
+                      <DashHotelCard
+                        hotel={sanatorium}
+                        key={sanatorium._id}
+                        mode="sanatorium"
+                      />
+                    );
+                  })
+                : "is loading"}
+            </div>
+          </Section>
         </div>
       )}
     </div>

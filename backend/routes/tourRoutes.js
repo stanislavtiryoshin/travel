@@ -15,8 +15,8 @@ const { protect } = require("../middleware/authMiddleware");
 const { upload } = require("./uploadRoutes");
 
 router.get("/", getTour);
-router.get("/:id", getSingleTour);
 router.post("/", protect, addTour);
+router.get("/:id", getSingleTour);
 router.delete("/:id", protect, deleteTour);
 router.patch("/:id", protect, updateTour);
 

@@ -104,10 +104,8 @@ const hotelSchema = mongoose.Schema(
     },
     hotelServices: [
       {
-        serviceId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "HotelService",
-        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "HotelService",
       },
     ],
     rooms: [

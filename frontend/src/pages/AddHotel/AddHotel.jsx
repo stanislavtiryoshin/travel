@@ -26,10 +26,12 @@ import { Input } from "../../components/Form";
 import Modal from "../../components/Modal";
 import Section from "../../components/Section";
 import RoomRow from "./RoomRow";
-import Selector2 from "./Selector";
+import ServiceSelector from "./Selector";
 import hotelService from "../../features/hotel/hotelService";
 
 import { useUploadImageMutation } from "../../features/services/upload.service";
+import GalleryBox from "../../components/Slider/GalleryBox";
+import e from "cors";
 
 const AddHotel = ({
   fetchedHotelData,
@@ -207,6 +209,8 @@ const AddHotel = ({
 
   const [servs, setServs] = useState();
 
+  console.log(servs);
+
   useEffect(() => {
     setHotelData({ ...hotelData, hotelServices: servs });
   }, [servs]);
@@ -215,6 +219,11 @@ const AddHotel = ({
     hotelServiceName: null,
     category: null,
   });
+
+  const [sources, setSources] = useState([]);
+  useEffect(() => {
+    setSources(hotelData?.img ? hotelData?.img : []);
+  }, [hotelData]);
 
   return (
     <>
@@ -229,9 +238,7 @@ const AddHotel = ({
           section="add_gen-section"
           wrapper="add_gen-wrapper wrapper shadowed_box"
         >
-          <div className="gen_img-box">
-            <img src={addhotel} alt="" />
-          </div>
+          <GalleryBox sources={sources} />
           <div className="gen_content-box">
             <div className="gen_title">Основное об отеле</div>
             <div className="input_row">
@@ -727,7 +734,7 @@ const AddHotel = ({
                                   max={31}
                                   placeholder="d"
                                   value={per.startDay}
-                                  inputmode="numeric"
+                                  inputMode="numeric"
                                   onChange={(e) => {
                                     newPeriods[idx].startDay = e.target.value;
                                     setPeriods(newPeriods);
@@ -738,7 +745,7 @@ const AddHotel = ({
                                   type="number"
                                   min={1}
                                   max={31}
-                                  inputmode="numeric"
+                                  inputMode="numeric"
                                   placeholder="m"
                                   value={per.startMonth}
                                   onChange={(e) => {
@@ -899,7 +906,7 @@ export const ServiceCard = ({
         Категория {number}{" "}
         <button onClick={() => deleteService(currServ)}>X</button>
       </div>
-      {/* <Selector
+      <Selector
         allCategories={allCategories}
         optionList={optionList}
         thisCategServices={thisCategServices}
@@ -912,13 +919,14 @@ export const ServiceCard = ({
             outline: "none",
           }),
         }}
-      /> */}
-      <Selector2
+      />
+      {/* <ServiceSelector
         data={newAllServices}
+        allCategories={allCategories}
         onChange={setServs}
         value={servs}
         placeholder={"Выберете услугу"}
-      />
+      /> */}
       <span onClick={() => setIsOpen(true)} className="additional-service">
         Добавить новую услугу
       </span>

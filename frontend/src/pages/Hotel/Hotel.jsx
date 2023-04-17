@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-import { getSingleHotel } from "../../features/hotel/hotelSlice";
+import { getSingleHotel, reset } from "../../features/hotel/hotelSlice";
 import { RatingBox } from "../../components/HotelCard/HotelCard";
 import { addOrder } from "../../features/order/orderSlice";
 
@@ -27,6 +27,11 @@ import {
 } from "../../features/services/base.service";
 import Card from "../../components/Card";
 import Section from "../../components/Section";
+import GalleryBox from "../../components/Slider/GalleryBox";
+import Recommendation from "../../components/Recommendation/Recommendation";
+import HotelLoader from "../../components/Loader/HotelLoader";
+import RoomLoader from "../../components/Loader/RoomLoader";
+import RecommLoader from "../../components/Loader/RecommLoader";
 
 const Hotel = () => {
   const dispatch = useDispatch();
@@ -37,6 +42,16 @@ const Hotel = () => {
     (state) => state.hotels
   );
 
+  const [sources, setSources] = useState([]);
+
+  useEffect(() => {
+    if (singleHotel.img) {
+      setSources(singleHotel.img);
+    } else {
+      setSources([]);
+    }
+  }, [singleHotel]);
+
   const [roomCount, setRoomCount] = useState(3);
 
   const { data: roomsData, isLoading: roomIsLoading } =
@@ -45,9 +60,8 @@ const Hotel = () => {
       limit: roomCount,
     });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  console.log(isLoading);
+
   const [
     getData,
     {
@@ -70,8 +84,11 @@ const Hotel = () => {
     if (isError) {
       console.log(message);
     }
-    if (hotelId) dispatch(getSingleHotel(hotelId));
-  }, [hotelId, isError, isSuccess, message, navigate, dispatch]);
+    dispatch(getSingleHotel(hotelId));
+    return () => {
+      dispatch(reset());
+    };
+  }, [hotelId, dispatch]);
 
   const handleOrder = (e) => {
     e.preventDefault();
@@ -141,29 +158,33 @@ const Hotel = () => {
 
   const [sum, setSum] = useState(0);
 
-  const { clientExcursions, clientRooms, excSum } = useSelector(
+  const { clientExcursions, clientRoom, excSum } = useSelector(
     (state) => state.client
   );
 
   useEffect(() => {
     window.localStorage.setItem("sum", sum);
-    if (clientRooms && clientRooms.length > 0)
-      window.localStorage.setItem("rooms", JSON.stringify(clientRooms));
+    if (clientRoom) window.localStorage.setItem("room", clientRoom);
     if (singleHotel) window.localStorage.setItem("hotel", singleHotel?._id);
     if (clientExcursions)
       window.localStorage.setItem(
         "excursions",
         JSON.stringify(clientExcursions)
       );
-  }, [sum, clientRooms, singleHotel, clientExcursions]);
+  }, [sum, clientRoom, singleHotel, clientExcursions]);
+
+  if (isLoading) {
+    return <HotelLoader />;
+  }
 
   if (roomIsLoading) {
-    return <div>Loading...</div>;
+    return <RecommLoader />;
   }
 
   if (recommendationIsLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading recommednations...</div>;
   }
+
   return (
     <div className="hotel_page page">
       <section className="hotel_section">
@@ -172,8 +193,8 @@ const Hotel = () => {
             <div className="hotel_page_wrapper wrapper ">
               <div className="hotel_main_wrapper wrapper ver">
                 <div className="hotel_page_top shadowed_box">
-                  <div className="top_img-box">
-                    <img src={hotel} alt="" className="hotel_img-main" />
+                  <div className="hotel_img-box">
+                    {sources ? <GalleryBox sources={sources} /> : null}
                   </div>
                   <div className="top_content">
                     <div className="top_heading-row row">
@@ -198,7 +219,9 @@ const Hotel = () => {
                     </div>
                     <div className="top_desc-row">
                       <div className="desc_title">Описание</div>
-                      <div className="desc_box">{singleHotel?.description}</div>
+                      <div className="desc_box">
+                        {singleHotel?.description?.slice(0, 100)}...
+                      </div>
                       <a href="#anchor" className="hotel_anchor">
                         Подробнее
                       </a>
@@ -237,32 +260,38 @@ const Hotel = () => {
                   </div>
                 </div>
                 <div className="hotel_page-gen shadowed_box">
-                  <div className="gen_chosen-row">
-                    <div className="body_title-box">
-                      <div className="body_title" id="anchor">
-                        Ваш номер
+                  {clientRoom ? (
+                    <div className="hotel_page-rooms">
+                      <div className="body_title-box">
+                        <div className="body_title">Ваш номер</div>
+                        <div className="body_title-text">
+                          Выбранный вами номер отображается здесь. Другие
+                          варианты номеров и цены находятся{" "}
+                          <a href="#room_anchor" className="hotel_anchor">
+                            здесь.
+                          </a>
+                        </div>
                       </div>
-                      <div className="body_title-text">
-                        Выбранный вами номер отображается здесь. Другие варианты
-                        номеров и цены находятся{" "}
-                        <a href="" className="hotel_anchor">
-                          здесь.
-                        </a>
-                      </div>
+                      <Room
+                        key={clientRoom._id}
+                        room={clientRoom}
+                        days={clientData?.daysAmount}
+                        active={true}
+                      />
+                      {/* {sclie
+                          .map((room) => {
+                            return (
+                              <Room
+                                key={room._id}
+                                room={room}
+                                days={clientData?.daysAmount}
+                                active={true}
+                              />
+                            );
+                          })} */}
                     </div>
-                    <div className="chosen_room-box">
-                      {clientRooms &&
-                        clientRooms?.map((room) => {
-                          <Room
-                            key={room._id}
-                            room={room}
-                            days={clientData?.daysAmount}
-                            active={true}
-                          />;
-                        })}
-                    </div>
-                  </div>
-                  <div className="gen_info-row">
+                  ) : null}
+                  <div className="gen_info-row" id="anchor">
                     <div className="body_title-box">
                       <div className="body_title">Об отеле</div>
                       <div className="body_title-text">
@@ -281,10 +310,11 @@ const Hotel = () => {
                       </div>
                     </div>
                     <div className="desc-row">{singleHotel?.description}</div>
-                    <div className="food-row row">
-                      <span>Типы питания:</span> все включено, без питания,
-                      только завтрак
-                    </div>
+                    {singleHotel && singleHotel?.food?.label ? (
+                      <div className="food-row row">
+                        <span>Типы питания:</span> {singleHotel?.food?.label}
+                      </div>
+                    ) : null}
                   </div>
                   <div className="hotel_services-row">
                     <div className="body_title-box">
@@ -295,6 +325,7 @@ const Hotel = () => {
                         <div className="services_col-title">
                           <img src={serv} alt="" />
                           Питание
+                          {console.log(singleHotel)}
                         </div>
                         <ul className="services-list">
                           <li>главный ресторан</li>
@@ -329,7 +360,7 @@ const Hotel = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="hotel_page-rooms">
+                  <div className="hotel_page-rooms" id="room_anchor">
                     <div className="body_title-box">
                       <div className="body_title">Варианты номеров</div>
                       <div className="body_title-text">
@@ -344,9 +375,7 @@ const Hotel = () => {
                           <Room
                             key={room._id}
                             room={room}
-                            active={clientRooms.some(
-                              (clientRoom) => clientRoom._id === room._id
-                            )}
+                            active={clientRoom._id === room._id}
                           />
                         );
                       })}
@@ -420,36 +449,7 @@ const Hotel = () => {
           ) : null}
         </div>
       </section>
-      <Section section="similar_section" wrapper="hotel_similar-wrapper ver">
-        <div className="hotel_similar-tour">Похожие отели</div>
-        <div className="hotel_similar_text">
-          Мы подобрали вам похожие туры. Взгляните, чтобы сравнить
-        </div>
-        {/* {console.log(recommendation)} */}
-        <div className="hotel_similar-body">
-          {recommendation?.map((recomm) => (
-            <>
-              {recomm._id !== singleHotel._id && (
-                <Card
-                  isHotel
-                  id={recomm._id}
-                  key={recomm._id}
-                  location={`${
-                    recomm.locationId && recomm.locationId.locationName
-                  }, ${recomm.locationId && recomm.locationId.locationCountry}`}
-                  name={recomm.name}
-                  stars={recomm.hotelStars}
-                  food={recomm.food && recomm.food.value}
-                  duration={`${recomm.enterTime} - ${recomm.leaveTime}`}
-                  image={
-                    "https://www.state.gov/wp-content/uploads/2019/04/Kazakhstan-2426x1406.jpg"
-                  }
-                />
-              )}
-            </>
-          ))}
-        </div>
-      </Section>
+      <Recommendation recommendation={recommendation} />
     </div>
   );
 };

@@ -11,7 +11,6 @@ import HotelSlice, {
 import {
   setFilterData as setTourFilterData,
   clearFilterData as clearTourFilterData,
-  selectTours,
 } from "../../features/tour/tourSlice";
 
 import HotelStars from "../HotelStars/HotelStars";
@@ -83,8 +82,6 @@ const Filter = ({ mode }) => {
   const [currentLocation, setCurrentLocation] = useState("");
 
   const stars = [5, 4, 3, 2];
-
-  console.log(filterData);
 
   return (
     <div className="filter_box">
