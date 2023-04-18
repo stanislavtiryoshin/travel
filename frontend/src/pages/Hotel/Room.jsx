@@ -9,6 +9,8 @@ import { addClientRoom, removeClientRoom } from "../../features/clientSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 
+import "./Room.scss";
+
 const Room = ({ room, active, days, sum }) => {
   const dispatch = useDispatch();
   const [bedCount, setBedCount] = React.useState(
@@ -32,19 +34,22 @@ const Room = ({ room, active, days, sum }) => {
     >
       <div className="rooms_top">
         <img src={roompic} pic alt="" />
-        {room?.roomName}
-      </div>
-      <div className="additional_tag">
-        <div className="room_bed">
-          <img src={bed} alt="" />
-          {bedCount} кровати
+        <div className="room_top-content">
+          {room?.roomName}
+          <div className="additional_tag">
+            <div className="room_bed">
+              <img src={bed} alt="" />
+              {bedCount} кровати
+            </div>
+            <div className="room_food">
+              <img src={food} alt="" />
+              {room?.food ? "Завтрак включен" : "Завтрак не включен"}
+            </div>
+          </div>
+          <RoomTags tags={tags.flat()} />
         </div>
-        <div className="room_food">
-          <img src={food} alt="" />
-          {room?.food ? "Завтрак включен" : "Завтрак не включен"}
-        </div>
       </div>
-      <RoomTags tags={tags.flat()} />
+
       <div className="rooms_bot">
         <div className="room_bot-left">
           <div className="room_bot-row">Цена номера</div>

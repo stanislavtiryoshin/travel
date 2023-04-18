@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 import { getSingleHotel, reset } from "../../features/hotel/hotelSlice";
-import { RatingBox } from "../../components/HotelCard/HotelCard";
+import RatingBox from "../../components/HotelCard/RatingBox";
 import { addOrder } from "../../features/order/orderSlice";
 
 import geo from "../../assets/geo.svg";
@@ -16,6 +16,7 @@ import serv from "../../assets/serv.svg";
 import check from "../../assets/check.svg";
 import person from "../../assets/person.svg";
 import kids from "../../assets/kids.png";
+import divider from "../../assets/hotel/divider.svg";
 
 import hotel from "../../assets/hotel.png";
 import "./Hotel.scss";
@@ -32,6 +33,8 @@ import Recommendation from "../../components/Recommendation/Recommendation";
 import HotelLoader from "../../components/Loader/HotelLoader";
 import RoomLoader from "../../components/Loader/RoomLoader";
 import RecommLoader from "../../components/Loader/RecommLoader";
+import BodyTitle from "../../components/BodyTitle/BodyTitle";
+import CheckBtn from "../../components/Filter/CheckBtn";
 
 const Hotel = () => {
   const dispatch = useDispatch();
@@ -59,8 +62,6 @@ const Hotel = () => {
       hotelId,
       limit: roomCount,
     });
-
-  console.log(isLoading);
 
   const [
     getData,
@@ -103,6 +104,7 @@ const Hotel = () => {
     name: "",
     room: "",
     sum: null,
+    foodIncluded: false,
   });
 
   const [clientData, setClientData] = useState({
@@ -173,16 +175,39 @@ const Hotel = () => {
       );
   }, [sum, clientRoom, singleHotel, clientExcursions]);
 
+  const [servicesToRender, setServicesToRender] = useState();
+
+  useEffect(() => {
+    const result = singleHotel?.hotelServices?.reduce((acc, cur) => {
+      const category = cur.category.categoryName;
+      const service = {
+        _id: cur._id,
+        hotelServiceName: cur.hotelServiceName,
+      };
+
+      if (!acc[category]) {
+        acc[category] = {
+          category,
+          services: [service],
+        };
+      } else {
+        acc[category].services.push(service);
+      }
+
+      return acc;
+    }, {});
+
+    const arrayResult = result ? Object.values(result) : [];
+
+    if (singleHotel?.hotelServices) setServicesToRender(arrayResult);
+  }, [singleHotel]);
+
   if (isLoading) {
     return <HotelLoader />;
   }
 
   if (roomIsLoading) {
-    return <RecommLoader />;
-  }
-
-  if (recommendationIsLoading) {
-    return <div>Loading recommednations...</div>;
+    return <RoomLoader />;
   }
 
   return (
@@ -199,7 +224,7 @@ const Hotel = () => {
                   <div className="top_content">
                     <div className="top_heading-row row">
                       <div className="hotel_name">{singleHotel?.name}</div>
-                      <RatingBox rating={singleHotel?.rating} />
+                      <RatingBox rating={singleHotel?.rating} starMode />
                     </div>
                     <div className="top_location-row row">
                       <div className="top_location-box">
@@ -212,84 +237,86 @@ const Hotel = () => {
                           ? singleHotel?.locationId.locationCountry
                           : null}
                       </div>
-                      <button className="top_location-btn primary-btn">
+                      <a
+                        className="top_location-btn primary-btn"
+                        href={singleHotel.mapLink}
+                      >
                         <img src={map} alt="" />
                         Посмотреть <br /> на карте
-                      </button>
+                      </a>
                     </div>
                     <div className="top_desc-row">
                       <div className="desc_title">Описание</div>
                       <div className="desc_box">
-                        {singleHotel?.description?.slice(0, 100)}...
+                        {singleHotel?.description?.slice(0, 200)}...
                       </div>
                       <a href="#anchor" className="hotel_anchor">
                         Подробнее
                       </a>
                     </div>
                     <div className="top_tags-row">
-                      <div className="hotel_tag">
-                        <img src={tag} alt="" />
-                        Ресторан
-                      </div>
-                      <div className="hotel_tag">
-                        <img src={tag} alt="" />
-                        Ресторан
-                      </div>
-                      <div className="hotel_tag">
-                        <img src={tag} alt="" />
-                        Ресторан
-                      </div>
-                      <div className="hotel_tag">
-                        <img src={tag} alt="" />
-                        Ресторан
-                      </div>
-                      <div className="hotel_tag">
-                        <img src={tag} alt="" />
-                        Ресторан
-                      </div>
+                      {singleHotel && singleHotel?.hotelServices
+                        ? singleHotel?.hotelServices
+                            ?.filter((serv) => serv.priority === 1)
+                            .map((serv) => {
+                              return (
+                                <div className="hotel_tag">
+                                  {serv.icon ? (
+                                    <div
+                                      dangerouslySetInnerHTML={{
+                                        __html: serv.icon,
+                                      }}
+                                    />
+                                  ) : null}
+                                  {serv.hotelServiceName}
+                                </div>
+                              );
+                            })
+                        : null}
                     </div>
                   </div>
                 </div>
                 <div className="hotel_page-price shadowed_box">
-                  <div className="body_title-box">
-                    <div className="body_title">Цена</div>
-                    <div className="body_title-text">
-                      Выберите что хотите добавить в свой тур, чтобы рассчитать
-                      стоимость и сравните периоды
-                    </div>
-                  </div>
+                  <BodyTitle
+                    title="Цена"
+                    text="Выберите что хотите добавить в свой тур, чтобы рассчитать
+                      стоимость и сравните периоды"
+                  />
                 </div>
                 <div className="hotel_page-gen shadowed_box">
-                  {clientRoom ? (
-                    <div className="hotel_page-rooms">
-                      <div className="body_title-box">
-                        <div className="body_title">Ваш номер</div>
-                        <div className="body_title-text">
-                          Выбранный вами номер отображается здесь. Другие
-                          варианты номеров и цены находятся{" "}
-                          <a href="#room_anchor" className="hotel_anchor">
-                            здесь.
-                          </a>
+                  {clientRoom._id ? (
+                    <>
+                      <div className="hotel_page-rooms">
+                        <div className="body_title-box">
+                          <div className="body_title">Ваш номер</div>
+                          <div className="body_title-text">
+                            Выбранный вами номер отображается здесь. Другие
+                            варианты номеров и цены находятся{" "}
+                            <a href="#room_anchor" className="hotel_anchor">
+                              здесь.
+                            </a>
+                          </div>
+                          <div
+                            className="body_title-text"
+                            style={{ marginTop: "8px" }}
+                          >
+                            <font style={{ color: "rgba(233, 135, 21, 1)" }}>
+                              Дети до 3-х лет проживают бесплатно без
+                              предоставления места и питания.
+                            </font>{" "}
+                            <br />В каждом номере есть ограничение по размещению
+                            младенцев.
+                          </div>
                         </div>
+                        <Room
+                          key={clientRoom._id}
+                          room={clientRoom}
+                          days={clientData?.daysAmount}
+                          active={true}
+                        />
                       </div>
-                      <Room
-                        key={clientRoom._id}
-                        room={clientRoom}
-                        days={clientData?.daysAmount}
-                        active={true}
-                      />
-                      {/* {sclie
-                          .map((room) => {
-                            return (
-                              <Room
-                                key={room._id}
-                                room={room}
-                                days={clientData?.daysAmount}
-                                active={true}
-                              />
-                            );
-                          })} */}
-                    </div>
+                      <img src={divider} alt="" />
+                    </>
                   ) : null}
                   <div className="gen_info-row" id="anchor">
                     <div className="body_title-box">
@@ -312,63 +339,118 @@ const Hotel = () => {
                     <div className="desc-row">{singleHotel?.description}</div>
                     {singleHotel && singleHotel?.food?.label ? (
                       <div className="food-row row">
-                        <span>Типы питания:</span> {singleHotel?.food?.label}
+                        <span>Тип питания:</span> {singleHotel?.food?.label}
                       </div>
                     ) : null}
                   </div>
+                  <img src={divider} alt="" />
                   <div className="hotel_services-row">
                     <div className="body_title-box">
                       <div className="body_title">Услуги отеля</div>
                     </div>
                     <div className="services_box">
-                      <div className="services_col">
-                        <div className="services_col-title">
-                          <img src={serv} alt="" />
-                          Питание
-                          {console.log(singleHotel)}
+                      {servicesToRender
+                        ? servicesToRender.map((obj) => {
+                            return (
+                              <div className="services_col">
+                                <div className="services_col-title">
+                                  <img src={serv} alt="" />
+                                  {obj.category}
+                                </div>
+                                <ul className="services_list">
+                                  {obj?.services?.map((serv) => {
+                                    return <li>{serv.hotelServiceName}</li>;
+                                  })}
+                                </ul>
+                              </div>
+                            );
+                          })
+                        : null}
+                    </div>
+                  </div>
+                  <img src={divider} alt="" />
+                  <div className="hotel_food-row">
+                    <div className="body_title-box">
+                      <div className="body_title">
+                        Питание{" "}
+                        <div
+                          className={`food_tag ${
+                            singleHotel?.foodIncluded ? "incl" : "notincl"
+                          }`}
+                        >
+                          {singleHotel?.foodIncluded
+                            ? "Включено"
+                            : "Не включено"}
                         </div>
-                        <ul className="services-list">
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                        </ul>
                       </div>
-                      <div className="services_col">
-                        <div className="services_col-title">
-                          <img src={serv} alt="" />
-                          Питание
-                        </div>
-                        <ul className="services-list">
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                        </ul>
+                      <div className="body_title-text">
+                        <span>
+                          Наш отель предлагает гостям уютные номера и
+                          великолепный сервис, включая 3-х разовое питание на
+                          каждый день пребывания.
+                        </span>
+                        <span>
+                          Мы заботимся о качестве и свежести нашей еды, чтобы
+                          гости могли насладиться здоровым и вкусным питанием в
+                          течение всего пребывания. Наш шеф-повар готовит блюда
+                          из натуральных и свежих ингредиентов, а также
+                          учитывает предпочтения и потребности каждого гостя.
+                        </span>
                       </div>
-                      <div className="services_col">
-                        <div className="services_col-title">
-                          <img src={serv} alt="" />
-                          Питание
+                    </div>
+                    <div className="food_box">
+                      <div className="food_price-box">
+                        <div className="food_prices">
+                          {singleHotel?.adultFoodPrice ? (
+                            <span>
+                              Взрослый - {singleHotel?.adultFoodPrice}
+                            </span>
+                          ) : null}
+                          {singleHotel?.kidFoodPrice ? (
+                            <span>Детский - {singleHotel?.kidFoodPrice}</span>
+                          ) : null}
+                          {singleHotel?.babyFoodInfo ? (
+                            <span>{singleHotel?.babyFoodInfo}</span>
+                          ) : null}
                         </div>
-                        <ul className="services-list">
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                        </ul>
+                      </div>
+                      <div className="food_price-form">
+                        <div
+                          className="filter_content"
+                          onClick={() =>
+                            setOrderTerms({
+                              ...orderTerms,
+                              foodIncluded: !orderTerms.foodIncluded,
+                            })
+                          }
+                        >
+                          <CheckBtn
+                            isActive={orderTerms.foodIncluded ? true : false}
+                          />
+                          Добавить питание
+                        </div>
+                        <div className="input_row">
+                          <select name="" id="" className="primary-input">
+                            <option value={3}>3</option>
+                            <option value={2}>2</option>
+                            <option value={1}>1</option>
+                          </select>
+                          <select name="" id="" className="primary-input">
+                            <option value={3}>3</option>
+                            <option value={2}>2</option>
+                            <option value={1}>1</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <img src={divider} alt="" />
                   <div className="hotel_page-rooms" id="room_anchor">
-                    <div className="body_title-box">
-                      <div className="body_title">Варианты номеров</div>
-                      <div className="body_title-text">
-                        Выберите номер, который вам нравится и мы автоматически
-                        рассчитаем цену в блоке “Бронирование”
-                      </div>
-                    </div>
-
+                    <BodyTitle
+                      title="Варианты номеров"
+                      text="Выберите номер, который вам нравится и мы автоматически
+                        рассчитаем цену в блоке “Бронирование”"
+                    />
                     {roomsData &&
                       roomsData.map((room) => {
                         return (

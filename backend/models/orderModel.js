@@ -27,13 +27,11 @@ const orderSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    rooms: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Room",
-        required: true,
-      },
-    ],
+    room: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Room",
+      required: true,
+    },
     status: {
       type: String,
       default: "В обработке",

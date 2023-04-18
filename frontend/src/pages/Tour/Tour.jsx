@@ -10,7 +10,7 @@ import {
   getHotels,
   getSingleHotel,
 } from "../../features/hotel/hotelSlice";
-import { RatingBox } from "../../components/HotelCard/HotelCard";
+import RatingBox from "../../components/HotelCard/RatingBox";
 import { addOrder } from "../../features/order/orderSlice";
 
 import geo from "../../assets/geo.svg";
@@ -60,11 +60,11 @@ const Tour = () => {
   useEffect(() => {
     if (!isLoading)
       getTour({
-        food: singleTour.food && singleTour.food,
-        locationId: singleTour.locationId && singleTour.locationId._id,
-        duration: singleTour.duration && singleTour.duration,
+        food: singleTour?.food && singleTour?.food,
+        locationId: singleTour?.locationId && singleTour?.locationId._id,
+        duration: singleTour?.duration && singleTour?.duration,
       }).then(({ data }) => setRecommendation(data));
-  }, [isLoading]);
+  }, [singleTour, isLoading]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -76,7 +76,7 @@ const Tour = () => {
           )
           .reduce((prev, curr) => prev.concat(curr));
 
-      const days = [...new Set(points.map((point) => point.day))];
+      const days = [...new Set(points?.map((point) => point.day))];
 
       const result = days.map((day) => {
         const pointsForDay = points.filter((point) => point.day === day);

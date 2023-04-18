@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { RatingBox } from "./HotelCard";
+import RatingBox from "./RatingBox";
 
 import admhotel from "../../assets/admhotel.png";
 import check2 from "../../assets/check2.svg";

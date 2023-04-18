@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+import RatingBox from "./RatingBox";
+
 import "./HotelCard.scss";
 
 import declOfNum from "../DayConfig";
 
-import hotel from "../../assets/hotel.png";
+import hotelimg from "../../assets/hotel.png";
 import line from "../../assets/line.svg";
-import star from "../../assets/star.svg";
 import sun from "../../assets/sun.svg";
 import moon from "../../assets/moon.svg";
 import tag from "../../assets/tag.svg";
@@ -27,6 +28,8 @@ const HotelCard = ({
   hotelStars,
   mode,
   program,
+  hotelServices,
+  hotel,
 }) => {
   const [cheapestRoom, setCheapestRoom] = useState();
 
@@ -43,8 +46,6 @@ const HotelCard = ({
     }
     setTourDays(Object.keys(uniqueDays).length);
   }, [mode]);
-
-  console.log(tourDays, "tourDays");
 
   const { startDate, endDate, daysAmount, peopleAmount } = useSelector(
     (state) => state.client
@@ -138,10 +139,16 @@ const HotelCard = ({
   //   }
   // }, [clientData, cheapestRoom, daysAmount]);
 
+  console.log(hotel);
+
   return (
     <div className="hotel_card">
       <div className="card_left card_col">
-        <img src={hotel} alt="" className="hotel_card-img" />
+        <img
+          src={hotel?.img[0] ? hotel?.img[0] : hotelimg}
+          alt=""
+          className="hotel_card-img"
+        />
         {cheapestRoom?.discount && cheapestRoom?.discount !== 0 ? (
           <div className="discount_box">-{cheapestRoom?.discount}%</div>
         ) : null}
@@ -163,16 +170,28 @@ const HotelCard = ({
           {description.length > 100 ? "..." : ""}
         </div>
         <div className="card_mid-tags">
-          <div className="card_tag">
-            <img src={tag} alt="" />
-            {mode === "tour"
-              ? `${tourDays} ${declOfNum(tourDays)}`
-              : "Все включено"}
-          </div>
-          <div className="card_tag">
-            <img src={tag} alt="" />
-            Все включено
-          </div>
+          {mode === "tour" ? (
+            <div className="card_tag">
+              <img src={tag} alt="" />
+              `${tourDays} ${declOfNum(tourDays)}`
+            </div>
+          ) : null}
+          {hotelServices && hotelServices.length > 0
+            ? hotelServices?.slice(0, 4).map((serv) => {
+                return (
+                  <div className="card_tag">
+                    {serv.icon ? (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: serv.icon,
+                        }}
+                      />
+                    ) : null}
+                    {serv.hotelServiceName}
+                  </div>
+                );
+              })
+            : null}
         </div>
       </div>
       <img src={line} alt="" />
@@ -220,10 +239,6 @@ const HotelCard = ({
       </div>
     </div>
   );
-};
-
-export const RatingBox = ({ rating }) => {
-  return <div className="rating-num">Рейтинг {rating}</div>;
 };
 
 export default HotelCard;

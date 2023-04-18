@@ -101,7 +101,13 @@ const getHotels = asyncHandler(async (req, res) => {
     .populate("locationId")
     .populate("food")
     .populate("rooms")
-    .populate("hotelServices");
+    .populate({
+      path: "hotelServices",
+      populate: {
+        path: "category",
+        model: "Category",
+      },
+    });
   res.status(200).json(hotels);
 });
 
@@ -239,12 +245,26 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     })
       .populate("locationId")
       .populate("food")
-      .populate("rooms");
+      .populate("rooms")
+      .populate({
+        path: "hotelServices",
+        populate: {
+          path: "category",
+          model: "Category",
+        },
+      });
   } else {
     hotels = await Hotel.find()
       .populate("locationId")
       .populate("food")
-      .populate("rooms");
+      .populate("rooms")
+      .populate({
+        path: "hotelServices",
+        populate: {
+          path: "category",
+          model: "Category",
+        },
+      });
   }
 
   const newHotels = hotels.map((hotel) => {

@@ -44,6 +44,8 @@ const Hotels = ({ selectedHotels, mode }) => {
                 oldPrice={hotel.oldPrice}
                 hotelStars={hotel.hotelStars}
                 mode={mode}
+                hotelServices={hotel.hotelServices}
+                hotel={hotel}
               />
             );
           })

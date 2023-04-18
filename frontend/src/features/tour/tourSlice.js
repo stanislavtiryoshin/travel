@@ -92,36 +92,36 @@ export const tourSlice = createSlice({
   },
 });
 
-// export const selectTours = (state) => {
-//   const {
-//     filterMaxPrice,
-//     filterMinPrice,
-//     filterFood,
-//     filterRating,
-//     filterStars,
-//   } = state.tour.filterData;
+export const selectTours = (state) => {
+  const {
+    filterMaxPrice,
+    filterMinPrice,
+    filterFood,
+    filterRating,
+    filterStars,
+  } = state.tour.filterData;
 
-//   let filteredTours = state.tour.tours;
+  let filteredTours = state.tour.tours;
 
-//   // Filter the hotels array based on the filter data
+  // Filter the hotels array based on the filter data
 
-//   // if (filterMaxPrice) {
-//   //   filteredHotels = filteredHotels.filter(
-//   //     (hotel) => hotel.totalPrice <= filterMaxPrice
-//   //   );
-//   // }
-//   // if (filterMinPrice) {
-//   //   filteredHotels = filteredHotels.filter(
-//   //     (hotel) => hotel.totalPrice >= filterMinPrice
-//   //   );
-//   // }
-//   // if (filterFood && filterFood.length > 0) {
-//   //   filteredTours = filteredTours.filter((tour) => {
-//   //     return tour.food.some((el) => filterFood.includes(el));
-//   //   });
-//   // }
-//   return filteredTours;
-// };
+  // if (filterMaxPrice) {
+  //   filteredHotels = filteredHotels.filter(
+  //     (hotel) => hotel.totalPrice <= filterMaxPrice
+  //   );
+  // }
+  // if (filterMinPrice) {
+  //   filteredHotels = filteredHotels.filter(
+  //     (hotel) => hotel.totalPrice >= filterMinPrice
+  //   );
+  // }
+  // if (filterFood && filterFood.length > 0) {
+  //   filteredTours = filteredTours.filter((tour) => {
+  //     return tour.food.some((el) => filterFood.includes(el));
+  //   });
+  // }
+  return filteredTours;
+};
 
 export const {
   reset,

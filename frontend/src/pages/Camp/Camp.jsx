@@ -10,7 +10,7 @@ import {
   getHotels,
   getSingleHotel,
 } from "../../features/hotel/hotelSlice";
-import { RatingBox } from "../../components/HotelCard/HotelCard";
+import RatingBox from "../../components/HotelCard/RatingBox";
 import { addOrder } from "../../features/order/orderSlice";
 
 import geo from "../../assets/geo.svg";

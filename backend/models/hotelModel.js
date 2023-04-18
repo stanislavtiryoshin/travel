@@ -44,6 +44,7 @@ const hotelSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Food",
     },
+    foodIncluded: Number,
     periods: [
       {
         startDay: Number,
@@ -57,6 +58,9 @@ const hotelSchema = mongoose.Schema(
     },
     adultFoodPrice: {
       type: Number,
+    },
+    babyFoodInfo: {
+      type: String,
     },
     kids: {
       babyMaxAge: {

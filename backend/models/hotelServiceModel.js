@@ -11,6 +11,11 @@ const hotelServiceSchema = mongoose.Schema(
       ref: "Category",
       required: true,
     },
+    icon: String,
+    priority: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

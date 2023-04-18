@@ -37,7 +37,7 @@ const GallerySlider = ({ sources }) => {
         <div className="gal_slider" style={{ width: "100%" }}>
           <Swiper
             modules={[Navigation, Pagination, A11y, Scrollbar]}
-            spaceBetween={3}
+            spaceBetween={12}
             slidesPerView={4}
             scrollbar={{ draggable: true }}
             breakpoints={{

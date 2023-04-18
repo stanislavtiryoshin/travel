@@ -10,6 +10,9 @@
 }
 .primary_img {
   border-radius: 16px;
+  min-height: 480px;
+  margin-bottom: 12px;
+  object-fit: cover;
 }
 
 .swiper {

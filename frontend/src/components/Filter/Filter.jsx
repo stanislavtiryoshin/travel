@@ -11,6 +11,7 @@ import HotelSlice, {
 import {
   setFilterData as setTourFilterData,
   clearFilterData as clearTourFilterData,
+  selectTours,
 } from "../../features/tour/tourSlice";
 
 import HotelStars from "../HotelStars/HotelStars";
@@ -101,11 +102,8 @@ const Filter = ({ mode }) => {
   const applyFilter = () => {
     filterTours(tourFilter).then(({ data }) => {
       dispatch(setTourFilterData(data));
-      console.log(data, "new Data");
     });
   };
-
-  console.log(selectedTours, "selectedTours");
 
   return (
     <div className="filter_box">
@@ -217,7 +215,6 @@ const Filter = ({ mode }) => {
                   key={food._id}
                   className="filter_content"
                   onClick={() => {
-                    console.log(food._id);
                     if (mode === "tour") {
                       setTourFilter((prev) => ({
                         ...prev,
