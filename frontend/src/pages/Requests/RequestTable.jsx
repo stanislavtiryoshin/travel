@@ -111,7 +111,7 @@ const fakeColumns = [
 ];
 
 const RequestTable = ({ data, columns }) => {
-  const datas = useMemo(() => (data ? data : fakeData), []);
+  const datas = useMemo(() => (data ? data : fakeData), [data]);
 
   const columnsData = columns ? columns : useMemo(() => fakeColumns, []);
 

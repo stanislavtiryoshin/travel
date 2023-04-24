@@ -36,25 +36,8 @@ const getSingleOrder = asyncHandler(async (req, res) => {
 //@access Private
 
 const updateOrder = asyncHandler(async (req, res) => {
-  const order = await Order.findById(req.params.id);
-
-  // if (!order) {
-  //   res.status(400);
-  //   throw new Error("Order not found");
-  // }
-
-  // // Check if user exists
-  // if (!req.user) {
-  //   res.status(401);
-  //   throw new Error("User not found");
-  // }
-
-  // // Check if user is logged in
-  // if (order.user.toString() !== req.user.id) {
-  //   res.status(401);
-  //   throw new Error("User not authorized");
-  // }
-
+  // res.send(req.params.id);
+  // const order = await Order.findById(req.params.id);
   const updatedOrder = await Order.findByIdAndUpdate(
     req.params.id,
     { status: req.body.status },

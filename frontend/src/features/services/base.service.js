@@ -203,6 +203,14 @@ export const baseApi = createApi({
       }),
       invalidatesTags: [{ id: "LIST", type: "services" }],
     }),
+    updateStatus: builder.mutation({
+      query: (body) => ({
+        url: `/orders/${body.id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: [{ id: "LIST", type: "Orders" }],
+    }),
   }),
 });
 
@@ -225,4 +233,6 @@ export const {
 
   useGetLocationByLetterQuery,
   useGetTourByIdQuery,
+
+  useUpdateStatusMutation,
 } = baseApi;

@@ -4,12 +4,17 @@ import style from "./Requests.module.scss";
 import HotelSearch from "../../components/SearchPanel/HotelSearch";
 import RequestTable from "./RequestTable";
 import { useSelector } from "react-redux";
-import { useGetOrdersQuery } from "../../features/services/base.service";
+import {
+  useGetOrdersQuery,
+  useUpdateStatusMutation,
+} from "../../features/services/base.service";
 
 const Requests = () => {
   const { user } = useSelector((state) => state.auth);
 
-  const { data: orders, isLoading } = useGetOrdersQuery(user.token);
+  const { data: orders = [], isLoading } = useGetOrdersQuery(user.token);
+
+  const [updateStatus] = useUpdateStatusMutation();
 
   const statuses = [
     {
@@ -29,6 +34,14 @@ const Requests = () => {
       style: "pause-status",
     },
   ];
+
+  const handleUpdate = (id, status) => {
+    const values = {
+      id,
+      status,
+    };
+    updateStatus(values);
+  };
 
   const columns = useMemo(
     () => [
@@ -98,6 +111,29 @@ const Requests = () => {
           >
             {row.original.status}
           </button>
+        ),
+      },
+      {
+        id: "changeStatus",
+        header: "Изменить статус",
+        Cell: ({ row }) => (
+          <>
+            <select
+              className="status-select"
+              onChange={(e) => handleUpdate(row.original._id, e.target.value)}
+            >
+              {statuses.map((stat) => (
+                <option
+                  key={stat.label}
+                  value={stat.label}
+                  className={stat.style}
+                  selected={stat.label === row.original.status}
+                >
+                  {stat.label}
+                </option>
+              ))}
+            </select>
+          </>
         ),
       },
     ],

@@ -93,7 +93,13 @@ const Hotel = () => {
 
   const handleOrder = (e) => {
     e.preventDefault();
-    dispatch(addOrder(orderTerms));
+    const values = {
+      ...orderTerms,
+      room: clientRoom._id,
+    };
+    dispatch(addOrder(values));
+    navigate("/orders/new-order");
+    console.log(values);
   };
 
   const [orderTerms, setOrderTerms] = useState({
@@ -166,7 +172,8 @@ const Hotel = () => {
 
   useEffect(() => {
     window.localStorage.setItem("sum", sum);
-    if (clientRoom) window.localStorage.setItem("room", clientRoom);
+    if (clientRoom)
+      window.localStorage.setItem("room", JSON.stringify(clientRoom));
     if (singleHotel) window.localStorage.setItem("hotel", singleHotel?._id);
     if (clientExcursions)
       window.localStorage.setItem(
@@ -210,6 +217,7 @@ const Hotel = () => {
     return <RoomLoader />;
   }
 
+  // console.log(clientRoom._id);
   return (
     <div className="hotel_page page">
       <section className="hotel_section">
@@ -531,7 +539,10 @@ const Hotel = () => {
           ) : null}
         </div>
       </section>
-      <Recommendation recommendation={recommendation} />
+      <Recommendation
+        recommendation={recommendation}
+        singleHotel={singleHotel}
+      />
     </div>
   );
 };

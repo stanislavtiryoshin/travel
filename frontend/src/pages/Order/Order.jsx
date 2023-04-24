@@ -38,6 +38,7 @@ const Order = () => {
     clientName: "",
     clientEmail: "",
     clientPhone: "",
+    clientDateOfBirth: "",
     clientOtherPhone: "",
     extraInfo: "",
   });
@@ -60,7 +61,9 @@ const Order = () => {
       peopleAmount: window.localStorage.getItem("peopleAmount"),
       daysAmount: window.localStorage.getItem("daysAmount"),
       hotel: window.localStorage.getItem("hotel"),
-      rooms: JSON.parse(window.localStorage.getItem("room")),
+      rooms: JSON.parse(
+        localStorage.getItem("room") ? localStorage.getItem("room") : []
+      ),
       sum: window.localStorage.getItem("sum"),
       excursions: JSON.parse(window.localStorage.getItem("excursions")),
     });
@@ -75,7 +78,7 @@ const Order = () => {
       startDate: clientData.startDate,
       endDate: clientData.endDate,
       hotel: clientData.hotel,
-      rooms: clientData.rooms.map((room) => room._id),
+      rooms: clientData && clientData.rooms && clientData.rooms,
       sum: clientData.sum,
     });
   }, [clientData]);
@@ -99,7 +102,7 @@ const Order = () => {
 
   const { singleRoom } = useSelector((state) => state.rooms);
 
-  console.log(clientData.rooms);
+  // console.log(clientData.rooms);
 
   const handleSendOrderEmail = () => {
     if (orderTerms) {
@@ -113,6 +116,7 @@ const Order = () => {
           sum: clientData?.sum,
           startDate: orderTerms?.startDate,
           endDate: orderTerms?.endDate,
+          dateOfBirth: orderTerms?.clientDateOfBirth,
         })
         .then((response) => {
           console.log(response);
@@ -148,7 +152,7 @@ const Order = () => {
         console.log(error);
       });
   };
-
+  console.log(orderTerms);
   return (
     <div className="order_page page">
       <section className="order_section">
@@ -194,6 +198,21 @@ const Order = () => {
                           setOrderTerms({
                             ...orderTerms,
                             clientEmail: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="input_box">
+                      <div className="input_title">Дата рождения</div>
+                      <input
+                        type="date"
+                        className="order_input icon"
+                        required
+                        placeholder="Дата рождения"
+                        onChange={(e) =>
+                          setOrderTerms({
+                            ...orderTerms,
+                            clientDateOfBirth: e.target.value,
                           })
                         }
                       />
