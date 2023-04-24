@@ -129,11 +129,11 @@ const Navbar = ({ isSearch }) => {
       </header>
       {!containsDashboard ? (
         <>
-          <div className="header_bot">
+          <div className="header_bot" style={!isHome ? { padding: 0 } : {}}>
             <div className="container">
               <div className="header_bot-wrapper wrapper">
                 <div className="header_bot-left wrapper">
-                  {!isDashboard ? (
+                  {!isDashboard && isHome ? (
                     <>
                       <img src={photo} alt="" className="header_bot-photo" />
                       <div className="header_bot-left-text">
@@ -141,6 +141,15 @@ const Navbar = ({ isSearch }) => {
                       </div>
                     </>
                   ) : null}
+
+                  {!isHome && (
+                    <SearchPanel
+                      style={{
+                        margin: "10px 0px",
+                      }}
+                      isUserLook
+                    />
+                  )}
                 </div>
                 {!isDashboard ? (
                   <form
@@ -168,14 +177,14 @@ const Navbar = ({ isSearch }) => {
               </div>
             </div>
           </div>
-          <div className="search-panel">
+          {/* <div className="search-panel">
             {isHotels && (
               <SearchPanel
                 style={{ marginBottom: "0px !important" }}
                 isUserLook
               />
             )}
-          </div>
+          </div> */}
         </>
       ) : null}
     </>

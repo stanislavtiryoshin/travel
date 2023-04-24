@@ -372,34 +372,61 @@ const Tour = () => {
                       </div>
                     </div>
                   </div>
-                  {points.map((point, idx) => (
-                    <div className="hotel_services-row">
-                      <div
-                        onClick={() => {
-                          setProgramIdx(idx);
-                        }}
-                        className="tour-program"
-                      >
-                        <div className="tour_day">{idx + 1} день</div>
-                        <div className="tour_expand">V</div>
+                  <div className="hotel_services-row">
+                    {points.map((point, idx) => (
+                      <div>
+                        <div
+                          onClick={() => {
+                            if (programIdx === idx) {
+                              setProgramIdx(null);
+                            } else {
+                              setProgramIdx(idx);
+                            }
+                          }}
+                          style={
+                            programIdx === idx
+                              ? {
+                                  borderRadius: "0px",
+                                  borderTopLeftRadius: "16px",
+                                  borderTopRightRadius: "16px",
+                                }
+                              : {}
+                          }
+                          className="tour-program"
+                        >
+                          <div className="tour_day">{idx + 1} день</div>
+                          <div className="tour_expand">V</div>
+                        </div>
+                        {programIdx === idx && (
+                          <>
+                            {point.points.map((info, infoIdx) => (
+                              <div
+                                style={
+                                  point.points.length - 1 === infoIdx
+                                    ? {
+                                        borderBottomLeftRadius: "16px",
+                                        borderBottomRightRadius: "16px",
+                                      }
+                                    : { borderRadius: "0px" }
+                                }
+                                className="tour_info"
+                              >
+                                <div className="tour_info-time">
+                                  {info.time}
+                                </div>
+                                <div className="tour_info-title">
+                                  {info.pointName}
+                                </div>
+                                <div className="tour_info-desc">
+                                  {info.pointDescription}
+                                </div>
+                              </div>
+                            ))}
+                          </>
+                        )}
                       </div>
-                      {programIdx === idx && (
-                        <>
-                          {point.points.map((info, infoIdx) => (
-                            <div className="tour_info">
-                              <div className="tour_info-time">{info.time}</div>
-                              <div className="tour_info-title">
-                                {info.pointName}
-                              </div>
-                              <div className="tour_info-desc">
-                                {info.pointDescription}
-                              </div>
-                            </div>
-                          ))}
-                        </>
-                      )}
-                    </div>
-                  ))}
+                    ))}
+                  </div>
 
                   {/* <div className="hotel_page-rooms">
                     <Hotels hotel={singleTour.hotelId} />

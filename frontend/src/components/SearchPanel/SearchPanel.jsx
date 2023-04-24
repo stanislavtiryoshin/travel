@@ -164,6 +164,8 @@ const SearchPanel = ({ isUserLook, style }) => {
     });
   };
 
+  const isHome = window.location.pathname === "/";
+
   const handleKidsSelect = (num) => {
     setSearchTerms({
       ...searchTerms,
@@ -207,7 +209,7 @@ const SearchPanel = ({ isUserLook, style }) => {
         </div>
       )}
 
-      <div className="search_bot">
+      <div className="search_bot" style={!isHome ? { padding: "8px" } : {}}>
         <div className="search_col">
           <img src={search1} alt="" className="search_bot-icon" />
           <div className="search_col-content">
