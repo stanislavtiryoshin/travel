@@ -62,7 +62,7 @@ const SearchPanel = ({ isUserLook, style }) => {
     origin: "Астана",
     destination: allLocations?._id ? allLocations[0]._id : null,
     peopleAmount: 1,
-    adultAmount: 1,
+    adultsAmount: 1,
     kidsAmount: 0,
   });
 
@@ -70,7 +70,7 @@ const SearchPanel = ({ isUserLook, style }) => {
     endDate: Date.parse(endingDate),
     startDate: Date.parse(startingDate),
     peopleAmount: 1,
-    adultAmount: 1,
+    adultsAmount: 1,
     kidsAmount: 0,
     daysAmount: localStorage.getItem("daysAmount")
       ? JSON.parse(localStorage.getItem("daysAmount"))
@@ -108,7 +108,7 @@ const SearchPanel = ({ isUserLook, style }) => {
       endDate: localStorage.getItem("endDate"),
       peopleAmount: +localStorage.getItem("peopleAmount"),
       kidsAmount: +localStorage.getItem("kidsAmount"),
-      adultAmount: +localStorage.getItem("adultAmount"),
+      adultsAmount: +localStorage.getItem("adultsAmount"),
       daysAmount: +localStorage.getItem("daysAmount"),
     });
   }, []);
@@ -119,7 +119,7 @@ const SearchPanel = ({ isUserLook, style }) => {
     localStorage.setItem("daysAmount", +clientData.daysAmount);
     localStorage.setItem("peopleAmount", +clientData.peopleAmount);
     localStorage.setItem("kidsAmount", +clientData.kidsAmount);
-    localStorage.setItem("adultAmount", +clientData.adultAmount);
+    localStorage.setItem("adultsAmount", +clientData.adultsAmount);
   }, [clientData]);
 
   const handleSearch = ({
@@ -127,10 +127,19 @@ const SearchPanel = ({ isUserLook, style }) => {
     peopleAmount,
     daysAmount,
     startDate,
+    adultsAmount,
+    kidsAmount,
   }) => {
     if (chosenTag == "Отели") {
       dispatch(
-        getSearchedHotels({ locationId, peopleAmount, daysAmount, startDate })
+        getSearchedHotels({
+          locationId,
+          peopleAmount,
+          daysAmount,
+          startDate,
+          adultsAmount,
+          kidsAmount,
+        })
       );
     }
     if (chosenTag == "Лагеря") {
@@ -145,12 +154,12 @@ const SearchPanel = ({ isUserLook, style }) => {
     const parsedNum = Number(num);
     setSearchTerms({
       ...searchTerms,
-      adultAmount: searchTerms.adultAmount + parsedNum,
+      adultsAmount: searchTerms.adultsAmount + parsedNum,
       peopleAmount: searchTerms.peopleAmount + parsedNum,
     });
     setClientData({
       ...clientData,
-      adultAmount: clientData.adultAmount + parsedNum,
+      adultsAmount: clientData.adultsAmount + parsedNum,
       peopleAmount: clientData.peopleAmount + parsedNum,
     });
   };
@@ -173,7 +182,7 @@ const SearchPanel = ({ isUserLook, style }) => {
       setSearchOptions({
         peopleAmount: clientData.peopleAmount,
         kidsAmount: clientData.kidsAmount,
-        adultAmount: clientData.adultAmount,
+        adultsAmount: clientData.adultsAmount,
       })
     );
   }, [clientData]);
@@ -276,18 +285,20 @@ const SearchPanel = ({ isUserLook, style }) => {
           handleKidsSelect={handleKidsSelect}
           value={searchTerms.peopleAmount}
           kids={searchTerms.kidsAmount}
-          adults={searchTerms.adultAmount}
+          adults={searchTerms.adultsAmount}
         />
         <button
           className="primary-btn yellow"
           onClick={() => {
-            console.log("adf");
+            console.log(clientData);
             if (searchTerms.destination && searchTerms.destination !== "Весь") {
               handleSearch({
                 locationId: searchTerms.destination,
                 peopleAmount: clientData.peopleAmount,
                 daysAmount: clientData.daysAmount,
                 startDate: clientData.startDate,
+                adultsAmount: clientData.adultsAmount,
+                kidsAmount: clientData.kidsAmount,
               });
             } else if (searchTerms.destination === "Весь") {
               handleSearch({
@@ -295,6 +306,8 @@ const SearchPanel = ({ isUserLook, style }) => {
                 peopleAmount: clientData.peopleAmount,
                 daysAmount: clientData.daysAmount,
                 startDate: clientData.startDate,
+                adultsAmount: clientData.adultsAmount,
+                kidsAmount: clientData.kidsAmount,
               });
             }
           }}

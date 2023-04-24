@@ -34,7 +34,10 @@ const getAdminSanatoriums = (req, res) => {
 const getSingleSanatorium = (req, res) => {
   Sanatorium.findById(req.params.id)
     .populate("locationId")
+    .populate("rooms")
     .populate("sanatoriumProgram.programId")
+    .populate("food.foodType")
+    .populate("sanatoriumServices.serviceType")
     .then((response) => res.status(200).json(response))
     .catch((err) => res.sendStatus(403));
 };

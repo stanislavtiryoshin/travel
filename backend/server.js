@@ -137,6 +137,7 @@ app.use("/api/programs", require("./routes/programRoutes"));
 app.use("/api/sanatoriums", require("./routes/sanatoryRoutes"));
 app.use("/api/camps", require("./routes/campRoutes"));
 app.use("/api/tour", require("./routes/tourRoutes"));
+app.use("/api/periods", require("./routes/periodRoutes"));
 
 app.use("/images", express.static(path.join(__dirname, "../public/uploads")));
 

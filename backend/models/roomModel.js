@@ -10,17 +10,22 @@ const roomSchema = mongoose.Schema(
     img: [String],
     periodPrices: [
       {
-        periodId: {
+        period: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Period",
         },
-        startDay: Number,
-        startMonth: Number,
-        endDay: Number,
-        endMonth: Number,
-        roomPrice: Number,
-        adultPrice: Number,
-        kidPrice: Number,
+        roomPrice: {
+          type: Number,
+          default: 0,
+        },
+        adultPrice: {
+          type: Number,
+          default: 0,
+        },
+        kidPrice: {
+          type: Number,
+          default: 0,
+        },
       },
     ],
     roomName: {
@@ -32,9 +37,17 @@ const roomSchema = mongoose.Schema(
     capacity: {
       type: Number,
     },
-    extraPlace: {
-      type: Number,
-    },
+    extraPlaces: [
+      {
+        // _id: 1488
+        minAge: Number,
+        maxAge: Number,
+        isAdult: Boolean,
+        priceWithFood: Number,
+        priceNoFood: Number,
+        foodPrice: Number,
+      },
+    ],
     roomPrice: {
       type: Number,
     },

@@ -64,6 +64,23 @@ const updateRoom = asyncHandler(async (req, res) => {
   res.status(200).json(room);
 });
 
+//@desc   Update room period prices
+//@route  PATCH /api/rooms/:roomId/prices
+//@access Private
+
+const updatePrices = asyncHandler(async (req, res) => {
+  const room = await Room.findByIdAndUpdate(
+    req.params.roomId,
+    {
+      periodPrices: req.body.periodPrices,
+    },
+    {
+      new: true,
+    }
+  );
+  res.status(200).json(room);
+});
+
 //@desc   Insert prices
 //@route  PATCH /api/rooms/:roomId/prices
 //@access Private
@@ -129,4 +146,5 @@ module.exports = {
   getSingleRoom,
   updateRoom,
   insertPrices,
+  updatePrices,
 };

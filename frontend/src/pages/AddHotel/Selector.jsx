@@ -20,8 +20,6 @@ export default function ServiceSelector({
     }
   }, [allCategories, currCateg, data]);
 
-  console.log(valu);
-
   return (
     <>
       {allCategories && (

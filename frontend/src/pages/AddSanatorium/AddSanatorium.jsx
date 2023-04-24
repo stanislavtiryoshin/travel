@@ -16,25 +16,23 @@ import ShortUniqueId from "short-unique-id";
 
 import check from "../../assets/check.svg";
 
-import "./AddHotel.scss";
-import "./Table.scss";
+import "./AddSanatorium.scss";
+import "../AddHotel/Table.scss";
+import "../AddHotel/AddHotel.scss";
 import { useDispatch, useSelector } from "react-redux";
-import Selector from "./Select";
 import { AdminHead } from "../../components/Admin";
-import { AdminAddForm } from "../../components/Admin/AdminAddForm";
 import { Input } from "../../components/Form";
 import Modal from "../../components/Modal";
 import Section from "../../components/Section";
-import RoomRow from "./RoomRow";
-import ServiceSelector from "./Selector";
-import hotelService from "../../features/hotel/hotelService";
+import RoomRow from "../AddHotel/RoomRow";
+import ServiceSelector from "../AddHotel/Selector";
 
 import { useUploadImageMutation } from "../../features/services/upload.service";
 import GalleryBox from "../../components/Slider/GalleryBox";
 import e from "cors";
 
-const AddHotel = ({
-  fetchedHotelData,
+const AddSanatorium = ({
+  fetchedSanatoriumData,
   editMode,
   updateHotelData,
   handleUploadImage,
@@ -48,7 +46,9 @@ const AddHotel = ({
 
   const [hotelData, setHotelData] = useState({
     uid: uid(),
-    hotelServices: [{ serviceId: "64258af02ba7928f871a09cd" }],
+    sanatoriumServices: [
+      { serviceType: "644517f32927d86d2f5a7ee7", description: "" },
+    ],
     locationId: null,
     name: "",
     locationFeature: "",
@@ -77,9 +77,9 @@ const AddHotel = ({
   });
 
   useEffect(() => {
-    let newData = fetchedHotelData;
+    let newData = fetchedSanatoriumData;
     setHotelData(newData);
-  }, [fetchedHotelData, editMode]);
+  }, [fetchedSanatoriumData, editMode]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -90,6 +90,7 @@ const AddHotel = ({
   const [allLocations, setAllLocations] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [allServices, setAllServices] = useState([]);
+  const [allSanServices, setAllSanServices] = useState([]);
 
   const [servicesObjs, setServicesObjs] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -133,17 +134,20 @@ const AddHotel = ({
   ]);
 
   // If the hotel already has services, insert them into addedServices
-  useEffect(() => {
-    if (fetchedHotelData && fetchedHotelData?.hotelServices?.length > 0) {
-      setAddedServices(fetchedHotelData.hotelServices);
-      setNewServices(fetchedHotelData.hotelServices);
-    }
-  }, [fetchedHotelData]);
+  // useEffect(() => {
+  //   if (
+  //     fetchedSanatoriumData &&
+  //     fetchedSanatoriumData?.hotelServices?.length > 0
+  //   ) {
+  //     setAddedServices(fetchedSanatoriumData.hotelServices);
+  //     setNewServices(fetchedSanatoriumData.hotelServices);
+  //   }
+  // }, [fetchedSanatoriumData]);
   // console.log(newServices);
 
-  useEffect(() => {
-    setHotelData({ ...hotelData, hotelServices: newServices });
-  }, [newServices]);
+  // useEffect(() => {
+  //   setHotelData({ ...hotelData, hotelServices: newServices });
+  // }, [newServices]);
 
   // Fetching all categories, services, locations
   useEffect(() => {
@@ -168,11 +172,40 @@ const AddHotel = ({
       .get(`http://localhost:3000/api/hotelServices`)
       .then((response) => {
         setAllServices(response.data);
+        setAllSanServices(
+          response.data.filter(
+            (serv) => serv.category._id === "644516e52927d86d2f5a7ee5"
+          )
+        );
       })
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [axios]);
+
+  const [newSanServices, setNewSanServices] = useState([]);
+
+  useEffect(() => {
+    setNewSanServices(
+      allSanServices.map((serv) => {
+        return { serviceType: serv, description: "" };
+      })
+    );
+  }, [allSanServices]);
+
+  const [addedSanServices, setAddedSanServices] = useState([
+    { serviceType: "644517f32927d86d2f5a7ee7", description: "" },
+  ]);
+
+  const [fetchedSanatoriumServices, setFetchedSanatoriumServices] = useState();
+
+  useEffect(() => {
+    setAddedSanServices(fetchedSanatoriumData.sanatoriumServices);
+  }, [fetchedSanatoriumData, editMode]);
+
+  useEffect(() => {
+    setHotelData({ ...hotelData, sanatoriumServices: addedSanServices });
+  }, [addedSanServices]);
 
   // comforts: [...JSON.parse(localStorage.getItem("comforts"))],
 
@@ -191,15 +224,15 @@ const AddHotel = ({
 
   const [prices, setPrices] = useState([]);
 
-  const handlePriceChange = (roomId, periodId, price) => {
-    setPrices((prevPrices) => ({
-      ...prevPrices,
-      [roomId]: {
-        ...prevPrices[roomId],
-        [periodId]: price,
-      },
-    }));
-  };
+  // const handlePriceChange = (roomId, periodId, price) => {
+  //   setPrices((prevPrices) => ({
+  //     ...prevPrices,
+  //     [roomId]: {
+  //       ...prevPrices[roomId],
+  //       [periodId]: price,
+  //     },
+  //   }));
+  // };
 
   const [periods, setPeriods] = useState([]);
 
@@ -209,16 +242,14 @@ const AddHotel = ({
 
   const [servs, setServs] = useState();
 
-  console.log(servs, "servs");
+  // useEffect(() => {
+  //   setHotelData({ ...hotelData, hotelServices: servs });
+  // }, [servs]);
 
-  useEffect(() => {
-    setHotelData({ ...hotelData, hotelServices: servs });
-  }, [servs]);
-
-  const [newService, setNewService] = useState({
-    hotelServiceName: null,
-    category: null,
-  });
+  // const [newService, setNewService] = useState({
+  //   hotelServiceName: null,
+  //   category: null,
+  // });
 
   const [sources, setSources] = useState([]);
   useEffect(() => {
@@ -228,7 +259,9 @@ const AddHotel = ({
   return (
     <>
       <AdminHead
-        text={!editMode ? "Создание нового отеля" : "Редактирование отеля"}
+        text={
+          !editMode ? "Создание нового санатория" : "Редактирование санатория"
+        }
         onClick={() => {
           !editMode ? handleSubmit() : dispatch(updateHotel(hotelData));
         }}
@@ -240,7 +273,7 @@ const AddHotel = ({
         >
           <GalleryBox sources={sources} />
           <div className="gen_content-box">
-            <div className="gen_title">Основное об отеле</div>
+            <div className="gen_title">Основное о санаторие</div>
             <div className="input_row">
               <input
                 type="text"
@@ -478,7 +511,7 @@ const AddHotel = ({
                     name="discountType"
                     id=""
                     className="primary-input"
-                    value={hotelData.kids.kidDiscount.discountType}
+                    value={hotelData?.kids?.kidDiscount?.discountType}
                     onChange={(e) =>
                       setHotelData({
                         ...hotelData,
@@ -503,7 +536,7 @@ const AddHotel = ({
                     name="discount"
                     className="primary-input"
                     placeholder="2000"
-                    value={hotelData.kids.kidDiscount.discountValue}
+                    value={hotelData?.kids?.kidDiscount?.discountValue}
                     onChange={(e) =>
                       setHotelData({
                         ...hotelData,
@@ -595,7 +628,7 @@ const AddHotel = ({
                     name=""
                     id=""
                     className="primary-input"
-                    value={hotelData.payment.paymentType}
+                    value={hotelData?.payment?.paymentType}
                     onChange={(e) => {
                       setHotelData({
                         ...hotelData,
@@ -618,7 +651,7 @@ const AddHotel = ({
                     name=""
                     id=""
                     className="primary-input"
-                    value={hotelData.payment.prepayment}
+                    value={hotelData?.payment?.prepayment}
                     onChange={(e) => {
                       setHotelData({
                         ...hotelData,
@@ -640,14 +673,17 @@ const AddHotel = ({
           </div>
           <div className="add_more-col categ-col shadowed_box">
             <div className="gen_title">Услуги отеля</div>
-            {addedServices?.map((serv, idx) => {
+            {addedSanServices?.map((serv, idx) => {
               return (
                 <ServiceCard
                   setIsOpen={setIsOpen}
                   number={idx + 1}
+                  setAddedSanServices={setAddedSanServices}
+                  addedSanServices={addedSanServices}
                   allCategories={allCategories}
                   allServices={allServices}
                   optionList={servicesObjs}
+                  allSanServices={allSanServices}
                   selectedOptions={selectedOptions}
                   handleSelect={handleSelect}
                   setServs={setServs}
@@ -655,10 +691,42 @@ const AddHotel = ({
                 />
               );
             })}
+            {/* {editMode &&
+            fetchedSanatoriumData &&
+            fetchedSanatoriumServices &&
+            fetchedSanatoriumServices.length > 0
+              ? fetchedSanatoriumServices.map((serv, idx) => {
+                  return (
+                    <ServiceCard
+                      setIsOpen={setIsOpen}
+                      number={idx + 1}
+                      setAddedSanServices={setAddedSanServices}
+                      fetchedSanatoriumServices={fetchedSanatoriumServices}
+                      setFetchedSanatoriumServices={
+                        setFetchedSanatoriumServices
+                      }
+                      addedSanServices={addedSanServices}
+                      allCategories={allCategories}
+                      allServices={allServices}
+                      optionList={servicesObjs}
+                      allSanServices={allSanServices}
+                      selectedOptions={selectedOptions}
+                      handleSelect={handleSelect}
+                      setServs={setServs}
+                      servs={servs}
+                      fetchedService={serv}
+                      fetchedMode
+                    />
+                  );
+                })
+              : null} */}
             <button
               className="add_service-btn primary-btn"
               onClick={() => {
-                setAddedServices((prev) => [...prev, {}]);
+                setAddedSanServices((prev) => [
+                  ...prev,
+                  { serviceType: "644517f32927d86d2f5a7ee7", description: "" },
+                ]);
               }}
             >
               Добавить услугу
@@ -790,7 +858,7 @@ const AddHotel = ({
                   : null}
               </div>
             </Section>
-            {fetchedHotelData && fetchedHotelData?.periods ? (
+            {fetchedSanatoriumData && fetchedSanatoriumData?.periods ? (
               <Section
                 section="tb_section"
                 wrapper="tb_wrapper ver shadowed_box"
@@ -828,48 +896,7 @@ const AddHotel = ({
         ) : null}
       </div>
 
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div className="modal-content">
-          <div className="modal-title">
-            Хотите добавить новую <br /> услугу?
-          </div>
-          <div className="modal-body">
-            <span className="modal-select-text">Название новой услуги</span>
-            <select
-              name=""
-              id=""
-              className="primary-input"
-              style={{ width: "100%", marginTop: "22px" }}
-              onChange={(e) =>
-                setNewService({ ...newService, category: e.target.value })
-              }
-            >
-              {allCategories?.map((categ) => {
-                return <option value={categ._id}>{categ.categoryName}</option>;
-              })}
-            </select>
-            <Input
-              style={{ width: "100%", marginTop: "22px" }}
-              placeholder="Услуга"
-              onChange={(e) =>
-                setNewService({
-                  ...newService,
-                  hotelServiceName: e.target.value,
-                })
-              }
-            />
-            <div className="modal-button">
-              <button
-                style={{ width: "100%", marginTop: "10px" }}
-                className="primary-btn"
-                onClick={() => dispatch(addService(newService))}
-              >
-                <span>Добавить услугу</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </Modal>
+      {console.log(hotelData)}
     </>
   );
 };
@@ -877,14 +904,21 @@ const AddHotel = ({
 export const ServiceCard = ({
   number,
   allCategories,
+  allSanServices,
   allServices,
   deleteService,
   optionList,
   selectedOptions,
+  addedSanServices,
+  setAddedSanServices,
+  fetchedSanatoriumServices,
+  setFetchedSanatoriumServices,
   handleSelect,
   setIsOpen,
   setServs,
   servs,
+  fetchedService,
+  fetchedMode,
 }) => {
   const [currCateg, setCurrCateg] = useState("Питание");
   const [currServ, setCurrServ] = useState("64258af02ba7928f871a09cd");
@@ -903,35 +937,60 @@ export const ServiceCard = ({
   return (
     <div className="service-card">
       <div className="service-title">
-        Категория {number}{" "}
+        Услуга {number}{" "}
         <button onClick={() => deleteService(currServ)}>X</button>
       </div>
-      {/* <Selector
-        allCategories={allCategories}
-        optionList={optionList}
-        thisCategServices={thisCategServices}
-        styles={{
-          control: (baseStyles) => ({
-            ...baseStyles,
-            width: `${550}px`,
-            border: "none",
-            "background-color": "rgb(249, 249, 249)",
-            outline: "none",
-          }),
+      <select
+        name=""
+        id=""
+        className="primary-input"
+        defaultValue={allSanServices[0]}
+        value={
+          fetchedService
+            ? fetchedService?.serviceType
+            : addedSanServices[number - 1]?.serviceType
+        }
+        onChange={(e) => {
+          setAddedSanServices((prevServices) => {
+            const updatedServices = [...prevServices];
+            updatedServices[number - 1] = {
+              ...updatedServices[number - 1],
+              serviceType: e.target.value,
+            };
+            return updatedServices;
+          });
         }}
-      /> */}
-      <ServiceSelector
-        data={newAllServices}
-        allCategories={allCategories}
-        onChange={setServs}
-        value={servs}
-        placeholder={"Выберете услугу"}
-      />
-      <span onClick={() => setIsOpen(true)} className="additional-service">
-        Добавить новую услугу
-      </span>
+      >
+        {allSanServices &&
+          allSanServices?.map((serv) => {
+            return (
+              <option key={serv._id} value={serv._id}>
+                {serv.hotelServiceName}
+              </option>
+            );
+          })}
+      </select>
+      <textarea
+        className="primary-input"
+        placeholder="Описание..."
+        name=""
+        id=""
+        cols="30"
+        rows="10"
+        value={addedSanServices[number - 1]?.description || ""}
+        onChange={(e) => {
+          setAddedSanServices((prevServices) => {
+            const updatedServices = [...prevServices];
+            updatedServices[number - 1] = {
+              ...updatedServices[number - 1],
+              description: e.target.value,
+            };
+            return updatedServices;
+          });
+        }}
+      ></textarea>
     </div>
   );
 };
 
-export default AddHotel;
+export default AddSanatorium;

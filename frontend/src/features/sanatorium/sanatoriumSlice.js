@@ -5,6 +5,7 @@ const user = JSON.parse(localStorage.getItem("user"));
 
 const initialState = {
   sanatoriums: [],
+  singleSanatorium: {},
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -20,6 +21,25 @@ export const getSanatoriums = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       return await sanatoriumService.getSanatoriums();
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Get single sanatorium by id
+
+export const getSingleSanatorium = createAsyncThunk(
+  "sanatoriums/getSingle",
+  async (sanatoriumId, thunkAPI) => {
+    try {
+      return await sanatoriumService.getSingleSanatorium(sanatoriumId);
     } catch (error) {
       const message =
         (error.response &&
@@ -81,6 +101,11 @@ export const sanatoriumSlice = createSlice({
       state.isLoading = false;
       state.isSuccess = true;
       state.sanatoriums = action.payload;
+    });
+    builder.addCase(getSingleSanatorium.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isSuccess = true;
+      state.singleSanatorium = action.payload;
     });
   },
 });

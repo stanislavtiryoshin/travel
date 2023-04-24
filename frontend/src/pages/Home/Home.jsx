@@ -47,6 +47,8 @@ const Home = () => {
         peopleAmount: 1,
         daysAmount: 2,
         startDate: Date.parse(new Date()),
+        adultsAmount: 1,
+        kidsAmount: 0,
       })
     );
     dispatch(getSanatoriums());

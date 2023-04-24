@@ -93,7 +93,14 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
         </div>
       </div>
       <div className="adm_hotel-btns">
-        <Link to={`/dashboard/hotel/${_id}`} className="primary-btn clear">
+        <Link
+          to={
+            mode === "hotel"
+              ? `/dashboard/hotel/${_id}`
+              : `/dashboard/sanatorium/${_id}`
+          }
+          className="primary-btn clear"
+        >
           Редактировать
         </Link>
       </div>

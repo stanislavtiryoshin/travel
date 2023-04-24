@@ -210,17 +210,22 @@ const HotelCard = ({
             </div>
           )}
 
-          <div className="card_right-people">На {peopleAmount} взр.</div>
+          <div className="card_right-people">
+            На {hotel.adultsAmount} взр.
+            {hotel.kidsAmount && hotel.kidsAmount > 0
+              ? `, ${hotel.kidsAmount} дет.`
+              : null}
+          </div>
         </div>
         <div className="card_right-days">
           <div className="card_days">
             <img src={sun} alt="" />
-            <span>{daysAmount}</span>
+            <span>{hotel?.daysAmount}</span>
             дней
           </div>
           <div className="card_days nights">
             <img src={moon} alt="" />
-            <span>{daysAmount - 1}</span>
+            <span>{hotel?.nightsAmount}</span>
             ночи
           </div>
         </div>

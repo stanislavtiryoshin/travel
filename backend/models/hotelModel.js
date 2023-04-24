@@ -44,13 +44,12 @@ const hotelSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Food",
     },
-    foodIncluded: Number,
+    foodIncluded: Boolean,
+    extrasFoodIncludd: Boolean,
     periods: [
       {
-        startDay: Number,
-        startMonth: Number,
-        endDay: Number,
-        endMonth: Number,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Period",
       },
     ],
     kidFoodPrice: {

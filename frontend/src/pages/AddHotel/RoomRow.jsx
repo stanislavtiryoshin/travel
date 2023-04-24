@@ -4,41 +4,10 @@ import { updateRoom } from "../../features/room/roomSlice";
 
 const RoomRow = ({ room, handlePriceChange, periods, prices }) => {
   const dispatch = useDispatch();
-  const [periodPrices, setPeriodPrices] = useState([
-    { periodId: "", roomPrice: 0 },
-  ]);
+  const [periodPrices, setPeriodPrices] = useState([]);
+  const [newPeriodPrices, setNewPeriodPrices] = useState([]);
 
-  useEffect(() => {
-    if (room && room?.periodPrices && room?.periodPrices.length > 0) {
-      let newPeriodPrices = [...room.periodPrices];
-      if (newPeriodPrices?.length < periods?.length) {
-        const diff = periods.length - newPeriodPrices.length;
-        for (let i = 0; i < diff; i++) {
-          if (i < periods.length) {
-            newPeriodPrices.push({
-              periodId: periods[periods.length - diff + i]._id,
-              roomPrice: 0,
-            });
-          } else {
-            newPeriodPrices.push({ periodId: "", roomPrice: 0 });
-          }
-        }
-      }
-      setPeriodPrices(newPeriodPrices);
-    } else {
-      setPeriodPrices((prevPeriodPrices) => {
-        const newPeriodPrices = periods?.map((per) => ({
-          periodId: per._id,
-          startDay: per.startDay,
-          startMonth: per.startMonth,
-          endDay: per.endDay,
-          endMonth: per.endMonth,
-          roomPrice: 0,
-        }));
-        return newPeriodPrices;
-      });
-    }
-  }, [periods, room]);
+  useEffect(() => {}, [periods, room]);
 
   return (
     <>

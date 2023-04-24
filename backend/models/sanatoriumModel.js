@@ -5,10 +5,32 @@ const sanatoriumSchema = Schema(
     name: {
       type: String,
     },
+    periods: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Period",
+      },
+    ],
     locationId: {
       type: Schema.Types.ObjectId,
       ref: "Location",
     },
+    food: {
+      foodType: {
+        type: Schema.Types.ObjectId,
+        ref: "Food",
+      },
+      description: String,
+    },
+    sanatoriumServices: [
+      {
+        serviceType: {
+          type: Schema.Types.ObjectId,
+          ref: "HotelService",
+        },
+        description: String,
+      },
+    ],
     locationFeature: {
       type: String,
     },
