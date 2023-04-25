@@ -30,7 +30,7 @@ router.patch("/:roomId/upload", upload.array("images", 5), (req, res) => {
       },
     }
   )
-    .then((response) => res.status(201).json(response))
+    .then((response) => res.status(201).json(filePath))
     .catch(() => res.sendStatus(500));
 });
 

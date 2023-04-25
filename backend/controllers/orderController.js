@@ -46,9 +46,31 @@ const updateOrder = asyncHandler(async (req, res) => {
   res.status(200).json(updatedOrder);
 });
 
+const searchOrders = (req, res) => {
+  const { status, query } = req.query;
+
+  let q = {};
+  if (status && status.length !== 0) {
+    q.status = status;
+  }
+  if (query && query.length !== 0) {
+    q["$or"] = [
+      { uid: { $regex: query, $options: "i" } },
+      { clientName: { $regex: query, $options: "i" } },
+    ];
+  }
+
+  // console.log(JSON.stringify(q, null, 2));
+
+  Order.find(q)
+    .then((response) => res.status(200).json(response))
+    .catch(() => res.sendStatus(500));
+};
+
 module.exports = {
   getOrders,
   addOrder,
   updateOrder,
   getSingleOrder,
+  searchOrders,
 };

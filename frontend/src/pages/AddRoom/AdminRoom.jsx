@@ -6,7 +6,10 @@ import { getSingleRoom } from "../../features/room/roomSlice";
 
 import AddRoom from "./AddRoom";
 
+import { useUploadImageMutation } from "../../features/services/upload.service";
+
 const AdminRoom = () => {
+  const [uploadImage] = useUploadImageMutation();
   const { roomId } = useParams();
   const dispatch = useDispatch();
 
@@ -17,8 +20,6 @@ const AdminRoom = () => {
   useEffect(() => {
     dispatch(getSingleRoom(roomId));
   }, [roomId]);
-
-  console.log(singleRoom);
 
   return (
     <>

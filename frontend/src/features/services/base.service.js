@@ -130,6 +130,14 @@ export const baseApi = createApi({
             ]
           : [{ type: "Orders", id: "LIST" }],
     }),
+    getOrdersByQuery: builder.query({
+      query: (body) => ({
+        url: `/orders/order/search?status=${body.status}&query=${body.query}`,
+        headers: {
+          Authorization: `Bearer ${body.token}`,
+        },
+      }),
+    }),
     //Addition
     addTour: builder.mutation({
       query: (body) => ({
@@ -228,6 +236,8 @@ export const {
   useGetFoodQuery,
   useAddHotelServiceMutation,
   useGetOrdersQuery,
+  useGetOrdersByQueryQuery,
+  useLazyGetOrdersByQueryQuery,
   useGetRoomByHotelIdLimitQuery,
   useGetHotelsByTagMutation,
 

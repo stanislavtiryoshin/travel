@@ -5,16 +5,43 @@ import HotelSearch from "../../components/SearchPanel/HotelSearch";
 import RequestTable from "./RequestTable";
 import { useSelector } from "react-redux";
 import {
+  useGetOrdersByQueryQuery,
   useGetOrdersQuery,
+  useLazyGetOrdersByQueryQuery,
   useUpdateStatusMutation,
 } from "../../features/services/base.service";
 
 const Requests = () => {
   const { user } = useSelector((state) => state.auth);
 
-  const { data: orders = [], isLoading } = useGetOrdersQuery(user.token);
+  // const { data: orders = [], isLoading } = useGetOrdersQuery(user.token);
+  const [query, setQuery] = React.useState("");
+  const [status, setStatus] = React.useState("");
+
+  // const {
+  //   data: orders = [],
+  //   isLoading,
+  // } = useGetOrdersByQueryQuery({
+  //   token: user.token,
+  //   query: query,
+  //   status: status,
+  // });
+  const [orders, setOrders] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  const [fetchOrders] = useLazyGetOrdersByQueryQuery();
 
   const [updateStatus] = useUpdateStatusMutation();
+
+  React.useEffect(() => {
+    fetchOrders({
+      token: user.token,
+      query: query,
+      status: status,
+    })
+      .then(({ data }) => setOrders(data))
+      .then(() => setIsLoading(false));
+  }, []);
 
   const statuses = [
     {
@@ -40,7 +67,15 @@ const Requests = () => {
       id,
       status,
     };
-    updateStatus(values);
+    updateStatus(values).then(({ data }) => {
+      const orderIndex = orders.findIndex((order) => order._id === data._id);
+      const newOrders = [
+        ...orders.slice(0, orderIndex),
+        { ...orders[orderIndex], status: data.status },
+        ...orders.slice(orderIndex + 1),
+      ];
+      setOrders(newOrders);
+    });
   };
 
   const columns = useMemo(
@@ -140,9 +175,30 @@ const Requests = () => {
     []
   );
 
+  const handleSearch = () => {
+    fetchOrders({
+      token: user.token,
+      query: query,
+      status: status,
+    })
+      .then(({ data }) => {
+        setIsLoading(true);
+        setOrders(data);
+      })
+      .finally(() => setIsLoading(false));
+  };
+
+  console.log(query, "query");
+
   return (
     <>
-      <HotelSearch reqMode />
+      <HotelSearch
+        reqMode
+        handleQuery={setQuery}
+        handleStatus={setStatus}
+        find={handleSearch}
+        query={query}
+      />
 
       <section className="dash_section">
         {isLoading ? (

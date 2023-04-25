@@ -74,6 +74,7 @@ const DesktopRoute = () => {
             path="/dashboard/hotel/:hotelId/add-room"
             element={<AddRoom />}
           />
+          {/* edit room */}
           <Route path="/dashboard/room/:roomId" element={<AdminRoom />} />
 
           {/* <Route path="/tour/:sanatoriumId" element={<Tour />} /> */}
