@@ -12,6 +12,8 @@ const getTour = (req, res) => {
     .populate("locationId")
     .populate("hotels")
     .populate("food")
+    .populate("hotelId")
+
     .populate("comforts")
     .then((response) => res.status(200).json(response))
     .catch((err) => res.send(err));
@@ -30,6 +32,7 @@ const getSingleTour = (req, res) => {
     .populate("rooms")
     .populate("locationId")
     .populate("hotels")
+    .populate("hotelId")
     .populate("food")
     .populate("comforts")
     .then((response) => res.status(200).json(response))
@@ -157,6 +160,8 @@ const tourByTagRecommendation = async (req, res) => {
       .populate("locationId")
       .populate("hotels")
       .populate("food")
+      .populate("hotelId")
+
       .populate("comforts");
 
     if (tours.length === 0) {

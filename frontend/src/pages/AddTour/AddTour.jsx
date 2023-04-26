@@ -21,12 +21,16 @@ import {
 import { useSelector } from "react-redux";
 import Modal from "../../components/Modal";
 
+import { useNavigate } from "react-router-dom";
+
 const AddTour = () => {
   const { data: food = [], isLoading: isLoadFood } = useGetFoodQuery();
   const [isOpen, setIsOpen] = React.useState(false);
   const [dayIDX, setDayIdx] = React.useState(0);
   const [foodValue, setFoodValue] = React.useState([]);
   const [comfortsValue, setComfortsValue] = React.useState([]);
+
+  const navigate = useNavigate();
 
   const [isOpenModal, setIsOpenModal] = React.useState(false);
   const [tourData, setTourData] = React.useState({
@@ -81,7 +85,8 @@ const AddTour = () => {
     },
   ]);
 
-  const [createTour, { isLoading: addLoad }] = useAddTourMutation();
+  const [createTour, { isLoading: addLoad, data: addedTour }] =
+    useAddTourMutation();
   const { user } = useSelector((state) => state.auth);
 
   const [serviceName, setServiceName] = React.useState("");
@@ -114,9 +119,8 @@ const AddTour = () => {
     await createTour(values);
 
     if (!addLoad) {
-      localStorage.removeItem("comforts");
-      localStorage.removeItem("food");
       alert("Added");
+      navigate(`/tour/${addedTour._id}`);
     }
   };
 
@@ -297,8 +301,8 @@ const AddTour = () => {
                     Добавить отель
                   </button>
                   <div className="input_title">Тип питания</div>
-
                   <Selector2
+                    food
                     data={food}
                     onChange={setFoodValue}
                     value={foodValue}
@@ -324,6 +328,7 @@ const AddTour = () => {
 
                   <div className="input_title">Удобства</div>
                   <Selector2
+                    isServ
                     data={allServices}
                     placeholder={`Введите значение`}
                     onChange={setComfortsValue}

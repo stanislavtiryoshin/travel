@@ -86,7 +86,10 @@ const tourSchema = Schema({
       type: Number,
     },
   },
-
+  hotelId: {
+    type: Schema.Types.ObjectId,
+    ref: "Hotel",
+  },
   hotels: [
     {
       hotel: {
@@ -95,10 +98,10 @@ const tourSchema = Schema({
       },
       room: {
         type: Schema.Types.ObjectId,
-        ref: "Room"
+        ref: "Room",
       },
     },
-  ],
+  ], // я что то не понял
 
   food: [
     {

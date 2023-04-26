@@ -42,6 +42,8 @@ import Room from "../Hotel/Room";
 import Hotels from "./Hotels";
 import { useGetTourByTagMutation } from "../../features/services/edit.service";
 
+import style from "./Hotel.module.scss";
+
 const Tour = () => {
   // const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -294,16 +296,49 @@ const Tour = () => {
                 <div className="hotel_page-gen shadowed_box">
                   <div className="gen_chosen-row">
                     <div className="body_title-box">
-                      <div className="body_title" id="anchor">
-                        Ваш номер
-                      </div>
-                      <div className="body_title-text">
-                        Выбранный вами номер отображается здесь. Другие варианты
-                        номеров и цены находятся{" "}
-                        <a href="" className="hotel_anchor">
-                          здесь.
-                        </a>
-                      </div>
+                      {singleTour.hotelId && (
+                        <>
+                          <div className="body_title" id="anchor">
+                            Ваш отель
+                          </div>
+                          <div className="body_title">
+                            <div className={style.hotelTour}>
+                              <div className={style.hotelTitleBox}>
+                                <div className={style.hotelImage}>
+                                  <img src="https://alterainvest.ru/upload/iblock/606/6068fc0ed88b9d6f995d3f1d073cce37.jpg" />
+                                </div>
+                                <div className={style.hotelTitle}>
+                                  <div className={style.hotelName}>
+                                    {singleTour.hotelId.name}
+                                  </div>
+                                  <div className={style.info}>
+                                    <div>
+                                      Заезд с {singleTour.hotelId.enterTime}
+                                    </div>
+                                    <div>
+                                      Выезд до {singleTour.hotelId.leaveTime}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <hr />
+                              <div className={style.btn_container}>
+                                <button
+                                  className="load-more-btn"
+                                  style={{
+                                    padding: "4px",
+                                    width: "100%",
+                                    color: "black",
+                                  }}
+                                  disabled
+                                >
+                                  Выбрано
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                   <div className="gen_info-row">
