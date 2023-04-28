@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login, reset } from "../../features/auth/authSlice";
 
+import "./Login.scss";
+
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -52,28 +54,42 @@ const LoginPage = () => {
       <section className="reg_section">
         <div className="container">
           <div className="reg_wrapper wrapper ver">
-            <h2>Login</h2>
+            <form
+              onSubmit={handleSubmit}
+              className="reg_form"
+              style={{ height: "65vh", width: "350px" }}
+            >
+              <h2>Войти</h2>
 
-            <form onSubmit={handleSubmit} className="reg_form">
               <input
                 type="email"
                 name="email"
-                placeholder="email"
-                value={email}
+                placeholder="Почта"
+                className="reg_input"
+                value={formData.email}
                 onChange={handleChange}
               />
 
               <input
                 type="password"
-                name="password"
+                name="Пароль"
+                className="reg_input"
                 placeholder="password"
-                value={password}
-                onChange={handleChange}
+                value={formData.password}
+                onChange={(e) => {
+                  setFormData((prevState) => ({
+                    ...prevState,
+                    password: e.target.value,
+                  }));
+                }}
               />
 
               <button type="submit" className="btn-pink-solid">
-                Submit
+                Войти
               </button>
+              <span onClick={() => navigate("/register")} className="no-user">
+                Нет аккаунта
+              </span>
             </form>
           </div>
         </div>

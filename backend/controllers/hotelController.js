@@ -308,7 +308,7 @@ const getPrice = asyncHandler(async (req, res) => {
     personMode,
     excursions,
     kidsFoodAmount,
-    adultsFoodAmount
+    adultsFoodAmount,
   } = req.query;
 
   // const urlParams = queryString.parse(kidsAges.split("?")[1]);
@@ -317,7 +317,7 @@ const getPrice = asyncHandler(async (req, res) => {
 
   const hotel = await Hotel.findById(req.params.hotelId);
   const chosenRoom = hotel.rooms.find((room) => room._id === roomId);
-  const extraPlacesAmount = kidsAmount + adultsAmount - chosenRoom.capacity // = 2
+  const extraPlacesAmount = kidsAmount + adultsAmount - chosenRoom.capacity; // = 2
 
   if (
     extraPlacesAmount &&

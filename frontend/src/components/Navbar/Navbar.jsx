@@ -56,6 +56,7 @@ const Navbar = ({ isSearch }) => {
     { id: 2, label: "1-3 туры" },
     { id: 3, label: "Лагеря" },
     { id: 4, label: "Санатории" },
+    { id: 5, label: "Менеджеры" },
   ];
 
   const renderTabs = () => {

@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { register, reset } from "../../features/auth/authSlice";
 
+import "../Login/Login.scss";
+
 const RegisterPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -55,30 +57,37 @@ const RegisterPage = () => {
     <main className="reg_page">
       <section className="reg_section">
         <div className="container">
-          <div className="wrapper ver reg_wrapper">
-            <h2>Register</h2>
+          <div className="wrapper ver reg_wrapper" style={{ height: "65vh" }}>
+            <form
+              onSubmit={handleSubmit}
+              className="reg_form"
+              style={{ width: "350px" }}
+            >
+              <h2>Регистрация</h2>
 
-            <form onSubmit={handleSubmit} className="reg_form">
               <input
                 type="text"
+                className="reg_input"
                 name="name"
-                placeholder="name"
+                placeholder="Имя"
                 value={name}
                 onChange={handleChange}
               />
 
               <input
                 type="email"
+                className="reg_input"
                 name="email"
-                placeholder="email"
+                placeholder="Почта"
                 value={email}
                 onChange={handleChange}
               />
 
               <input
                 type="password"
+                className="reg_input"
                 name="password"
-                placeholder="password"
+                placeholder="Пароль"
                 value={password}
                 onChange={handleChange}
               />

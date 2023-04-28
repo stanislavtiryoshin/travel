@@ -567,6 +567,7 @@ const Tour = () => {
                 <Card
                   id={recomm._id}
                   isTour
+                  stars={recomm.rating}
                   key={recomm._id}
                   name={recomm.name}
                   // description={recomm.description}

@@ -1,12 +1,9 @@
 import React, { useMemo } from "react";
 
-import style from "./Requests.module.scss";
 import HotelSearch from "../../components/SearchPanel/HotelSearch";
 import RequestTable from "./RequestTable";
 import { useSelector } from "react-redux";
 import {
-  useGetOrdersByQueryQuery,
-  useGetOrdersQuery,
   useLazyGetOrdersByQueryQuery,
   useUpdateStatusMutation,
 } from "../../features/services/base.service";
@@ -187,8 +184,6 @@ const Requests = () => {
       })
       .finally(() => setIsLoading(false));
   };
-
-  console.log(query, "query");
 
   return (
     <>

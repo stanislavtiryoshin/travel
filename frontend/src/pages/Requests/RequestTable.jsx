@@ -110,7 +110,7 @@ const fakeColumns = [
   },
 ];
 
-const RequestTable = ({ data, columns }) => {
+const RequestTable = ({ data, columns, isManager }) => {
   const datas = useMemo(() => {
     if (Array.isArray(data)) {
       return data;
@@ -131,7 +131,15 @@ const RequestTable = ({ data, columns }) => {
     );
 
   return (
-    <div className="container">
+    <div
+      className="container"
+      style={
+        isManager && {
+          display: "flex",
+          justifyContent: "center",
+        }
+      }
+    >
       <table {...getTableProps()} className={styles.table}>
         <thead>
           {headerGroups.map((headerGroup) => (
