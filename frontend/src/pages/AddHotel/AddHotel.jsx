@@ -429,7 +429,7 @@ const AddHotel = ({
                   name="babyMaxAge"
                   id=""
                   className="primary-input"
-                  value={hotelData.kids.babyMaxAge}
+                  value={hotelData?.kids?.babyMaxAge}
                   onChange={(e) =>
                     setHotelData({
                       ...hotelData,
@@ -451,7 +451,7 @@ const AddHotel = ({
                   name="kidMaxAge"
                   id=""
                   className="primary-input"
-                  value={hotelData.kids.kidMaxAge}
+                  value={hotelData?.kids?.kidMaxAge}
                   onChange={(e) =>
                     setHotelData({
                       ...hotelData,
@@ -478,7 +478,7 @@ const AddHotel = ({
                     name="discountType"
                     id=""
                     className="primary-input"
-                    value={hotelData.kids.kidDiscount.discountType}
+                    value={hotelData?.kids?.kidDiscount?.discountType}
                     onChange={(e) =>
                       setHotelData({
                         ...hotelData,
@@ -503,7 +503,7 @@ const AddHotel = ({
                     name="discount"
                     className="primary-input"
                     placeholder="2000"
-                    value={hotelData.kids.kidDiscount.discountValue}
+                    value={hotelData?.kids?.kidDiscount?.discountValue}
                     onChange={(e) =>
                       setHotelData({
                         ...hotelData,
@@ -595,7 +595,7 @@ const AddHotel = ({
                     name=""
                     id=""
                     className="primary-input"
-                    value={hotelData.payment.paymentType}
+                    value={hotelData?.payment?.paymentType}
                     onChange={(e) => {
                       setHotelData({
                         ...hotelData,
@@ -618,7 +618,7 @@ const AddHotel = ({
                     name=""
                     id=""
                     className="primary-input"
-                    value={hotelData.payment.prepayment}
+                    value={hotelData?.payment?.prepayment}
                     onChange={(e) => {
                       setHotelData({
                         ...hotelData,

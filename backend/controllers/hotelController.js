@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const { Hotel } = require("../models/hotelModel");
+const { Excursion } = require("../models/excursionModel");
 const Room = require("../models/roomModel");
 const { parse } = require("csv-parse");
 const fs = require("fs");
@@ -10,6 +11,7 @@ const path = require("path");
 const csv = require("fast-csv");
 const Tour = require("../models/tourModel");
 const queryString = require("querystring");
+const mongoose = require("mongoose");
 
 //@desc   Add new hotel
 //@route  POST /api/hotels
@@ -156,7 +158,21 @@ const getSingleHotel = asyncHandler(async (req, res) => {
   const singleHotel = await Hotel.findById(req.params.id)
     .populate("locationId")
     .populate("food")
-    .populate("rooms")
+    .populate({
+      path: "rooms",
+      populate: {
+        path: "periodPrices.period",
+        model: "Period",
+      },
+      match: {
+        $expr: {
+          $gte: [
+            { $sum: ["$capacity", { $size: "$extraPlaces" }] },
+            +req.query.peopleAmount,
+          ],
+        },
+      },
+    })
     .populate("periods")
     .populate({
       path: "hotelServices",
@@ -165,7 +181,7 @@ const getSingleHotel = asyncHandler(async (req, res) => {
         model: "Category",
       },
     });
-  res.status(200).json(singleHotel);
+  res.status(200).json(singleHotel.rooms);
 });
 
 //@desc   Get searched hotels
@@ -257,7 +273,10 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     const newHotel = hotel.toObject();
     const rooms = newHotel.rooms;
     const cheapestRoom = rooms.reduce(
-      (prev, curr) => (prev.roomPrice < curr.roomPrice ? prev : curr),
+      (prev, curr) =>
+        prev.periodPrices[0].roomPrice < curr.periodPrices[0].roomPrice
+          ? prev
+          : curr,
       rooms[0]
     );
     const basePrice = cheapestRoom?.roomPrice;
@@ -301,31 +320,161 @@ const getPrice = asyncHandler(async (req, res) => {
     addExtraFood,
     start,
     daysAmount,
-    kidsAmount,
-    adultsAmount,
-    kidsAges,
+    agesArray,
+    hotelId,
     roomId,
     personMode,
     excursions,
     kidsFoodAmount,
-    adultsFoodAmount
+    adultsFoodAmount,
   } = req.query;
 
-  // const urlParams = queryString.parse(kidsAges.split("?")[1]);
-  // const serializedArray = urlParams.myArray;
-  // const myArray = JSON.parse(decodeURIComponent(serializedArray));
+  ages = agesArray.split(",").map(Number);
 
-  const hotel = await Hotel.findById(req.params.hotelId);
-  const chosenRoom = hotel.rooms.find((room) => room._id === roomId);
-  const extraPlacesAmount = kidsAmount + adultsAmount - chosenRoom.capacity // = 2
+  const hotel = await Hotel.findById(hotelId)
+    .populate("locationId")
+    .populate("food")
+    .populate({
+      path: "rooms",
+      populate: {
+        path: "periodPrices.period",
+        model: "Period",
+      },
+    })
+    .populate({
+      path: "hotelServices",
+      populate: {
+        path: "category",
+        model: "Category",
+      },
+    });
+  const chosenRoom = hotel.rooms.find((room) => room._id == roomId);
 
-  if (
-    extraPlacesAmount &&
-    extraPlacesAmount > 0 &&
-    hotel &&
-    hotel.extraPlaces
-  ) {
-  }
+  let sum = 0;
+  let chosenPlaces = [];
+
+  const extraPlacesAmount = ages.length - chosenRoom.capacity;
+
+  let placesArray = chosenRoom.extraPlaces;
+
+  ages.sort((a, b) => b - a);
+
+  const accomodatedAges = ages.splice(0, extraPlacesAmount);
+
+  console.log(ages, "ages");
+
+  const notChosen = (place) => !chosenPlaces.some((el) => el._id === place._id);
+
+  ages.forEach((age) => {
+    const matchingPlace = placesArray.find((place) => {
+      if (age !== 1000 && notChosen(place)) {
+        return true;
+      } else if (age === 1000 && !place.isKid && notChosen(place)) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    if (matchingPlace) {
+      chosenPlaces.push(matchingPlace);
+    }
+  });
+
+  sum = chosenPlaces.reduce((acc, place) => {
+    if (addExtraFood) {
+      console.log("addExtraFood");
+
+      return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
+    } else if (!addExtraFood) {
+      console.log("!addExtraFood");
+
+      return acc + place.priceNoFood * daysAmount;
+    } else {
+      console.log("extra food included");
+
+      return acc + place.priceWithFood * daysAmount;
+    }
+  }, 0);
+
+  (function calculatePrice(start, daysNum, basePrice, pricesArray) {
+    let daysArray = [];
+    const startingDate = new Date(+start);
+
+    for (let i = 0; i < daysNum; i++) {
+      let date = new Date(startingDate.getTime());
+      date.setDate(startingDate.getDate() + i);
+      daysArray.push(date);
+    }
+
+    const findPriceByDate = (date) => {
+      if (pricesArray && pricesArray.length > 0) {
+        let priceFound = false;
+        pricesArray.forEach((el) => {
+          const startMonth = el.period.startMonth;
+          const startDay = el.period.startDay;
+          const endMonth = el.period.endMonth;
+          const endDay = el.period.endDay;
+
+          // console.log(startDay, startMonth, endDay, endMonth);
+          // console.log(date.getMonth() + 1, date.getDate());
+
+          if (
+            (date.getMonth() + 1 > startMonth ||
+              (date.getMonth() + 1 === startMonth &&
+                date.getDate() >= startDay)) &&
+            (date.getMonth() + 1 < endMonth ||
+              (date.getMonth() + 1 === endMonth && date.getDate() <= endDay))
+          ) {
+            console.log(startDay, startMonth, endDay, endMonth, "period");
+            console.log(date.getMonth() + 1, date.getDate(), "date");
+
+            if (!personMode) {
+              sum += el.roomPrice;
+              console.log("sum += el.roomPrice");
+              priceFound = true;
+            } else {
+              accomodatedAges.forEach((age) => {
+                if (age === 1000) {
+                  sum += el.adultPrice;
+                  console.log("sum += el.adultPrice");
+                } else {
+                  sum += el.kidPrice;
+                  console.log("sum += el.kidPrice;");
+                }
+              });
+              priceFound = true;
+            }
+          }
+        });
+        if (!priceFound) {
+          sum += basePrice;
+          console.log("!priceFound");
+        }
+      } else {
+        sum += basePrice;
+        console.log("else");
+      }
+      console.log(sum);
+    };
+    for (let i = 0; i < daysNum; i++) {
+      findPriceByDate(daysArray[i]);
+    }
+
+    (function calculateFood() {
+      if (addRoomFood) {
+        accomodatedAges.forEach((age) => {
+          if (age === 1000) sum += hotel.adultFoodPrice;
+          else if (age >= kids.kidMaxAge) sum += hotel.kidFoodPrice;
+        });
+      }
+    })();
+
+    if (excursions && excursions.length > 0) {
+      excursions.forEach((exc) => (sum += exc.price));
+    }
+  })(start, daysAmount, 2, chosenRoom.periodPrices);
+
+  res.status(200).json(sum);
 });
 
 // Get room by prices
@@ -431,6 +580,7 @@ module.exports = {
   updateHotel,
   updateHotelPeriods,
   deletePeriod,
+  getPrice,
   //test
   getRoomPrices,
   getRoomsByLimit,

@@ -2,6 +2,7 @@ const Tour = require("../models/tourModel");
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 const expressAsyncHandler = require("express-async-handler");
+const asyncHandler = require("express-async-handler");
 
 const fs = require("fs");
 const csv = require("fast-csv");
@@ -88,8 +89,22 @@ const insertTourPrices = expressAsyncHandler(async (req, res) => {
   }
 });
 
-const getSearchedTour = (req, res) => {
-  const { locationId, duration, rating, paymentType, food } = req.query;
+//@desc   Search tours
+//@route  GET /api/tour/searched
+
+const getSearchedTour = async (req, res) => {
+  const {
+    locationId,
+    duration,
+    rating,
+    paymentType,
+    food,
+    peopleAmount,
+    daysAmount,
+    startDate,
+    adultsAmount,
+    kidsAmount,
+  } = req.query;
 
   let query = {};
 
@@ -116,9 +131,17 @@ const getSearchedTour = (req, res) => {
     };
   }
 
-  Tour.find(query)
-    .then((response) => res.status(200).json(response))
-    .catch(() => res.sendStatus(404));
+  try {
+    let tours = await Tour.find(query);
+
+    tours.map((tour) => {
+      return { ...tour, totalCost, adultsAmount, kidsAmount };
+    });
+
+    res.status(200).json(tours);
+  } catch (err) {
+    res.sendStatus(404);
+  }
 };
 
 const tourByTagRecommendation = async (req, res) => {
@@ -169,6 +192,87 @@ const tourByTagRecommendation = async (req, res) => {
   }
 };
 
+//@desc Get tour price
+//@route GET /api/tour/price
+//@access Public
+
+const getPrice = asyncHandler(async (req, res) => {
+  const { tourId, agesArray, start, daysAmount } = req.query;
+
+  ages = agesArray.split(",").map(Number);
+  console.log(ages, "ages");
+
+  const tour = await Tour.findById(tourId).populate({
+    path: "periodPrices",
+    populate: { path: "period", model: "Period" },
+  });
+
+  const pricesArray = tour.periodPrices;
+  let sum = 0;
+
+  (function calculatePrice(basePrice) {
+    let daysArray = [];
+    const startingDate = new Date(+start);
+
+    for (let i = 0; i < daysAmount; i++) {
+      let date = new Date(startingDate.getTime());
+      date.setDate(startingDate.getDate() + i);
+      daysArray.push(date);
+    }
+
+    const findPriceByDate = (date) => {
+      if (pricesArray && pricesArray.length > 0) {
+        let priceFound = false;
+        pricesArray.forEach((el) => {
+          const startMonth = el.period.startMonth;
+          const startDay = el.period.startDay;
+          const endMonth = el.period.endMonth;
+          const endDay = el.period.endDay;
+
+          if (
+            (date.getMonth() + 1 > startMonth ||
+              (date.getMonth() + 1 === startMonth &&
+                date.getDate() >= startDay)) &&
+            (date.getMonth() + 1 < endMonth ||
+              (date.getMonth() + 1 === endMonth && date.getDate() <= endDay))
+          ) {
+            console.log(startDay, startMonth, endDay, endMonth, "period");
+            console.log(date.getMonth() + 1, date.getDate(), "date");
+
+            ages.forEach((age) => {
+              if (age > tour.kids.kidMaxAge) {
+                sum += el.adultPrice;
+                console.log(el.adultPrice);
+              } else if (
+                age <= tour.kids.kidMaxAge &&
+                age > tour.kids.babyMaxAge
+              ) {
+                sum += el.kidPrice;
+                console.log(el.kidPrice);
+              } else {
+                console.log("not found");
+              }
+            });
+
+            priceFound = true;
+          }
+        });
+        if (!priceFound) {
+          res.status(404).send("could not calculate");
+        }
+      } else {
+        res.status(404).send("could not calculate");
+      }
+    };
+    for (let i = 0; i < daysAmount; i++) {
+      findPriceByDate(daysArray[i]);
+    }
+    console.log(daysArray);
+  })(1);
+
+  res.status(200).json(sum);
+});
+
 module.exports = {
   addTour,
   deleteTour,
@@ -177,6 +281,7 @@ module.exports = {
   updateTour,
   insertTourPrices,
   getSearchedTour,
+  getPrice,
 
   tourByTagRecommendation,
 };
