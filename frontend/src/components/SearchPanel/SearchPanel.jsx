@@ -78,6 +78,8 @@ const SearchPanel = ({ isUserLook, style }) => {
     destination: "",
   });
 
+  const [ages, setAges] = useState([]);
+
   const onChange = (dates) => {
     const [start, end] = dates;
     setStartingDate(start);

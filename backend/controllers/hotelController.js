@@ -360,9 +360,12 @@ const getPrice = asyncHandler(async (req, res) => {
 
   ages = agesArray.split(",").map(Number);
 
-  const excursionArray = await Excursion.find({
-    _id: { $in: excursions },
-  });
+  const excursionArray = null;
+  if (excursions) {
+    excursionArray = await Excursion.find({
+      _id: { $in: excursions },
+    });
+  }
 
   const hotel = await Hotel.findById(hotelId)
     .populate("locationId")
@@ -496,10 +499,12 @@ const getPrice = asyncHandler(async (req, res) => {
 
     (function calculateFood() {
       if (addRoomFood) {
-        accomodatedAges.forEach((age) => {
-          if (age === 1000) sum += hotel.adultFoodPrice;
-          else if (age >= kids.kidMaxAge) sum += hotel.kidFoodPrice;
-        });
+        for (let i = 0; i < kidsFoodAmount; i++) {
+          sum += hotel.kidFoodPrice;
+        }
+        for (let i = 0; i < adultsFoodAmount; i++) {
+          sum += hotel.adultFoodPrice;
+        }
       }
     })();
 

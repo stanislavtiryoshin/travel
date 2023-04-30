@@ -14,10 +14,11 @@ const PeopleSelect = ({
 
   const renderKidInputs = (kids) => {
     let kidsArray = [];
+
     for (let i = 0; i < kids; i++) {
       kidsArray.push(
         <div className="kid_input" key={i}>
-          Возр. {"     "}
+          Возр.
           <input type="number" value={10} />
         </div>
       );
