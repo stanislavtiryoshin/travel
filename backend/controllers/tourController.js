@@ -99,9 +99,10 @@ const getSearchedTour = async (req, res) => {
     rating,
     paymentType,
     food,
+    agesArray,
     peopleAmount,
     daysAmount,
-    startDate,
+    start,
     adultsAmount,
     kidsAmount,
   } = req.query;
@@ -131,12 +132,20 @@ const getSearchedTour = async (req, res) => {
     };
   }
 
-  try {
-    let tours = await Tour.find(query);
+  ages = agesArray.split(",").map(Number);
 
-    tours.map((tour) => {
-      return { ...tour, totalCost, adultsAmount, kidsAmount };
+  try {
+    let tours = await Tour.find(query).populate({
+      path: "periodPrices",
+      populate: { path: "period", model: "Period" },
     });
+
+    // tours.map((tour) => {
+    //       const pricesArray = tour.periodPrices;
+    //       let sum = 0;
+
+    //   return { ...tour, totalCost: sum, adultsAmount, kidsAmount };
+    // });
 
     res.status(200).json(tours);
   } catch (err) {

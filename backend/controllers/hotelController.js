@@ -181,7 +181,7 @@ const getSingleHotel = asyncHandler(async (req, res) => {
         model: "Category",
       },
     });
-  res.status(200).json(singleHotel.rooms);
+  res.status(200).json(singleHotel);
 });
 
 //@desc   Get searched hotels
@@ -331,6 +331,10 @@ const getPrice = asyncHandler(async (req, res) => {
 
   ages = agesArray.split(",").map(Number);
 
+  const excursionArray = await Excursion.find({
+    _id: { $in: excursions },
+  });
+
   const hotel = await Hotel.findById(hotelId)
     .populate("locationId")
     .populate("food")
@@ -425,8 +429,8 @@ const getPrice = asyncHandler(async (req, res) => {
             (date.getMonth() + 1 < endMonth ||
               (date.getMonth() + 1 === endMonth && date.getDate() <= endDay))
           ) {
-            console.log(startDay, startMonth, endDay, endMonth, "period");
-            console.log(date.getMonth() + 1, date.getDate(), "date");
+            // console.log(startDay, startMonth, endDay, endMonth, "period");
+            // console.log(date.getMonth() + 1, date.getDate(), "date");
 
             if (!personMode) {
               sum += el.roomPrice;
@@ -447,15 +451,16 @@ const getPrice = asyncHandler(async (req, res) => {
           }
         });
         if (!priceFound) {
-          sum += basePrice;
+          res.sendStatus(404);
           console.log("!priceFound");
         }
       } else {
-        sum += basePrice;
+        res.sendStatus(404);
         console.log("else");
       }
       console.log(sum);
     };
+
     for (let i = 0; i < daysNum; i++) {
       findPriceByDate(daysArray[i]);
     }
@@ -469,8 +474,8 @@ const getPrice = asyncHandler(async (req, res) => {
       }
     })();
 
-    if (excursions && excursions.length > 0) {
-      excursions.forEach((exc) => (sum += exc.price));
+    if (excursionArray && excursionArray.length > 0) {
+      excursionArray.forEach((exc) => (sum += exc.price));
     }
   })(start, daysAmount, 2, chosenRoom.periodPrices);
 
