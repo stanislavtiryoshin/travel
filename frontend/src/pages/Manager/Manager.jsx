@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import RequestTable from "../Requests/RequestTable";
 import HotelSearch from "../../components/SearchPanel/HotelSearch";
 
+import Loader from "../../components/Loader";
+
 const Manager = () => {
   const [fakeManagers, setFakeManagers] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -63,7 +65,7 @@ const Manager = () => {
         }}
       >
         {isLoading ? (
-          <div className="table-loader">Загрузка менеджеров...</div>
+          <Loader />
         ) : (
           <RequestTable columns={columns} data={fakeManagers} isManager />
         )}
