@@ -15,6 +15,7 @@ import Requests from "../Requests/Requests";
 import { getTours } from "../../features/tour/tourSlice";
 import { getCamps } from "../../features/camps/campSlice";
 import { getSanatoriums } from "../../features/sanatorium/sanatoriumSlice";
+import Manager from "../Manager/Manager";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -34,8 +35,6 @@ const Dashboard = () => {
   const { tours } = useSelector((state) => state.tour);
   const { camps } = useSelector((state) => state.camps);
   const { sanatoriums } = useSelector((state) => state.sanatoriums);
-
-  console.log(tours);
 
   useEffect(() => {
     if (isError) {
@@ -76,6 +75,11 @@ const Dashboard = () => {
       {currentTab === 0 && (
         <div className="reqs_tab tab">
           <Requests />
+        </div>
+      )}
+      {currentTab === 5 && (
+        <div className="reqs_tab tab">
+          <Manager hotelMode />
         </div>
       )}
       {currentTab === 2 && (

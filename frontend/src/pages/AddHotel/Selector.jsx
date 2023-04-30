@@ -7,6 +7,8 @@ export default function ServiceSelector({
   placeholder,
   onChange,
   data,
+  food,
+  isServ,
 }) {
   const [options, setOptions] = useState([]);
   const [currCateg, setCurrCateg] = useState("Питание");
@@ -41,7 +43,7 @@ export default function ServiceSelector({
       )}
       <div className="service-input full">
         <Select
-          options={options}
+          options={food ? data : isServ ? data : options}
           placeholder={placeholder}
           onChange={onChange}
           styles={{

@@ -130,6 +130,14 @@ export const baseApi = createApi({
             ]
           : [{ type: "Orders", id: "LIST" }],
     }),
+    getOrdersByQuery: builder.query({
+      query: (body) => ({
+        url: `/orders/order/search?status=${body.status}&query=${body.query}`,
+        headers: {
+          Authorization: `Bearer ${body.token}`,
+        },
+      }),
+    }),
     //Addition
     addTour: builder.mutation({
       query: (body) => ({
@@ -203,6 +211,14 @@ export const baseApi = createApi({
       }),
       invalidatesTags: [{ id: "LIST", type: "services" }],
     }),
+    updateStatus: builder.mutation({
+      query: (body) => ({
+        url: `/orders/${body.id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: [{ id: "LIST", type: "Orders" }],
+    }),
   }),
 });
 
@@ -220,9 +236,13 @@ export const {
   useGetFoodQuery,
   useAddHotelServiceMutation,
   useGetOrdersQuery,
+  useGetOrdersByQueryQuery,
+  useLazyGetOrdersByQueryQuery,
   useGetRoomByHotelIdLimitQuery,
   useGetHotelsByTagMutation,
 
   useGetLocationByLetterQuery,
   useGetTourByIdQuery,
+
+  useUpdateStatusMutation,
 } = baseApi;

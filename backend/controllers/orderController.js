@@ -36,25 +36,8 @@ const getSingleOrder = asyncHandler(async (req, res) => {
 //@access Private
 
 const updateOrder = asyncHandler(async (req, res) => {
-  const order = await Order.findById(req.params.id);
-
-  // if (!order) {
-  //   res.status(400);
-  //   throw new Error("Order not found");
-  // }
-
-  // // Check if user exists
-  // if (!req.user) {
-  //   res.status(401);
-  //   throw new Error("User not found");
-  // }
-
-  // // Check if user is logged in
-  // if (order.user.toString() !== req.user.id) {
-  //   res.status(401);
-  //   throw new Error("User not authorized");
-  // }
-
+  // res.send(req.params.id);
+  // const order = await Order.findById(req.params.id);
   const updatedOrder = await Order.findByIdAndUpdate(
     req.params.id,
     { status: req.body.status },
@@ -63,9 +46,31 @@ const updateOrder = asyncHandler(async (req, res) => {
   res.status(200).json(updatedOrder);
 });
 
+const searchOrders = (req, res) => {
+  const { status, query } = req.query;
+
+  let q = {};
+  if (status && status.length !== 0) {
+    q.status = status;
+  }
+  if (query && query.length !== 0) {
+    q["$or"] = [
+      { uid: { $regex: query, $options: "i" } },
+      { clientName: { $regex: query, $options: "i" } },
+    ];
+  }
+
+  // console.log(JSON.stringify(q, null, 2));
+
+  Order.find(q)
+    .then((response) => res.status(200).json(response))
+    .catch(() => res.sendStatus(500));
+};
+
 module.exports = {
   getOrders,
   addOrder,
   updateOrder,
   getSingleOrder,
+  searchOrders,
 };

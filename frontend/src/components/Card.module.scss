@@ -28,9 +28,15 @@
   }
   .card_stars_body {
     width: 100%;
+
     .card_stars {
       font-weight: 400;
       font-size: 12px;
+      background: rgba(94, 178, 21, 1);
+      color: white;
+      width: 65px;
+      border-radius: 4px;
+      padding: 4px;
     }
   }
 
@@ -41,6 +47,21 @@
       margin-bottom: 12px;
       font-size: 20px;
       font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+
+      .peoples {
+        font-size: 14px;
+        color: rgba(174, 173, 171, 1);
+        display: flex;
+        font-family: GT Walsheim Pro;
+        gap: 5px;
+        align-items: center;
+        img {
+          width: 18px;
+          height: 18px;
+        }
+      }
     }
   }
 

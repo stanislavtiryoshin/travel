@@ -25,6 +25,18 @@ const Card = ({
       behavior: "smooth",
     });
   };
+  const [peopleAmount, setPeopleAmount] = React.useState(
+    localStorage.getItem("peopleAmount")
+      ? JSON.parse(localStorage.getItem("peopleAmount"))
+      : 1
+  );
+
+  const [kidsAmount] = React.useState(
+    localStorage.getItem("kidsAmount")
+      ? JSON.parse(localStorage.getItem("kidsAmount"))
+      : 0
+  );
+
   return (
     <div className={`${style.card_container}`}>
       <div className={`${style.card_body}`}>
@@ -36,7 +48,7 @@ const Card = ({
           {name ? name : "Горный тур по Тянь-Шань"}
         </div>
         <div className={style.card_stars_body}>
-          <div className={style.card_stars}>{stars}</div>
+          <div className={style.card_stars}>Рейтинг {stars}</div>
         </div>
 
         <div className={style.card_info}>
@@ -56,7 +68,19 @@ const Card = ({
         </div>
       </div>
       <div className={style.card_button}>
-        <div className={style.price}>от {price ? price : 120000} тг</div>
+        <hr
+          style={{
+            height: "1px",
+            border: "none",
+            backgroundColor: "rgba(174, 173, 171, .5)",
+          }}
+        />
+        <div className={style.price}>
+          <div>от {price ? price : 120000} тг</div>
+          <div className={style.peoples}>
+            На {peopleAmount} взр. {kidsAmount !== 0 && `и ${kidsAmount} реб.`}
+          </div>
+        </div>
         <button
           onClick={() => {
             navigate(isTour ? `/tour/${id}` : isHotel ? `/hotels/${id}` : "");

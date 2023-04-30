@@ -1,6 +1,8 @@
 import React from "react";
+import Section from "../Section";
+import Card from "../Card";
 
-const Recommendation = ({ recommendation }) => {
+const Recommendation = ({ recommendation, singleHotel }) => {
   return (
     <>
       {recommendation && recommendation.length > 1 ? (
@@ -13,7 +15,7 @@ const Recommendation = ({ recommendation }) => {
             {recommendation?.map((recomm) => {
               return (
                 <>
-                  {recomm._id !== singleHotel._id && (
+                  {recomm && recomm._id !== singleHotel && singleHotel._id && (
                     <Card
                       isHotel
                       id={recomm._id}

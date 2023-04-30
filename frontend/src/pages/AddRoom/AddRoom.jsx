@@ -5,6 +5,8 @@ import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import addhotel from "../../assets/addhotel.png";
 
+import { useUploadImageMutation } from "../../features/services/upload.service";
+
 import "./AddRoom.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { addRoom, updateRoom } from "../../features/room/roomSlice";
@@ -16,6 +18,8 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { hotelId } = useParams();
+
+  const [uploadImage] = useUploadImageMutation();
 
   const [roomData, setRoomData] = useState({
     hotel: hotelId,
@@ -174,6 +178,8 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
   }, [fetchedRoomData]);
   console.log(fetchedRoomData?.periodPrices);
 
+  const fileRef = React.useRef(null);
+
   useEffect(() => {
     if (fetchedRoomData && fetchedRoomData?.periodPrices?.length > 0) {
       setNewPeriods(fetchedRoomData?.periodPrices);
@@ -189,6 +195,23 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
   useEffect(() => {
     setRoomData({ ...roomData, periodPrices: newPeriods });
   }, [newPeriods]);
+
+  const handleUploadImage = (e) => {
+    const files = e.target.files;
+    const formData = new FormData();
+
+    for (let i = 0; i < files.length; i++) {
+      formData.append("images", files[i]);
+    }
+    const values = {
+      id: fetchedRoomData._id,
+      formData,
+      name: "rooms",
+    };
+    uploadImage(values).then((res) => console.log(res));
+  };
+
+  // console.log(fetchedRoomData._id, "roomData");
 
   return (
     <>
@@ -491,6 +514,25 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 }
               ></textarea>
             </div>
+            {editMode && (
+              <div className="input_row">
+                <input
+                  type="file"
+                  multiple
+                  hidden
+                  ref={fileRef}
+                  onChange={handleUploadImage}
+                />
+                <button
+                  className="primary-btn"
+                  onClick={() => {
+                    fileRef.current.click();
+                  }}
+                >
+                  Добавить фото
+                </button>
+              </div>
+            )}
           </div>
         </Section>
         {editMode ? (

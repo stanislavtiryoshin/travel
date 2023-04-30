@@ -9,9 +9,12 @@ import { addClientRoom, removeClientRoom } from "../../features/clientSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 
+import { useUploadImageMutation } from "../../features/services/upload.service";
+
 import "./Room.scss";
 
 const Room = ({ room, active, days, sum }) => {
+  const [uploadImage] = useUploadImageMutation();
   const dispatch = useDispatch();
   const [bedCount, setBedCount] = React.useState(
     room?.beds?.largeBeds + room?.beds?.smallBeds

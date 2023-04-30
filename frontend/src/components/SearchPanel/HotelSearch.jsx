@@ -15,7 +15,17 @@ import tag5 from "../../assets/tags/tag5.svg";
 
 import { getAdminHotels, reset } from "../../features/hotel/hotelSlice";
 
-const HotelSearch = ({ hotelMode, tourMode, campMode, sanMode, reqMode }) => {
+const HotelSearch = ({
+  hotelMode,
+  tourMode,
+  campMode,
+  sanMode,
+  reqMode,
+  handleStatus,
+  handleQuery,
+  find,
+  query,
+}) => {
   const dispatch = useDispatch();
 
   const [panelTag, setPanelTag] = useState("");
@@ -120,12 +130,16 @@ const HotelSearch = ({ hotelMode, tourMode, campMode, sanMode, reqMode }) => {
                           : "Название или ID"
                       }
                       name="origin"
-                      value={searchTerms.name}
+                      value={reqMode ? query : searchTerms.name}
                       onChange={(e) => {
-                        setSearchTerms({
-                          ...searchTerms,
-                          name: e.target.value,
-                        });
+                        if (reqMode) {
+                          handleQuery(e.target.value);
+                        } else {
+                          setSearchTerms({
+                            ...searchTerms,
+                            name: e.target.value,
+                          });
+                        }
                       }}
                     />
                   </div>
@@ -188,12 +202,20 @@ const HotelSearch = ({ hotelMode, tourMode, campMode, sanMode, reqMode }) => {
                   <div className="search_col-content">
                     <div className="search_col-top">Статус</div>
                     <div className="search_col-bot">
-                      <select type="text" name="status">
-                        <option selected>Любой статус</option>
-                        <option>Заявка</option>
-                        <option>Отклонен</option>
-                        <option>Оплачено</option>
-                        <option>На паузе</option>
+                      <select
+                        type="text"
+                        name="status"
+                        onChange={(e) => {
+                          handleStatus(e.target.value);
+                        }}
+                      >
+                        <option value="" selected>
+                          Любой статус
+                        </option>
+                        <option value="В обработке">В обработке</option>
+                        <option value="Отклонено">Отклонено</option>
+                        <option value="Оплачено">Оплачено</option>
+                        <option value="На паузе">На паузе</option>
                       </select>
                     </div>
                   </div>
@@ -243,7 +265,11 @@ const HotelSearch = ({ hotelMode, tourMode, campMode, sanMode, reqMode }) => {
               <button
                 className="primary-btn yellow"
                 onClick={() => {
-                  handleSearch();
+                  if (reqMode) {
+                    find();
+                  } else {
+                    handleSearch();
+                  }
                 }}
               >
                 Найти

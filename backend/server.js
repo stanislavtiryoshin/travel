@@ -57,8 +57,17 @@ app.post("/api/send-phone-email", (req, res) => {
 
 // New order email to administrator
 app.post("/api/send-order-email", (req, res) => {
-  const { name, email, phone, hotel, rooms, sum, startDate, endDate } =
-    req.body;
+  const {
+    name,
+    email,
+    phone,
+    hotel,
+    rooms,
+    sum,
+    startDate,
+    endDate,
+    dateOfBirth,
+  } = req.body;
 
   const transporter = nodemailer.createTransport({
     service: "gmail",

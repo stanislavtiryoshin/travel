@@ -14,9 +14,10 @@ const Table = ({ data, isUploading }) => {
   useEffect(() => {
     let p = [];
     if (data) {
-      data.forEach((price) => {
-        p.push(price.prices);
-      });
+      data &&
+        data.forEach((price) => {
+          p.push(price.prices);
+        });
     }
     setPrices(p.flat());
   }, [data]);

@@ -25,6 +25,7 @@ import Tour from "./pages/Tour/Tour";
 import Camp from "./pages/Camp/Camp";
 import AddSanatorium from "./pages/AddSanatorium/AddSanatorium";
 import EditSanatorium from "./pages/AddSanatorium/EditSanatorium";
+import Manager from "./pages/Manager/Manager";
 
 // const Dashboard = lazy(() => import("./pages/Dashboard/Dashboard"));
 // const Home = lazy(() => import("./pages/Home/Home"));
@@ -74,12 +75,13 @@ const DesktopRoute = () => {
             path="/dashboard/hotel/:hotelId/add-room"
             element={<AddRoom />}
           />
+          {/* edit room */}
           <Route path="/dashboard/room/:roomId" element={<AdminRoom />} />
 
           {/* <Route path="/tour/:sanatoriumId" element={<Tour />} /> */}
           <Route path="/tour/:tourId" element={<Tour />} />
           <Route path="/camp/:campId" element={<Camp />} />
-
+          <Route path="/dashboard/managers" element={<Manager />} />
           <Route path="/test" element={<Test />} />
         </Routes>
       </Layout>

@@ -110,50 +110,36 @@ const fakeColumns = [
   },
 ];
 
-const RequestTable = ({ data, columns }) => {
-  const datas = useMemo(() => (data ? data : fakeData), []);
+const RequestTable = ({ data, columns, isManager }) => {
+  const datas = useMemo(() => {
+    if (Array.isArray(data)) {
+      return data;
+    } else {
+      return fakeData;
+    }
+  }, [data]);
 
   const columnsData = columns ? columns : useMemo(() => fakeColumns, []);
 
-  const {
-    selectedFlatRows,
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-    // state: { selectedRowIds },
-  } = useTable(
-    {
-      columns: columnsData,
-      data: datas,
-    },
-    useSortBy
-    // useRowSelect,
-    // (hooks) => {
-    //   hooks.visibleColumns.push((columns) => [
-    //     {
-    //       id: "selection",
-    //       header: ({ getToggleAllRowsSelectedProps }) => (
-    //         <div>
-    //           <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-    //         </div>
-    //       ),
-    //       Cell: ({ row }) => (
-    //         <div>
-    //           <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-    //         </div>
-    //       ),
-    //     },
-    //     ...columns,
-    //   ]);
-    // }
-  );
-
-  // console.log(`selected row ids: ${Object.keys(selectedRowIds)}`);
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      {
+        columns: columnsData,
+        data: datas !== null && datas,
+      },
+      useSortBy
+    );
 
   return (
-    <div className="container">
+    <div
+      className="container"
+      style={
+        isManager && {
+          display: "flex",
+          justifyContent: "center",
+        }
+      }
+    >
       <table {...getTableProps()} className={styles.table}>
         <thead>
           {headerGroups.map((headerGroup) => (
