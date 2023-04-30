@@ -146,7 +146,7 @@ const Order = () => {
   const handleOrder = (e) => {
     dispatch(addOrder(orderTerms))
       .then(() => {
-        // navigate("/");
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);

@@ -37,6 +37,28 @@ const Filter = ({ mode }) => {
     (state) => state.hotels
   );
 
+  const maxPrice = hotels?.reduce(
+    (acc, curr) => {
+      if (curr.totalPrice > acc.totalPrice) {
+        return curr;
+      } else {
+        return acc;
+      }
+    },
+    { totalPrice: 0 }
+  ).totalPrice;
+
+  const minPrice = hotels?.reduce(
+    (acc, curr) => {
+      if (curr.totalPrice < acc.totalPrice) {
+        return curr;
+      } else {
+        return acc;
+      }
+    },
+    { totalPrice: 0 }
+  ).totalPrice;
+
   const { filterData } = useSelector((state) => state.tour);
   const [tourFilter, setTourFilter] = useState({
     locationId: "",
@@ -50,8 +72,8 @@ const Filter = ({ mode }) => {
     useLazyGetTourByFilterQuery();
 
   const [filterObj, setFilterObj] = useState({
-    filterMaxPrice: 600000,
-    filterMinPrice: 0,
+    filterMaxPrice: maxPrice ? maxPrice : 600000,
+    filterMinPrice: minPrice ? minPrice : 0,
     filterFood: [],
     filterRating: null,
     filterStars: null,
@@ -64,15 +86,15 @@ const Filter = ({ mode }) => {
   const handleClearFilterData = () => {
     dispatch(clearFilterData());
     setFilterObj({
-      filterMaxPrice: 600000,
-      filterMinPrice: 0,
+      filterMaxPrice: maxPrice ? maxPrice : 600000,
+      filterMinPrice: minPrice ? minPrice : 0,
       filterFood: [],
       filterRating: null,
       filterStars: null,
     });
   };
 
-  const [value, setValue] = useState([0, 600000]);
+  const [value, setValue] = useState([minPrice, maxPrice]);
 
   useEffect(() => {
     setFilterObj({
@@ -144,7 +166,13 @@ const Filter = ({ mode }) => {
       <div className="filter_row">
         <div className="filter_title">Цена</div>
         <div className="filter_content price_range">
-          <RangeSlider onInput={setValue} min={0} max={600000} step={1000} />
+          <RangeSlider
+            onInput={setValue}
+            value={value}
+            min={minPrice}
+            max={maxPrice}
+            step={100}
+          />
           <div className="price-box">
             <div className="price-col left">
               <div className="price-col-title">от</div>

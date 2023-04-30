@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const { Hotel } = require("../models/hotelModel");
+const Period = require("../models/periodModel");
 const { Excursion } = require("../models/excursionModel");
 const Room = require("../models/roomModel");
 const { parse } = require("csv-parse");
@@ -38,22 +39,26 @@ const updateHotel = asyncHandler(async (req, res) => {
 //@access Private
 
 const deletePeriod = asyncHandler(async (req, res) => {
+  await Period.findByIdAndDelete(req.body.periodId);
+
   // Delete period from hotel
-  const hotel = await Hotel.findByIdAndUpdate(req.params.hotelId, {
-    $pull: {
-      periods: {
-        _id: req.body.periodId,
+  const hotel = await Hotel.findByIdAndUpdate(
+    req.params.hotelId,
+    {
+      $pull: {
+        periods: req.body.periodId,
       },
     },
-  });
+    { new: true }
+  );
 
-  // Delete periodPrices with the recieved periodId from this hotel's rooms
+  // Delete periodPrices with the received periodId from this hotel's rooms
   try {
-    for (const room of hotel.rooms) {
-      await Room.findByIdAndUpdate(room, {
+    for (const roomId of hotel.rooms) {
+      await Room.findByIdAndUpdate(roomId, {
         $pull: {
           periodPrices: {
-            periodId: req.body.periodId,
+            period: req.body.periodId,
           },
         },
       });
@@ -70,29 +75,45 @@ const deletePeriod = asyncHandler(async (req, res) => {
 //@access Private
 
 const updateHotelPeriods = asyncHandler(async (req, res) => {
-  const hotel = await Hotel.findByIdAndUpdate(
-    req.params.hotelId,
-    { periods: req.body.periods },
-    {
-      new: true,
-    }
-  );
   try {
-    hotel.rooms.forEach((room) =>
-      Room.findByIdAndUpdate(room, {
-        $pull: {
-          periodPrices: {
-            periodId: {
-              $nin: req.body.periods.map((period) => period.periodId),
-            },
-          },
-        },
-      })
+    for (let period of req.body.periods) {
+      if (!period._id) {
+        const newPeriod = new Period({
+          startDay: +period.startDay,
+          startMonth: +period.startMonth,
+          endDay: +period.endDay,
+          endMonth: +period.endMonth,
+          hotel: req.params.hotelId,
+        });
+        await newPeriod.save();
+      }
+    }
+
+    const hotel = await Hotel.findByIdAndUpdate(
+      req.params.hotelId,
+      { periods: req.body.periods },
+      {
+        new: true,
+      }
     );
+
+    // hotel.rooms.forEach((roomId) =>
+    //   Room.findByIdAndUpdate(roomId, {
+    //     $pull: {
+    //       periodPrices: {
+    //         periodId: {
+    //           $nin: req.body.periods
+    //             .filter((period) => period._id)
+    //             .map((period) => mongoose.Types.ObjectId(period._id)),
+    //         },
+    //       },
+    //     },
+    //   })
+    // );
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-  res.status(200).json(hotel);
+  res.status(200).json("successfull");
 });
 
 //@desc   Get all hotels
@@ -259,6 +280,14 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
       populate: {
         path: "periodPrices.period",
         model: "Period",
+      },
+      match: {
+        $expr: {
+          $gte: [
+            { $sum: ["$capacity", { $size: "$extraPlaces" }] },
+            { $sum: [req.query.kidsAmount, req.query.adultsAmount] },
+          ],
+        },
       },
     })
     .populate({

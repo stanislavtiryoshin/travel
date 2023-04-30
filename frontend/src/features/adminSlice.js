@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialStateValues = {
   currentTab: 0,
   newHotelData: {},
+  currServices: [],
 };
 
 export const adminSlice = createSlice({
@@ -15,10 +16,14 @@ export const adminSlice = createSlice({
     setNewHotelData: (state, action) => {
       state.newHotelData = action.payload;
     },
+    setCurrServices: (state, action) => {
+      state.currServices.push(action.payload);
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setCurrentTab, setNewHotelData } = adminSlice.actions;
+export const { setCurrentTab, setNewHotelData, setCurrServices } =
+  adminSlice.actions;
 
 export default adminSlice.reducer;

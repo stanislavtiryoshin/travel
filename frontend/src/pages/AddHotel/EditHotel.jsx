@@ -100,7 +100,9 @@ const EditHotel = () => {
     };
 
     uploadImage(values)
-      .then((response) => console.log(response))
+      .then((response) => {
+        dispatch(getSingleHotel(hotelId));
+      })
       .catch((err) => console.error(err));
   };
 
