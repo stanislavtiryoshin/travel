@@ -9,6 +9,7 @@ import {
   useLazyGetOrderByIdQuery,
 } from "../../features/services/base.service";
 import Modal from "../../components/Modal";
+import Loader from "../../components/Loader";
 
 const Requests = () => {
   const { user } = useSelector((state) => state.auth);
@@ -214,7 +215,7 @@ const Requests = () => {
 
       <section className="dash_section">
         {isLoading ? (
-          <div className="table-loader">Загрузка заявок...</div>
+          <Loader />
         ) : (
           <RequestTable columns={columns} data={orders} />
         )}
