@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
 import addhotel from "../../assets/addhotel.png";
-
+import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import {
   addHotel,
@@ -32,6 +32,8 @@ import hotelService from "../../features/hotel/hotelService";
 import { useUploadImageMutation } from "../../features/services/upload.service";
 import GalleryBox from "../../components/Slider/GalleryBox";
 import e from "cors";
+import { setCurrServices } from "../../features/adminSlice";
+import { addPeriods } from "../../features/periods/periodSlice";
 
 const AddHotel = ({
   fetchedHotelData,
@@ -46,9 +48,11 @@ const AddHotel = ({
 
   const imageRef = useRef(null);
 
+  const { currServices } = useSelector((state) => state.admin);
+
   const [hotelData, setHotelData] = useState({
     uid: uid(),
-    hotelServices: [{ serviceId: "64258af02ba7928f871a09cd" }],
+    hotelServices: [],
     locationId: null,
     name: "",
     locationFeature: "",
@@ -174,6 +178,33 @@ const AddHotel = ({
       });
   }, []);
 
+  const [servicesToRender, setServicesToRender] = useState();
+
+  useEffect(() => {
+    const result = allServices?.reduce((acc, cur) => {
+      const category = cur.category.categoryName;
+      const service = {
+        _id: cur._id,
+        hotelServiceName: cur.hotelServiceName,
+      };
+
+      if (!acc[category]) {
+        acc[category] = {
+          category,
+          services: [service],
+        };
+      } else {
+        acc[category].services.push(service);
+      }
+
+      return acc;
+    }, {});
+
+    const arrayResult = result ? Object.values(result) : [];
+
+    if (allServices) setServicesToRender(arrayResult);
+  }, [allServices]);
+
   // comforts: [...JSON.parse(localStorage.getItem("comforts"))],
 
   const handleSubmit = () => {
@@ -207,6 +238,8 @@ const AddHotel = ({
     setPeriods(hotelData.periods);
   }, [hotelData]);
 
+  console.log(periods, "periods");
+
   const [servs, setServs] = useState();
 
   console.log(servs, "servs");
@@ -224,6 +257,8 @@ const AddHotel = ({
   useEffect(() => {
     setSources(hotelData?.img ? hotelData?.img : []);
   }, [hotelData]);
+
+  const [totChosenServices, setTotChosenServices] = useState([]);
 
   return (
     <>
@@ -429,7 +464,7 @@ const AddHotel = ({
                   name="babyMaxAge"
                   id=""
                   className="primary-input"
-                  value={hotelData.kids.babyMaxAge}
+                  value={hotelData?.kids?.babyMaxAge}
                   onChange={(e) =>
                     setHotelData({
                       ...hotelData,
@@ -451,7 +486,7 @@ const AddHotel = ({
                   name="kidMaxAge"
                   id=""
                   className="primary-input"
-                  value={hotelData.kids.kidMaxAge}
+                  value={hotelData?.kids?.kidMaxAge}
                   onChange={(e) =>
                     setHotelData({
                       ...hotelData,
@@ -478,7 +513,7 @@ const AddHotel = ({
                     name="discountType"
                     id=""
                     className="primary-input"
-                    value={hotelData.kids.kidDiscount.discountType}
+                    value={hotelData?.kids?.kidDiscount?.discountType}
                     onChange={(e) =>
                       setHotelData({
                         ...hotelData,
@@ -503,7 +538,7 @@ const AddHotel = ({
                     name="discount"
                     className="primary-input"
                     placeholder="2000"
-                    value={hotelData.kids.kidDiscount.discountValue}
+                    value={hotelData?.kids?.kidDiscount?.discountValue}
                     onChange={(e) =>
                       setHotelData({
                         ...hotelData,
@@ -595,7 +630,7 @@ const AddHotel = ({
                     name=""
                     id=""
                     className="primary-input"
-                    value={hotelData.payment.paymentType}
+                    value={hotelData?.payment?.paymentType}
                     onChange={(e) => {
                       setHotelData({
                         ...hotelData,
@@ -618,7 +653,7 @@ const AddHotel = ({
                     name=""
                     id=""
                     className="primary-input"
-                    value={hotelData.payment.prepayment}
+                    value={hotelData?.payment?.prepayment}
                     onChange={(e) => {
                       setHotelData({
                         ...hotelData,
@@ -640,7 +675,33 @@ const AddHotel = ({
           </div>
           <div className="add_more-col categ-col shadowed_box">
             <div className="gen_title">Услуги отеля</div>
-            {addedServices?.map((serv, idx) => {
+            {servicesToRender?.length > 0
+              ? servicesToRender?.map((serv, idx) => {
+                  return (
+                    <ServiceCard
+                      onChange={setTotChosenServices}
+                      setIsOpen={setIsOpen}
+                      number={idx + 1}
+                      allCategories={allCategories}
+                      allServices={allServices}
+                      optionList={servicesObjs}
+                      selectedOptions={selectedOptions}
+                      handleSelect={handleSelect}
+                      setServs={setServs}
+                      servs={servs}
+                      necCategory={serv.category}
+                      necServices={serv.services.map((el) => {
+                        return {
+                          ...el,
+                          label: el.hotelServiceName,
+                          value: el._id,
+                        };
+                      })}
+                    />
+                  );
+                })
+              : null}
+            {/* {addedServices?.map((serv, idx) => {
               return (
                 <ServiceCard
                   setIsOpen={setIsOpen}
@@ -662,7 +723,7 @@ const AddHotel = ({
               }}
             >
               Добавить услугу
-            </button>
+            </button> */}
           </div>
         </Section>
 
@@ -682,6 +743,7 @@ const AddHotel = ({
                           startMonth: null,
                           endDay: null,
                           endMonth: null,
+                          hotel: hotelData._id,
                         },
                       ]);
                     }}
@@ -691,12 +753,9 @@ const AddHotel = ({
                   <button
                     className="primary-btn black"
                     onClick={() => {
-                      dispatch(
-                        updateHotelPeriods({
-                          hotelId: hotelData._id,
-                          periods: periods,
-                        })
-                      ).then((response) => updateHotelData());
+                      dispatch(addPeriods({ periods: periods })).then(
+                        (response) => updateHotelData()
+                      );
                     }}
                   >
                     Сохранить
@@ -801,6 +860,7 @@ const AddHotel = ({
                     <thead>
                       <tr>
                         <th>Номера и периоды</th>
+                        {console.log(hotelData)}
                         {hotelData &&
                           hotelData.periods &&
                           hotelData?.periods?.map((period) => (
@@ -817,7 +877,10 @@ const AddHotel = ({
                         hotelData.periods &&
                         prices &&
                         hotelData?.rooms?.map((room) => (
-                          <RoomRow room={room} periods={hotelData.periods} />
+                          <RoomRow
+                            room={room}
+                            periodPrices={room.periodPrices}
+                          />
                         ))}
                     </tbody>
                   </table>
@@ -885,26 +948,41 @@ export const ServiceCard = ({
   setIsOpen,
   setServs,
   servs,
+  necServices,
+  necCategory,
+  onChange,
 }) => {
-  const [currCateg, setCurrCateg] = useState("Питание");
-  const [currServ, setCurrServ] = useState("64258af02ba7928f871a09cd");
-  const [thisCategServices, setThisCategServices] = useState();
+  // const [currCateg, setCurrCateg] = useState("Питание");
+  // const [currServ, setCurrServ] = useState("64258af02ba7928f871a09cd");
+  // const [thisCategServices, setThisCategServices] = useState();
+
+  // useEffect(() => {
+  //   setThisCategServices(
+  //     selectedOptions.filter((serv) => serv.category === currCateg)
+  //   );
+  // }, [currCateg]);
+
+  const { currServices } = useSelector((state) => state.admin);
+  const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    setThisCategServices(
-      selectedOptions.filter((serv) => serv.category === currCateg)
-    );
-  }, [currCateg]);
+    options?.forEach((opt) => {
+      if (!currServices.some((el) => el === opt._id))
+        dispatch(setCurrServices(opt._id));
+    });
+  }, [options]);
 
   const newAllServices = allServices.map((serv) => {
     return { ...serv, label: serv.hotelServiceName, value: serv._id };
   });
 
+  const dispatch = useDispatch();
+
   return (
     <div className="service-card">
       <div className="service-title">
-        Категория {number}{" "}
-        <button onClick={() => deleteService(currServ)}>X</button>
+        Категория {number}: {necCategory}
+        {/* <button onClick={() => deleteService(currServ)}>X</button> */}
       </div>
       {/* <Selector
         allCategories={allCategories}
@@ -920,12 +998,24 @@ export const ServiceCard = ({
           }),
         }}
       /> */}
-      <ServiceSelector
-        data={newAllServices}
-        allCategories={allCategories}
-        onChange={setServs}
-        value={servs}
-        placeholder={"Выберете услугу"}
+      <Select
+        options={necServices}
+        onChange={(option) => {
+          setOptions(option);
+        }}
+        styles={{
+          control: (baseStyles) => ({
+            ...baseStyles,
+            width: `${550}px`,
+            border: "none",
+            backgroundColor: "rgb(249, 249, 249)",
+            outline: "none",
+          }),
+        }}
+        isSearchable
+        isMulti
+        useDragHandle
+        axis="xy"
       />
       <span onClick={() => setIsOpen(true)} className="additional-service">
         Добавить новую услугу

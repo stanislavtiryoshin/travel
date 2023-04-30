@@ -10,8 +10,19 @@ import { Link } from "react-router-dom";
 import declOfNum from "../DayConfig";
 
 const DashHotelCard = ({ hotel, tour, mode }) => {
-  const { name, rating, stars, locationId, hotelStars, _id, extraPlaces } =
-    hotel;
+  const {
+    name,
+    rating,
+    stars,
+    locationId,
+    hotelStars,
+    _id,
+    extraPlaces,
+    img,
+    rooms,
+    hotelServices,
+    food,
+  } = hotel;
 
   const [tourDays, setTourDays] = useState(0);
 
@@ -26,10 +37,63 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
     }
     setTourDays(Object.keys(uniqueDays).length);
   }, [mode]);
+
+  const [roomsCount, setRoomsCount] = useState([]);
+  const [capCount, setCapCount] = useState([]);
+
+  useEffect(() => {
+    setRoomsCount(
+      rooms?.reduce((acc, curr) => {
+        if (acc[curr.roomType]) {
+          acc[curr.roomType] += curr.roomsNumber;
+        } else {
+          acc[curr.roomType] = curr.roomsNumber;
+        }
+        return acc;
+      }, {})
+    );
+
+    setCapCount(
+      rooms?.reduce((acc, curr) => {
+        if (acc[curr.capacity]) {
+          acc[curr.capacity] += curr.roomsNumber;
+        } else {
+          acc[curr.capacity] = curr.roomsNumber;
+        }
+        return acc;
+      }, {})
+    );
+  }, [rooms]);
+
+  // const roomsCount = rooms?.reduce((acc, curr) => {
+  //   if (acc[curr.roomType]) {
+  //     acc[curr.roomType] += curr.roomsNumber;
+  //   } else {
+  //     acc[curr.roomType] = curr.roomsNumber;
+  //   }
+  //   return acc;
+  // }, {});
+
+  // const capCount = rooms?.reduce((acc, curr) => {
+  //   if (acc[curr.roomType]) {
+  //     acc[curr.capacity] += curr.roomsNumber;
+  //   } else {
+  //     acc[curr.capacity] = curr.roomsNumber;
+  //   }
+  //   return acc;
+  // }, {});
+
+  console.log(roomsCount);
+  console.log(capCount);
+
   return (
     <div className="adm_hotel-card shadowed_box">
       <div className="adm_hotels-content">
-        <img src={admhotel} alt="" />
+        <img
+          src={img && img.length > 0 ? img[0] : admhotel}
+          alt=""
+          style={{ width: "270px", height: "120px", objectFit: "cover" }}
+        />
         <div className="adm_hotel-title">{name}</div>
         <div className="adm_hotel-loc">
           {locationId ? locationId?.locationName + ", " : "Место загружается"}
@@ -48,18 +112,36 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
 
         {mode === "hotel" ? (
           <div className="adm_hotel-feats">
-            <div className="feats_col">
-              <div className="feats_title">Номера</div>
-              <div className="feats_row">1 мест.: 12</div>
-              <div className="feats_row">2 мест.: 12</div>
-              <div className="feats_row">4 мест.: 12</div>
-            </div>
-            <div className="feats_col">
-              <div className="feats_title">Классы</div>
-              <div className="feats_row">Стандарт: 4</div>
-              <div className="feats_row">Делюкс: 12</div>
-              <div className="feats_row">Люкс: 12</div>
-            </div>
+            {capCount && Object.keys(capCount).length > 0 ? (
+              <>
+                <div className="feats_col">
+                  <div className="feats_title">Номера</div>
+
+                  {Object.entries(capCount).map(([cap, num]) => {
+                    return (
+                      <div key={cap} className="feats_row">
+                        {cap} мест.: {num}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            ) : null}
+            {roomsCount && Object.keys(roomsCount).length > 0 ? (
+              <>
+                <div className="feats_col">
+                  <div className="feats_title">Классы</div>
+
+                  {Object.entries(roomsCount).map(([roomType, num]) => {
+                    return (
+                      <div key={roomType} className="feats_row">
+                        {roomType}: {num}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            ) : null}
           </div>
         ) : null}
         <div className="card_mid-tags">
@@ -71,25 +153,25 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
           ) : (
             <div className="card_tag">
               <img src={tag} alt="" />
-              Все включено
+              {food ? food.label : null}
             </div>
           )}
-          <div className="card_tag">
-            <img src={tag} alt="" />
-            Все включено
-          </div>
-          <div className="card_tag">
-            <img src={tag} alt="" />
-            Аниматоры
-          </div>
-          <div className="card_tag">
-            <img src={tag} alt="" />
-            Аниматоры
-          </div>
-          <div className="card_tag">
-            <img src={tag} alt="" />
-            Аниматоры
-          </div>
+          {hotelServices && hotelServices.length > 0
+            ? hotelServices?.slice(0, 4).map((serv) => {
+                return (
+                  <div className="card_tag">
+                    {serv.icon ? (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: serv.icon,
+                        }}
+                      />
+                    ) : null}
+                    {serv.hotelServiceName}
+                  </div>
+                );
+              })
+            : null}
         </div>
       </div>
       <div className="adm_hotel-btns">

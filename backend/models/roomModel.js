@@ -39,10 +39,9 @@ const roomSchema = mongoose.Schema(
     },
     extraPlaces: [
       {
-        // _id: 1488
         minAge: Number,
         maxAge: Number,
-        isAdult: Boolean,
+        isKid: Boolean,
         priceWithFood: Number,
         priceNoFood: Number,
         foodPrice: Number,

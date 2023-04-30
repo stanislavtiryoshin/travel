@@ -3,10 +3,7 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { reset } from "../../features/auth/authSlice";
-import {
-  getSearchedHotels,
-  selectHotels,
-} from "../../features/hotel/hotelSlice";
+import { selectHotels } from "../../features/hotel/hotelSlice";
 import "react-range-slider-input/dist/style.css";
 import Hero from "../../components/Hero/Hero";
 import media from "../../assets/media.svg";
@@ -18,6 +15,7 @@ import "./Home.scss";
 
 import Filter from "../../components/Filter/Filter";
 import Hotels from "./Hotels";
+import { getSearchedHotels } from "../../features/hotel/hotelSlice";
 import { getSanatoriums } from "../../features/sanatorium/sanatoriumSlice";
 import { getCamps } from "../../features/camps/campSlice";
 import { getTours } from "../../features/tour/tourSlice";
@@ -54,6 +52,7 @@ const Home = () => {
     dispatch(getSanatoriums());
     dispatch(getCamps());
     dispatch(getTours());
+
     dispatch(reset());
   }, [isError, isSuccess, message, navigate, dispatch]);
 

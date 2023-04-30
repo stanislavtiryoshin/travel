@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateRoom } from "../../features/room/roomSlice";
 
-const RoomRow = ({ room, handlePriceChange, periods, prices }) => {
+const RoomRow = ({ room, handlePriceChange, periodPrices, prices }) => {
   const dispatch = useDispatch();
-  const [periodPrices, setPeriodPrices] = useState([]);
-  const [newPeriodPrices, setNewPeriodPrices] = useState([]);
 
-  useEffect(() => {}, [periods, room]);
+  const [newPeriodPrices, setNewPeriodPrices] = useState(periodPrices);
+
+  useEffect(() => {
+    setNewPeriodPrices(periodPrices);
+  }, []);
 
   return (
     <>
@@ -22,7 +24,7 @@ const RoomRow = ({ room, handlePriceChange, periods, prices }) => {
                   dispatch(
                     updateRoom({
                       _id: room._id,
-                      periodPrices: periodPrices,
+                      periodPrices: newPeriodPrices,
                     })
                   );
                   console.log({
@@ -56,21 +58,22 @@ const RoomRow = ({ room, handlePriceChange, periods, prices }) => {
               </button>
             )}
           </td>
-          {periodPrices &&
-            periodPrices?.map((period, idx) => {
-              let newPrices = [...periodPrices];
-              const corrPeriod = periods?.find((per) => per._id === period._id);
+          {newPeriodPrices &&
+            newPeriodPrices?.map((period, idx) => {
               return (
                 <td key={period._id} style={{}}>
                   <input
                     type="number"
-                    value={newPrices[idx].roomPrice}
+                    value={period.roomPrice}
                     onChange={(e) => {
-                      newPrices[idx] = {
-                        ...newPrices[idx],
-                        roomPrice: e.target.value,
-                      };
-                      setPeriodPrices(newPrices);
+                      const newPrice = e.target.value;
+                      setNewPeriodPrices((prevPrices) =>
+                        prevPrices.map((prevPeriod) =>
+                          prevPeriod._id === period._id
+                            ? { ...prevPeriod, roomPrice: newPrice }
+                            : prevPeriod
+                        )
+                      );
                     }}
                   />
                 </td>

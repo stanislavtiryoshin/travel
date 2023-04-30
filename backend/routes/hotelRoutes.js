@@ -14,6 +14,7 @@ const {
   updateHotelPeriods,
   deletePeriod,
   getByTagRecommendation,
+  getPrice,
 } = require("../controllers/hotelController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -23,12 +24,13 @@ const { upload } = require("./uploadRoutes");
 
 router.post("/", protect, addHotel);
 router.get("/", getHotels);
+router.get("/price", getPrice);
 router.get("/searched", getSearchedHotels);
 router.get("/admin", getAdminHotels);
 router.patch("/:hotelId", protect, updateHotel);
-router.get("/:id", getSingleHotel);
 router.patch("/:hotelId/periods", protect, updateHotelPeriods);
 router.patch("/:hotelId/delete-period", protect, deletePeriod);
+router.get("/:id", getSingleHotel);
 
 //test
 router.get("/:hotelId/room", getRoomsByLimit);

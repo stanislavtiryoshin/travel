@@ -9,6 +9,7 @@ const {
   getSearchedTour,
   insertTourPrices,
   tourByTagRecommendation,
+  getPrice,
 } = require("../controllers/tourController");
 const Tour = require("../models/tourModel");
 const { protect } = require("../middleware/authMiddleware");
@@ -16,12 +17,14 @@ const { upload } = require("./uploadRoutes");
 
 router.get("/", getTour);
 router.post("/", protect, addTour);
+router.get("/price", getPrice);
+router.get("/searched", getSearchedTour);
+
 router.get("/:id", getSingleTour);
 router.delete("/:id", protect, deleteTour);
 router.patch("/:id", protect, updateTour);
 
 // router.patch("/:tourId/tourPrices", upload.single("file"), insertTourPrices);
-router.get("/searched/query", getSearchedTour);
 
 router.post("/recommendation", tourByTagRecommendation);
 

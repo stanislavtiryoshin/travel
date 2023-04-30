@@ -283,16 +283,16 @@ export const selectHotels = (state) => {
 
   // Filter the hotels array based on the filter data
 
-  // if (filterMaxPrice) {
-  //   filteredHotels = filteredHotels.filter(
-  //     (hotel) => hotel.totalPrice <= filterMaxPrice
-  //   );
-  // }
-  // if (filterMinPrice) {
-  //   filteredHotels = filteredHotels.filter(
-  //     (hotel) => hotel.totalPrice >= filterMinPrice
-  //   );
-  // }
+  if (filterMaxPrice) {
+    filteredHotels = filteredHotels.filter(
+      (hotel) => hotel.totalPrice <= filterMaxPrice
+    );
+  }
+  if (filterMinPrice) {
+    filteredHotels = filteredHotels.filter(
+      (hotel) => hotel.totalPrice >= filterMinPrice
+    );
+  }
   if (filterFood && filterFood.length > 0) {
     filteredHotels = filteredHotels.filter((hotel) => {
       return filterFood.some((el) => hotel?.food?._id === el);

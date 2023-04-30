@@ -25,32 +25,35 @@ const addPeriod = asyncHandler(async (req, res) => {
     try {
       const newPeriods = await Promise.all(
         periods.map(async (period) => {
-          const periodObj = await Period.create(period);
-          const hotel = await Hotel.findOneAndUpdate(
-            { _id: periodObj.hotel },
-            {
-              $push: {
-                periods: periodObj,
-              },
-            }
-          );
-
-          if (hotel && hotel.rooms) {
-            for (const room of hotel.rooms) {
-              await Room.findByIdAndUpdate(room, {
+          let periodObj;
+          if (!period._id) {
+            periodObj = await Period.create(period);
+            const hotel = await Hotel.findOneAndUpdate(
+              { _id: periodObj.hotel },
+              {
                 $push: {
-                  periodPrices: {
-                    period: periodObj._id,
-                    roomPrice: 0,
-                    adultPrice: 0,
-                    kidPrice: 0,
-                  },
+                  periods: periodObj,
                 },
-              });
-            }
-          }
+              }
+            );
 
-          return periodObj;
+            if (hotel && hotel.rooms) {
+              for (const room of hotel.rooms) {
+                await Room.findByIdAndUpdate(room, {
+                  $push: {
+                    periodPrices: {
+                      period: periodObj._id,
+                      roomPrice: 0,
+                      adultPrice: 0,
+                      kidPrice: 0,
+                    },
+                  },
+                });
+              }
+            }
+
+            return periodObj;
+          } else return;
         })
       );
 

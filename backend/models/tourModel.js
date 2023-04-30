@@ -4,6 +4,16 @@ const tourSchema = Schema({
   name: {
     type: String,
   },
+  periodPrices: [
+    {
+      period: {
+        type: Schema.Types.ObjectId,
+        ref: "Periods",
+      },
+      adultPrice: Number,
+      kidPrice: Number,
+    },
+  ],
   locationId: {
     type: Schema.Types.ObjectId,
     ref: "Location",
