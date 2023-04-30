@@ -565,6 +565,7 @@ const Tour = () => {
             <>
               {recomm._id !== singleTour._id && (
                 <Card
+                  comforts={recomm.comforts}
                   id={recomm._id}
                   isTour
                   stars={recomm.rating}

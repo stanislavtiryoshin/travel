@@ -26,7 +26,6 @@ const getOrders = asyncHandler(async (req, res) => {
 const getSingleOrder = asyncHandler(async (req, res) => {
   const order = await Order.findById(req.params.orderId)
     .populate({ path: "hotel", select: "name" })
-    .populate("location")
     .populate({ path: "hotelRoom", select: "rooms.roomName" });
   res.status(200).json(order);
 });

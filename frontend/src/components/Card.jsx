@@ -17,6 +17,7 @@ const Card = ({
   id,
   isTour,
   isHotel,
+  comforts,
 }) => {
   const navigate = useNavigate();
   const goToTop = () => {
@@ -66,6 +67,21 @@ const Card = ({
             )}
           </div>
         </div>
+        {comforts && comforts.length > 0 && (
+          <div className={style.comforts}>
+            <>
+              {comforts.map((comfort, idx) => (
+                <>
+                  {idx < 3 && (
+                    <div key={comfort._id} className={style.comfort}>
+                      {comfort.length > 18 ? comfort.substring(0, 16) : comfort}
+                    </div>
+                  )}
+                </>
+              ))}
+            </>
+          </div>
+        )}
       </div>
       <div className={style.card_button}>
         <hr

@@ -13,29 +13,34 @@ const Recommendation = ({ recommendation, singleHotel }) => {
           </div>
           <div className="hotel_similar-body">
             {recommendation?.map((recomm) => {
-              return (
-                <>
-                  {recomm && recomm._id !== singleHotel && singleHotel._id && (
-                    <Card
-                      isHotel
-                      id={recomm._id}
-                      key={recomm._id}
-                      location={`${
-                        recomm.locationId && recomm.locationId.locationName
-                      }, ${
-                        recomm.locationId && recomm.locationId.locationCountry
-                      }`}
-                      name={recomm.name}
-                      stars={recomm.hotelStars}
-                      food={recomm.food && recomm.food.value}
-                      duration={`${recomm.enterTime} - ${recomm.leaveTime}`}
-                      image={
-                        "https://www.state.gov/wp-content/uploads/2019/04/Kazakhstan-2426x1406.jpg"
-                      }
-                    />
-                  )}
-                </>
-              );
+              if (recomm._id !== singleHotel._id)
+                return (
+                  <>
+                    {recomm &&
+                      recomm._id !== singleHotel &&
+                      singleHotel._id && (
+                        <Card
+                          isHotel
+                          id={recomm._id}
+                          key={recomm._id}
+                          comforts={recomm.comforts}
+                          location={`${
+                            recomm.locationId && recomm.locationId.locationName
+                          }, ${
+                            recomm.locationId &&
+                            recomm.locationId.locationCountry
+                          }`}
+                          name={recomm.name}
+                          stars={recomm.hotelStars}
+                          food={recomm.food && recomm.food.value}
+                          duration={`${recomm.enterTime} - ${recomm.leaveTime}`}
+                          image={
+                            "https://www.state.gov/wp-content/uploads/2019/04/Kazakhstan-2426x1406.jpg"
+                          }
+                        />
+                      )}
+                  </>
+                );
             })}
           </div>
         </Section>
