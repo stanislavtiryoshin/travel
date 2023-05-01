@@ -491,7 +491,7 @@ const getPrice = asyncHandler(async (req, res) => {
     }
 
     (function calculateFood() {
-      if (addRoomFood) {
+      if (addRoomFood && kidsFoodAmount && adultsFoodAmount) {
         for (let i = 0; i < kidsFoodAmount; i++) {
           sum += hotel.kidFoodPrice;
         }
@@ -500,10 +500,6 @@ const getPrice = asyncHandler(async (req, res) => {
         }
       }
     })();
-
-    // if (excursionArray && excursionArray.length > 0) {
-    //   excursionArray.forEach((exc) => (sum += exc.price));
-    // }
   })(start, daysAmount, 2, chosenRoom.periodPrices);
 
   res.status(200).json(sum);
