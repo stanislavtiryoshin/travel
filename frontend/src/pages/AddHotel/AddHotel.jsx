@@ -85,6 +85,8 @@ const AddHotel = ({
     setHotelData(newData);
   }, [fetchedHotelData, editMode]);
 
+  const { singleHotel } = useSelector((state) => state.hotels);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -238,11 +240,7 @@ const AddHotel = ({
     setPeriods(hotelData.periods);
   }, [hotelData]);
 
-  console.log(periods, "periods");
-
   const [servs, setServs] = useState();
-
-  console.log(servs, "servs");
 
   useEffect(() => {
     setHotelData({ ...hotelData, hotelServices: servs });
@@ -753,9 +751,10 @@ const AddHotel = ({
                   <button
                     className="primary-btn black"
                     onClick={() => {
-                      dispatch(addPeriods({ periods: periods })).then(
-                        (response) => updateHotelData()
-                      );
+                      dispatch(addPeriods({ periods: periods })).then(() => {
+                        updateHotelData();
+                        console.log(singleHotel);
+                      });
                     }}
                   >
                     Сохранить
@@ -860,7 +859,6 @@ const AddHotel = ({
                     <thead>
                       <tr>
                         <th>Номера и периоды</th>
-                        {console.log(hotelData)}
                         {hotelData &&
                           hotelData.periods &&
                           hotelData?.periods?.map((period) => (
@@ -872,11 +870,11 @@ const AddHotel = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {hotelData &&
-                        hotelData.rooms &&
-                        hotelData.periods &&
+                      {fetchedHotelData &&
+                        fetchedHotelData.rooms &&
+                        fetchedHotelData.periods &&
                         prices &&
-                        hotelData?.rooms?.map((room) => (
+                        fetchedHotelData?.rooms?.map((room) => (
                           <RoomRow
                             room={room}
                             periodPrices={room.periodPrices}
@@ -964,6 +962,7 @@ export const ServiceCard = ({
 
   const { currServices } = useSelector((state) => state.admin);
   const [options, setOptions] = useState([]);
+  console.log(currServices);
 
   useEffect(() => {
     options?.forEach((opt) => {

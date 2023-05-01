@@ -166,18 +166,9 @@ const SearchPanel = ({ isUserLook, style }) => {
 
   const isHome = window.location.pathname === "/";
 
-  const handleKidsSelect = (num) => {
-    setSearchTerms({
-      ...searchTerms,
-      kidsAmount: searchTerms.kidsAmount + 1,
-      peopleAmount: searchTerms.peopleAmount + 1,
-    });
-    setClientData({
-      ...clientData,
-      kidsAmount: clientData.kidsAmount + 1,
-      peopleAmount: clientData.peopleAmount + 1,
-    });
-  };
+  const [agesArray, setAgesArray] = useState([]);
+
+  console.log(agesArray);
 
   useEffect(() => {
     dispatch(
@@ -188,8 +179,6 @@ const SearchPanel = ({ isUserLook, style }) => {
       })
     );
   }, [clientData]);
-
-  const [kidsArr, setKidsArr] = useState([]);
 
   return (
     <div className="search_box" style={style && { ...style }}>
@@ -282,13 +271,7 @@ const SearchPanel = ({ isUserLook, style }) => {
           </div>
         </div>
         <img src={line} className="line" alt="" />
-        <PeopleSelect
-          handleAdultSelect={handleAdultSelect}
-          handleKidsSelect={handleKidsSelect}
-          value={searchTerms.peopleAmount}
-          kids={searchTerms.kidsAmount}
-          adults={searchTerms.adultsAmount}
-        />
+        <PeopleSelect setAgesArray={setAgesArray} agesArray={agesArray} />
         <button
           className="primary-btn yellow"
           onClick={() => {

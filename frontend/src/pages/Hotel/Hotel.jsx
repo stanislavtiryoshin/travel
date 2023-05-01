@@ -170,6 +170,8 @@ const Hotel = () => {
     (state) => state.client
   );
 
+  console.log(clientRoom);
+
   useEffect(() => {
     window.localStorage.setItem("sum", sum);
     if (clientRoom)

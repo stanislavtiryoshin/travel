@@ -9,7 +9,7 @@ const RoomRow = ({ room, handlePriceChange, periodPrices, prices }) => {
 
   useEffect(() => {
     setNewPeriodPrices(periodPrices);
-  }, []);
+  }, [periodPrices]);
 
   return (
     <>

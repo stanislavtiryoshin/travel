@@ -139,8 +139,6 @@ const HotelCard = ({
   //   }
   // }, [clientData, cheapestRoom, daysAmount]);
 
-  console.log(hotel);
-
   return (
     <div className="hotel_card">
       <div className="card_left card_col">

@@ -360,9 +360,12 @@ const getPrice = asyncHandler(async (req, res) => {
 
   ages = agesArray.split(",").map(Number);
 
-  const excursionArray = await Excursion.find({
-    _id: { $in: excursions },
-  });
+  // let ex;
+  // if (excursions) {
+  //   const excursionArray = await Excursion.find({
+  //     _id: { $in: excursions },
+  //   });
+  // }
 
   const hotel = await Hotel.findById(hotelId)
     .populate("locationId")
@@ -496,16 +499,18 @@ const getPrice = asyncHandler(async (req, res) => {
 
     (function calculateFood() {
       if (addRoomFood) {
-        accomodatedAges.forEach((age) => {
-          if (age === 1000) sum += hotel.adultFoodPrice;
-          else if (age >= kids.kidMaxAge) sum += hotel.kidFoodPrice;
-        });
+        for (let i = 0; i < kidsFoodAmount; i++) {
+          sum += hotel.kidFoodPrice;
+        }
+        for (let i = 0; i < adultsFoodAmount; i++) {
+          sum += hotel.adultFoodPrice;
+        }
       }
     })();
 
-    if (excursionArray && excursionArray.length > 0) {
-      excursionArray.forEach((exc) => (sum += exc.price));
-    }
+    // if (excursionArray && excursionArray.length > 0) {
+    //   excursionArray.forEach((exc) => (sum += exc.price));
+    // }
   })(start, daysAmount, 2, chosenRoom.periodPrices);
 
   res.status(200).json(sum);
