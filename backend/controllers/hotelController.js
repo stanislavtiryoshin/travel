@@ -505,9 +505,13 @@ const getPrice = asyncHandler(async (req, res) => {
 
     (async function calculateExcursionPrices() {
       for (const id of excursions) {
-        const excursion = await Excursion.findById(id);
-        if (excursion && excursion.price) {
-          sum += excursion.price;
+        try {
+          const excursion = await Excursion.findById(id);
+          if (excursion && excursion.price) {
+            sum += excursion.price;
+          }
+        } catch (error) {
+          console.error(error);
         }
       }
     })();
