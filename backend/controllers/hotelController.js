@@ -4,7 +4,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const { Hotel } = require("../models/hotelModel");
 const Period = require("../models/periodModel");
-const { Excursion } = require("../models/excursionModel");
+const Excursion = require("../models/excursionModel");
 const Room = require("../models/roomModel");
 const { parse } = require("csv-parse");
 const fs = require("fs");
@@ -353,12 +353,13 @@ const getPrice = asyncHandler(async (req, res) => {
     hotelId,
     roomId,
     personMode,
-    excursions,
+    excursionsArray,
     kidsFoodAmount,
     adultsFoodAmount,
   } = req.query;
 
-  ages = agesArray.split(",").map(Number);
+  let ages = agesArray.split(",").map(Number);
+  let excursions = excursionsArray.split(",");
 
   const hotel = await Hotel.findById(hotelId)
     .populate("locationId")
@@ -425,7 +426,7 @@ const getPrice = asyncHandler(async (req, res) => {
     }
   }, 0);
 
-  (function calculatePrice(start, daysNum, basePrice, pricesArray) {
+  async function calculatePrice(start, daysNum, basePrice, pricesArray) {
     let daysArray = [];
     const startingDate = new Date(+start);
 
@@ -503,15 +504,27 @@ const getPrice = asyncHandler(async (req, res) => {
       }
     })();
 
-    (async function calculateExcursionPrices() {
-      for (const id of excursions) {
-        const excursion = await Excursion.findById(id);
-        if (excursion && excursion.price) {
-          sum += excursion.price;
+    async function calculateExcursionPrices() {
+      if (excursions && excursions.length > 0) {
+        for (const id of excursions) {
+          const excursion = await Excursion.findById(
+            new mongoose.Types.ObjectId(id)
+          );
+          if (excursion && excursion.price) {
+            sum += excursion.price;
+          }
         }
       }
-    })();
-  })(start, daysAmount, 2, chosenRoom.periodPrices);
+    }
+
+    if (excursions && excursions.length > 0) {
+      await calculateExcursionPrices();
+    }
+
+    console.log(excursions, "excs");
+  }
+
+  await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
 
   res.status(200).json(sum);
 });
