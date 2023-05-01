@@ -96,3 +96,20 @@
     }
   }
 }
+.comforts {
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  // flex-wrap: wrap;
+
+  .comfort {
+    background-color: rgba(101, 159, 254, 0.06);
+    color: rgba(37, 105, 215, 1);
+    padding: 12px 10px;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+  }
+}

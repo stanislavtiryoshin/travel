@@ -35,6 +35,8 @@ import RoomLoader from "../../components/Loader/RoomLoader";
 import RecommLoader from "../../components/Loader/RecommLoader";
 import BodyTitle from "../../components/BodyTitle/BodyTitle";
 import CheckBtn from "../../components/Filter/CheckBtn";
+import { useGetHotelPriceQuery } from "../../features/services/price.service";
+import Loader from "../../components/Loader";
 
 const Hotel = () => {
   const dispatch = useDispatch();
@@ -211,6 +213,50 @@ const Hotel = () => {
     if (singleHotel?.hotelServices) setServicesToRender(arrayResult);
   }, [singleHotel]);
 
+  // const { clientRoom } = useSelector((state) => state.client);
+
+  const [priceData, setPriceData] = useState({
+    addRoomFood: false,
+    addExtraFood: false,
+    start: localStorage.getItem("startDate")
+      ? JSON.parse(localStorage.getItem("startDate"))
+      : "",
+    daysAmount: localStorage.getItem("daysAmount")
+      ? localStorage.getItem("daysAmount")
+      : "",
+    agesArray: [1000, 1000, 15, 5],
+    hotelId,
+    roomId: clientRoom._id,
+    personMode: false,
+    excursions: [],
+    kidsFoodAmount: 0,
+    adultsFoodAmount: 0,
+  });
+
+  useEffect(() => {
+    setPriceData((prev) => ({
+      ...prev,
+      roomId: clientRoom._id,
+    }));
+  }, [clientRoom]);
+
+  useEffect(() => {
+    setPriceData((prev) => ({
+      ...prev,
+      start: localStorage.getItem("startDate")
+        ? JSON.parse(localStorage.getItem("startDate"))
+        : "",
+      daysAmount: localStorage.getItem("daysAmount")
+        ? localStorage.getItem("daysAmount")
+        : "",
+    }));
+  }, [localStorage.getItem("daysAmount"), localStorage.getItem("startDate")]);
+
+  const { data: price, isLoading: priceIsLoading } =
+    useGetHotelPriceQuery(priceData);
+
+  const formatter = Intl.NumberFormat("ru-RU");
+
   if (isLoading) {
     return <HotelLoader />;
   }
@@ -219,7 +265,6 @@ const Hotel = () => {
     return <RoomLoader />;
   }
 
-  // console.log(clientRoom._id);
   return (
     <div className="hotel_page page">
       <section className="hotel_section">
@@ -427,12 +472,16 @@ const Hotel = () => {
                       <div className="food_price-form">
                         <div
                           className="filter_content"
-                          onClick={() =>
+                          onClick={() => {
                             setOrderTerms({
                               ...orderTerms,
                               foodIncluded: !orderTerms.foodIncluded,
-                            })
-                          }
+                            });
+                            setPriceData((prev) => ({
+                              ...prev,
+                              addRoomFood: !prev.addRoomFood,
+                            }));
+                          }}
                         >
                           <CheckBtn
                             isActive={orderTerms.foodIncluded ? true : false}
@@ -440,15 +489,46 @@ const Hotel = () => {
                           Добавить питание
                         </div>
                         <div className="input_row">
-                          <select name="" id="" className="primary-input">
+                          <select
+                            name=""
+                            id=""
+                            className="primary-input"
+                            onChange={(e) => {
+                              setPriceData((prev) => ({
+                                ...prev,
+                                kidsFoodAmount: Number(e.target.value),
+                              }));
+                            }}
+                          >
+                            <option value={5}>5</option>
+                            <option value={4}>4</option>
+
                             <option value={3}>3</option>
                             <option value={2}>2</option>
                             <option value={1}>1</option>
+                            <option value={0} selected>
+                              0
+                            </option>
                           </select>
-                          <select name="" id="" className="primary-input">
+                          <select
+                            name=""
+                            id=""
+                            className="primary-input"
+                            onChange={(e) => {
+                              setPriceData((prev) => ({
+                                ...prev,
+                                adultFoodAmount: Number(e.target.value),
+                              }));
+                            }}
+                          >
+                            <option value={5}>5</option>
+                            <option value={4}>4</option>
                             <option value={3}>3</option>
                             <option value={2}>2</option>
                             <option value={1}>1</option>
+                            <option value={0} selected>
+                              0
+                            </option>
                           </select>
                         </div>
                       </div>
@@ -465,6 +545,7 @@ const Hotel = () => {
                       roomsData.map((room) => {
                         return (
                           <Room
+                            // setRoomId={setPriceData}
                             key={room._id}
                             room={room}
                             active={clientRoom._id === room._id}
@@ -503,7 +584,17 @@ const Hotel = () => {
                     <img src={person} alt="" /> {orderTerms?.amount} взр.
                   </div>
                   <div className="hotel_side-row total">
-                    Итого: <span>{sum} тг.</span>
+                    Итого:
+                    {priceIsLoading ? (
+                      <Loader />
+                    ) : (
+                      <span>
+                        {typeof price !== "object"
+                          ? formatter.format(price)
+                          : "0"}
+                        тг.
+                      </span>
+                    )}
                   </div>
                   <Link
                     to="/orders/new-order"

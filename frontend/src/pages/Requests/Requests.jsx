@@ -6,7 +6,10 @@ import { useSelector } from "react-redux";
 import {
   useLazyGetOrdersByQueryQuery,
   useUpdateStatusMutation,
+  useLazyGetOrderByIdQuery,
 } from "../../features/services/base.service";
+import Modal from "../../components/Modal";
+import Loader from "../../components/Loader";
 
 const Requests = () => {
   const { user } = useSelector((state) => state.auth);
@@ -14,7 +17,8 @@ const Requests = () => {
   // const { data: orders = [], isLoading } = useGetOrdersQuery(user.token);
   const [query, setQuery] = React.useState("");
   const [status, setStatus] = React.useState("");
-
+  const [getOrder] = useLazyGetOrderByIdQuery();
+  const [order, setOrder] = React.useState(null);
   // const {
   //   data: orders = [],
   //   isLoading,
@@ -127,7 +131,19 @@ const Requests = () => {
       {
         id: "details",
         header: "Подробности",
-        Cell: ({ row }) => <button className="order-btn">Открыть заказ</button>,
+        Cell: ({ row }) => (
+          <button
+            onClick={() => {
+              getOrder(row.original._id).then(({ data }) => {
+                setOrder(data);
+              });
+              setIsOpen(true);
+            }}
+            className="order-btn"
+          >
+            Открыть заказ
+          </button>
+        ),
       },
       {
         id: "status",
@@ -185,6 +201,8 @@ const Requests = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const [isOpen, setIsOpen] = React.useState(false);
+
   return (
     <>
       <HotelSearch
@@ -197,11 +215,48 @@ const Requests = () => {
 
       <section className="dash_section">
         {isLoading ? (
-          <div className="table-loader">Загрузка заявок...</div>
+          <Loader />
         ) : (
           <RequestTable columns={columns} data={orders} />
         )}
       </section>
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <div style={{ lineHeight: "1.5" }}>
+          <h2>Заказ №{order?.uid}</h2>
+          <div className="order-details">
+            <div className="order-details__item">
+              <h3>Имя</h3>
+              <p>{order?.clientName}</p>
+            </div>
+            <div className="order-details__item">
+              <h3>Номер телефона</h3>
+              <p>{order?.clientPhone}</p>
+            </div>
+            <div className="order-details__item">
+              <h3>Электронная почта</h3>
+              <p>{order?.clientEmail}</p>
+            </div>
+            <div className="order-details__item">
+              <h3>Дата заявки</h3>
+              <p>
+                {new Date(+order?.startDate).toLocaleString(undefined, {
+                  month: "numeric",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </p>
+            </div>
+            <div className="order-details__item">
+              <h3>Количество людей</h3>
+              <p>{order?.peopleAmount}</p>
+            </div>
+            <div className="order-details__item">
+              <h3>Дополнительная информация</h3>
+              <p>{order?.extraInfo}</p>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };

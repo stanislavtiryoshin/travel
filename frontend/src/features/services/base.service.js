@@ -138,6 +138,11 @@ export const baseApi = createApi({
         },
       }),
     }),
+    getOrderById: builder.query({
+      query: (id) => ({
+        url: `/orders/${id}`,
+      }),
+    }),
     //Addition
     addTour: builder.mutation({
       query: (body) => ({
@@ -245,4 +250,5 @@ export const {
   useGetTourByIdQuery,
 
   useUpdateStatusMutation,
+  useLazyGetOrderByIdQuery,
 } = baseApi;

@@ -360,13 +360,6 @@ const getPrice = asyncHandler(async (req, res) => {
 
   ages = agesArray.split(",").map(Number);
 
-  // let ex;
-  // if (excursions) {
-  //   const excursionArray = await Excursion.find({
-  //     _id: { $in: excursions },
-  //   });
-  // }
-
   const hotel = await Hotel.findById(hotelId)
     .populate("locationId")
     .populate("food")
