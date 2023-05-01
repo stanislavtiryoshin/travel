@@ -23,7 +23,7 @@ export const priceApi = createApi({
           body.kidsFoodAmount !== "" && body.kidsFoodAmount
         }&adultsFoodAmount=${
           body.adultsFoodAmount !== "" && body.adultsFoodAmount
-        }`,
+        }&excursions=${body.excursions}`,
       }),
       providesTags: ["hotelPrice"],
     }),

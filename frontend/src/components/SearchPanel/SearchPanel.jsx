@@ -170,7 +170,12 @@ const SearchPanel = ({ isUserLook, style }) => {
 
   const [agesArray, setAgesArray] = useState([]);
 
-  console.log(agesArray);
+  useEffect(() => {
+    localStorage.setItem(
+      "agesArray",
+      JSON.stringify(agesArray.filter((ages) => ages !== null))
+    );
+  }, [agesArray]);
 
   useEffect(() => {
     dispatch(

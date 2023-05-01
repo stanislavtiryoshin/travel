@@ -172,8 +172,6 @@ const Hotel = () => {
     (state) => state.client
   );
 
-  console.log(clientRoom);
-
   useEffect(() => {
     window.localStorage.setItem("sum", sum);
     if (clientRoom)
@@ -224,7 +222,7 @@ const Hotel = () => {
     daysAmount: localStorage.getItem("daysAmount")
       ? localStorage.getItem("daysAmount")
       : "",
-    agesArray: [1000, 1000, 15, 5],
+    agesArray: [],
     hotelId,
     roomId: clientRoom._id,
     personMode: false,
@@ -249,11 +247,32 @@ const Hotel = () => {
       daysAmount: localStorage.getItem("daysAmount")
         ? localStorage.getItem("daysAmount")
         : "",
+      agesArray: localStorage.getItem("agesArray")
+        ? JSON.parse(localStorage.getItem("agesArray"))
+        : [],
+      excursions: localStorage.getItem("excursions")
+        ? JSON.parse(localStorage.getItem("excursions"))
+        : [],
     }));
-  }, [localStorage.getItem("daysAmount"), localStorage.getItem("startDate")]);
+  }, [
+    localStorage.getItem("daysAmount"),
+    localStorage.getItem("startDate"),
+    localStorage.getItem("agesArray"),
+    localStorage.getItem("excursions"),
+  ]);
 
   const { data: price, isLoading: priceIsLoading } =
     useGetHotelPriceQuery(priceData);
+
+  useEffect(() => {
+    if (!orderTerms.foodIncluded) {
+      setPriceData((prev) => ({
+        ...prev,
+        adultsFoodAmount: 0,
+        kidsFoodAmount: 0,
+      }));
+    }
+  }, [orderTerms.foodIncluded]);
 
   const formatter = Intl.NumberFormat("ru-RU");
 
@@ -264,6 +283,8 @@ const Hotel = () => {
   if (roomIsLoading) {
     return <RoomLoader />;
   }
+
+  console.log(localStorage.getItem("excursions"), "excursions");
 
   return (
     <div className="hotel_page page">
@@ -492,6 +513,7 @@ const Hotel = () => {
                           <select
                             name=""
                             id=""
+                            disabled={priceData.addRoomFood ? false : true}
                             className="primary-input"
                             onChange={(e) => {
                               setPriceData((prev) => ({
@@ -514,10 +536,11 @@ const Hotel = () => {
                             name=""
                             id=""
                             className="primary-input"
+                            disabled={priceData.addRoomFood ? false : true}
                             onChange={(e) => {
                               setPriceData((prev) => ({
                                 ...prev,
-                                adultFoodAmount: Number(e.target.value),
+                                adultsFoodAmount: Number(e.target.value),
                               }));
                             }}
                           >
