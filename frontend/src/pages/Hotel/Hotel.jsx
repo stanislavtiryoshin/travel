@@ -231,6 +231,8 @@ const Hotel = () => {
     adultsFoodAmount: 0,
   });
 
+  console.log(priceData);
+
   useEffect(() => {
     setPriceData((prev) => ({
       ...prev,

@@ -491,12 +491,23 @@ const getPrice = asyncHandler(async (req, res) => {
     }
 
     (function calculateFood() {
-      if (addRoomFood && kidsFoodAmount && adultsFoodAmount) {
-        for (let i = 0; i < kidsFoodAmount; i++) {
-          sum += hotel.kidFoodPrice;
+      if (addRoomFood && kidsFoodAmount != false && adultsFoodAmount != false) {
+        for (let i = 0; i < daysAmount; i++) {
+          for (let i = 0; i < kidsFoodAmount; i++) {
+            sum += hotel.kidFoodPrice;
+          }
+          for (let i = 0; i < adultsFoodAmount; i++) {
+            sum += hotel.adultFoodPrice;
+          }
         }
-        for (let i = 0; i < adultsFoodAmount; i++) {
-          sum += hotel.adultFoodPrice;
+      }
+    })();
+
+    (async function calculateExcursionPrices() {
+      for (const id of excursions) {
+        const excursion = await Excursion.findById(id);
+        if (excursion && excursion.price) {
+          sum += excursion.price;
         }
       }
     })();
