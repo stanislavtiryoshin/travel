@@ -233,6 +233,8 @@ const Hotel = () => {
     adultsFoodAmount: 0,
   });
 
+  console.log(priceData);
+
   useEffect(() => {
     setPriceData((prev) => ({
       ...prev,
@@ -517,7 +519,7 @@ const Hotel = () => {
                             onChange={(e) => {
                               setPriceData((prev) => ({
                                 ...prev,
-                                adultFoodAmount: Number(e.target.value),
+                                adultsFoodAmount: Number(e.target.value),
                               }));
                             }}
                           >

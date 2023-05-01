@@ -15,8 +15,10 @@ export const priceApi = createApi({
           body.start
         }&hotelId=${body.hotelId}&roomId=${
           body.roomId !== "" && body.roomId
-        }&addExtraFood=${body.addExtraFood}&addRoomFood=${
-          body.addRoomFood !== "" && body.addRoomFood
+        }&addExtraFood=${
+          body.addExtraFood !== false && body.addExtraFood
+        }&addRoomFood=${
+          body.addRoomFood !== false && body.addRoomFood
         }&daysAmount=${
           body.daysAmount !== "" && body.daysAmount
         }&kidsFoodAmount=${
