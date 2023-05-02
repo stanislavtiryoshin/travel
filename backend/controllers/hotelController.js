@@ -360,7 +360,10 @@ const getPrice = asyncHandler(async (req, res) => {
   } = req.query;
 
   let ages = agesArray.split(",").map(Number);
-  let excursions = excursionsArray.split(",");
+  let excursions = null;
+  if (excursionsArray) {
+    excursions = excursionsArray.split(",").map(Number);
+  }
 
   const hotel = await Hotel.findById(hotelId)
     .populate("locationId")
