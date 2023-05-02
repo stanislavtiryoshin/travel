@@ -1,39 +1,26 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
-import addhotel from "../../assets/addhotel.png";
-import Select from "react-select";
 import { useNavigate } from "react-router-dom";
-import {
-  addHotel,
-  deletePeriod,
-  updateHotel,
-  updateHotelPeriods,
-} from "../../features/hotel/hotelSlice";
+import { addHotel, updateHotel } from "../../features/hotel/hotelSlice";
 import { addService } from "../../features/hotelService/hotelServSlice";
 
 import ShortUniqueId from "short-unique-id";
 
-import check from "../../assets/check.svg";
-
 import "./AddHotel.scss";
 import "./Table.scss";
 import { useDispatch, useSelector } from "react-redux";
-import Selector from "./Select";
 import { AdminHead } from "../../components/Admin";
-import { AdminAddForm } from "../../components/Admin/AdminAddForm";
 import { Input } from "../../components/Form";
 import Modal from "../../components/Modal";
 import Section from "../../components/Section";
 import RoomRow from "./RoomRow";
-import ServiceSelector from "./Selector";
-import hotelService from "../../features/hotel/hotelService";
+import ServiceCard from "./ServiceCard";
 
 import { useUploadImageMutation } from "../../features/services/upload.service";
 import GalleryBox from "../../components/Slider/GalleryBox";
-import e from "cors";
 import { setCurrServices } from "../../features/adminSlice";
-import { addPeriods } from "../../features/periods/periodSlice";
+import Periods from "./Periods";
 
 const AddHotel = ({
   fetchedHotelData,
@@ -673,6 +660,7 @@ const AddHotel = ({
           </div>
           <div className="add_more-col categ-col shadowed_box">
             <div className="gen_title">Услуги отеля</div>
+            {console.log(currServices)}
             {servicesToRender?.length > 0
               ? servicesToRender?.map((serv, idx) => {
                   return (
@@ -680,13 +668,8 @@ const AddHotel = ({
                       onChange={setTotChosenServices}
                       setIsOpen={setIsOpen}
                       number={idx + 1}
-                      allCategories={allCategories}
                       allServices={allServices}
-                      optionList={servicesObjs}
-                      selectedOptions={selectedOptions}
-                      handleSelect={handleSelect}
-                      setServs={setServs}
-                      servs={servs}
+                      setCurrServices={setCurrServices}
                       necCategory={serv.category}
                       necServices={serv.services.map((el) => {
                         return {
@@ -699,155 +682,17 @@ const AddHotel = ({
                   );
                 })
               : null}
-            {/* {addedServices?.map((serv, idx) => {
-              return (
-                <ServiceCard
-                  setIsOpen={setIsOpen}
-                  number={idx + 1}
-                  allCategories={allCategories}
-                  allServices={allServices}
-                  optionList={servicesObjs}
-                  selectedOptions={selectedOptions}
-                  handleSelect={handleSelect}
-                  setServs={setServs}
-                  servs={servs}
-                />
-              );
-            })}
-            <button
-              className="add_service-btn primary-btn"
-              onClick={() => {
-                setAddedServices((prev) => [...prev, {}]);
-              }}
-            >
-              Добавить услугу
-            </button> */}
           </div>
         </Section>
 
         {editMode ? (
           <>
-            <Section section="periods_section" wrapper="periods_wrapper ver">
-              <div className="periods_top">
-                <div className="gen_title">Периоды</div>
-                <div className="periods_btns">
-                  <button
-                    className="primary-btn black clear"
-                    onClick={() => {
-                      setPeriods([
-                        ...periods,
-                        {
-                          startDay: null,
-                          startMonth: null,
-                          endDay: null,
-                          endMonth: null,
-                          hotel: hotelData._id,
-                        },
-                      ]);
-                    }}
-                  >
-                    + Новый период
-                  </button>
-                  <button
-                    className="primary-btn black"
-                    onClick={() => {
-                      dispatch(addPeriods({ periods: periods })).then(() => {
-                        updateHotelData();
-                        console.log(singleHotel);
-                      });
-                    }}
-                  >
-                    Сохранить
-                  </button>
-                </div>
-              </div>
-              <div className="periods_box">
-                {periods && periods.length > 0
-                  ? periods?.map((per, idx) => {
-                      const newPeriods = periods;
-                      return (
-                        <div className="period_card shadowed_box">
-                          <div className="period_title">
-                            {`Период ${idx + 1}`}
-                            <button
-                              onClick={() => {
-                                dispatch(
-                                  deletePeriod({
-                                    hotelId: hotelData._id,
-                                    periodId: per._id,
-                                  })
-                                ).then((response) => updateHotelData());
-                              }}
-                            >
-                              X
-                            </button>
-                          </div>
-                          <div className="inputs_row">
-                            <div className="input_col">
-                              <span>Начало</span>
-                              <div className="inputs_content">
-                                <input
-                                  type="number"
-                                  min={1}
-                                  max={31}
-                                  placeholder="d"
-                                  value={per.startDay}
-                                  inputMode="numeric"
-                                  onChange={(e) => {
-                                    newPeriods[idx].startDay = e.target.value;
-                                    setPeriods(newPeriods);
-                                  }}
-                                />
-                                /
-                                <input
-                                  type="number"
-                                  min={1}
-                                  max={31}
-                                  inputMode="numeric"
-                                  placeholder="m"
-                                  value={per.startMonth}
-                                  onChange={(e) => {
-                                    newPeriods[idx].startMonth = e.target.value;
-                                    setPeriods(newPeriods);
-                                  }}
-                                />
-                              </div>
-                            </div>
-                            <div className="input_col">
-                              <span>Конец</span>
-                              <div className="inputs_content">
-                                <input
-                                  type="number"
-                                  min={1}
-                                  max={12}
-                                  placeholder="d"
-                                  value={per.endDay}
-                                  onChange={(e) => {
-                                    newPeriods[idx].endDay = e.target.value;
-                                    setPeriods(newPeriods);
-                                  }}
-                                />
-                                /
-                                <input
-                                  type="number"
-                                  min={1}
-                                  max={12}
-                                  value={per.endMonth}
-                                  placeholder="m"
-                                  onChange={(e) => {
-                                    newPeriods[idx].endMonth = e.target.value;
-                                    setPeriods(newPeriods);
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  : null}
-              </div>
-            </Section>
+            <Periods
+              periods={periods}
+              setPeriods={setPeriods}
+              updateHotelData={updateHotelData}
+              hotelId={hotelData._id}
+            />
             {fetchedHotelData && fetchedHotelData?.periods ? (
               <Section
                 section="tb_section"
@@ -932,94 +777,6 @@ const AddHotel = ({
         </div>
       </Modal>
     </>
-  );
-};
-
-export const ServiceCard = ({
-  number,
-  allCategories,
-  allServices,
-  deleteService,
-  optionList,
-  selectedOptions,
-  handleSelect,
-  setIsOpen,
-  setServs,
-  servs,
-  necServices,
-  necCategory,
-  onChange,
-}) => {
-  // const [currCateg, setCurrCateg] = useState("Питание");
-  // const [currServ, setCurrServ] = useState("64258af02ba7928f871a09cd");
-  // const [thisCategServices, setThisCategServices] = useState();
-
-  // useEffect(() => {
-  //   setThisCategServices(
-  //     selectedOptions.filter((serv) => serv.category === currCateg)
-  //   );
-  // }, [currCateg]);
-
-  const { currServices } = useSelector((state) => state.admin);
-  const [options, setOptions] = useState([]);
-  console.log(currServices);
-
-  useEffect(() => {
-    options?.forEach((opt) => {
-      if (!currServices.some((el) => el === opt._id))
-        dispatch(setCurrServices(opt._id));
-    });
-  }, [options]);
-
-  const newAllServices = allServices.map((serv) => {
-    return { ...serv, label: serv.hotelServiceName, value: serv._id };
-  });
-
-  const dispatch = useDispatch();
-
-  return (
-    <div className="service-card">
-      <div className="service-title">
-        Категория {number}: {necCategory}
-        {/* <button onClick={() => deleteService(currServ)}>X</button> */}
-      </div>
-      {/* <Selector
-        allCategories={allCategories}
-        optionList={optionList}
-        thisCategServices={thisCategServices}
-        styles={{
-          control: (baseStyles) => ({
-            ...baseStyles,
-            width: `${550}px`,
-            border: "none",
-            "background-color": "rgb(249, 249, 249)",
-            outline: "none",
-          }),
-        }}
-      /> */}
-      <Select
-        options={necServices}
-        onChange={(option) => {
-          setOptions(option);
-        }}
-        styles={{
-          control: (baseStyles) => ({
-            ...baseStyles,
-            width: `${550}px`,
-            border: "none",
-            backgroundColor: "rgb(249, 249, 249)",
-            outline: "none",
-          }),
-        }}
-        isSearchable
-        isMulti
-        useDragHandle
-        axis="xy"
-      />
-      <span onClick={() => setIsOpen(true)} className="additional-service">
-        Добавить новую услугу
-      </span>
-    </div>
   );
 };
 

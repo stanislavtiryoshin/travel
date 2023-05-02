@@ -308,6 +308,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
           : curr,
       rooms[0]
     );
+    console.log(cheapestRoom?.roomName);
     const basePrice = cheapestRoom?.roomPrice;
     const pricesArray = cheapestRoom?.periodPrices;
 

@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateRoom } from "../../features/room/roomSlice";
 
-const RoomRow = ({ room, handlePriceChange, periodPrices, prices }) => {
+const RoomRow = ({
+  room,
+  handlePriceChange,
+  periodPrices,
+  prices,
+  roomMode,
+}) => {
   const dispatch = useDispatch();
 
   const [newPeriodPrices, setNewPeriodPrices] = useState(periodPrices);

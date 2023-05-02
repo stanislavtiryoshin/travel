@@ -13,6 +13,7 @@ import { addRoom, updateRoom } from "../../features/room/roomSlice";
 import { AdminHead } from "../../components/Admin";
 import Section from "../../components/Section";
 import RoomRow from "../AddHotel/RoomRow";
+import GalleryBox from "../../components/Slider/GalleryBox";
 
 const AddRoom = ({ fetchedRoomData, editMode }) => {
   const dispatch = useDispatch();
@@ -61,28 +62,6 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
     let newData = fetchedRoomData;
     if (fetchedRoomData && editMode) setRoomData(newData);
   }, [fetchedRoomData, editMode]);
-
-  // const [allCategories, setAllCategories] = useState([]);
-  // const [allServices, setAllServices] = useState([]);
-
-  // useEffect(() => {
-  //   axios
-  //     .get(`http://localhost:3000/api/categories`)
-  //     .then((response) => {
-  //       setAllCategories(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  //   axios
-  //     .get(`http://localhost:3000/api/roomServices`)
-  //     .then((response) => {
-  //       setAllServices(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }, []);
 
   const roomServiceOpts = [
     {
@@ -211,6 +190,11 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
     uploadImage(values).then((res) => console.log(res));
   };
 
+  const [sources, setSources] = useState([]);
+  useEffect(() => {
+    setSources(roomData?.img ? roomData?.img : []);
+  }, [roomData]);
+
   // console.log(fetchedRoomData._id, "roomData");
 
   return (
@@ -224,9 +208,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
           section="add_gen-section"
           wrapper="add_gen-wrapper shadowed_box"
         >
-          <div className="gen_img-box">
-            <img src={addhotel} alt="" />
-          </div>
+          <GalleryBox sources={sources} />
           <div className="gen_content-box">
             <div className="gen_title">Основное о номере</div>
             <div className="input_row">
@@ -556,7 +538,8 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 <tbody>
                   <RoomRow
                     room={fetchedRoomData}
-                    periods={fetchedRoomData?.hotel?.periods}
+                    periodPrices={fetchedRoomData?.periodPrices}
+                    roomMode
                   />
                 </tbody>
               </table>
