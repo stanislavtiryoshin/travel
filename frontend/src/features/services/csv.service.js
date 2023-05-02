@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const csvApi = createApi({
   reducerPath: "csvApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api",
+    baseUrl: "https://easy-plum-panther-tam.cyclic.app/api",
     credentials: "include",
   }),
   tagTypes: ["Csv"],

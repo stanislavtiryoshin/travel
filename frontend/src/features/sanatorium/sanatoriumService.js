@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "/api/sanatoriums/";
+const API_URL = "https://easy-plum-panther-tam.cyclic.app/api/sanatoriums/";
 
 // Get all tours
 

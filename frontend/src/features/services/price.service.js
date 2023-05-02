@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 export const priceApi = createApi({
   reducerPath: "priceApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api",
+    baseUrl: "https://easy-plum-panther-tam.cyclic.app/api",
   }),
   tagTypes: ["hotelPrice"],
   endpoints: (builder) => ({
@@ -25,7 +25,7 @@ export const priceApi = createApi({
           body.kidsFoodAmount !== "" && body.kidsFoodAmount
         }&adultsFoodAmount=${
           body.adultsFoodAmount !== "" && body.adultsFoodAmount
-        }&excursionsArray=${body.excursions}`,
+        }&excursionsArray=${body.excursionsArray}`,
       }),
       providesTags: ["hotelPrice"],
     }),

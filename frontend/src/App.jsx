@@ -11,8 +11,9 @@ function App() {
 
   return (
     <>
-      {isDesktopOrLaptop && <DesktopRoute />}
-      {isTabletOrMobile && <MobileRotue />}
+      <DesktopRoute />
+      {/* {isDesktopOrLaptop && <DesktopRoute />} */}
+      {/* {isTabletOrMobile && <MobileRotue />} */}
     </>
   );
 }

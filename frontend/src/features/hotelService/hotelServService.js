@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "/api/hotelServices/";
+const API_URL = "https://easy-plum-panther-tam.cyclic.app/api/hotelServices/";
 
 // Add new hotel service
 

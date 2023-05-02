@@ -44,6 +44,8 @@ const Requests = () => {
       .then(() => setIsLoading(false));
   }, []);
 
+  console.log(orders);
+
   const statuses = [
     {
       label: "В обработке",
@@ -154,7 +156,7 @@ const Requests = () => {
             className={`${
               statuses.filter((stat) =>
                 stat.label.includes(row.original.status)
-              )[0].style
+              )[0]?.style
             } status-btn`}
           >
             {row.original.status}

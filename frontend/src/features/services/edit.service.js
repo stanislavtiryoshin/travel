@@ -3,7 +3,7 @@ import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react";
 export const editApi = createApi({
   reducerPath: "editApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api",
+    baseUrl: "https://easy-plum-panther-tam.cyclic.app/api",
     credentials: "include",
   }),
   tagTypes: ["Camp", "Tour"],

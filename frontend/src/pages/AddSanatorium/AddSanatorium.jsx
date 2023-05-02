@@ -152,7 +152,7 @@ const AddSanatorium = ({
   // Fetching all categories, services, locations
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/locations`)
+      .get(`https://easy-plum-panther-tam.cyclic.app/api/locations`)
       .then((response) => {
         setAllLocations(response.data);
       })
@@ -160,7 +160,7 @@ const AddSanatorium = ({
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/api/categories`)
+      .get(`https://easy-plum-panther-tam.cyclic.app/api/categories`)
       .then(({ data }) => {
         setAllCategories(data);
         // console.log(data);
@@ -169,7 +169,7 @@ const AddSanatorium = ({
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/api/hotelServices`)
+      .get(`https://easy-plum-panther-tam.cyclic.app/api/hotelServices`)
       .then((response) => {
         setAllServices(response.data);
         setAllSanServices(

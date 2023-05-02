@@ -226,7 +226,7 @@ const Hotel = () => {
     hotelId,
     roomId: clientRoom._id,
     personMode: false,
-    excursions: [],
+    excursionsArray: [],
     kidsFoodAmount: 0,
     adultsFoodAmount: 0,
   });
@@ -252,7 +252,7 @@ const Hotel = () => {
       agesArray: localStorage.getItem("agesArray")
         ? JSON.parse(localStorage.getItem("agesArray"))
         : [],
-      excursions: localStorage.getItem("excursions")
+      excursionsArray: localStorage.getItem("excursions")
         ? JSON.parse(localStorage.getItem("excursions"))
         : [],
     }));

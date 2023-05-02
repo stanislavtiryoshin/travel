@@ -67,7 +67,9 @@ const Home = () => {
   useEffect(() => {
     if (destination)
       axios
-        .get(`http://localhost:3000/api/locations/${destination}`)
+        .get(
+          `https://easy-plum-panther-tam.cyclic.app/api/locations/${destination}`
+        )
         .then((response) => {
           setCurrentLocation(response.data);
         })

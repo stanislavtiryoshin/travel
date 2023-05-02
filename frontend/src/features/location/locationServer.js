@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "/api/locations/";
+const API_URL = "https://easy-plum-panther-tam.cyclic.app/api/locations/";
 
 // Get location
 const getLocations = async (locationId) => {

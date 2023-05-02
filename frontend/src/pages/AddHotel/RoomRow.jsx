@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateRoom } from "../../features/room/roomSlice";
+import { Link } from "react-router-dom";
 
 const RoomRow = ({
   room,
@@ -22,7 +23,8 @@ const RoomRow = ({
       {room ? (
         <tr key={room._id} style={{ margin: "5px" }}>
           <td className="first_col">
-            {room?.roomName}{" "}
+            <Link to={`/dashboard/room/${room?._id}`}>{room?.roomName} </Link>
+
             {room._id && (
               <button
                 className="price-btn"
@@ -33,10 +35,6 @@ const RoomRow = ({
                       periodPrices: newPeriodPrices,
                     })
                   );
-                  console.log({
-                    _id: room._id,
-                    periodPrices: periodPrices,
-                  });
                 }}
               >
                 <svg

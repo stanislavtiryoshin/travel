@@ -2,7 +2,7 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
-  "proxy": "http://localhost:5000",
+  "proxy": "https://easy-plum-panther-tam.cyclic.app",
   "type": "module",
   "scripts": {
     "front": "vite",

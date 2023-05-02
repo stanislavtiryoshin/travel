@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api",
+    baseUrl: "https://easy-plum-panther-tam.cyclic.app/api",
     credentials: "include",
   }),
   tagTypes: [
@@ -133,9 +133,9 @@ export const baseApi = createApi({
     getOrdersByQuery: builder.query({
       query: (body) => ({
         url: `/orders/order/search?status=${body.status}&query=${body.query}`,
-        headers: {
-          Authorization: `Bearer ${body.token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${body.token}`,
+        // },
       }),
     }),
     getOrderById: builder.query({

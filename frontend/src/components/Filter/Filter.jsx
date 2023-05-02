@@ -108,7 +108,7 @@ const Filter = ({ mode }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/foods`)
+      .get(`https://easy-plum-panther-tam.cyclic.app/api/foods`)
       .then((response) => {
         setAllFoods(response.data);
       })

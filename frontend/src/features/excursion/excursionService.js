@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "/api/excursions/";
+const API_URL = "https://easy-plum-panther-tam.cyclic.app/api/excursions/";
 
 // Get searched hotels
 

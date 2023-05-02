@@ -141,7 +141,7 @@ const AddHotel = ({
   // Fetching all categories, services, locations
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/locations`)
+      .get(`https://easy-plum-panther-tam.cyclic.app/api/locations`)
       .then((response) => {
         setAllLocations(response.data);
       })
@@ -149,7 +149,7 @@ const AddHotel = ({
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/api/categories`)
+      .get(`https://easy-plum-panther-tam.cyclic.app/api/categories`)
       .then(({ data }) => {
         setAllCategories(data);
         // console.log(data);
@@ -158,7 +158,7 @@ const AddHotel = ({
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/api/hotelServices`)
+      .get(`https://easy-plum-panther-tam.cyclic.app/api/hotelServices`)
       .then((response) => {
         setAllServices(response.data);
       })
@@ -698,7 +698,12 @@ const AddHotel = ({
                 section="tb_section"
                 wrapper="tb_wrapper ver shadowed_box"
               >
-                <div className="gen_title">Номера</div>
+                <div className="periods_top">
+                  <div className="gen_title">Номера </div>
+                  <div className="periods_btns">
+                    <button className="primary-btn black">Сохранить</button>
+                  </div>
+                </div>
                 <div className="table_wrapper">
                   <table className="periods_table">
                     <thead>
