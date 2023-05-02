@@ -231,8 +231,6 @@ const Hotel = () => {
     adultsFoodAmount: 0,
   });
 
-  console.log(priceData);
-
   useEffect(() => {
     setPriceData((prev) => ({
       ...prev,
@@ -243,25 +241,37 @@ const Hotel = () => {
   useEffect(() => {
     setPriceData((prev) => ({
       ...prev,
-      start: localStorage.getItem("startDate")
-        ? JSON.parse(localStorage.getItem("startDate"))
-        : "",
-      daysAmount: localStorage.getItem("daysAmount")
-        ? localStorage.getItem("daysAmount")
-        : "",
-      agesArray: localStorage.getItem("agesArray")
-        ? JSON.parse(localStorage.getItem("agesArray"))
-        : [],
+      agesArray: JSON.parse(localStorage.getItem("agesArray")),
+    }));
+    console.log(JSON.parse(localStorage.getItem("agesArray")), "ages");
+  }, [JSON.parse(localStorage.getItem("agesArray"))]);
+
+  useEffect(() => {
+    setPriceData((prev) => ({
+      ...prev,
       excursions: localStorage.getItem("excursions")
         ? JSON.parse(localStorage.getItem("excursions"))
         : [],
     }));
-  }, [
-    localStorage.getItem("daysAmount"),
-    localStorage.getItem("startDate"),
-    localStorage.getItem("agesArray"),
-    localStorage.getItem("excursions"),
-  ]);
+  }, [localStorage.getItem("excursions")]);
+
+  useEffect(() => {
+    setPriceData((prev) => ({
+      ...prev,
+      daysAmount: localStorage.getItem("daysAmount")
+        ? localStorage.getItem("daysAmount")
+        : 1,
+    }));
+  }, [localStorage.getItem("daysAmount")]);
+
+  useEffect(() => {
+    setPriceData((prev) => ({
+      ...prev,
+      start: localStorage.getItem("startDate")
+        ? JSON.parse(localStorage.getItem("startDate"))
+        : Date.now(),
+    }));
+  }, [localStorage.getItem("startDate")]);
 
   const { data: price, isLoading: priceIsLoading } =
     useGetHotelPriceQuery(priceData);
@@ -609,6 +619,7 @@ const Hotel = () => {
                     <img src={person} alt="" /> {orderTerms?.amount} взр.
                   </div>
                   <div className="hotel_side-row total">
+                    {JSON.parse(localStorage.getItem("agesArray")).length}
                     Итого:
                     {priceIsLoading ? (
                       <Loader />
