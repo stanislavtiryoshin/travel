@@ -10,7 +10,7 @@ export default defineConfig({
     open: true,
     proxy: {
       "/api": {
-        target: "https://easy-plum-panther-tam.cyclic.app",
+        target: "http://localhost:5000",
         changeOrigin: true,
         secure: false,
       },

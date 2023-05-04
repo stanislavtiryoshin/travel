@@ -141,7 +141,7 @@ const AddHotel = ({
   // Fetching all categories, services, locations
   useEffect(() => {
     axios
-      .get(`https://easy-plum-panther-tam.cyclic.app/api/locations`)
+      .get(`http://localhost:3000/api/api/locations`)
       .then((response) => {
         setAllLocations(response.data);
       })
@@ -149,7 +149,7 @@ const AddHotel = ({
         console.log(error);
       });
     axios
-      .get(`https://easy-plum-panther-tam.cyclic.app/api/categories`)
+      .get(`http://localhost:3000/api/api/categories`)
       .then(({ data }) => {
         setAllCategories(data);
         // console.log(data);
@@ -158,7 +158,7 @@ const AddHotel = ({
         console.log(error);
       });
     axios
-      .get(`https://easy-plum-panther-tam.cyclic.app/api/hotelServices`)
+      .get(`http://localhost:3000/api/api/hotelServices`)
       .then((response) => {
         setAllServices(response.data);
       })

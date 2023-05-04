@@ -3,7 +3,7 @@ import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/dist/query/react";
 export const campApi = createApi({
   reducerPath: "campApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://easy-plum-panther-tam.cyclic.app/api",
+    baseUrl: "http://localhost:3000/api",
     credentials: "include",
   }),
   tagTypes: ["Camp"],

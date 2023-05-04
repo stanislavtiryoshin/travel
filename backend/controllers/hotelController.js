@@ -360,7 +360,7 @@ const getPrice = asyncHandler(async (req, res) => {
   } = req.query;
 
   let ages = agesArray.split(",").map(Number);
-  let excursions = null;
+  let excursions = [];
   if (excursionsArray) {
     excursions = excursionsArray.split(",").map(Number);
   }
@@ -449,9 +449,6 @@ const getPrice = asyncHandler(async (req, res) => {
           const endMonth = el.period.endMonth;
           const endDay = el.period.endDay;
 
-          // console.log(startDay, startMonth, endDay, endMonth);
-          // console.log(date.getMonth() + 1, date.getDate());
-
           if (
             (date.getMonth() + 1 > startMonth ||
               (date.getMonth() + 1 === startMonth &&
@@ -459,9 +456,6 @@ const getPrice = asyncHandler(async (req, res) => {
             (date.getMonth() + 1 < endMonth ||
               (date.getMonth() + 1 === endMonth && date.getDate() <= endDay))
           ) {
-            // console.log(startDay, startMonth, endDay, endMonth, "period");
-            // console.log(date.getMonth() + 1, date.getDate(), "date");
-
             if (!personMode) {
               sum += el.roomPrice;
               console.log("sum += el.roomPrice");
@@ -524,13 +518,11 @@ const getPrice = asyncHandler(async (req, res) => {
     if (excursions && excursions.length > 0) {
       await calculateExcursionPrices();
     }
-
-    console.log(excursions, "excs");
   }
 
   await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
 
-  res.status(200).json(sum);
+  res.status(200).send("asfasdf");
 });
 
 // Get room by prices

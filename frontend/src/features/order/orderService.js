@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://easy-plum-panther-tam.cyclic.app/api/orders/";
+const API_URL = "/api/orders/";
 
 //  Add new order
 

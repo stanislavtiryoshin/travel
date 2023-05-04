@@ -34,7 +34,7 @@ const HotelSearch = ({
 
   useEffect(() => {
     axios
-      .get(`https://easy-plum-panther-tam.cyclic.app/api/locations`)
+      .get(`/api/locations`)
       .then((response) => {
         setAllLocations(response.data);
       })

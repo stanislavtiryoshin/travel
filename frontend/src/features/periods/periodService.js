@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://easy-plum-panther-tam.cyclic.app/api/periods/";
+const API_URL = "/api/periods/";
 
 // Add new periods
 

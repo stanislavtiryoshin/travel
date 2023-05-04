@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const uploadApi = createApi({
   reducerPath: "uploadApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://easy-plum-panther-tam.cyclic.app/api",
+    baseUrl: "http://localhost:3000/api",
     credentials: "include",
   }),
   tagTypes: ["image"],

@@ -38,7 +38,7 @@ const SearchPanel = ({ isUserLook, style }) => {
 
   useEffect(() => {
     axios
-      .get(`https://easy-plum-panther-tam.cyclic.app/api/locations`)
+      .get(`http://localhost:3000/api/locations`)
       .then((response) => {
         setAllLocations(response.data);
       })
