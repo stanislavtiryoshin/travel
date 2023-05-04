@@ -361,9 +361,11 @@ const getPrice = asyncHandler(async (req, res) => {
 
   let ages = agesArray.split(",").map(Number);
   let excursions = [];
-  if (excursionsArray) {
-    excursions = excursionsArray.split(",").map(Number);
-  }
+
+  if (excursionsArray && excursionsArray.length > 0)
+    excursions = excursionsArray?.split(",");
+
+  console.log(excursions);
 
   const hotel = await Hotel.findById(hotelId)
     .populate("locationId")
@@ -389,11 +391,13 @@ const getPrice = asyncHandler(async (req, res) => {
 
   const extraPlacesAmount = ages.length - chosenRoom.capacity;
 
+  console.log(extraPlacesAmount, "extraPlacesAmount");
+
   let placesArray = chosenRoom.extraPlaces;
 
   ages.sort((a, b) => b - a);
 
-  const accomodatedAges = ages.splice(0, extraPlacesAmount);
+  const accomodatedAges = ages.splice(0, chosenRoom.capacity);
 
   console.log(ages, "ages");
 
@@ -414,18 +418,17 @@ const getPrice = asyncHandler(async (req, res) => {
     }
   });
 
+  console.log(chosenPlaces);
+
   sum = chosenPlaces.reduce((acc, place) => {
-    if (addExtraFood) {
+    if (addExtraFood && !chosenRoom.extraFoodIncluded) {
       console.log("addExtraFood");
-
       return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
-    } else if (!addExtraFood) {
+    } else if (!addExtraFood && !chosenRoom.extraFoodIncluded) {
       console.log("!addExtraFood");
-
       return acc + place.priceNoFood * daysAmount;
-    } else {
-      console.log("extra food included");
-
+    } else if (chosenRoom.extraFoodIncluded) {
+      console.log("extra food already included");
       return acc + place.priceWithFood * daysAmount;
     }
   }, 0);
@@ -475,12 +478,10 @@ const getPrice = asyncHandler(async (req, res) => {
           }
         });
         if (!priceFound) {
-          res.sendStatus(404);
-          console.log("!priceFound");
+          res.status(404).json("Could not find period for these dates");
         }
       } else {
-        res.sendStatus(404);
-        console.log("else");
+        res.status(404).json("This room has no prices set");
       }
       console.log(sum);
     };
@@ -490,13 +491,15 @@ const getPrice = asyncHandler(async (req, res) => {
     }
 
     (function calculateFood() {
-      if (addRoomFood && kidsFoodAmount != false && adultsFoodAmount != false) {
+      if (addRoomFood && kidsFoodAmount !== 0 && adultsFoodAmount !== 0) {
         for (let i = 0; i < daysAmount; i++) {
           for (let i = 0; i < kidsFoodAmount; i++) {
             sum += hotel.kidFoodPrice;
+            console.log("kid food");
           }
           for (let i = 0; i < adultsFoodAmount; i++) {
             sum += hotel.adultFoodPrice;
+            console.log("adult food");
           }
         }
       }
@@ -505,11 +508,9 @@ const getPrice = asyncHandler(async (req, res) => {
     async function calculateExcursionPrices() {
       if (excursions && excursions.length > 0) {
         for (const id of excursions) {
-          const excursion = await Excursion.findById(
-            new mongoose.Types.ObjectId(id)
-          );
+          const excursion = await Excursion.findById(id);
           if (excursion && excursion.price) {
-            sum += excursion.price;
+            sum += excursion.price * agesArray.split(",").length;
           }
         }
       }
@@ -522,7 +523,7 @@ const getPrice = asyncHandler(async (req, res) => {
 
   await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
 
-  res.status(200).send("asfasdf");
+  res.status(200).json(sum);
 });
 
 // Get room by prices

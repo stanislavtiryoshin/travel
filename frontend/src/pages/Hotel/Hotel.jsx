@@ -249,7 +249,7 @@ const Hotel = () => {
   useEffect(() => {
     setPriceData((prev) => ({
       ...prev,
-      excursions: localStorage.getItem("excursions")
+      excursionsArray: localStorage.getItem("excursions")
         ? JSON.parse(localStorage.getItem("excursions"))
         : [],
     }));

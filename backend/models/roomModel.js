@@ -8,6 +8,7 @@ const roomSchema = mongoose.Schema(
       required: true,
     },
     img: [String],
+    extraFoodIncluded: Boolean,
     periodPrices: [
       {
         period: {

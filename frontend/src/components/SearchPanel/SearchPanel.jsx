@@ -168,7 +168,11 @@ const SearchPanel = ({ isUserLook, style }) => {
 
   const isHome = window.location.pathname === "/";
 
-  const [agesArray, setAgesArray] = useState([]);
+  const [agesArray, setAgesArray] = useState(
+    localStorage.getItem("agesArray")
+      ? JSON.parse(localStorage.getItem("agesArray"))
+      : [1000]
+  );
 
   useEffect(() => {
     localStorage.setItem(
@@ -176,6 +180,8 @@ const SearchPanel = ({ isUserLook, style }) => {
       JSON.stringify(agesArray.filter((ages) => ages !== null))
     );
   }, [agesArray]);
+
+  console.log(agesArray);
 
   useEffect(() => {
     dispatch(

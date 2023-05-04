@@ -9,11 +9,9 @@ export const priceApi = createApi({
   endpoints: (builder) => ({
     getHotelPrice: builder.query({
       query: (body) => ({
-        url: `/hotels/price?hotelId${
-          body.hotelId !== "" && body.hotelId
-        }&agesArray=${body.agesArray !== "" && body.agesArray}&start=${
-          body.start
-        }&hotelId=${body.hotelId}&roomId=${
+        url: `/hotels/price?agesArray=${
+          body.agesArray !== "" && body.agesArray
+        }&start=${body.start}&hotelId=${body.hotelId}&roomId=${
           body.roomId !== "" && body.roomId
         }&addExtraFood=${
           body.addExtraFood !== false && body.addExtraFood
