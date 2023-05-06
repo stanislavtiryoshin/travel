@@ -38,6 +38,8 @@ import CheckBtn from "../../components/Filter/CheckBtn";
 import { useGetHotelPriceQuery } from "../../features/services/price.service";
 import Loader from "../../components/Loader";
 
+import { setRefetch } from "../../features/search/searchSlice";
+
 const Hotel = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -63,16 +65,20 @@ const Hotel = () => {
     useGetRoomByHotelIdLimitQuery({
       hotelId,
       limit: roomCount,
+      capacity: localStorage.getItem("agesArray")
+        ? JSON.parse(localStorage.getItem("agesArray")).length
+        : null,
     });
 
   const [
     getData,
-    {
-      data: recommendation,
-      isLoading: recommendationIsLoading,
-      isSuccess: recommendationSuccess,
-    },
+    // {
+    //   data: recommendation,
+    //   isLoading: recommendationIsLoading,
+    // },
   ] = useGetHotelsByTagMutation();
+
+  const [recommendation, setRecommendation] = useState([]);
 
   useEffect(() => {
     getData({
@@ -80,7 +86,7 @@ const Hotel = () => {
       comforts: singleHotel && singleHotel.comforts && singleHotel.comforts,
       hotelServices:
         singleHotel && singleHotel.hotelServices && singleHotel.hotelServices,
-    });
+    }).then((res) => setRecommendation(res.data));
   }, [singleHotel]);
 
   useEffect(() => {
@@ -238,13 +244,21 @@ const Hotel = () => {
     }));
   }, [clientRoom]);
 
+  // const [ageA] = useState(
+  //   localStorage.getItem("agesArray")
+  //     ? JSON.parse(localStorage.getItem("agesArray"))
+  //     : []
+  // );
+
   useEffect(() => {
-    setPriceData((prev) => ({
-      ...prev,
-      agesArray: JSON.parse(localStorage.getItem("agesArray")),
-    }));
-    console.log(JSON.parse(localStorage.getItem("agesArray")), "ages");
-  }, [JSON.parse(localStorage.getItem("agesArray"))]);
+    const storedAgesArray = JSON.parse(localStorage.getItem("agesArray"));
+    if (storedAgesArray) {
+      setPriceData((prev) => ({
+        ...prev,
+        agesArray: storedAgesArray,
+      }));
+    }
+  }, [localStorage.getItem("agesArray")]);
 
   useEffect(() => {
     setPriceData((prev) => ({
@@ -273,8 +287,15 @@ const Hotel = () => {
     }));
   }, [localStorage.getItem("startDate")]);
 
-  const { data: price, isLoading: priceIsLoading } =
-    useGetHotelPriceQuery(priceData);
+  const {
+    data: price,
+    isLoading: priceIsLoading,
+    refetch,
+  } = useGetHotelPriceQuery(priceData);
+
+  useEffect(() => {
+    dispatch(setRefetch(refetch));
+  }, [price]);
 
   useEffect(() => {
     if (!orderTerms.foodIncluded) {
@@ -295,8 +316,6 @@ const Hotel = () => {
   if (roomIsLoading) {
     return <RoomLoader />;
   }
-
-  console.log(localStorage.getItem("excursions"), "excursions");
 
   return (
     <div className="hotel_page page">
@@ -348,7 +367,7 @@ const Hotel = () => {
                             ?.filter((serv) => serv.priority === 1)
                             .map((serv) => {
                               return (
-                                <div className="hotel_tag">
+                                <div className="hotel_tag" key={serv._id}>
                                   {serv.icon ? (
                                     <div
                                       dangerouslySetInnerHTML={{
@@ -440,7 +459,7 @@ const Hotel = () => {
                       {servicesToRender
                         ? servicesToRender.map((obj) => {
                             return (
-                              <div className="services_col">
+                              <div className="services_col" key={obj._id}>
                                 <div className="services_col-title">
                                   <img src={serv} alt="" />
                                   {obj.category}

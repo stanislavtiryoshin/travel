@@ -167,12 +167,10 @@ export const baseApi = createApi({
       invalidatesTags: [{ id: "LIST", type: "Camp" }],
     }),
     getRoomByHotelIdLimit: builder.query({
-      query: ({ limit, hotelId }) => ({
-        url: `/hotels/${hotelId}/room?limit=${limit}&agesArray=${JSON.parse(
-          localStorage.getItem("agesArray")
-        )
-          .split(",")
-          .map(Number)}`,
+      query: ({ limit, hotelId, capacity }) => ({
+        url: `/hotels/${hotelId}/room?limit=${limit}&capacity=${
+          capacity ? capacity : ""
+        }`,
       }),
       providesTags: (result) =>
         result
@@ -184,7 +182,6 @@ export const baseApi = createApi({
     }),
     getHotelsByTag: builder.mutation({
       query: (body) => {
-        // console.log("body", body);
         return {
           url: "/hotels/hotelRecommendation/tags",
           body,

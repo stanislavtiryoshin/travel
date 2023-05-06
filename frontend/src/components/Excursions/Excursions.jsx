@@ -55,6 +55,7 @@ const Excursions = ({ locationId }) => {
               excursions?.map((exc, index) => {
                 return (
                   <div
+                    key={exc._id}
                     className={`exc_card ${
                       clientExcursions.includes(exc._id) ? "active" : ""
                     }`}

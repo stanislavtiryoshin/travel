@@ -538,35 +538,35 @@ const getRoomPrices = (req, res) => {
 // Get rooms with limit
 
 const getRoomsByLimit = async (req, res) => {
-  const { limit } = req.query;
+  const { limit, capacity } = req.query;
   const { hotelId } = req.params;
   let roomData = [];
 
   try {
-    const hotels = await Hotel.findOne({ _id: hotelId });
+    const hotel = await Hotel.findOne({ _id: hotelId });
     if (limit) {
-      hotels.rooms.length = limit;
+      hotel.rooms.length = limit;
     }
 
     try {
-      const rooms = await Room.find(
+      const rooms = await Room.aggregate([
         {
-          _id: {
-            $in: hotels.rooms,
+          $match: {
+            _id: {
+              $in: hotel.rooms,
+            },
+            $expr: {
+              $gte: [
+                { $sum: ["$capacity", { $size: "$extraPlaces" }] },
+                parseInt(capacity),
+              ],
+            },
           },
         },
-        {
-          $expr: {
-            $gte: [
-              { $sum: ["$capacity", { $size: "$extraPlaces" }] },
-              { $size: req.query.agesArray },
-            ],
-          },
-        }
-      );
+      ]);
       res.status(200).json(rooms);
     } catch (error) {
-      res.sendStatus(400);
+      res.status(500).json(error);
     }
 
     console.log(roomData);

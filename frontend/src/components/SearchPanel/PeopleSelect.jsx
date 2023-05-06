@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import search4 from "../../assets/search/search4.svg";
 import "./SearchPanel.scss";
 
-const PeopleSelect = ({ agesArray, setAgesArray }) => {
+const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleAgeChange = (index, value) => {

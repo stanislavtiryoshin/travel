@@ -36,6 +36,8 @@ const SearchPanel = ({ isUserLook, style }) => {
 
   const [allLocations, setAllLocations] = useState(null);
 
+  const { refetch } = useSelector((state) => state.search);
+
   useEffect(() => {
     axios
       .get(`http://localhost:3000/api/locations`)
@@ -179,9 +181,8 @@ const SearchPanel = ({ isUserLook, style }) => {
       "agesArray",
       JSON.stringify(agesArray.filter((ages) => ages !== null))
     );
+    refetch();
   }, [agesArray]);
-
-  console.log(agesArray);
 
   useEffect(() => {
     dispatch(
@@ -284,11 +285,14 @@ const SearchPanel = ({ isUserLook, style }) => {
           </div>
         </div>
         <img src={line} className="line" alt="" />
-        <PeopleSelect setAgesArray={setAgesArray} agesArray={agesArray} />
+        <PeopleSelect
+          setAgesArray={setAgesArray}
+          agesArray={agesArray}
+          refetch={refetch}
+        />
         <button
           className="primary-btn yellow"
           onClick={() => {
-            console.log(clientData);
             if (searchTerms.destination && searchTerms.destination !== "Весь") {
               handleSearch({
                 locationId: searchTerms.destination,
