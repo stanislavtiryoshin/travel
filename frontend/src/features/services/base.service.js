@@ -168,7 +168,11 @@ export const baseApi = createApi({
     }),
     getRoomByHotelIdLimit: builder.query({
       query: ({ limit, hotelId }) => ({
-        url: `/hotels/${hotelId}/room?limit=${limit}`,
+        url: `/hotels/${hotelId}/room?limit=${limit}&agesArray=${JSON.parse(
+          localStorage.getItem("agesArray")
+        )
+          .split(",")
+          .map(Number)}`,
       }),
       providesTags: (result) =>
         result

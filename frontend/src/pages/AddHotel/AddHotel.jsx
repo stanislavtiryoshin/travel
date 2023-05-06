@@ -37,6 +37,8 @@ const AddHotel = ({
 
   const { currServices } = useSelector((state) => state.admin);
 
+  console.log(currServices, "currServices");
+
   const [hotelData, setHotelData] = useState({
     uid: uid(),
     hotelServices: [],
@@ -66,6 +68,17 @@ const AddHotel = ({
     comforts: [],
     hotelStars: 5,
   });
+
+  const [fetchedOptions, setFetchedOptions] = useState([]);
+
+  useEffect(() => {
+    if (
+      fetchedHotelData?.hotelServices &&
+      fetchedHotelData?.hotelServices.length > 0
+    ) {
+      setFetchedOptions(fetchedHotelData?.hotelServices);
+    }
+  }, [fetchedHotelData]);
 
   useEffect(() => {
     let newData = fetchedHotelData;
@@ -168,6 +181,7 @@ const AddHotel = ({
   }, []);
 
   const [servicesToRender, setServicesToRender] = useState();
+  const [fetchedOptionsToRender, setFetchedOptionsToRender] = useState([]);
 
   useEffect(() => {
     const result = allServices?.reduce((acc, cur) => {
@@ -194,6 +208,35 @@ const AddHotel = ({
     if (allServices) setServicesToRender(arrayResult);
   }, [allServices]);
 
+  useEffect(() => {
+    const result = fetchedOptions?.reduce((acc, cur) => {
+      const category = cur?.category?.categoryName;
+      const service = {
+        _id: cur._id,
+        hotelServiceName: cur?.hotelServiceName,
+        label: cur?.hotelServiceName,
+        value: cur?._id,
+      };
+
+      if (!acc[category]) {
+        acc[category] = {
+          category,
+          services: [service],
+        };
+      } else {
+        acc[category]?.services?.push(service);
+      }
+
+      return acc;
+    }, {});
+
+    const arrayResult = result ? Object.values(result) : [];
+
+    if (fetchedOptions) setFetchedOptionsToRender(arrayResult);
+  }, [fetchedOptions]);
+
+  // console.log(fetchedOptionsToRender, "fetched options to rendre");
+
   // comforts: [...JSON.parse(localStorage.getItem("comforts"))],
 
   const handleSubmit = () => {
@@ -204,9 +247,11 @@ const AddHotel = ({
 
     // console.log(values);
 
-    dispatch(addHotel(hotelData)).then((res) => {
-      navigate(`/dashboard/hotel/${res.payload._id}`);
-    });
+    dispatch(addHotel({ ...hotelData, hotelServices: currServices })).then(
+      (res) => {
+        navigate(`/dashboard/hotel/${res.payload._id}`);
+      }
+    );
   };
 
   const [prices, setPrices] = useState([]);
@@ -250,7 +295,11 @@ const AddHotel = ({
       <AdminHead
         text={!editMode ? "Создание нового отеля" : "Редактирование отеля"}
         onClick={() => {
-          !editMode ? handleSubmit() : dispatch(updateHotel(hotelData));
+          !editMode
+            ? handleSubmit()
+            : dispatch(
+                updateHotel({ ...hotelData, hotelServices: currServices })
+              );
         }}
       />
       <div className="add_hotel-page">
@@ -660,7 +709,8 @@ const AddHotel = ({
           </div>
           <div className="add_more-col categ-col shadowed_box">
             <div className="gen_title">Услуги отеля</div>
-            {console.log(currServices)}
+            {/* {console.log(fetchedOptions)}
+            {console.log(servicesToRender)} */}
             {servicesToRender?.length > 0
               ? servicesToRender?.map((serv, idx) => {
                   return (
@@ -679,6 +729,11 @@ const AddHotel = ({
                           value: el._id,
                         };
                       })}
+                      fetchedOptions={
+                        fetchedOptionsToRender?.filter(
+                          (service) => service.category === serv.category
+                        )[0]?.services
+                      }
                     />
                   );
                 })

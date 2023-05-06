@@ -13,6 +13,7 @@ const ServiceCard = ({
   setCurrServices,
   onChange,
   editMode,
+  fetchedOptions,
 }) => {
   const { currServices } = useSelector((state) => state.admin);
   const [options, setOptions] = useState([]);
@@ -31,7 +32,7 @@ const ServiceCard = ({
       <div className="service-title">
         Категория {number}: {necCategory}
       </div>
-      <MultiSelect options={necServices} onChange={() => console.log("sdf")} />
+      <MultiSelect options={necServices} fetchedOptions={fetchedOptions} />
       <span onClick={() => setIsOpen(true)} className="additional-service">
         Добавить новую услугу
       </span>

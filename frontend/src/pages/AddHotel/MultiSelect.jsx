@@ -1,15 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import "./MultiSelect.scss";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { rmCurrServices, setCurrServices } from "../../features/adminSlice";
 
-function MultiSelect({ options, onChange }) {
+function MultiSelect({ options, onChange, fetchedOptions }) {
   const dispatch = useDispatch();
 
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const { currServices } = useSelector((state) => state.admin);
+
+  useEffect(() => {
+    if (fetchedOptions) {
+      setSelectedOptions(fetchedOptions);
+      fetchedOptions.forEach((o) => {
+        if (!currServices.some((el) => el === o._id)) {
+          dispatch(setCurrServices(o._id));
+        }
+      });
+    }
+  }, [fetchedOptions]);
 
   const filteredOptions = options.filter(
     (option) =>
@@ -19,7 +32,9 @@ function MultiSelect({ options, onChange }) {
         !selectedOptions.some((o) => o.value === option.value))
   );
 
-  console.log("selectedOptions", selectedOptions);
+  // console.log(selectedOptions, "selected options");
+
+  // console.log("selectedOptions", selectedOptions);
 
   function handleOptionClick(option) {
     const optionAlreadySelected = selectedOptions.some(

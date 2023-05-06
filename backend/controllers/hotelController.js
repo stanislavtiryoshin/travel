@@ -189,7 +189,7 @@ const getSingleHotel = asyncHandler(async (req, res) => {
         $expr: {
           $gte: [
             { $sum: ["$capacity", { $size: "$extraPlaces" }] },
-            +req.query.peopleAmount,
+            { $size: req.query.agesArray },
           ],
         },
       },
@@ -549,11 +549,21 @@ const getRoomsByLimit = async (req, res) => {
     }
 
     try {
-      const rooms = await Room.find({
-        _id: {
-          $in: hotels.rooms,
+      const rooms = await Room.find(
+        {
+          _id: {
+            $in: hotels.rooms,
+          },
         },
-      });
+        {
+          $expr: {
+            $gte: [
+              { $sum: ["$capacity", { $size: "$extraPlaces" }] },
+              { $size: req.query.agesArray },
+            ],
+          },
+        }
+      );
       res.status(200).json(rooms);
     } catch (error) {
       res.sendStatus(400);
