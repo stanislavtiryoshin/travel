@@ -703,7 +703,10 @@ const Hotel = () => {
                 </div>
 
                 {singleHotel?.locationId?._id ? (
-                  <Excursions locationId={singleHotel?.locationId?._id} />
+                  <Excursions
+                    locationId={singleHotel?.locationId?._id}
+                    refetch={refetch}
+                  />
                 ) : (
                   "Экскурсии загружаются"
                 )}
