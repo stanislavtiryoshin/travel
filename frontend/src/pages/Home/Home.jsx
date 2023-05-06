@@ -67,7 +67,7 @@ const Home = () => {
   useEffect(() => {
     if (destination)
       axios
-        .get(`http://localhost:3000/api/api/locations/${destination}`)
+        .get(`http://localhost:3000/api/locations/${destination}`)
         .then((response) => {
           setCurrentLocation(response.data);
         })

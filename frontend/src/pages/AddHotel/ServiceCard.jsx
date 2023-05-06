@@ -12,6 +12,7 @@ const ServiceCard = ({
   necCategory,
   setCurrServices,
   onChange,
+  editMode,
 }) => {
   const { currServices } = useSelector((state) => state.admin);
   const [options, setOptions] = useState([]);

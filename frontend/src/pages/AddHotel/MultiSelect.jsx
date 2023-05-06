@@ -19,6 +19,8 @@ function MultiSelect({ options, onChange }) {
         !selectedOptions.some((o) => o.value === option.value))
   );
 
+  console.log("selectedOptions", selectedOptions);
+
   function handleOptionClick(option) {
     const optionAlreadySelected = selectedOptions.some(
       (o) => o.value === option.value

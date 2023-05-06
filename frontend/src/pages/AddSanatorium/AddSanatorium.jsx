@@ -152,7 +152,7 @@ const AddSanatorium = ({
   // Fetching all categories, services, locations
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/api/locations`)
+      .get(`http://localhost:3000/api/locations`)
       .then((response) => {
         setAllLocations(response.data);
       })
@@ -160,7 +160,7 @@ const AddSanatorium = ({
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/api/api/categories`)
+      .get(`http://localhost:3000/api/categories`)
       .then(({ data }) => {
         setAllCategories(data);
         // console.log(data);
@@ -169,7 +169,7 @@ const AddSanatorium = ({
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/api/api/hotelServices`)
+      .get(`http://localhost:3000/api/hotelServices`)
       .then((response) => {
         setAllServices(response.data);
         setAllSanServices(
