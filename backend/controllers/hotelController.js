@@ -523,7 +523,7 @@ const getPrice = asyncHandler(async (req, res) => {
 
   await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
 
-  res.status(200).json(sum);
+  res.status(200).json(sum * 1.1);
 });
 
 // Get room by prices

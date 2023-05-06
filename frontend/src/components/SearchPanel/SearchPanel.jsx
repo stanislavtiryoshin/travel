@@ -182,7 +182,7 @@ const SearchPanel = ({ isUserLook, style }) => {
       JSON.stringify(agesArray.filter((ages) => ages !== null))
     );
     refetch();
-  }, [agesArray]);
+  }, [agesArray, refetch]);
 
   useEffect(() => {
     dispatch(
