@@ -11,7 +11,7 @@ import excphoto from "../../assets/exc.png";
 
 import "./Excursions.scss";
 
-const Excursions = ({ locationId }) => {
+const Excursions = ({ locationId, refetch }) => {
   const dispatch = useDispatch();
 
   const { excursions, isLoading, isSuccess, isError, message } = useSelector(
@@ -31,10 +31,12 @@ const Excursions = ({ locationId }) => {
   const handleAddExcursion = (excId, excPrice) => {
     dispatch(addClientExcursion(excId));
     dispatch(addExcSum(excPrice));
+    refetch();
   };
   const handleRemoveExcursion = (excId, excPrice) => {
     dispatch(removeClientExcursion(excId));
     dispatch(removeExcSum(excPrice));
+    refetch();
   };
 
   return (

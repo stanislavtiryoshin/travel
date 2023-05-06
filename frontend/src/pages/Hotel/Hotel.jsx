@@ -555,6 +555,7 @@ const Hotel = () => {
                           Добавить питание
                         </div>
                         <div className="input_row">
+                          <label htmlFor="">Кол-во детс.</label>
                           <select
                             name=""
                             id=""
@@ -567,16 +568,22 @@ const Hotel = () => {
                               }));
                             }}
                           >
-                            <option value={5}>5</option>
-                            <option value={4}>4</option>
+                            {new Array(
+                              JSON.parse(
+                                localStorage.getItem("agesArray")
+                              ).filter((age) => age !== 1000).length
+                            )
+                              .fill(0)
+                              .map((el, idx) => (
+                                <option value={idx + 1}>{idx + 1}</option>
+                              ))}
 
-                            <option value={3}>3</option>
-                            <option value={2}>2</option>
-                            <option value={1}>1</option>
                             <option value={0} selected>
                               0
                             </option>
                           </select>
+
+                          <label htmlFor="">Кол-во взр.</label>
                           <select
                             name=""
                             id=""
@@ -589,14 +596,23 @@ const Hotel = () => {
                               }));
                             }}
                           >
-                            <option value={5}>5</option>
+                            {new Array(
+                              JSON.parse(
+                                localStorage.getItem("agesArray")
+                              ).filter((age) => age === 1000).length
+                            )
+                              .fill(0)
+                              .map((el, idx) => (
+                                <option value={idx + 1}>{idx + 1}</option>
+                              ))}
+                            {/* <option value={5}>5</option>
                             <option value={4}>4</option>
                             <option value={3}>3</option>
                             <option value={2}>2</option>
                             <option value={1}>1</option>
                             <option value={0} selected>
                               0
-                            </option>
+                            </option> */}
                           </select>
                         </div>
                       </div>
@@ -662,20 +678,35 @@ const Hotel = () => {
                       })}
                   </div>
                   <div className="hotel_side-row">
-                    <img src={person} alt="" /> {orderTerms?.amount} взр.
+                    <img src={person} alt="" />{" "}
+                    {JSON.parse(localStorage.getItem("agesArray")).length} взр.
                   </div>
                   <div className="hotel_side-row total">
-                    {JSON.parse(localStorage.getItem("agesArray")).length}
                     Итого:
                     {priceIsLoading ? (
                       <Loader />
                     ) : (
-                      <span>
-                        {typeof price !== "object"
-                          ? formatter.format(price)
-                          : "0"}
-                        тг.
-                      </span>
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <span style={{ opacity: ".75", fontSize: "16px" }}>
+                          {typeof price !== "object"
+                            ? formatter.format(price / 1.1)
+                            : "0"}
+                        </span>
+
+                        <span style={{ color: "gray", fontSize: "16px" }}>
+                          +
+                          {typeof price !== "object"
+                            ? formatter.format(price - price / 1.1)
+                            : "0"}
+                        </span>
+
+                        <span>
+                          {typeof price !== "object"
+                            ? formatter.format(price)
+                            : "0"}
+                          тг.
+                        </span>
+                      </div>
                     )}
                   </div>
                   <Link
@@ -699,7 +730,10 @@ const Hotel = () => {
                 </div>
 
                 {singleHotel?.locationId?._id ? (
-                  <Excursions locationId={singleHotel?.locationId?._id} />
+                  <Excursions
+                    locationId={singleHotel?.locationId?._id}
+                    refetch={refetch}
+                  />
                 ) : (
                   "Экскурсии загружаются"
                 )}

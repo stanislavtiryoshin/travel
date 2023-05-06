@@ -19,6 +19,7 @@ const orderSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    margeSum: Number,
     sum: {
       type: Number,
       required: true,
