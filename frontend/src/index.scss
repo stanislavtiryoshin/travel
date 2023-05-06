@@ -1,3 +1,5 @@
+@import "variables.scss";
+
 @font-face {
   font-family: "GT Walsheim Pro";
   src: url("./assets/fonts/GTWalsheimPro-Light.ttf") format("truetype");
@@ -22,8 +24,6 @@
   font-weight: 700;
   font-style: normal;
 }
-
-$main-font: "GT Walsheim Pro";
 
 *,
 *::after,
@@ -233,9 +233,24 @@ a {
 }
 
 .load-more-btn {
+  display: flex;
+  width: fit-content;
   border-radius: 16px;
   padding: 12px 20px 12px 20px;
-  border: 2px solid gray;
+  border: 2px solid rgba(41, 45, 50, 0.5) !important;
+  transition: 0.2s;
+  &:hover {
+    background-color: rgba(41, 45, 50, 0.5);
+    border-color: transparent;
+    color: #fff;
+  }
+}
+
+.load-more-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* INPUTS */

@@ -237,6 +237,10 @@ const Hotel = () => {
     adultsFoodAmount: 0,
   });
 
+  const changeExtraFood = () => [
+    setPriceData({ ...priceData, addExtraFood: !priceData.addExtraFood }),
+  ];
+
   useEffect(() => {
     setPriceData((prev) => ({
       ...prev,
@@ -420,6 +424,16 @@ const Hotel = () => {
                           room={clientRoom}
                           days={clientData?.daysAmount}
                           active={true}
+                          changeExtraFood={changeExtraFood}
+                          extraFoodActive={priceData.addExtraFood}
+                          hasExtraPlaces={
+                            clientRoom?.capacity <
+                            JSON.parse(localStorage.getItem("agesArray")).length
+                          }
+                          extraPlaces={
+                            JSON.parse(localStorage.getItem("agesArray"))
+                              .length - clientRoom?.capacity
+                          }
                         />
                       </div>
                       <img src={divider} alt="" />
@@ -603,17 +617,30 @@ const Hotel = () => {
                             key={room._id}
                             room={room}
                             active={clientRoom._id === room._id}
+                            changeExtraFood={changeExtraFood}
+                            extraFoodActive={priceData.addExtraFood}
+                            hasExtraPlaces={
+                              room?.capacity <
+                              JSON.parse(localStorage.getItem("agesArray"))
+                                .length
+                            }
+                            extraPlaces={
+                              JSON.parse(localStorage.getItem("agesArray"))
+                                .length - room?.capacity
+                            }
                           />
                         );
                       })}
                   </div>
                   {roomCount < 100 ? (
-                    <button
-                      className="load-more-btn"
-                      onClick={() => setRoomCount((prev) => prev + 100)}
-                    >
-                      Показать остальные
-                    </button>
+                    <div className="load-more-row">
+                      <button
+                        className="load-more-btn"
+                        onClick={() => setRoomCount((prev) => prev + 100)}
+                      >
+                        Показать остальные
+                      </button>
+                    </div>
                   ) : null}
                 </div>
               </div>
@@ -718,90 +745,3 @@ export const ExpandableText = ({ text }) => {
 };
 
 export default Hotel;
-
-// const calculatePrice = (start, daysNum, basePrice) => {
-//   let daysArray = [];
-
-//   const pricesArray = clientRoom.prices;
-
-//   for (let i = 0; i < daysNum; i++) {
-//     let date = new Date();
-//     date.setDate(start.getDate() + i);
-//     daysArray.push(date);
-//   }
-
-//   let sum = 0;
-
-//   const findPriceByDate = (date) => {
-//     if (pricesArray && pricesArray.length > 0) {
-//       pricesArray.forEach((el) => {
-//         if (
-//           date.getMonth() + 1 >= el.dateStart.month &&
-//           date.getMonth() + 1 <= el.dateEnd.month &&
-//           date.getDate() >= el.dateStart.day &&
-//           date.getDate() <= el.dateEnd.day &&
-//           el.price
-//         ) {
-//           sum += el.price;
-//         } else {
-//           sum += basePrice;
-//         }
-//       });
-//     } else {
-//       sum += basePrice;
-//     }
-//     return;
-//   };
-
-//   for (let i = 0; i < daysNum; i++) {
-//     findPriceByDate(daysArray[i]);
-//   }
-
-//   return sum;
-// };
-
-// useEffect(() => {
-//   if (clientData && clientRoom) {
-//     if (clientRoom?.discount) {
-//       setSum(
-//         (calculatePrice(
-//           clientStartingDate,
-//           clientData?.daysAmount,
-//           clientRoom?.roomPrice
-//         ) *
-//           (100 - clientRoom?.discount)) /
-//           100 +
-//           excSum
-//       );
-//     } else {
-//       setSum(
-//         calculatePrice(
-//           clientStartingDate,
-//           clientData?.daysAmount,
-//           clientRoom?.roomPrice
-//         ) + excSum
-//       );
-//     }
-//     window.localStorage.setItem("sum", sum);
-//   }
-// }, [clientRoom, excSum]);
-
-/* {singleHotel.rooms &&
-      clientRoom &&
-      singleHotel?.rooms
-        ?.filter(
-          (room) => room.capacity >= clientData.peopleAmount
-        )
-        .map((room, index) => {
-          return (
-            <Room
-              key={room._id}
-              room={room}
-              chooseRoom={chooseRoom}
-              days={clientData?.daysAmount}
-              active={
-                clientRoom?._id === room._id ? true : false
-              }
-            />
-          );
-        })} */
