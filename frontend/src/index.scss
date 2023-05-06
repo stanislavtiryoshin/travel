@@ -128,18 +128,30 @@ button {
   font-size: 16px;
   font-weight: 500;
   line-height: 18px;
-  background-color: rgba(94, 178, 21, 1);
+  background-color: $base-green;
   color: #fff;
   text-align: center;
   cursor: pointer;
+  transition: 0.2s;
+
+  &.clear {
+    background-color: #fff;
+    border-color: $base-green;
+    color: $base-green;
+    &:hover {
+      background-color: $base-green;
+      color: #fff;
+    }
+  }
+
   &.yellow {
     background-color: rgba(228, 155, 12, 1);
   }
   &.green {
     &.clear {
       background-color: #fff;
-      border-color: rgba(94, 178, 21, 1);
-      color: rgba(94, 178, 21, 1);
+      border-color: $base-green;
+      color: $base-green;
     }
   }
   &.white {

@@ -7,7 +7,11 @@ const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
 
   const handleAgeChange = (index, value) => {
     const newAgesArray = [...agesArray];
-    newAgesArray[index] = +value;
+    if (value === "") {
+      newAgesArray[index] = "";
+    } else {
+      newAgesArray[index] = +value;
+    }
     setAgesArray(newAgesArray);
   };
 
@@ -26,9 +30,14 @@ const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
   };
 
   const handleDeleteAge = (index) => {
-    const newAgesArray = [...agesArray];
-    newAgesArray.splice(index, 1);
-    setAgesArray(newAgesArray);
+    const ageToDelete = agesArray[index];
+    if (ageToDelete === 1000) {
+      handleRemoveAdult();
+    } else {
+      const newAgesArray = [...agesArray];
+      newAgesArray.splice(index, 1);
+      setAgesArray(newAgesArray);
+    }
   };
 
   return (
@@ -63,9 +72,15 @@ const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
             </div>
           </div>
           <div className="kids_box">
-            <button onClick={() => handleAddAge()}>Добавить ребенка</button>
+            <button
+              className="primary-btn clear"
+              onClick={() => handleAddAge()}
+            >
+              Добавить ребенка +
+            </button>
             {agesArray
               ?.filter((age) => age !== 1000)
+              ?.sort((a, b) => b - a)
               ?.map((age, idx) => {
                 return (
                   <div className="kid_input" key={idx}>
@@ -82,7 +97,9 @@ const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
                       id=""
                       value={age}
                       className="primary-input"
-                      onChange={(e) => handleAgeChange(idx, e.target.value)}
+                      onChange={(e) =>
+                        handleAgeChange(agesArray.indexOf(age), e.target.value)
+                      }
                     >
                       <option value={1}>1</option>
                       <option value={2}>2</option>
@@ -102,7 +119,12 @@ const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
                       <option value={16}>16</option>
                       <option value={17}>17</option>
                     </select>
-                    <button onClick={() => handleDeleteAge(idx)}>X</button>
+                    <button
+                      className="cross_btn"
+                      onClick={() => handleDeleteAge(agesArray.indexOf(age))}
+                    >
+                      &#x2573;
+                    </button>
                   </div>
                 );
               })}

@@ -184,6 +184,8 @@ const SearchPanel = ({ isUserLook, style }) => {
     refetch();
   }, [agesArray, refetch]);
 
+  console.log(agesArray);
+
   useEffect(() => {
     dispatch(
       setSearchOptions({
