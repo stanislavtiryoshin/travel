@@ -4,6 +4,7 @@ import "./SearchPanel.scss";
 
 const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const isHome = window.location.pathname === "/";
 
   const handleAgeChange = (index, value) => {
     const newAgesArray = [...agesArray];
@@ -13,11 +14,18 @@ const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
       newAgesArray[index] = +value;
     }
     setAgesArray(newAgesArray);
+    if (!isHome) {
+      refetch();
+    }
   };
 
   const handleAddAge = (isAdult) => {
     const newAgesArray = [...agesArray, isAdult ? 1000 : 1];
     setAgesArray(newAgesArray);
+
+    if (!isHome) {
+      refetch();
+    }
   };
 
   const handleRemoveAdult = () => {
@@ -26,6 +34,9 @@ const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
       const newAgesArray = [...agesArray];
       newAgesArray.splice(idx, 1);
       setAgesArray(newAgesArray);
+    }
+    if (!isHome) {
+      refetch();
     }
   };
 
@@ -37,6 +48,9 @@ const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
       const newAgesArray = [...agesArray];
       newAgesArray.splice(index, 1);
       setAgesArray(newAgesArray);
+    }
+    if (!isHome) {
+      refetch();
     }
   };
 
