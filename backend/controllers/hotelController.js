@@ -401,6 +401,7 @@ const getPrice = asyncHandler(async (req, res) => {
 
   let sum = 0;
   let extraPlacesSum = 0;
+  let excursionsSum = 0;
   let chosenPlaces = [];
 
   const extraPlacesAmount = ages.length - chosenRoom.capacity;
@@ -538,6 +539,7 @@ const getPrice = asyncHandler(async (req, res) => {
           const excursion = await Excursion.findById(id);
           if (excursion && excursion.price) {
             sum += excursion.price * agesArray.split(",").length;
+            excursionsSum += excursion.price * agesArray.split(",").length;
           }
         }
       }
@@ -550,7 +552,13 @@ const getPrice = asyncHandler(async (req, res) => {
 
   await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
 
-  res.status(200).json({ sum: sum * 1.1, extraPlacesSum: extraPlacesSum });
+  res
+    .status(200)
+    .json({
+      sum: sum * 1.1,
+      extraPlacesSum: extraPlacesSum,
+      excursionsSum: excursionsSum,
+    });
 });
 
 // Get room by prices
