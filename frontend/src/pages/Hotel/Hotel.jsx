@@ -39,6 +39,7 @@ import { useGetHotelPriceQuery } from "../../features/services/price.service";
 import Loader from "../../components/Loader";
 
 import { setRefetch } from "../../features/search/searchSlice";
+import { addClientRoom } from "../../features/clientSlice";
 
 const Hotel = () => {
   const dispatch = useDispatch();
@@ -103,7 +104,7 @@ const Hotel = () => {
     e.preventDefault();
     const values = {
       ...orderTerms,
-      room: clientRoom._id,
+      room: clientRoom?._id,
     };
     dispatch(addOrder(values));
     navigate("/orders/new-order");
@@ -179,6 +180,14 @@ const Hotel = () => {
   );
 
   useEffect(() => {
+    if (singleHotel && singleHotel.rooms) {
+      dispatch(addClientRoom(roomsData[0]));
+    }
+  }, [roomsData]);
+
+  console.log(singleHotel, "singlehotel rooms");
+
+  useEffect(() => {
     window.localStorage.setItem("sum", sum);
     if (clientRoom)
       window.localStorage.setItem("room", JSON.stringify(clientRoom));
@@ -230,7 +239,7 @@ const Hotel = () => {
       : "",
     agesArray: [],
     hotelId,
-    roomId: clientRoom._id,
+    roomId: clientRoom?._id,
     personMode: false,
     excursionsArray: [],
     kidsFoodAmount: 0,
@@ -244,7 +253,7 @@ const Hotel = () => {
   useEffect(() => {
     setPriceData((prev) => ({
       ...prev,
-      roomId: clientRoom._id,
+      roomId: clientRoom?._id,
     }));
   }, [clientRoom]);
 
@@ -395,7 +404,7 @@ const Hotel = () => {
                   />
                 </div>
                 <div className="hotel_page-gen shadowed_box">
-                  {clientRoom._id ? (
+                  {clientRoom?._id ? (
                     <>
                       <div className="hotel_page-rooms">
                         <div className="body_title-box">
@@ -420,7 +429,7 @@ const Hotel = () => {
                           </div>
                         </div>
                         <Room
-                          key={clientRoom._id}
+                          key={clientRoom?._id}
                           room={clientRoom}
                           days={clientData?.daysAmount}
                           active={true}
@@ -480,7 +489,11 @@ const Hotel = () => {
                                 </div>
                                 <ul className="services_list">
                                   {obj?.services?.map((serv) => {
-                                    return <li>{serv.hotelServiceName}</li>;
+                                    return (
+                                      <li key={serv._id}>
+                                        {serv.hotelServiceName}
+                                      </li>
+                                    );
                                   })}
                                 </ul>
                               </div>
@@ -575,7 +588,9 @@ const Hotel = () => {
                             )
                               .fill(0)
                               .map((el, idx) => (
-                                <option value={idx + 1}>{idx + 1}</option>
+                                <option value={idx + 1} key={idx}>
+                                  {idx + 1}
+                                </option>
                               ))}
 
                             <option value={0} selected>
@@ -603,7 +618,9 @@ const Hotel = () => {
                             )
                               .fill(0)
                               .map((el, idx) => (
-                                <option value={idx + 1}>{idx + 1}</option>
+                                <option value={idx + 1} key={idx}>
+                                  {idx + 1}
+                                </option>
                               ))}
                             {/* <option value={5}>5</option>
                             <option value={4}>4</option>
@@ -632,7 +649,7 @@ const Hotel = () => {
                             // setRoomId={setPriceData}
                             key={room._id}
                             room={room}
-                            active={clientRoom._id === room._id}
+                            active={clientRoom?._id === room._id}
                             changeExtraFood={changeExtraFood}
                             extraFoodActive={priceData.addExtraFood}
                             hasExtraPlaces={
