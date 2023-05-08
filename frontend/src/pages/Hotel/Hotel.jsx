@@ -664,7 +664,57 @@ const Hotel = () => {
               <div className="hotel_side_wrapper wrapper ver">
                 <div className="hotel_side-top shadowed_box">
                   <div className="hotel_side-title">Бронирование</div>
-                  <div className="hotel_side-row">
+                  <div>
+                    <div className="hotel_side-checksum">
+                      <span>{clientRoom.roomName}</span>
+                      <span>{formatter.format(clientRoom.roomPrice)} тг.</span>
+                    </div>
+                    {JSON.parse(
+                      localStorage.getItem("agesArray").length !==
+                        clientRoom.capacity
+                    ) && (
+                      <div className="hotel_side-extraPlace">
+                        <span>
+                          +{" "}
+                          {JSON.parse(localStorage.getItem("agesArray"))
+                            .length - clientRoom.capacity}{" "}
+                          доп. места
+                        </span>
+                        <span>{formatter.format(price.extraPlacesSum)}тг</span>
+                      </div>
+                    )}
+                    {priceData.excursionsArray.length > 0 && (
+                      <>
+                        <div className="hotel_side-checksum">
+                          <div>Экскурсия</div>
+                        </div>
+                        <div className="hotel_side-extraPlace">
+                          {JSON.parse(localStorage.getItem("agesArray")).reduce(
+                            (acc, current) => {
+                              if (current === 1000) {
+                                return acc + 1;
+                              }
+                              return acc;
+                            },
+                            0
+                          )}{" "}
+                          взр.{" "}
+                          {JSON.parse(localStorage.getItem("agesArray")).reduce(
+                            (acc, current) => {
+                              if (current !== 1000) {
+                                return acc + 1;
+                              }
+                              return acc;
+                            },
+                            0
+                          )}{" "}
+                          дет.
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* <div className="hotel_side-row">
                     {clientStartingDate &&
                       clientStartingDate.toLocaleString(undefined, {
                         month: "numeric",
@@ -676,11 +726,12 @@ const Hotel = () => {
                         month: "numeric",
                         day: "numeric",
                       })}
-                  </div>
-                  <div className="hotel_side-row">
-                    <img src={person} alt="" />{" "}
-                    {JSON.parse(localStorage.getItem("agesArray")).length} взр.
-                  </div>
+                  </div> */}
+                  {/* <div className="hotel_side-row"> */}
+                  {/* <img src={person} alt="" />{" "}
+                    {JSON.parse(localStorage.getItem("agesArray")).length} взр. */}
+
+                  {/* </div> */}
                   <div className="hotel_side-row total">
                     Итого:
                     {priceIsLoading ? (
@@ -688,22 +739,17 @@ const Hotel = () => {
                     ) : (
                       <div style={{ display: "flex", flexDirection: "column" }}>
                         <span style={{ opacity: ".75", fontSize: "16px" }}>
-                          {typeof price !== "object"
-                            ? formatter.format(price / 1.1)
-                            : "0"}
+                          {price.sum ? formatter.format(price.sum / 1.1) : "0"}
                         </span>
 
                         <span style={{ color: "gray", fontSize: "16px" }}>
                           +
-                          {typeof price !== "object"
-                            ? formatter.format(price - price / 1.1)
+                          {price.sum
+                            ? formatter.format(price.sum - price.sum / 1.1)
                             : "0"}
                         </span>
-
                         <span>
-                          {typeof price !== "object"
-                            ? formatter.format(price)
-                            : "0"}
+                          {price.sum ? formatter.format(price.sum) : "0"}
                           тг.
                         </span>
                       </div>
