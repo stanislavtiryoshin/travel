@@ -40,6 +40,7 @@ const roomSchema = mongoose.Schema(
     },
     extraPlaces: [
       {
+        isBabyPlace: Boolean,
         minAge: Number,
         maxAge: Number,
         isKid: Boolean,

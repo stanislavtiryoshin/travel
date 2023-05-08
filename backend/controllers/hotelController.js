@@ -188,7 +188,20 @@ const getSingleHotel = asyncHandler(async (req, res) => {
       match: {
         $expr: {
           $gte: [
-            { $sum: ["$capacity", { $size: "$extraPlaces" }] },
+            {
+              $sum: [
+                "$capacity",
+                {
+                  $size: {
+                    $filter: {
+                      input: "$extraPlaces",
+                      as: "extraPlace",
+                      cond: { $ne: ["$$extraPlace.isBabyPlace", true] },
+                    },
+                  },
+                },
+              ],
+            },
             { $size: req.query.agesArray },
           ],
         },
@@ -387,6 +400,7 @@ const getPrice = asyncHandler(async (req, res) => {
   const chosenRoom = hotel.rooms.find((room) => room._id == roomId);
 
   let sum = 0;
+  let extraPlacesSum = 0;
   let chosenPlaces = [];
 
   const extraPlacesAmount = ages.length - chosenRoom.capacity;
@@ -421,6 +435,19 @@ const getPrice = asyncHandler(async (req, res) => {
   console.log(chosenPlaces);
 
   sum = chosenPlaces.reduce((acc, place) => {
+    if (addExtraFood && !chosenRoom.extraFoodIncluded) {
+      console.log("addExtraFood");
+      return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
+    } else if (!addExtraFood && !chosenRoom.extraFoodIncluded) {
+      console.log("!addExtraFood");
+      return acc + place.priceNoFood * daysAmount;
+    } else if (chosenRoom.extraFoodIncluded) {
+      console.log("extra food already included");
+      return acc + place.priceWithFood * daysAmount;
+    }
+  }, 0);
+
+  extraPlacesSum = chosenPlaces.reduce((acc, place) => {
     if (addExtraFood && !chosenRoom.extraFoodIncluded) {
       console.log("addExtraFood");
       return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
@@ -523,7 +550,7 @@ const getPrice = asyncHandler(async (req, res) => {
 
   await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
 
-  res.status(200).json(sum * 1.1);
+  res.status(200).json({ sum: sum * 1.1, extraPlacesSum: extraPlacesSum });
 });
 
 // Get room by prices
@@ -557,7 +584,20 @@ const getRoomsByLimit = async (req, res) => {
             },
             $expr: {
               $gte: [
-                { $sum: ["$capacity", { $size: "$extraPlaces" }] },
+                {
+                  $sum: [
+                    "$capacity",
+                    {
+                      $size: {
+                        $filter: {
+                          input: "$extraPlaces",
+                          as: "extraPlace",
+                          cond: { $ne: ["$$extraPlace.isBabyPlace", true] },
+                        },
+                      },
+                    },
+                  ],
+                },
                 parseInt(capacity),
               ],
             },
