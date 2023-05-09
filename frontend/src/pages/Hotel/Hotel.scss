@@ -6,6 +6,25 @@
   max-width: 1200px;
 }
 
+.hotel_side-checksum {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  line-height: 14px;
+  font-family: GT Walsheim Pro;
+  color: rgba(41, 45, 50, 1);
+}
+
+.hotel_side-extraPlace {
+  margin-bottom: 20px;
+  color: rgba(81, 85, 91, 1);
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  color: rgba(41, 45, 50, 1);
+}
+
 .hotel_page_top {
   display: flex;
   column-gap: 20px;
