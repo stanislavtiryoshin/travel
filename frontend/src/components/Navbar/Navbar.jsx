@@ -81,7 +81,8 @@ const Navbar = ({ isSearch }) => {
     location.pathname === "/dashboard" || location.pathname === "/dashboard/";
   const containsDashboard = location.pathname.includes("/dashboard");
   const isHotels = location.pathname.includes("/hotels/");
-  const isHome = location.pathname === "/";
+  const [isHome] = useState(location.pathname === "/");
+  const [isOrder] = useState(location.pathname === "/orders/new-order");
 
   return (
     <>
@@ -115,7 +116,10 @@ const Navbar = ({ isSearch }) => {
       </header>
       {!containsDashboard ? (
         <>
-          <div className="header_bot" style={!isHome ? { padding: 0 } : {}}>
+          <div
+            className="header_bot"
+            style={isHome || isOrder ? { padding: "10px" } : { padding: 0 }}
+          >
             <div className="container">
               <div className="header_bot-wrapper wrapper">
                 <div className="header_bot-left wrapper">

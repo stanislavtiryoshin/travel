@@ -565,6 +565,14 @@ const Hotel = () => {
                                 }));
                               }}
                             >
+                              <option
+                                value={0}
+                                selected={
+                                  orderTerms.foodIncluded ? false : true
+                                }
+                              >
+                                0
+                              </option>
                               {new Array(
                                 JSON.parse(
                                   localStorage.getItem("agesArray")
@@ -576,10 +584,6 @@ const Hotel = () => {
                                     {idx + 1}
                                   </option>
                                 ))}
-
-                              <option value={0} selected>
-                                0
-                              </option>
                             </select>
                           </div>
 
@@ -597,6 +601,14 @@ const Hotel = () => {
                                 }));
                               }}
                             >
+                              <option
+                                value="0"
+                                selected={
+                                  orderTerms.foodIncluded ? false : true
+                                }
+                              >
+                                0
+                              </option>
                               {new Array(
                                 JSON.parse(
                                   localStorage.getItem("agesArray")
