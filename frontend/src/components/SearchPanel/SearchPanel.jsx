@@ -292,25 +292,14 @@ const SearchPanel = ({ isUserLook, style }) => {
         <button
           className="primary-btn yellow"
           onClick={() => {
-            if (searchTerms.destination && searchTerms.destination !== "Весь") {
-              handleSearch({
-                locationId: searchTerms.destination,
-                peopleAmount: clientData.peopleAmount,
-                daysAmount: clientData.daysAmount,
-                startDate: clientData.startDate,
-                adultsAmount: clientData.adultsAmount,
-                kidsAmount: clientData.kidsAmount,
-              });
-            } else if (searchTerms.destination === "Весь") {
-              handleSearch({
-                locationId: "",
-                peopleAmount: clientData.peopleAmount,
-                daysAmount: clientData.daysAmount,
-                startDate: clientData.startDate,
-                adultsAmount: clientData.adultsAmount,
-                kidsAmount: clientData.kidsAmount,
-              });
-            }
+            handleSearch({
+              locationId: searchTerms.destination,
+              peopleAmount: clientData.peopleAmount,
+              daysAmount: clientData.daysAmount,
+              startDate: clientData.startDate,
+              adultsAmount: agesArray.filter((age) => age === 1000).length,
+              kidsAmount: agesArray.filter((age) => age !== 1000).length,
+            });
           }}
         >
           Найти

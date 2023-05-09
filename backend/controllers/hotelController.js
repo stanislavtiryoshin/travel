@@ -280,7 +280,8 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
   };
 
   const query = {};
-  if (locationId !== "") {
+
+  if (locationId && locationId !== "") {
     query.locationId = locationId;
   }
 
@@ -552,13 +553,11 @@ const getPrice = asyncHandler(async (req, res) => {
 
   await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
 
-  res
-    .status(200)
-    .json({
-      sum: sum * 1.1,
-      extraPlacesSum: extraPlacesSum,
-      excursionsSum: excursionsSum,
-    });
+  res.status(200).json({
+    sum: sum * 1.1,
+    extraPlacesSum: extraPlacesSum,
+    excursionsSum: excursionsSum,
+  });
 });
 
 // Get room by prices

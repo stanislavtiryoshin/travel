@@ -71,49 +71,6 @@ const HotelCard = ({
     setClientEndingDate(new Date(+endDate));
   }, [startDate, endDate]);
 
-  // const [sum, setSum] = useState(0);
-
-  // const calculatePrice = (start, daysNum, basePrice) => {
-  //   let daysArray = [];
-
-  //   const pricesArray = cheapestRoom.prices;
-
-  //   for (let i = 0; i < daysNum; i++) {
-  //     let date = new Date();
-  //     date.setDate(start.getDate() + i);
-  //     daysArray.push(date);
-  //   }
-
-  //   let sum = 0;
-
-  //   const findPriceByDate = (date) => {
-  //     if (pricesArray && pricesArray.length > 0) {
-  //       pricesArray.forEach((el) => {
-  //         if (
-  //           date.getMonth() + 1 >= el.dateStart.month &&
-  //           date.getMonth() + 1 <= el.dateEnd.month &&
-  //           date.getDate() >= el.dateStart.day &&
-  //           date.getDate() <= el.dateEnd.day &&
-  //           el.price
-  //         ) {
-  //           sum += el.price;
-  //         } else {
-  //           sum += basePrice;
-  //         }
-  //       });
-  //     } else {
-  //       sum += basePrice;
-  //     }
-  //     return;
-  //   };
-
-  //   for (let i = 0; i < daysNum; i++) {
-  //     findPriceByDate(daysArray[i]);
-  //   }
-
-  //   return sum;
-  // };
-
   const [clientData, setClientData] = useState({
     endDate: 0,
     startDate: 0,
@@ -130,14 +87,6 @@ const HotelCard = ({
       daysAmount: window.localStorage.getItem("daysAmount"),
     });
   }, []);
-
-  // useEffect(() => {
-  //   if (clientData && cheapestRoom) {
-  //     setSum(
-  //       calculatePrice(clientStartingDate, daysAmount, cheapestRoom?.roomPrice)
-  //     );
-  //   }
-  // }, [clientData, cheapestRoom, daysAmount]);
 
   return (
     <div className="hotel_card">
