@@ -163,28 +163,30 @@ const Filter = ({ mode }) => {
           Показывать с доп. местом
         </div>
       </div> */}
-      <div className="filter_row">
-        <div className="filter_title">Цена</div>
-        <div className="filter_content price_range">
-          <RangeSlider
-            onInput={setValue}
-            value={value}
-            min={minPrice}
-            max={maxPrice}
-            step={100}
-          />
-          <div className="price-box">
-            <div className="price-col left">
-              <div className="price-col-title">от</div>
-              <div className="price-col-text">{filterObj.filterMinPrice}</div>
-            </div>
-            <div className="price-col">
-              <div className="price-col-title">до</div>
-              <div className="price-col-text">{filterObj.filterMaxPrice}</div>
+      {location.pathname !== "/dashboard" ? (
+        <div className="filter_row">
+          <div className="filter_title">Цена</div>
+          <div className="filter_content price_range">
+            <RangeSlider
+              onInput={setValue}
+              value={value}
+              min={minPrice}
+              max={maxPrice}
+              step={100}
+            />
+            <div className="price-box">
+              <div className="price-col left">
+                <div className="price-col-title">от</div>
+                <div className="price-col-text">{filterObj.filterMinPrice}</div>
+              </div>
+              <div className="price-col">
+                <div className="price-col-title">до</div>
+                <div className="price-col-text">{filterObj.filterMaxPrice}</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : null}
       {mode === "tour" ? (
         <div className="filter_row">
           <div className="filter_title">Длительность тура</div>

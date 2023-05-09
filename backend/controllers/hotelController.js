@@ -586,9 +586,6 @@ const getRoomsByLimit = async (req, res) => {
 
   try {
     const hotel = await Hotel.findOne({ _id: hotelId });
-    if (limit) {
-      hotel.rooms.length = limit;
-    }
 
     try {
       const rooms = await Room.aggregate([
