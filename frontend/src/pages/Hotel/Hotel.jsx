@@ -149,18 +149,6 @@ const Hotel = () => {
     });
   }, [clientData]);
 
-  // useEffect(() => {
-  //   if (singleHotel?.rooms && singleHotel?.rooms.length > 0) {
-  //     setClientRoom(
-  //       singleHotel?.rooms
-  //         // .filter((room) => room.capacity >= clientData.peopleAmount)
-  //         ?.reduce(function (prev, current) {
-  //           return prev.roomPrice < current.roomPrice ? prev : current;
-  //         })
-  //     );
-  //   }
-  // }, [singleHotel.rooms]);
-
   const [clientStartingDate, setClientStartingDate] = useState(
     Date.parse(new Date())
   );
@@ -180,24 +168,12 @@ const Hotel = () => {
   );
 
   useEffect(() => {
-    if (singleHotel && singleHotel.rooms) {
+    if (roomsData) {
       dispatch(addClientRoom(roomsData[0]));
     }
   }, [roomsData]);
 
   console.log(singleHotel, "singlehotel rooms");
-
-  useEffect(() => {
-    window.localStorage.setItem("sum", sum);
-    if (clientRoom)
-      window.localStorage.setItem("room", JSON.stringify(clientRoom));
-    if (singleHotel) window.localStorage.setItem("hotel", singleHotel?._id);
-    if (clientExcursions)
-      window.localStorage.setItem(
-        "excursions",
-        JSON.stringify(clientExcursions)
-      );
-  }, [sum, clientRoom, singleHotel, clientExcursions]);
 
   const [servicesToRender, setServicesToRender] = useState();
 
@@ -307,6 +283,18 @@ const Hotel = () => {
   } = useGetHotelPriceQuery(priceData);
 
   useEffect(() => {
+    window.localStorage.setItem("sum", price?.sum);
+    if (clientRoom)
+      window.localStorage.setItem("room", JSON.stringify(clientRoom));
+    if (singleHotel) window.localStorage.setItem("hotel", singleHotel?._id);
+    if (clientExcursions)
+      window.localStorage.setItem(
+        "excursions",
+        JSON.stringify(clientExcursions)
+      );
+  }, [price, clientRoom, singleHotel, clientExcursions]);
+
+  useEffect(() => {
     dispatch(setRefetch(refetch));
   }, [price]);
 
@@ -396,13 +384,13 @@ const Hotel = () => {
                     </div>
                   </div>
                 </div>
-                <div className="hotel_page-price shadowed_box">
+                {/* <div className="hotel_page-price shadowed_box">
                   <BodyTitle
                     title="Цена"
                     text="Выберите что хотите добавить в свой тур, чтобы рассчитать
                       стоимость и сравните периоды"
                   />
-                </div>
+                </div> */}
                 <div className="hotel_page-gen shadowed_box">
                   {clientRoom?._id ? (
                     <>
@@ -467,11 +455,6 @@ const Hotel = () => {
                       </div>
                     </div>
                     <div className="desc-row">{singleHotel?.description}</div>
-                    {singleHotel && singleHotel?.food?.label ? (
-                      <div className="food-row row">
-                        <span>Тип питания:</span> {singleHotel?.food?.label}
-                      </div>
-                    ) : null}
                   </div>
                   <img src={divider} alt="" />
                   <div className="hotel_services-row">
@@ -568,69 +551,65 @@ const Hotel = () => {
                           Добавить питание
                         </div>
                         <div className="input_row">
-                          <label htmlFor="">Кол-во детс.</label>
-                          <select
-                            name=""
-                            id=""
-                            disabled={priceData.addRoomFood ? false : true}
-                            className="primary-input"
-                            onChange={(e) => {
-                              setPriceData((prev) => ({
-                                ...prev,
-                                kidsFoodAmount: Number(e.target.value),
-                              }));
-                            }}
-                          >
-                            {new Array(
-                              JSON.parse(
-                                localStorage.getItem("agesArray")
-                              ).filter((age) => age !== 1000).length
-                            )
-                              .fill(0)
-                              .map((el, idx) => (
-                                <option value={idx + 1} key={idx}>
-                                  {idx + 1}
-                                </option>
-                              ))}
+                          <div className="service-input">
+                            <label htmlFor="">Кол-во детс.</label>
+                            <select
+                              name=""
+                              id=""
+                              disabled={priceData.addRoomFood ? false : true}
+                              className="primary-input"
+                              onChange={(e) => {
+                                setPriceData((prev) => ({
+                                  ...prev,
+                                  kidsFoodAmount: Number(e.target.value),
+                                }));
+                              }}
+                            >
+                              {new Array(
+                                JSON.parse(
+                                  localStorage.getItem("agesArray")
+                                ).filter((age) => age !== 1000).length
+                              )
+                                .fill(0)
+                                .map((el, idx) => (
+                                  <option value={idx + 1} key={idx}>
+                                    {idx + 1}
+                                  </option>
+                                ))}
 
-                            <option value={0} selected>
-                              0
-                            </option>
-                          </select>
+                              <option value={0} selected>
+                                0
+                              </option>
+                            </select>
+                          </div>
 
-                          <label htmlFor="">Кол-во взр.</label>
-                          <select
-                            name=""
-                            id=""
-                            className="primary-input"
-                            disabled={priceData.addRoomFood ? false : true}
-                            onChange={(e) => {
-                              setPriceData((prev) => ({
-                                ...prev,
-                                adultsFoodAmount: Number(e.target.value),
-                              }));
-                            }}
-                          >
-                            {new Array(
-                              JSON.parse(
-                                localStorage.getItem("agesArray")
-                              ).filter((age) => age === 1000).length
-                            )
-                              .fill(0)
-                              .map((el, idx) => (
-                                <option value={idx + 1} key={idx}>
-                                  {idx + 1}
-                                </option>
-                              ))}
-                            {/* <option value={5}>5</option>
-                            <option value={4}>4</option>
-                            <option value={3}>3</option>
-                            <option value={2}>2</option>
-                            <option value={1}>1</option>
-                            <option value={0} selected>
-                              0
-                            </option> */}
-                          </select>
+                          <div className="service-input">
+                            <label htmlFor="">Кол-во взр.</label>
+                            <select
+                              name=""
+                              id=""
+                              className="primary-input"
+                              disabled={priceData.addRoomFood ? false : true}
+                              onChange={(e) => {
+                                setPriceData((prev) => ({
+                                  ...prev,
+                                  adultsFoodAmount: Number(e.target.value),
+                                }));
+                              }}
+                            >
+                              {new Array(
+                                JSON.parse(
+                                  localStorage.getItem("agesArray")
+                                ).filter((age) => age === 1000).length
+                              )
+                                .fill(0)
+                                .map((el, idx) => (
+                                  <option value={idx + 1} key={idx}>
+                                    {idx + 1}
+                                  </option>
+                                ))}
+                            </select>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -683,18 +662,16 @@ const Hotel = () => {
                   <div className="hotel_side-title">Бронирование</div>
 
                   <div>
-                    {clientRoom._id && (
+                    {clientRoom?._id && (
                       <>
                         <div className="hotel_side-checksum">
                           <span>{clientRoom.roomName}</span>
-                          <span>
-                            {formatter.format(clientRoom.roomPrice)} тг.
+                          <span className="price_span">
+                            {formatter.format(price?.roomSum)} тг.
                           </span>
                         </div>
-                        {JSON.parse(
-                          localStorage.getItem("agesArray").length !==
-                            clientRoom.capacity
-                        ) && (
+                        {price?.extraPlacesSum &&
+                        price?.extraPlacesSum !== 0 ? (
                           <div className="hotel_side-extraPlace">
                             <span>
                               +{" "}
@@ -702,20 +679,21 @@ const Hotel = () => {
                                 .length - clientRoom.capacity}{" "}
                               доп. места
                             </span>
-                            <span>
-                              {price && formatter.format(price.extraPlacesSum)}
+                            <span className="price_span">
+                              {price && formatter.format(price?.extraPlacesSum)}
                               тг
                             </span>
                           </div>
-                        )}
-                        {priceData.excursionsArray.length > 0 && (
+                        ) : null}
+                        {priceData?.excursionsArray.length > 0 && (
                           <>
                             <div className="hotel_side-checksum">
                               <div>Экскурсия</div>
-                              <div>
-                                {price && formatter.format(price.excursionsSum)}{" "}
+                              <span className="price_span">
+                                {price &&
+                                  formatter.format(price?.excursionsSum)}{" "}
                                 тг.
-                              </div>
+                              </span>
                             </div>
                             <div className="hotel_side-extraPlace">
                               {JSON.parse(
@@ -739,6 +717,19 @@ const Hotel = () => {
                             </div>
                           </>
                         )}
+                        {price?.margeSum && price?.margeSum !== 0 ? (
+                          <>
+                            <div className="hotel_side-checksum">
+                              <div>Маржа</div>
+                              <span className="price_span">
+                                {price && formatter.format(price?.margeSum)} тг.
+                              </span>
+                            </div>
+                            <div className="hotel_side-extraPlace">
+                              <span>10 %</span>
+                            </div>
+                          </>
+                        ) : null}
                       </>
                     )}
                   </div>
@@ -779,20 +770,25 @@ const Hotel = () => {
                     className="primary-btn yellow"
                     onClick={handleOrder}
                   >
-                    Забронировать
+                    Оставить заявку
                   </Link>
                   <div className="side-top-bot">
-                    <img src={check} alt="" />У нас самые выгодные цены!
+                    <div>
+                      <img src={check} alt="" /> У нас самые выгодные цены!
+                    </div>
+                    <div>
+                      <img src={check} alt="" /> Официальный турагент
+                    </div>
                   </div>
                 </div>
-                <div className="side_price-box shadowed_box small">
+                {/* <div className="side_price-box shadowed_box small">
                   <div className="body_title-box">
                     <div className="body_title">Лучшая цена в Июле!</div>
                     <div className="body_title-text">
                       Lorem ipsum dolor sit amet, id dicant splendide cum.{" "}
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {singleHotel?.locationId?._id ? (
                   <Excursions

@@ -64,10 +64,6 @@ const Room = ({
                 green
               />
             ) : null}
-            <AdditionalTag
-              text={`${room?.food ? "Завтрак включен" : "Завтрак не включен"}`}
-              img={food}
-            />
           </div>
           <RoomTags tags={tags.flat()} />
         </div>

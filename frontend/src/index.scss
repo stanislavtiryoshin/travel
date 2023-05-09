@@ -144,6 +144,10 @@ button {
     }
   }
 
+  &.blue {
+    background-color: $base-blue;
+  }
+
   &.yellow {
     background-color: rgba(228, 155, 12, 1);
   }

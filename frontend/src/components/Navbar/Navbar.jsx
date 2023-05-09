@@ -109,21 +109,6 @@ const Navbar = ({ isSearch }) => {
                   </a>
                 </div>
               </div>
-              {/* <button className="primary-btn">Заказать звонок</button> */}
-              {/* {user ? (
-              <li>
-                <button onClick={handleLogout} className="nav_link">
-                  Logout
-                </button>
-              </li>
-            ) : (
-              <li>
-                <span>
-                  <button onClick={handleRegister}>Register</button>/
-                  <button onClick={handleLogin}>Login</button>
-                </span>
-              </li>
-            )} */}
             </div>
           </div>
         </div>
@@ -134,7 +119,7 @@ const Navbar = ({ isSearch }) => {
             <div className="container">
               <div className="header_bot-wrapper wrapper">
                 <div className="header_bot-left wrapper">
-                  {!isDashboard && isHome ? (
+                  {(!isDashboard && isHome) || (!isDashboard && !isHotels) ? (
                     <>
                       <img src={photo} alt="" className="header_bot-photo" />
                       <div className="header_bot-left-text">
@@ -143,7 +128,7 @@ const Navbar = ({ isSearch }) => {
                     </>
                   ) : null}
 
-                  {!isHome && (
+                  {isHotels && (
                     <SearchPanel
                       style={{
                         margin: "10px 0px",

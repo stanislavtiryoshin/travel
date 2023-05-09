@@ -33,7 +33,7 @@ const Order = () => {
     startDate: null,
     endDate: null,
     hotel: null,
-    rooms: [],
+    room: null,
     sum: 0,
     clientName: "",
     clientEmail: "",
@@ -49,7 +49,7 @@ const Order = () => {
     peopleAmount: 1,
     daysAmount: 1,
     hotel: null,
-    rooms: [],
+    room: null,
     excursions: [],
   });
 
@@ -61,13 +61,13 @@ const Order = () => {
       peopleAmount: window.localStorage.getItem("peopleAmount"),
       daysAmount: window.localStorage.getItem("daysAmount"),
       hotel: window.localStorage.getItem("hotel"),
-      rooms: JSON.parse(
-        localStorage.getItem("room") ? localStorage.getItem("room") : []
-      ),
+      room: JSON.parse(window.localStorage.getItem("room")),
       sum: window.localStorage.getItem("sum"),
       excursions: JSON.parse(window.localStorage.getItem("excursions")),
     });
   }, []);
+
+  console.log(clientData, "clientData");
 
   useEffect(() => {
     setOrderTerms({
@@ -78,7 +78,7 @@ const Order = () => {
       startDate: clientData.startDate,
       endDate: clientData.endDate,
       hotel: clientData.hotel,
-      rooms: clientData && clientData.rooms && clientData.rooms,
+      room: clientData?.room?._id,
       sum: clientData.sum,
     });
   }, [clientData]);
@@ -144,13 +144,9 @@ const Order = () => {
   };
 
   const handleOrder = (e) => {
-    dispatch(addOrder(orderTerms))
-      .then(() => {
-        navigate("/");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    dispatch(addOrder(orderTerms)).catch((error) => {
+      console.log(error);
+    });
   };
   console.log(orderTerms);
   return (

@@ -211,62 +211,69 @@ const SearchPanel = ({ isUserLook, style }) => {
         </div>
       )}
 
-      <div className="search_bot" style={!isHome ? { padding: "8px" } : {}}>
-        <div className="search_col">
-          <img src={search1} alt="" className="search_bot-icon" />
-          <div className="search_col-content">
-            <div className="search_col-top">Откуда?</div>
-            <div className="search_col-bot">
-              <input
-                type="text"
-                placeholder="Астана"
-                name="origin"
-                value={searchTerms.origin}
-                onChange={(e) => {
-                  setSearchTerms({ ...searchTerms, origin: e.target.value });
-                }}
-              />
+      <div className={`search_bot ${isUserLook ? "min" : ""}`}>
+        {!isUserLook ? (
+          <>
+            <div className="search_col">
+              <img src={search1} alt="" className="search_bot-icon" />
+              <div className="search_col-content">
+                <div className="search_col-top">Откуда?</div>
+                <div className="search_col-bot">
+                  <input
+                    type="text"
+                    placeholder="Астана"
+                    name="origin"
+                    value={searchTerms.origin}
+                    onChange={(e) => {
+                      setSearchTerms({
+                        ...searchTerms,
+                        origin: e.target.value,
+                      });
+                    }}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <img src={line} className="line" alt="" />
-        <div className="search_col">
-          <img src={search2} alt="" className="search_bot-icon" />
-          <div className="search_col-content">
-            <div className="search_col-top">Куда?</div>
-            <div className="search_col-bot">
-              <select
-                type="text"
-                placeholder="Астана"
-                name="destination"
-                value={searchTerms.destination}
-                onChange={(e) => {
-                  setSearchTerms({
-                    ...searchTerms,
-                    destination: e.target.value,
-                  });
-                  dispatch(setDestination(e.target.value));
-                }}
-              >
-                <option value="Весь" selected>
-                  Весь Казахстан
-                </option>
-                {allLocations ? (
-                  allLocations.map((location, idx) => {
-                    return (
-                      <option value={location._id} key={idx}>
-                        {location.locationName}
-                      </option>
-                    );
-                  })
-                ) : (
-                  <p>Locations are loading</p>
-                )}
-              </select>
+            <img src={line} className="line" alt="" />
+            <div className="search_col">
+              <img src={search2} alt="" className="search_bot-icon" />
+              <div className="search_col-content">
+                <div className="search_col-top">Куда?</div>
+                <div className="search_col-bot">
+                  <select
+                    type="text"
+                    placeholder="Астана"
+                    name="destination"
+                    value={searchTerms.destination}
+                    onChange={(e) => {
+                      setSearchTerms({
+                        ...searchTerms,
+                        destination: e.target.value,
+                      });
+                      dispatch(setDestination(e.target.value));
+                    }}
+                  >
+                    <option value="Весь" selected>
+                      Весь Казахстан
+                    </option>
+                    {allLocations ? (
+                      allLocations.map((location, idx) => {
+                        return (
+                          <option value={location._id} key={idx}>
+                            {location.locationName}
+                          </option>
+                        );
+                      })
+                    ) : (
+                      <p>Locations are loading</p>
+                    )}
+                  </select>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <img src={line} className="line" alt="" />
+            <img src={line} className="line" alt="" />
+          </>
+        ) : null}
         <div className="search_col">
           <img src={search3} alt="" className="search_bot-icon" />
           <div className="search_col-content">
@@ -290,7 +297,7 @@ const SearchPanel = ({ isUserLook, style }) => {
           refetch={refetch}
         />
         <button
-          className="primary-btn yellow"
+          className={`primary-btn ${isUserLook ? "blue" : "yellow"}`}
           onClick={() => {
             handleSearch({
               locationId: searchTerms.destination,

@@ -402,6 +402,7 @@ const getPrice = asyncHandler(async (req, res) => {
 
   let sum = 0;
   let extraPlacesSum = 0;
+  let roomSum = 0;
   let excursionsSum = 0;
   let chosenPlaces = [];
 
@@ -437,10 +438,10 @@ const getPrice = asyncHandler(async (req, res) => {
   console.log(chosenPlaces);
 
   sum = chosenPlaces.reduce((acc, place) => {
-    if (addExtraFood && !chosenRoom.extraFoodIncluded) {
+    if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
       console.log("addExtraFood");
       return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
-    } else if (!addExtraFood && !chosenRoom.extraFoodIncluded) {
+    } else if (addExtraFood !== "true" && !chosenRoom.extraFoodIncluded) {
       console.log("!addExtraFood");
       return acc + place.priceNoFood * daysAmount;
     } else if (chosenRoom.extraFoodIncluded) {
@@ -450,10 +451,10 @@ const getPrice = asyncHandler(async (req, res) => {
   }, 0);
 
   extraPlacesSum = chosenPlaces.reduce((acc, place) => {
-    if (addExtraFood && !chosenRoom.extraFoodIncluded) {
+    if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
       console.log("addExtraFood");
       return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
-    } else if (!addExtraFood && !chosenRoom.extraFoodIncluded) {
+    } else if (addExtraFood !== "true" && !chosenRoom.extraFoodIncluded) {
       console.log("!addExtraFood");
       return acc + place.priceNoFood * daysAmount;
     } else if (chosenRoom.extraFoodIncluded) {
@@ -490,15 +491,18 @@ const getPrice = asyncHandler(async (req, res) => {
           ) {
             if (!personMode) {
               sum += el.roomPrice;
+              roomSum += el.roomPrice;
               console.log("sum += el.roomPrice");
               priceFound = true;
             } else {
               accomodatedAges.forEach((age) => {
                 if (age === 1000) {
                   sum += el.adultPrice;
+                  roomSum += el.roomPrice;
                   console.log("sum += el.adultPrice");
                 } else {
                   sum += el.kidPrice;
+                  roomSum += el.roomPrice;
                   console.log("sum += el.kidPrice;");
                 }
               });
@@ -555,12 +559,16 @@ const getPrice = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     sum: sum * 1.1,
+    margeSum: 0.1 * sum,
     extraPlacesSum: extraPlacesSum,
     excursionsSum: excursionsSum,
+    roomSum: roomSum,
   });
 });
 
-// Get room by prices
+//@desc   Get room by prices
+//@route  GET /api/hotels/:hotelId/price
+//@access Public
 
 const getRoomPrices = (req, res) => {
   Hotel.findOne({ _id: req.params.hotelId })
