@@ -2,22 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 import { getSingleHotel, reset } from "../../features/hotel/hotelSlice";
 import RatingBox from "../../components/HotelCard/RatingBox";
-import { addOrder } from "../../features/order/orderSlice";
 
 import geo from "../../assets/geo.svg";
 import map from "../../assets/map.svg";
-import tag from "../../assets/tag.svg";
 import clock from "../../assets/clock.svg";
-import check from "../../assets/check.svg";
-import person from "../../assets/person.svg";
 import kids from "../../assets/kids.png";
 import divider from "../../assets/hotel/divider.svg";
 
-import hotel from "../../assets/hotel.png";
 import "./Hotel.scss";
 import Room from "./Room";
 import Excursions from "../../components/Excursions/Excursions";
@@ -25,8 +19,6 @@ import {
   useGetHotelsByTagMutation,
   useGetRoomByHotelIdLimitQuery,
 } from "../../features/services/base.service";
-import Card from "../../components/Card";
-import Section from "../../components/Section";
 import GalleryBox from "../../components/Slider/GalleryBox";
 import Recommendation from "../../components/Recommendation/Recommendation";
 import HotelLoader from "../../components/Loader/HotelLoader";
@@ -35,16 +27,15 @@ import RecommLoader from "../../components/Loader/RecommLoader";
 import BodyTitle from "../../components/BodyTitle/BodyTitle";
 import CheckBtn from "../../components/Filter/CheckBtn";
 import { useGetHotelPriceQuery } from "../../features/services/price.service";
-import Loader from "../../components/Loader";
 
 import { setRefetch } from "../../features/search/searchSlice";
 import { addClientRoom } from "../../features/clientSlice";
 import Services from "../../components/Services/Services";
 import { ExpandableText } from "../../components/HotelPage/ExpandableText";
+import Sum from "../../components/HotelPage/Sum";
 
 const Hotel = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const { hotelId } = useParams();
   const { singleHotel, isLoading, isSuccess, isError, message } = useSelector(
@@ -101,17 +92,6 @@ const Hotel = () => {
     };
   }, [hotelId, dispatch]);
 
-  const handleOrder = (e) => {
-    e.preventDefault();
-    const values = {
-      ...orderTerms,
-      room: clientRoom?._id,
-    };
-    dispatch(addOrder(values));
-    navigate("/orders/new-order");
-    console.log(values);
-  };
-
   const [orderTerms, setOrderTerms] = useState({
     amount: 1,
     days: 2,
@@ -150,23 +130,7 @@ const Hotel = () => {
     });
   }, [clientData]);
 
-  const [clientStartingDate, setClientStartingDate] = useState(
-    Date.parse(new Date())
-  );
-  const [clientEndingDate, setClientEndingDate] = useState(
-    Date.parse(new Date(Date.now() + 3600 * 1000 * 24))
-  );
-
-  useEffect(() => {
-    setClientStartingDate(new Date(+clientData.startDate));
-    setClientEndingDate(new Date(+clientData.endDate));
-  }, [clientData.startDate, clientData.endDate]);
-
-  const [sum, setSum] = useState(0);
-
-  const { clientExcursions, clientRoom, excSum } = useSelector(
-    (state) => state.client
-  );
+  const { clientExcursions, clientRoom } = useSelector((state) => state.client);
 
   useEffect(() => {
     if (roomsData) {
@@ -271,8 +235,6 @@ const Hotel = () => {
       }));
     }
   }, [orderTerms.foodIncluded]);
-
-  const formatter = Intl.NumberFormat("ru-RU");
 
   if (isLoading) {
     return <HotelLoader />;
@@ -609,111 +571,13 @@ const Hotel = () => {
               </div>
 
               <div className="hotel_side_wrapper wrapper ver">
-                <div className="hotel_side-top shadowed_box">
-                  <div className="hotel_side-title">Бронирование</div>
-
-                  <div>
-                    {clientRoom?._id && (
-                      <>
-                        <div className="hotel_side-checksum">
-                          <span>{clientRoom.roomName}</span>
-                          <span className="price_span">
-                            {formatter.format(price?.roomSum)} тг.
-                          </span>
-                        </div>
-                        {price?.extraPlacesSum &&
-                        price?.extraPlacesSum !== 0 ? (
-                          <div className="hotel_side-extraPlace">
-                            <span>
-                              +{" "}
-                              {JSON.parse(localStorage.getItem("agesArray"))
-                                .length - clientRoom.capacity}{" "}
-                              доп. места
-                            </span>
-                            <span className="price_span">
-                              {price && formatter.format(price?.extraPlacesSum)}
-                              тг
-                            </span>
-                          </div>
-                        ) : null}
-                        {priceData?.excursionsArray.length > 0 && (
-                          <>
-                            <div className="hotel_side-checksum">
-                              <div>Экскурсия</div>
-                              <span className="price_span">
-                                {price &&
-                                  formatter.format(price?.excursionsSum)}{" "}
-                                тг.
-                              </span>
-                            </div>
-                            <div className="hotel_side-extraPlace">
-                              {JSON.parse(
-                                localStorage.getItem("agesArray")
-                              ).reduce((acc, current) => {
-                                if (current === 1000) {
-                                  return acc + 1;
-                                }
-                                return acc;
-                              }, 0)}{" "}
-                              взр.{" "}
-                              {JSON.parse(
-                                localStorage.getItem("agesArray")
-                              ).reduce((acc, current) => {
-                                if (current !== 1000) {
-                                  return acc + 1;
-                                }
-                                return acc;
-                              }, 0)}{" "}
-                              дет.
-                            </div>
-                          </>
-                        )}
-                        {price?.margeSum && price?.margeSum !== 0 ? (
-                          <>
-                            <div className="hotel_side-checksum">
-                              <div>Маржа</div>
-                              <span className="price_span">
-                                {price && formatter.format(price?.margeSum)} тг.
-                              </span>
-                            </div>
-                            <div className="hotel_side-extraPlace">
-                              <span>10 %</span>
-                            </div>
-                          </>
-                        ) : null}
-                      </>
-                    )}
-                  </div>
-
-                  <div className="hotel_side-row total">
-                    Итого:
-                    {priceIsLoading ? (
-                      <Loader />
-                    ) : (
-                      <div>
-                        <span>
-                          {price.sum ? formatter.format(price.sum) : "0"}
-                          тг.
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <Link
-                    to="/orders/new-order"
-                    className="primary-btn yellow"
-                    onClick={handleOrder}
-                  >
-                    Оставить заявку
-                  </Link>
-                  <div className="side-top-bot">
-                    <div>
-                      <img src={check} alt="" /> У нас самые выгодные цены!
-                    </div>
-                    <div>
-                      <img src={check} alt="" /> Официальный турагент
-                    </div>
-                  </div>
-                </div>
+                <Sum
+                  price={price}
+                  priceData={priceData}
+                  clientRoom={clientRoom}
+                  priceIsLoading={priceIsLoading}
+                  orderTerms={orderTerms}
+                />
 
                 {singleHotel?.locationId?._id ? (
                   <Excursions

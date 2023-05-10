@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import serv from "../../assets/serv.svg";
 
-const Services = ({ hotelServices }) => {
+const Services = ({ hotelServices, title }) => {
   const [servicesToRender, setServicesToRender] = useState();
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const Services = ({ hotelServices }) => {
   return (
     <div className="hotel_services-row">
       <div className="body_title-box">
-        <div className="body_title">Услуги отеля</div>
+        <div className="body_title">{title}</div>
       </div>
       <div className="services_box">
         {servicesToRender

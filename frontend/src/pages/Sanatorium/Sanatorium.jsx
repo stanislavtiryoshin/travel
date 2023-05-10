@@ -34,13 +34,14 @@ import RoomLoader from "../../components/Loader/RoomLoader";
 import RecommLoader from "../../components/Loader/RecommLoader";
 import BodyTitle from "../../components/BodyTitle/BodyTitle";
 import CheckBtn from "../../components/Filter/CheckBtn";
-import { useGetHotelPriceQuery } from "../../features/services/price.service";
+import { useGetSanatoriumPriceQuery } from "../../features/services/price.service";
 import Loader from "../../components/Loader";
 
 import { setRefetch } from "../../features/search/searchSlice";
 import { addClientRoom } from "../../features/clientSlice";
 import Services from "../../components/Services/Services";
 import { ExpandableText } from "../../components/HotelPage/ExpandableText";
+import Sum from "../../components/HotelPage/Sum";
 
 const Sanatorium = () => {
   const dispatch = useDispatch();
@@ -251,7 +252,7 @@ const Sanatorium = () => {
     data: price,
     isLoading: priceIsLoading,
     refetch,
-  } = useGetHotelPriceQuery(priceData);
+  } = useGetSanatoriumPriceQuery(priceData);
 
   useEffect(() => {
     window.localStorage.setItem("sum", price?.sum);
@@ -337,6 +338,8 @@ const Sanatorium = () => {
                     <div className="top_tags-row">
                       {singleSanatorium && singleSanatorium?.sanatoriumServices
                         ? singleSanatorium?.sanatoriumServices
+                            .map((serv) => serv.serviceType)
+
                             ?.filter((serv) => serv.priority === 1)
                             .map((serv) => {
                               return (
@@ -437,9 +440,10 @@ const Sanatorium = () => {
                       hotelServices={singleSanatorium?.sanatoriumServices?.map(
                         (serv) => serv.serviceType
                       )}
+                      title="Услуги санатория"
                     />
                   ) : null}
-                  <img src={divider} alt="" />
+                  {/* <img src={divider} alt="" />
                   <div className="hotel_food-row">
                     <div className="body_title-box">
                       <div className="body_title">
@@ -569,7 +573,7 @@ const Sanatorium = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                   <img src={divider} alt="" />
                   <div className="hotel_page-rooms" id="room_anchor">
                     <BodyTitle
@@ -614,137 +618,13 @@ const Sanatorium = () => {
               </div>
 
               <div className="hotel_side_wrapper wrapper ver">
-                <div className="hotel_side-top shadowed_box">
-                  <div className="hotel_side-title">Бронирование</div>
-
-                  <div>
-                    {clientRoom?._id && (
-                      <>
-                        <div className="hotel_side-checksum">
-                          <span>{clientRoom.roomName}</span>
-                          <span className="price_span">
-                            {formatter.format(price?.roomSum)} тг.
-                          </span>
-                        </div>
-                        {price?.extraPlacesSum &&
-                        price?.extraPlacesSum !== 0 ? (
-                          <div className="hotel_side-extraPlace">
-                            <span>
-                              +{" "}
-                              {JSON.parse(localStorage.getItem("agesArray"))
-                                .length - clientRoom.capacity}{" "}
-                              доп. места
-                            </span>
-                            <span className="price_span">
-                              {price && formatter.format(price?.extraPlacesSum)}
-                              тг
-                            </span>
-                          </div>
-                        ) : null}
-                        {priceData?.excursionsArray.length > 0 && (
-                          <>
-                            <div className="hotel_side-checksum">
-                              <div>Экскурсия</div>
-                              <span className="price_span">
-                                {price &&
-                                  formatter.format(price?.excursionsSum)}{" "}
-                                тг.
-                              </span>
-                            </div>
-                            <div className="hotel_side-extraPlace">
-                              {JSON.parse(
-                                localStorage.getItem("agesArray")
-                              ).reduce((acc, current) => {
-                                if (current === 1000) {
-                                  return acc + 1;
-                                }
-                                return acc;
-                              }, 0)}{" "}
-                              взр.{" "}
-                              {JSON.parse(
-                                localStorage.getItem("agesArray")
-                              ).reduce((acc, current) => {
-                                if (current !== 1000) {
-                                  return acc + 1;
-                                }
-                                return acc;
-                              }, 0)}{" "}
-                              дет.
-                            </div>
-                          </>
-                        )}
-                        {price?.margeSum && price?.margeSum !== 0 ? (
-                          <>
-                            <div className="hotel_side-checksum">
-                              <div>Маржа</div>
-                              <span className="price_span">
-                                {price && formatter.format(price?.margeSum)} тг.
-                              </span>
-                            </div>
-                            <div className="hotel_side-extraPlace">
-                              <span>10 %</span>
-                            </div>
-                          </>
-                        ) : null}
-                      </>
-                    )}
-                  </div>
-
-                  {/* <div className="hotel_side-row">
-                    {clientStartingDate &&
-                      clientStartingDate.toLocaleString(undefined, {
-                        month: "numeric",
-                        day: "numeric",
-                      })}{" "}
-                    -{" "}
-                    {clientEndingDate &&
-                      clientEndingDate.toLocaleString(undefined, {
-                        month: "numeric",
-                        day: "numeric",
-                      })}
-                  </div> */}
-                  {/* <div className="hotel_side-row"> */}
-                  {/* <img src={person} alt="" />{" "}
-                    {JSON.parse(localStorage.getItem("agesArray")).length} взр. */}
-
-                  {/* </div> */}
-                  <div className="hotel_side-row total">
-                    Итого:
-                    {priceIsLoading ? (
-                      <Loader />
-                    ) : (
-                      <div>
-                        <span>
-                          {price?.sum ? formatter.format(price?.sum) : "0"}
-                          тг.
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <Link
-                    to="/orders/new-order"
-                    className="primary-btn yellow"
-                    onClick={handleOrder}
-                  >
-                    Оставить заявку
-                  </Link>
-                  <div className="side-top-bot">
-                    <div>
-                      <img src={check} alt="" /> У нас самые выгодные цены!
-                    </div>
-                    <div>
-                      <img src={check} alt="" /> Официальный турагент
-                    </div>
-                  </div>
-                </div>
-                {/* <div className="side_price-box shadowed_box small">
-                  <div className="body_title-box">
-                    <div className="body_title">Лучшая цена в Июле!</div>
-                    <div className="body_title-text">
-                      Lorem ipsum dolor sit amet, id dicant splendide cum.{" "}
-                    </div>
-                  </div>
-                </div> */}
+                <Sum
+                  price={price}
+                  priceData={priceData}
+                  clientRoom={clientRoom}
+                  priceIsLoading={priceIsLoading}
+                  orderTerms={orderTerms}
+                />
 
                 {singleSanatorium?.locationId?._id ? (
                   <Excursions

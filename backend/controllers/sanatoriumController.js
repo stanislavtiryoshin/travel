@@ -2,6 +2,9 @@ const Sanatorium = require("../models/sanatoriumModel");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const Room = require("../models/roomModel");
+const Period = require("../models/periodModel");
+const Excursion = require("../models/excursionModel");
 
 const addSanatorium = async (req, res) => {
   const post = await Sanatorium.create(req.body);
@@ -32,6 +35,27 @@ const getAdminSanatoriums = (req, res) => {
   const { name, locationId, minAge } = req.query;
 };
 
+//@desc   Get single sanatorium
+//@route  GET /api/sanatoriums/:sanatoriumId
+//@access Public
+
+const getSingleSanatorium = (req, res) => {
+  Sanatorium.findById(req.params.sanatoriumId)
+    .populate("locationId")
+    .populate("rooms")
+    .populate("sanatoriumProgram.programId")
+    .populate("food.foodType")
+    .populate({
+      path: "sanatoriumServices.serviceType",
+      populate: {
+        path: "category",
+        model: "Category",
+      },
+    })
+    .then((response) => res.status(200).json(response))
+    .catch((err) => res.sendStatus(403));
+};
+
 //@desc   Calculate the price of hotel
 //@route  GET /api/hotels/:hotelId/price
 //@access Public
@@ -43,7 +67,7 @@ const getPrice = asyncHandler(async (req, res) => {
     start,
     daysAmount,
     agesArray,
-    hotelId,
+    sanatoriumId,
     roomId,
     personMode,
     excursionsArray,
@@ -59,87 +83,78 @@ const getPrice = asyncHandler(async (req, res) => {
 
   console.log(excursions);
 
-  const hotel = await Sanatorium.findById(hotelId)
-    .populate("locationId")
-    .populate("food")
-    .populate({
-      path: "rooms",
-      populate: {
-        path: "periodPrices.period",
-        model: "Period",
-      },
-    })
-    .populate({
-      path: "hotelServices",
-      populate: {
-        path: "category",
-        model: "Category",
-      },
-    });
+  const hotel = await Sanatorium.findById(sanatoriumId).populate({
+    path: "rooms",
+    populate: {
+      path: "periodPrices.period",
+      model: "Period",
+    },
+  });
   const chosenRoom = hotel.rooms.find((room) => room._id == roomId);
 
   let sum = 0;
-  let extraPlacesSum = 0;
   let roomSum = 0;
+  let extraPlacesSum = 0;
   let excursionsSum = 0;
+  let foodSum = 0;
   let chosenPlaces = [];
 
-  const extraPlacesAmount = ages.length - chosenRoom.capacity;
+  // const extraPlacesAmount = ages.length - chosenRoom.capacity;
 
-  console.log(extraPlacesAmount, "extraPlacesAmount");
+  // console.log(extraPlacesAmount, "extraPlacesAmount");
 
-  let placesArray = chosenRoom.extraPlaces;
+  // let placesArray = chosenRoom.extraPlaces;
 
   ages.sort((a, b) => b - a);
 
-  const accomodatedAges = ages.splice(0, chosenRoom.capacity);
+  // const accomodatedAges = ages.splice(0, chosenRoom.capacity);
 
-  console.log(ages, "ages");
+  // console.log(ages, "ages");
 
-  const notChosen = (place) => !chosenPlaces.some((el) => el._id === place._id);
+  // const notChosen = (place) => !chosenPlaces.some((el) => el._id === place._id);
 
-  ages.forEach((age) => {
-    const matchingPlace = placesArray.find((place) => {
-      if (age !== 1000 && notChosen(place)) {
-        return true;
-      } else if (age === 1000 && !place.isKid && notChosen(place)) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-    if (matchingPlace) {
-      chosenPlaces.push(matchingPlace);
-    }
-  });
+  // ages.forEach((age) => {
+  //   const matchingPlace = placesArray.find((place) => {
+  //     if (age !== 1000 && notChosen(place)) {
+  //       return true;
+  //     } else if (age === 1000 && !place.isKid && notChosen(place)) {
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   });
+  //   if (matchingPlace) {
+  //     chosenPlaces.push(matchingPlace);
+  //   }
+  // });
 
-  console.log(chosenPlaces);
+  // console.log(chosenPlaces);
 
-  sum = chosenPlaces.reduce((acc, place) => {
-    if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
-      console.log("addExtraFood");
-      return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
-    } else if (addExtraFood !== "true" && !chosenRoom.extraFoodIncluded) {
-      console.log("!addExtraFood");
-      return acc + place.priceNoFood * daysAmount;
-    } else if (chosenRoom.extraFoodIncluded) {
-      console.log("extra food already included");
-      return acc + place.priceWithFood * daysAmount;
-    }
-  }, 0);
+  // sum = chosenPlaces.reduce((acc, place) => {
+  //   if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
+  //     console.log("addExtraFood");
+  //     return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
+  //   } else if (addExtraFood !== "true" && !chosenRoom.extraFoodIncluded) {
+  //     console.log("!addExtraFood");
+  //     return acc + place.priceNoFood * daysAmount;
+  //   } else if (chosenRoom.extraFoodIncluded) {
+  //     console.log("extra food already included");
+  //     return acc + place.priceWithFood * daysAmount;
+  //   }
+  // }, 0);
 
-  extraPlacesSum = chosenPlaces.reduce((acc, place) => {
-    if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
-      console.log("addExtraFood");
-      return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
-    } else if (addExtraFood !== "true" && !chosenRoom.extraFoodIncluded) {
-      console.log("!addExtraFood");
-      return acc + place.priceNoFood * daysAmount;
-    } else if (chosenRoom.extraFoodIncluded) {
-      console.log("extra food already included");
-      return acc + place.priceWithFood * daysAmount;
-    }
-  }, 0);
+  // extraPlacesSum = chosenPlaces.reduce((acc, place) => {
+  //   if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
+  //     console.log("addExtraFood");
+  //     return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
+  //   } else if (addExtraFood !== "true" && !chosenRoom.extraFoodIncluded) {
+  //     console.log("!addExtraFood");
+  //     return acc + place.priceNoFood * daysAmount;
+  //   } else if (chosenRoom.extraFoodIncluded) {
+  //     console.log("extra food already included");
+  //     return acc + place.priceWithFood * daysAmount;
+  //   }
+  // }, 0);
 
   async function calculatePrice(start, daysNum, basePrice, pricesArray) {
     let daysArray = [];
@@ -201,36 +216,38 @@ const getPrice = asyncHandler(async (req, res) => {
       findPriceByDate(daysArray[i]);
     }
 
-    (function calculateFood() {
-      if (addRoomFood && kidsFoodAmount !== 0 && adultsFoodAmount !== 0) {
-        for (let i = 0; i < daysAmount; i++) {
-          for (let i = 0; i < kidsFoodAmount; i++) {
-            sum += hotel.kidFoodPrice;
-            console.log("kid food");
-          }
-          for (let i = 0; i < adultsFoodAmount; i++) {
-            sum += hotel.adultFoodPrice;
-            console.log("adult food");
-          }
-        }
-      }
-    })();
+    // (function calculateFood() {
+    //   if (addRoomFood && kidsFoodAmount !== 0 && adultsFoodAmount !== 0) {
+    //     for (let i = 0; i < daysAmount; i++) {
+    //       for (let i = 0; i < kidsFoodAmount; i++) {
+    //         sum += hotel.kidFoodPrice;
+    //         foodSum += hotel.kidFoodPrice;
+    //         console.log("kid food");
+    //       }
+    //       for (let i = 0; i < adultsFoodAmount; i++) {
+    //         sum += hotel.adultFoodPrice;
+    //         foodSum += hotel.adultFoodPrice;
+    //         console.log("adult food");
+    //       }
+    //     }
+    //   }
+    // })();
 
-    async function calculateExcursionPrices() {
-      if (excursions && excursions.length > 0) {
-        for (const id of excursions) {
-          const excursion = await Excursion.findById(id);
-          if (excursion && excursion.price) {
-            sum += excursion.price * agesArray.split(",").length;
-            excursionsSum += excursion.price * agesArray.split(",").length;
-          }
-        }
-      }
-    }
+    // async function calculateExcursionPrices() {
+    //   if (excursions && excursions.length > 0) {
+    //     for (const id of excursions) {
+    //       const excursion = await Excursion.findById(id);
+    //       if (excursion && excursion.price) {
+    //         sum += excursion.price * agesArray.split(",").length;
+    //         excursionsSum += excursion.price * agesArray.split(",").length;
+    //       }
+    //     }
+    //   }
+    // }
 
-    if (excursions && excursions.length > 0) {
-      await calculateExcursionPrices();
-    }
+    // if (excursions && excursions.length > 0) {
+    //   await calculateExcursionPrices();
+    // }
   }
 
   await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
@@ -238,37 +255,71 @@ const getPrice = asyncHandler(async (req, res) => {
   res.status(200).json({
     sum: sum * 1.1,
     margeSum: 0.1 * sum,
-    extraPlacesSum: extraPlacesSum,
-    excursionsSum: excursionsSum,
+    // extraPlacesSum: extraPlacesSum,
+    // excursionsSum: excursionsSum,
     roomSum: roomSum,
+    // foodSum: foodSum,
+    // kidsFoodAmount: kidsFoodAmount,
+    // adultsFoodAmount: adultsFoodAmount,
   });
 });
 
-//@desc   Get single sanatorium
-//@route  GET /api/sanatoriums/:sanatoriumId
-//@access Public
+// Get rooms with limit
 
-const getSingleSanatorium = (req, res) => {
-  Sanatorium.findById(req.params.sanatoriumId)
-    .populate("locationId")
-    .populate("rooms")
-    .populate("sanatoriumProgram.programId")
-    .populate("food.foodType")
-    .populate({
-      path: "sanatoriumServices.serviceType",
-      populate: {
-        path: "category",
-        model: "Category",
-      },
-    })
-    .then((response) => res.status(200).json(response))
-    .catch((err) => res.sendStatus(403));
+const getRoomsByLimit = async (req, res) => {
+  const { limit, capacity } = req.query;
+  const { sanatoriumId } = req.params;
+  let roomData = [];
+
+  try {
+    const sanatorium = await Sanatorium.findOne({ _id: sanatoriumId });
+
+    try {
+      const rooms = await Room.aggregate([
+        {
+          $match: {
+            _id: {
+              $in: sanatorium.rooms,
+            },
+            $expr: {
+              $gte: [
+                {
+                  $sum: [
+                    "$capacity",
+                    {
+                      $size: {
+                        $filter: {
+                          input: "$extraPlaces",
+                          as: "extraPlace",
+                          cond: { $ne: ["$$extraPlace.isBabyPlace", true] },
+                        },
+                      },
+                    },
+                  ],
+                },
+                parseInt(capacity),
+              ],
+            },
+          },
+        },
+      ]);
+      res.status(200).json(rooms);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+
+    console.log(roomData);
+  } catch (err) {
+    res.sendStatus(404);
+  }
 };
 
 module.exports = {
   getSingleSanatorium,
   getSanatoriums,
   addSanatorium,
+  getPrice,
+  getRoomsByLimit,
   // TODO!: Спросить
   // getAdminSanatoriums,
 };

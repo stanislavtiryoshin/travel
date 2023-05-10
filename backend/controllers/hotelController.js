@@ -404,6 +404,7 @@ const getPrice = asyncHandler(async (req, res) => {
   let extraPlacesSum = 0;
   let roomSum = 0;
   let excursionsSum = 0;
+  let foodSum = 0;
   let chosenPlaces = [];
 
   const extraPlacesAmount = ages.length - chosenRoom.capacity;
@@ -528,10 +529,12 @@ const getPrice = asyncHandler(async (req, res) => {
         for (let i = 0; i < daysAmount; i++) {
           for (let i = 0; i < kidsFoodAmount; i++) {
             sum += hotel.kidFoodPrice;
+            foodSum += hotel.kidFoodPrice;
             console.log("kid food");
           }
           for (let i = 0; i < adultsFoodAmount; i++) {
             sum += hotel.adultFoodPrice;
+            foodSum += hotel.adultFoodPrice;
             console.log("adult food");
           }
         }
@@ -562,7 +565,10 @@ const getPrice = asyncHandler(async (req, res) => {
     margeSum: 0.1 * sum,
     extraPlacesSum: extraPlacesSum,
     excursionsSum: excursionsSum,
+    foodSum: foodSum,
     roomSum: roomSum,
+    kidsFoodAmount: kidsFoodAmount,
+    adultsFoodAmount: adultsFoodAmount,
   });
 });
 

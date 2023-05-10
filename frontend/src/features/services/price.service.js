@@ -29,9 +29,9 @@ export const priceApi = createApi({
     }),
     getSanatoriumPrice: builder.query({
       query: (body) => ({
-        url: `/hotels/price?agesArray=${
+        url: `/sanatoriums/price?agesArray=${
           body.agesArray !== "" && body.agesArray
-        }&start=${body.start}&hotelId=${body.hotelId}&roomId=${
+        }&start=${body.start}&sanatoriumId=${body.sanatoriumId}&roomId=${
           body.roomId !== "" && body.roomId
         }&addExtraFood=${
           body.addExtraFood !== false && body.addExtraFood

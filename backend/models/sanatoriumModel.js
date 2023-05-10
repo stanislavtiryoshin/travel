@@ -61,6 +61,15 @@ const sanatoriumSchema = Schema(
         ref: "Program",
       },
     },
+    kidFoodPrice: {
+      type: Number,
+    },
+    adultFoodPrice: {
+      type: Number,
+    },
+    babyFoodInfo: {
+      type: String,
+    },
     kids: {
       babyMaxAge: {
         type: Number,

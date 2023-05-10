@@ -18,3 +18,11 @@
 .swiper {
   position: relative;
 }
+
+.gen_img-box {
+  max-width: 50%;
+  img {
+    width: 100%;
+    max-width: 100%;
+  }
+}
