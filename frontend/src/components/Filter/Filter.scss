@@ -54,3 +54,21 @@
   border-radius: 5px;
   background-color: rgba(190, 190, 190, 0.24);
 }
+.filter_destination,
+.filter_dateRange,
+.filter_userAmount {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .filter_divider {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: rgba(217, 217, 217, 1);
+  }
+}
+
+.users {
+  margin-top: 25px;
+}
