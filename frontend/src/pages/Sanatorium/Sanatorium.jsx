@@ -635,7 +635,12 @@ const Sanatorium = () => {
                   "Экскурсии загружаются"
                 )}
 
-                <ExpandableText text="Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum." />
+                <ExpandableText
+                  locationName={singleSanatorium?.locationId?.locationName}
+                  locationDescription={
+                    singleSanatorium?.locationId?.locationDescription
+                  }
+                />
 
                 <div className="kids_box">
                   <img src={kids} alt="" />

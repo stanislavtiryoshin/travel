@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-export const ExpandableText = ({ text }) => {
+export const ExpandableText = ({ locationDescription, locationName }) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
-  const truncatedText = text.slice(0, 200);
-  const displayText = isExpanded ? text : truncatedText;
+  const truncatedText = locationDescription.slice(0, 200);
+  const displayText = isExpanded ? locationDescription : truncatedText;
 
   return (
     <div className={`side_about-box shadowed_box small`}>
       <div className="body_title-box">
-        <div className="body_title">Про Туркестан </div>
+        <div className="body_title">Про {locationName} </div>
         <div className="body_title-text">
           {displayText}
           {!isExpanded ? "..." : ""}
