@@ -143,7 +143,7 @@ app.use("/api/hotelServices", require("./routes/hotelServiceRoutes"));
 app.use("/api/rooms", require("./routes/roomRoutes"));
 
 app.use("/api/programs", require("./routes/programRoutes"));
-app.use("/api/sanatoriums", require("./routes/sanatoryRoutes"));
+app.use("/api/sanatoriums", require("./routes/sanatoriumRoutes"));
 app.use("/api/camps", require("./routes/campRoutes"));
 app.use("/api/tour", require("./routes/tourRoutes"));
 app.use("/api/periods", require("./routes/periodRoutes"));

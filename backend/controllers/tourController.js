@@ -94,6 +94,7 @@ const insertTourPrices = expressAsyncHandler(async (req, res) => {
 
 //@desc   Search tours
 //@route  GET /api/tour/searched
+//@access Public
 
 const getSearchedTour = async (req, res) => {
   const {

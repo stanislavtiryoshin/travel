@@ -4,7 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-import { getSingleHotel, reset } from "../../features/hotel/hotelSlice";
+import {
+  getSingleSanatorium,
+  reset,
+} from "../../features/sanatorium/sanatoriumSlice";
 import RatingBox from "../../components/HotelCard/RatingBox";
 import { addOrder } from "../../features/order/orderSlice";
 
@@ -18,13 +21,10 @@ import kids from "../../assets/kids.png";
 import divider from "../../assets/hotel/divider.svg";
 
 import hotel from "../../assets/hotel.png";
-import "./Hotel.scss";
-import Room from "./Room";
+import "../Hotel/Hotel.scss";
+import Room from "../Hotel/Room";
 import Excursions from "../../components/Excursions/Excursions";
-import {
-  useGetHotelsByTagMutation,
-  useGetRoomByHotelIdLimitQuery,
-} from "../../features/services/base.service";
+import { useGetRoomBySanatoriumIdLimitQuery } from "../../features/services/base.service";
 import Card from "../../components/Card";
 import Section from "../../components/Section";
 import GalleryBox from "../../components/Slider/GalleryBox";
@@ -42,64 +42,71 @@ import { addClientRoom } from "../../features/clientSlice";
 import Services from "../../components/Services/Services";
 import { ExpandableText } from "../../components/HotelPage/ExpandableText";
 
-const Hotel = () => {
+const Sanatorium = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { hotelId } = useParams();
-  const { singleHotel, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.hotels
-  );
+  const { sanatoriumId } = useParams();
+  console.log(sanatoriumId, "san id");
+  const { singleSanatorium, isLoading, isSuccess, isError, message } =
+    useSelector((state) => state.sanatoriums);
 
+  console.log(singleSanatorium, "singleSanatorium");
   const [sources, setSources] = useState([]);
 
   useEffect(() => {
-    if (singleHotel.img) {
-      setSources(singleHotel.img);
+    if (singleSanatorium?.img) {
+      setSources(singleSanatorium?.img);
     } else {
       setSources([]);
     }
-  }, [singleHotel]);
+  }, [singleSanatorium]);
 
   const [roomCount, setRoomCount] = useState(3);
 
   const { data: roomsData, isLoading: roomIsLoading } =
-    useGetRoomByHotelIdLimitQuery({
-      hotelId,
+    useGetRoomBySanatoriumIdLimitQuery({
+      sanatoriumId,
       limit: roomCount,
       capacity: localStorage.getItem("agesArray")
         ? JSON.parse(localStorage.getItem("agesArray")).length
         : null,
     });
 
-  const [
-    getData,
-    // {
-    //   data: recommendation,
-    //   isLoading: recommendationIsLoading,
-    // },
-  ] = useGetHotelsByTagMutation();
+  // const [
+  //   getData,
+  //   // {
+  //   //   data: recommendation,
+  //   //   isLoading: recommendationIsLoading,
+  //   // },
+  // ] = useGetHotelsByTagMutation();
 
-  const [recommendation, setRecommendation] = useState([]);
+  // const [recommendation, setRecommendation] = useState([]);
 
-  useEffect(() => {
-    getData({
-      food: singleHotel && singleHotel.food && singleHotel.food._id,
-      comforts: singleHotel && singleHotel.comforts && singleHotel.comforts,
-      hotelServices:
-        singleHotel && singleHotel.hotelServices && singleHotel.hotelServices,
-    }).then((res) => setRecommendation(res.data));
-  }, [singleHotel]);
+  // useEffect(() => {
+  //   getData({
+  //     food:
+  //       singleSanatorium && singleSanatorium.food && singleSanatorium.food._id,
+  //     comforts:
+  //       singleSanatorium &&
+  //       singleSanatorium.comforts &&
+  //       singleSanatorium.comforts,
+  //     sanatoriumServices:
+  //       singleSanatorium &&
+  //       singleSanatorium.sanatoriumServices &&
+  //       singleSanatorium.sanatoriumServices,
+  //   }).then((res) => setRecommendation(res.data));
+  // }, [singleSanatorium]);
 
   useEffect(() => {
     if (isError) {
       console.log(message);
     }
-    dispatch(getSingleHotel(hotelId));
+    dispatch(getSingleSanatorium(sanatoriumId));
     return () => {
       dispatch(reset());
     };
-  }, [hotelId, dispatch]);
+  }, [sanatoriumId, dispatch]);
 
   const handleOrder = (e) => {
     e.preventDefault();
@@ -184,7 +191,7 @@ const Hotel = () => {
       ? localStorage.getItem("daysAmount")
       : "",
     agesArray: [],
-    hotelId,
+    sanatoriumId,
     roomId: clientRoom?._id,
     personMode: false,
     excursionsArray: [],
@@ -250,13 +257,14 @@ const Hotel = () => {
     window.localStorage.setItem("sum", price?.sum);
     if (clientRoom)
       window.localStorage.setItem("room", JSON.stringify(clientRoom));
-    if (singleHotel) window.localStorage.setItem("hotel", singleHotel?._id);
+    if (singleSanatorium)
+      window.localStorage.setItem("hotel", singleSanatorium?._id);
     if (clientExcursions)
       window.localStorage.setItem(
         "excursions",
         JSON.stringify(clientExcursions)
       );
-  }, [price, clientRoom, singleHotel, clientExcursions]);
+  }, [price, clientRoom, singleSanatorium, clientExcursions]);
 
   useEffect(() => {
     dispatch(setRefetch(refetch));
@@ -286,7 +294,7 @@ const Hotel = () => {
     <div className="hotel_page page">
       <section className="hotel_section">
         <div className="hotel_container container">
-          {singleHotel ? (
+          {singleSanatorium ? (
             <div className="hotel_page_wrapper wrapper ">
               <div className="hotel_main_wrapper wrapper ver">
                 <div className="hotel_page_top shadowed_box">
@@ -295,23 +303,23 @@ const Hotel = () => {
                   </div>
                   <div className="top_content">
                     <div className="top_heading-row row">
-                      <div className="hotel_name">{singleHotel?.name}</div>
-                      <RatingBox rating={singleHotel?.rating} starMode />
+                      <div className="hotel_name">{singleSanatorium?.name}</div>
+                      <RatingBox rating={singleSanatorium?.rating} starMode />
                     </div>
                     <div className="top_location-row row">
                       <div className="top_location-box">
                         <img src={geo} alt="" />
-                        {singleHotel?.locationId
-                          ? singleHotel?.locationId.locationName
+                        {singleSanatorium?.locationId
+                          ? singleSanatorium?.locationId.locationName
                           : null}
                         ,{" "}
-                        {singleHotel?.locationId
-                          ? singleHotel?.locationId.locationCountry
+                        {singleSanatorium?.locationId
+                          ? singleSanatorium?.locationId.locationCountry
                           : null}
                       </div>
                       <a
                         className="top_location-btn primary-btn"
-                        href={singleHotel.mapLink}
+                        href={singleSanatorium.mapLink}
                       >
                         <img src={map} alt="" />
                         Посмотреть <br /> на карте
@@ -320,15 +328,15 @@ const Hotel = () => {
                     <div className="top_desc-row">
                       <div className="desc_title">Описание</div>
                       <div className="desc_box">
-                        {singleHotel?.description?.slice(0, 200)}...
+                        {singleSanatorium?.description?.slice(0, 200)}...
                       </div>
                       <a href="#anchor" className="hotel_anchor">
                         Подробнее
                       </a>
                     </div>
                     <div className="top_tags-row">
-                      {singleHotel && singleHotel?.hotelServices
-                        ? singleHotel?.hotelServices
+                      {singleSanatorium && singleSanatorium?.sanatoriumServices
+                        ? singleSanatorium?.sanatoriumServices
                             ?.filter((serv) => serv.priority === 1)
                             .map((serv) => {
                               return (
@@ -404,25 +412,32 @@ const Hotel = () => {
                     <div className="body_title-box">
                       <div className="body_title">Об отеле</div>
                       <div className="body_title-text">
-                        Расположение: {singleHotel?.locationId?.locationName},{" "}
-                        {singleHotel?.locationId?.locationCountry}
+                        Расположение:{" "}
+                        {singleSanatorium?.locationId?.locationName},{" "}
+                        {singleSanatorium?.locationId?.locationCountry}
                       </div>
                     </div>
                     <div className="schedule-row row">
                       <div className="schedule-box">
                         <img src={clock} alt="" />
-                        Заезд с {singleHotel?.enterTime}
+                        Заезд с {singleSanatorium?.enterTime}
                       </div>
                       <div className="schedule-box">
                         <img src={clock} alt="" />
-                        Выезд до {singleHotel?.leaveTime}
+                        Выезд до {singleSanatorium?.leaveTime}
                       </div>
                     </div>
-                    <div className="desc-row">{singleHotel?.description}</div>
+                    <div className="desc-row">
+                      {singleSanatorium?.description}
+                    </div>
                   </div>
                   <img src={divider} alt="" />
-                  {singleHotel?.hotelServices ? (
-                    <Services hotelServices={singleHotel?.hotelServices} />
+                  {singleSanatorium?.sanatoriumServices ? (
+                    <Services
+                      hotelServices={singleSanatorium?.sanatoriumServices?.map(
+                        (serv) => serv.serviceType
+                      )}
+                    />
                   ) : null}
                   <img src={divider} alt="" />
                   <div className="hotel_food-row">
@@ -431,10 +446,10 @@ const Hotel = () => {
                         Питание{" "}
                         <div
                           className={`food_tag ${
-                            singleHotel?.foodIncluded ? "incl" : "notincl"
+                            singleSanatorium?.foodIncluded ? "incl" : "notincl"
                           }`}
                         >
-                          {singleHotel?.foodIncluded
+                          {singleSanatorium?.foodIncluded
                             ? "Включено"
                             : "Не включено"}
                         </div>
@@ -457,16 +472,18 @@ const Hotel = () => {
                     <div className="food_box">
                       <div className="food_price-box">
                         <div className="food_prices">
-                          {singleHotel?.adultFoodPrice ? (
+                          {singleSanatorium?.adultFoodPrice ? (
                             <span>
-                              Взрослый - {singleHotel?.adultFoodPrice}
+                              Взрослый - {singleSanatorium?.adultFoodPrice}
                             </span>
                           ) : null}
-                          {singleHotel?.kidFoodPrice ? (
-                            <span>Детский - {singleHotel?.kidFoodPrice}</span>
+                          {singleSanatorium?.kidFoodPrice ? (
+                            <span>
+                              Детский - {singleSanatorium?.kidFoodPrice}
+                            </span>
                           ) : null}
-                          {singleHotel?.babyFoodInfo ? (
-                            <span>{singleHotel?.babyFoodInfo}</span>
+                          {singleSanatorium?.babyFoodInfo ? (
+                            <span>{singleSanatorium?.babyFoodInfo}</span>
                           ) : null}
                         </div>
                       </div>
@@ -673,6 +690,24 @@ const Hotel = () => {
                     )}
                   </div>
 
+                  {/* <div className="hotel_side-row">
+                    {clientStartingDate &&
+                      clientStartingDate.toLocaleString(undefined, {
+                        month: "numeric",
+                        day: "numeric",
+                      })}{" "}
+                    -{" "}
+                    {clientEndingDate &&
+                      clientEndingDate.toLocaleString(undefined, {
+                        month: "numeric",
+                        day: "numeric",
+                      })}
+                  </div> */}
+                  {/* <div className="hotel_side-row"> */}
+                  {/* <img src={person} alt="" />{" "}
+                    {JSON.parse(localStorage.getItem("agesArray")).length} взр. */}
+
+                  {/* </div> */}
                   <div className="hotel_side-row total">
                     Итого:
                     {priceIsLoading ? (
@@ -680,7 +715,7 @@ const Hotel = () => {
                     ) : (
                       <div>
                         <span>
-                          {price.sum ? formatter.format(price.sum) : "0"}
+                          {price?.sum ? formatter.format(price?.sum) : "0"}
                           тг.
                         </span>
                       </div>
@@ -702,10 +737,18 @@ const Hotel = () => {
                     </div>
                   </div>
                 </div>
+                {/* <div className="side_price-box shadowed_box small">
+                  <div className="body_title-box">
+                    <div className="body_title">Лучшая цена в Июле!</div>
+                    <div className="body_title-text">
+                      Lorem ipsum dolor sit amet, id dicant splendide cum.{" "}
+                    </div>
+                  </div>
+                </div> */}
 
-                {singleHotel?.locationId?._id ? (
+                {singleSanatorium?.locationId?._id ? (
                   <Excursions
-                    locationId={singleHotel?.locationId?._id}
+                    locationId={singleSanatorium?.locationId?._id}
                     refetch={refetch}
                   />
                 ) : (
@@ -722,12 +765,12 @@ const Hotel = () => {
           ) : null}
         </div>
       </section>
-      <Recommendation
+      {/* <Recommendation
         recommendation={recommendation}
-        singleHotel={singleHotel}
-      />
+        singleSanatorium={singleSanatorium}
+      /> */}
     </div>
   );
 };
 
-export default Hotel;
+export default Sanatorium;

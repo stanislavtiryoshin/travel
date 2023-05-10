@@ -5,7 +5,7 @@ const {
   addSanatorium,
   getSanatoriums,
   getSingleSanatorium,
-} = require("../controllers/sanatoryController");
+} = require("../controllers/sanatoriumController");
 
 const { protect } = require("../middleware/authMiddleware");
 
@@ -15,7 +15,7 @@ const { upload } = require("./uploadRoutes");
 router.post("/", protect, addSanatorium);
 router.get("/", getSanatoriums);
 
-router.get("/:id", getSingleSanatorium);
+router.get("/:sanatoriumId", getSingleSanatorium);
 
 router.patch("/:id/upload", upload.array("images", 5), (req, res) => {
   const filePath = req.files.map(

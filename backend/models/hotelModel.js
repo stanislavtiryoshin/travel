@@ -5,9 +5,7 @@ const hotelSchema = mongoose.Schema(
     name: {
       type: String,
     },
-    searchable: {
-      type: Boolean,
-    },
+    searchable: Boolean,
     img: [String],
     uid: String,
     typeId: {
@@ -29,17 +27,6 @@ const hotelSchema = mongoose.Schema(
     phone: {
       type: String,
     },
-    program: [
-      {
-        dayNum: { type: Number },
-        activities: [
-          {
-            time: { type: String },
-            activity: { type: String },
-          },
-        ],
-      },
-    ],
     food: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Food",

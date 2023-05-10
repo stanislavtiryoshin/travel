@@ -27,7 +27,31 @@ export const priceApi = createApi({
       }),
       providesTags: ["hotelPrice"],
     }),
+    getSanatoriumPrice: builder.query({
+      query: (body) => ({
+        url: `/hotels/price?agesArray=${
+          body.agesArray !== "" && body.agesArray
+        }&start=${body.start}&hotelId=${body.hotelId}&roomId=${
+          body.roomId !== "" && body.roomId
+        }&addExtraFood=${
+          body.addExtraFood !== false && body.addExtraFood
+        }&addRoomFood=${
+          body.addRoomFood !== false && body.addRoomFood
+        }&daysAmount=${
+          body.daysAmount !== "" && body.daysAmount
+        }&kidsFoodAmount=${
+          body.kidsFoodAmount !== "" && body.kidsFoodAmount
+        }&adultsFoodAmount=${
+          body.adultsFoodAmount !== "" && body.adultsFoodAmount
+        }&excursionsArray=${body.excursionsArray}`,
+      }),
+    }),
   }),
 });
 
-export const { useGetHotelPriceQuery, useLazyGetHotelPriceQuery } = priceApi;
+export const {
+  useGetHotelPriceQuery,
+  useLazyGetHotelPriceQuery,
+  useGetSanatoriumPriceQuery,
+  useLazyGetSanatoriumPriceQuery,
+} = priceApi;

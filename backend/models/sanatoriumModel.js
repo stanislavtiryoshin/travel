@@ -11,6 +11,8 @@ const sanatoriumSchema = Schema(
         ref: "Period",
       },
     ],
+    img: [String],
+    uid: String,
     locationId: {
       type: Schema.Types.ObjectId,
       ref: "Location",
@@ -94,7 +96,6 @@ const sanatoriumSchema = Schema(
       adultPrice: Number,
       kidPrice: Number,
     },
-    img: [String],
   },
 
   {
