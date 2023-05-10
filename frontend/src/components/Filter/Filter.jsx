@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import RangeSlider from "react-range-slider-input";
 
+// import plane from "../../assets/plane.svg";
+
 import HotelSlice, {
   selectHotels,
   setFilterData,
@@ -96,6 +98,14 @@ const Filter = ({ mode }) => {
 
   const [value, setValue] = useState([minPrice, maxPrice]);
 
+  const [startTime] = useState(
+    new Date(JSON.parse(localStorage.getItem("startDate")))
+  );
+
+  const [endTime] = useState(
+    new Date(JSON.parse(localStorage.getItem("endDate")))
+  );
+
   useEffect(() => {
     setFilterObj({
       ...filterObj,
@@ -163,6 +173,60 @@ const Filter = ({ mode }) => {
           Показывать с доп. местом
         </div>
       </div> */}
+      <div>
+        <div className="filter_title">Ваш запрос</div>
+        <div className="filter_content">
+          <div className="filter_destination">
+            <img src={plane} alt="Откуда" />
+            Астана <div className="filter_divider"></div>{" "}
+            {localStorage.getItem("to")}
+          </div>
+        </div>
+        <div className="filter_content users">
+          <div className="filter_dateRange">
+            <img src={calendar} alt="Календарь" />
+            {startTime.getDay() < 9
+              ? "0" + (startTime.getDay() + 1)
+              : startTime.getDay() + 1}
+            .
+            {startTime.getMonth() < 9
+              ? "0" + (startTime.getMonth() + 1)
+              : startTime.getMonth() + 1}{" "}
+            -{" "}
+            {endTime.getDay() < 9
+              ? "0" + (endTime.getDay() + 1)
+              : endTime.getDay() + 1}
+            .
+            {endTime.getMonth() < 9
+              ? "0" + (endTime.getMonth() + 1)
+              : endTime.getMonth() + 1}
+          </div>
+        </div>
+        <div className="filter_content users">
+          <div className="filter_userAmount">
+            <img src={person2} alt="Люди" />
+            {
+              JSON.parse(localStorage.getItem("agesArray")).filter(
+                (age) => age === 1000
+              ).length
+            }{" "}
+            взр.
+            {JSON.parse(localStorage.getItem("agesArray")).filter(
+              (age) => age !== 1000
+            ).length !== 0 && (
+              <>
+                {
+                  JSON.parse(localStorage.getItem("agesArray")).filter(
+                    (age) => age !== 1000
+                  ).length
+                }{" "}
+                дет.
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
       {location.pathname !== "/dashboard" ? (
         <div className="filter_row">
           <div className="filter_title">Цена</div>
