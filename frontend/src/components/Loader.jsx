@@ -2,11 +2,13 @@ import React from "react";
 
 import "./Loader.scss";
 
-const Loader = () => {
+const Loader = ({ small }) => {
   return (
-    <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-      <div class="custom-loader"></div>
-    </div>
+    <>
+      <div className={`custom-loader-box ${small ? "small" : ""}`}>
+        Загрузка <div className={`custom-loader ${small ? "small" : ""}`}></div>
+      </div>
+    </>
   );
 };
 
