@@ -16,9 +16,30 @@ const getSingleSanatorium = async (sanatoriumId) => {
   return response.data;
 };
 
+const getSearchedSanatoriums = async (
+  locationId,
+  peopleAmount,
+  daysAmount,
+  startDate,
+  adultsAmount,
+  kidsAmount
+) => {
+  const params = {
+    locationId,
+    peopleAmount,
+    daysAmount,
+    startDate,
+    adultsAmount,
+    kidsAmount,
+  };
+  const response = await axios.get(API_URL + "searched", { params });
+  return response.data;
+};
+
 const sanatoriumService = {
   getSanatoriums,
   getSingleSanatorium,
+  getSearchedSanatoriums,
 };
 
 export default sanatoriumService;

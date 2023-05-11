@@ -285,7 +285,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     query.locationId = locationId;
   }
 
-  const hotels = await Hotel.find(query)
+  let hotels = await Hotel.find(query)
     .populate("locationId")
     .populate("food")
     .populate("rooms")
@@ -311,6 +311,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
         model: "Category",
       },
     });
+  hotels = hotels.filter((hotel) => hotel.rooms.length > 0);
 
   const newHotels = hotels.map((hotel) => {
     const newHotel = hotel.toObject();

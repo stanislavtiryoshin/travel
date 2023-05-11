@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { reset } from "../../features/auth/authSlice";
 import { selectHotels } from "../../features/hotel/hotelSlice";
 import "react-range-slider-input/dist/style.css";
@@ -35,26 +35,15 @@ const Home = () => {
   const selectedHotels = useSelector(selectHotels);
   // const selectedTours = useSelector(selectTours);
 
-  useEffect(() => {
-    if (isError) {
-      console.log(message);
-    }
-    dispatch(
-      getSearchedHotels({
-        locationId: "",
-        peopleAmount: 1,
-        daysAmount: 2,
-        startDate: Date.parse(new Date()),
-        adultsAmount: 1,
-        kidsAmount: 0,
-      })
-    );
-    dispatch(getSanatoriums());
-    dispatch(getCamps());
-    dispatch(getTours());
+  // useEffect(() => {
+  //   if (isError) {
+  //     console.log(message);
+  //   }
+  //   dispatch(getCamps());
+  //   dispatch(getTours());
 
-    dispatch(reset());
-  }, [isError, isSuccess, message, navigate, dispatch]);
+  //   dispatch(reset());
+  // }, [isError, isSuccess, message, navigate, dispatch]);
 
   // const handleSearch = (location) => {
   //   dispatch(getSearchedHotels({ location: location }));
@@ -76,6 +65,14 @@ const Home = () => {
         });
   }, [destination]);
 
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      navigate("/hotels", { replace: true });
+    }
+  }, [location]);
+
   return (
     <div className="main_page">
       <Hero />
@@ -85,26 +82,7 @@ const Home = () => {
             <Filter mode={chosenTag === "Туры" ? "tour" : ""} />
           </div>
           <div className="container main_container">
-            {chosenTag === "Отели" ? (
-              <Hotels
-                mode={"hotels"}
-                selectedHotels={selectedHotels}
-                hotelsMode
-              />
-            ) : null}
-            {chosenTag === "Лагеря" ? (
-              <Hotels mode={"camps"} selectedHotels={camps} campsMode />
-            ) : null}
-            {chosenTag === "Туры" ? (
-              <Hotels mode={"tour"} selectedHotels={tours} toursMode />
-            ) : null}
-            {chosenTag === "Санатории" ? (
-              <Hotels
-                mode={"sanatoriums"}
-                selectedHotels={sanatoriums}
-                sanatoriumsMode
-              />
-            ) : null}
+            <Outlet />
           </div>
           <div className="hotel_ad_wrapper wrapper ver">
             <div className="hotel_ad_top shadowed_box">

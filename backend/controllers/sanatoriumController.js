@@ -314,12 +314,148 @@ const getRoomsByLimit = async (req, res) => {
   }
 };
 
+//@desc   Get searched sanatoriums
+//@route  GET /api/sanatoriums/searched
+//@access Public
+
+const getSearchedSanatoriums = asyncHandler(async (req, res) => {
+  const {
+    peopleAmount,
+    daysAmount,
+    startDate,
+    locationId,
+    adultsAmount,
+    kidsAmount,
+  } = req.query;
+
+  const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
+    let daysArray = [];
+    const startingDate = new Date(+start);
+
+    for (let i = 0; i < daysNum; i++) {
+      let date = new Date(startingDate.getTime());
+      date.setDate(startingDate.getDate() + i);
+      daysArray.push(date);
+    }
+
+    let sum = 0;
+
+    const findPriceByDate = (date) => {
+      if (pricesArray && pricesArray.length > 0) {
+        let priceFound = false;
+        pricesArray.forEach((el) => {
+          const startMonth = el.period.startMonth;
+          const startDay = el.period.startDay;
+          const endMonth = el.period.endMonth;
+          const endDay = el.period.endDay;
+
+          if (
+            (date.getMonth() + 1 > startMonth ||
+              (date.getMonth() + 1 === startMonth &&
+                date.getDate() >= startDay)) &&
+            (date.getMonth() + 1 < endMonth ||
+              (date.getMonth() + 1 === endMonth && date.getDate() <= endDay))
+          ) {
+            sum += el.roomPrice;
+            priceFound = true;
+          }
+        });
+        if (!priceFound) {
+          sum += basePrice;
+        }
+      } else {
+        sum += basePrice;
+      }
+    };
+
+    for (let i = 0; i < daysNum; i++) {
+      findPriceByDate(daysArray[i]);
+    }
+
+    return sum;
+  };
+
+  const query = {};
+
+  if (locationId && locationId !== "") {
+    query.locationId = locationId;
+  }
+
+  let hotels = await Sanatorium.find(query)
+    .populate("locationId")
+    .populate("food")
+    .populate("rooms")
+    .populate({
+      path: "rooms",
+      populate: {
+        path: "periodPrices.period",
+        model: "Period",
+      },
+      match: {
+        $expr: {
+          $gte: ["$capacity", req.query.peopleAmount],
+        },
+      },
+    })
+    .populate({
+      path: "sanatoriumServices.serviceType",
+      populate: {
+        path: "category",
+        model: "Category",
+      },
+    });
+
+  hotels = hotels.filter((hotel) => hotel.rooms.length > 0);
+
+  const newHotels = hotels.map((hotel) => {
+    const newHotel = hotel.toObject();
+    const rooms = newHotel.rooms;
+    const cheapestRoom = rooms.reduce(
+      (prev, curr) =>
+        prev.periodPrices[0].roomPrice < curr.periodPrices[0].roomPrice
+          ? prev
+          : curr,
+      rooms[0]
+    );
+    console.log(cheapestRoom?.roomName);
+    const basePrice = cheapestRoom?.roomPrice;
+    const pricesArray = cheapestRoom?.periodPrices;
+
+    const costOfStay = calculatePrice(
+      startDate,
+      daysAmount,
+      basePrice,
+      pricesArray
+    );
+
+    if (cheapestRoom && cheapestRoom.discount && cheapestRoom.discount !== 0) {
+      newHotel.totalPrice = (costOfStay * (100 - cheapestRoom.discount)) / 100;
+      newHotel.oldPrice = costOfStay;
+    } else if (cheapestRoom) {
+      newHotel.totalPrice = costOfStay;
+    } else {
+      newHotel.totalPrice = 22800;
+    }
+
+    return {
+      ...newHotel,
+      daysAmount: +daysAmount,
+      nightsAmount: daysAmount - 1,
+      adultsAmount: +adultsAmount,
+      kidsAmount: +kidsAmount,
+    };
+  });
+
+  res.status(200).send(newHotels);
+});
+
 module.exports = {
   getSingleSanatorium,
   getSanatoriums,
   addSanatorium,
   getPrice,
   getRoomsByLimit,
+  getSearchedSanatoriums,
   // TODO!: Спросить
   // getAdminSanatoriums,
 };

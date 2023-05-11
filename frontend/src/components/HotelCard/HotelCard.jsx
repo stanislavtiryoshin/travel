@@ -126,7 +126,7 @@ const HotelCard = ({
           {hotelServices && hotelServices.length > 0
             ? hotelServices?.slice(0, 4).map((serv) => {
                 return (
-                  <div className="card_tag">
+                  <div className="card_tag" key={serv.hotelServiceName}>
                     {serv.icon ? (
                       <div
                         dangerouslySetInnerHTML={{
@@ -186,6 +186,8 @@ const HotelCard = ({
               ? `/tour/${hotelId}`
               : mode === "camps"
               ? `/camp/${hotelId}`
+              : mode === "sanatorium"
+              ? `/sanatoriums/${hotelId}`
               : `/hotels/${hotelId}`
           }
         >

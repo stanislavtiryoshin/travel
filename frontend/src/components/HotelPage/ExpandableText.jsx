@@ -3,7 +3,7 @@ import React, { useState } from "react";
 export const ExpandableText = ({ locationDescription, locationName }) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
-  const truncatedText = locationDescription.slice(0, 200);
+  const truncatedText = locationDescription?.slice(0, 200);
   const displayText = isExpanded ? locationDescription : truncatedText;
 
   return (

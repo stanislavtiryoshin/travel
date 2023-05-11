@@ -28,6 +28,8 @@ import { getSearchedHotels, reset } from "../../features/hotel/hotelSlice";
 import { tags } from "./tags";
 import PeopleSelect from "./PeopleSelect";
 import { getTours } from "../../features/tour/tourSlice";
+import { useLocation } from "react-router-dom";
+import { getSearchedSanatoriums } from "../../features/sanatorium/sanatoriumSlice";
 
 const SearchPanel = ({ isUserLook, style }) => {
   const dispatch = useDispatch();
@@ -126,6 +128,8 @@ const SearchPanel = ({ isUserLook, style }) => {
     localStorage.setItem("adultsAmount", +clientData.adultsAmount);
   }, [clientData]);
 
+  const location = useLocation();
+
   const handleSearch = ({
     locationId,
     peopleAmount,
@@ -134,23 +138,28 @@ const SearchPanel = ({ isUserLook, style }) => {
     adultsAmount,
     kidsAmount,
   }) => {
-    if (chosenTag == "Отели") {
+    if (location.pathname === "/hotels") {
       dispatch(
         getSearchedHotels({
           locationId,
-          peopleAmount,
+          peopleAmount: kidsAmount + adultsAmount,
           daysAmount,
           startDate,
           adultsAmount,
           kidsAmount,
         })
       );
-    }
-    if (chosenTag == "Лагеря") {
-      dispatch(getCamps());
-    }
-    if (chosenTag == "1-3 дневные") {
-      dispatch(getTours());
+    } else if (location.pathname === "/sanatoriums") {
+      dispatch(
+        getSearchedSanatoriums({
+          locationId,
+          peopleAmount: kidsAmount + adultsAmount,
+          daysAmount,
+          startDate,
+          adultsAmount,
+          kidsAmount,
+        })
+      );
     }
   };
 
@@ -204,6 +213,7 @@ const SearchPanel = ({ isUserLook, style }) => {
                 key={id}
                 icon={tag.icon}
                 text={tag.text}
+                path={tag.path}
                 active={isActive}
               />
             );
@@ -253,7 +263,7 @@ const SearchPanel = ({ isUserLook, style }) => {
                       dispatch(setDestination(e.target.value));
                     }}
                   >
-                    <option value="Весь" selected>
+                    <option value="" selected>
                       Весь Казахстан
                     </option>
                     {allLocations ? (

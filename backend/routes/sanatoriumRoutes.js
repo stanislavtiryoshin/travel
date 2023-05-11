@@ -7,6 +7,7 @@ const {
   getSingleSanatorium,
   getPrice,
   getRoomsByLimit,
+  getSearchedSanatoriums,
 } = require("../controllers/sanatoriumController");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -16,6 +17,7 @@ const { upload } = require("./uploadRoutes");
 
 router.post("/", protect, addSanatorium);
 router.get("/", getSanatoriums);
+router.get("/searched", getSearchedSanatoriums);
 router.get("/price", getPrice);
 router.get("/:sanatoriumId", getSingleSanatorium);
 router.get("/:sanatoriumId/room", getRoomsByLimit);

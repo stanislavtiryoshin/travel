@@ -52,6 +52,32 @@ export const getSingleSanatorium = createAsyncThunk(
   }
 );
 
+// Get searched sanatoriums
+
+export const getSearchedSanatoriums = createAsyncThunk(
+  "sanatoriums/getSearched",
+  async (searchData, thunkAPI) => {
+    try {
+      return await sanatoriumService.getSearchedSanatoriums(
+        searchData.locationId,
+        searchData.peopleAmount,
+        searchData.daysAmount,
+        searchData.startDate,
+        searchData.adultsAmount,
+        searchData.kidsAmount
+      );
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const sanatoriumSlice = createSlice({
   name: "sanatorium",
   initialState,
@@ -106,6 +132,11 @@ export const sanatoriumSlice = createSlice({
       state.isLoading = false;
       state.isSuccess = true;
       state.singleSanatorium = action.payload;
+    });
+    builder.addCase(getSearchedSanatoriums.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isSuccess = true;
+      state.sanatoriums = action.payload;
     });
   },
 });
