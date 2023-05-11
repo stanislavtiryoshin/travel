@@ -42,7 +42,9 @@ const updateOrder = asyncHandler(async (req, res) => {
     { status: req.body.status },
     { new: true }
   );
-  res.status(200).json(updatedOrder);
+  const orders = await Order.find({});
+
+  res.status(200).json(orders);
 });
 
 const searchOrders = (req, res) => {
