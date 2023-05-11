@@ -5,7 +5,7 @@ import RangeSlider from "react-range-slider-input";
 
 // import plane from "../../assets/plane.svg";
 
-import HotelSlice, {
+import {
   selectHotels,
   setFilterData,
   clearFilterData,
@@ -15,6 +15,11 @@ import {
   clearFilterData as clearTourFilterData,
   selectTours,
 } from "../../features/tour/tourSlice";
+import {
+  setFilterData as setSanFilterData,
+  clearFilterData as clearSanFilterData,
+  selectSanatoriums,
+} from "../../features/sanatorium/sanatoriumSlice";
 
 import HotelStars from "../HotelStars/HotelStars";
 import person2 from "../../assets/person2.svg";
@@ -31,35 +36,61 @@ import {
 } from "../../features/services/filter.service";
 
 const Filter = ({ mode }) => {
-  const selectedHotels = useSelector(selectHotels);
-  const selectedTours = useSelector(selectTours);
   const dispatch = useDispatch();
 
-  const { hotels, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.hotels
-  );
+  const selectedHotels = useSelector(selectHotels);
+  const selectedSanatoriums = useSelector(selectSanatoriums);
 
-  const maxPrice = hotels?.reduce(
-    (acc, curr) => {
-      if (curr.totalPrice > acc.totalPrice) {
-        return curr;
-      } else {
-        return acc;
-      }
-    },
-    { totalPrice: 0 }
-  ).totalPrice;
+  let maxPrice;
+  let minPrice;
 
-  const minPrice = hotels?.reduce(
-    (acc, curr) => {
-      if (curr.totalPrice < acc.totalPrice) {
-        return curr;
-      } else {
-        return acc;
-      }
-    },
-    { totalPrice: 0 }
-  ).totalPrice;
+  switch (mode) {
+    case "hotel":
+      maxPrice = selectedHotels?.reduce(
+        (acc, curr) => {
+          if (curr.totalPrice > acc.totalPrice) {
+            return curr;
+          } else {
+            return acc;
+          }
+        },
+        { totalPrice: 0 }
+      ).totalPrice;
+      minPrice = selectedHotels?.reduce(
+        (acc, curr) => {
+          if (curr.totalPrice < acc.totalPrice) {
+            return curr;
+          } else {
+            return acc;
+          }
+        },
+        { totalPrice: 0 }
+      ).totalPrice;
+
+    case "sanatorium":
+      maxPrice = selectedSanatoriums?.reduce(
+        (acc, curr) => {
+          if (curr.totalPrice > acc.totalPrice) {
+            return curr;
+          } else {
+            return acc;
+          }
+        },
+        { totalPrice: 0 }
+      ).totalPrice;
+      minPrice = selectedSanatoriums?.reduce(
+        (acc, curr) => {
+          if (curr.totalPrice < acc.totalPrice) {
+            return curr;
+          } else {
+            return acc;
+          }
+        },
+        { totalPrice: 0 }
+      ).totalPrice;
+  }
+
+  const [value, setValue] = useState([minPrice, maxPrice]);
 
   const { filterData } = useSelector((state) => state.tour);
   const [tourFilter, setTourFilter] = useState({
@@ -95,8 +126,6 @@ const Filter = ({ mode }) => {
       filterStars: null,
     });
   };
-
-  const [value, setValue] = useState([minPrice, maxPrice]);
 
   const [startTime] = useState(
     new Date(JSON.parse(localStorage.getItem("startDate")))
@@ -137,42 +166,30 @@ const Filter = ({ mode }) => {
     });
   };
 
+  const setFilter = () => {
+    switch (mode) {
+      case "tour":
+        applyFilter();
+      case "hotel":
+        dispatch(setFilterData(filterObj));
+      case "sanatorium":
+        dispatch(setSanFilterData(filterObj));
+    }
+  };
+
+  const clearFilter = () => {
+    switch (mode) {
+      case "tour":
+        dispatch(clearTourFilterData());
+      case "hotel":
+        dispatch(clearFilterData());
+      case "sanatorium":
+        dispatch(clearSanFilterData());
+    }
+  };
+
   return (
     <div className="filter_box">
-      {/* <div className="filter_row">
-        <div className="filter_title">Ваш запрос</div>
-        <div className="icon_row row">
-          <img src={plane} alt="" />
-          {currentLocation && currentLocation?.locationName ? (
-            <>
-              {currentLocation?.locationName} &#183;{" "}
-              {currentLocation?.locationCountry}
-            </>
-          ) : (
-            "Весь Казахстан"
-          )}
-        </div>
-        <div className="icon_row row">
-          <img src={calendar} alt="" />
-          {new Date(startDate).toLocaleString(undefined, {
-            month: "numeric",
-            day: "numeric",
-          })}{" "}
-          -{" "}
-          {new Date(endDate).toLocaleString(undefined, {
-            month: "numeric",
-            day: "numeric",
-          })}
-        </div>
-        <div className="icon_row row">
-          <img src={person2} alt="" />
-          {peopleAmount} взр.
-        </div>
-        <div className="icon_row row">
-          <button className="check-btn"></button>
-          Показывать с доп. местом
-        </div>
-      </div> */}
       <div>
         <div className="filter_title">Ваш запрос</div>
         <div className="filter_content">
@@ -390,25 +407,10 @@ const Filter = ({ mode }) => {
         </div>
       </div>
       <div className="filter_row no-border">
-        <button
-          className="primary-btn"
-          onClick={() =>
-            mode === "tour"
-              ? applyFilter()
-              : // dispatch(setTourFilterData(filterObj))
-                handleSetFilterData(filterObj)
-          }
-        >
+        <button className="primary-btn" onClick={() => setFilter()}>
           Отфильтровать
         </button>
-        <button
-          className="primary-btn yellow"
-          onClick={() =>
-            mode === "tour"
-              ? dispatch(clearTourFilterData())
-              : dispatch(clearFilterData())
-          }
-        >
+        <button className="primary-btn yellow" onClick={() => clearFilter()}>
           Сбросить фильтр
         </button>
       </div>

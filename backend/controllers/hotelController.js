@@ -176,7 +176,7 @@ const getAdminHotels = asyncHandler(async (req, res) => {
 //@access Public
 
 const getSingleHotel = asyncHandler(async (req, res) => {
-  const singleHotel = await Hotel.findById(req.params.id)
+  let query = Hotel.findById(req.params.id)
     .populate("locationId")
     .populate("food")
     .populate({
@@ -185,6 +185,19 @@ const getSingleHotel = asyncHandler(async (req, res) => {
         path: "periodPrices.period",
         model: "Period",
       },
+    })
+    .populate("periods")
+    .populate({
+      path: "hotelServices",
+      populate: {
+        path: "category",
+        model: "Category",
+      },
+    });
+
+  if (req.query.agesArray) {
+    query = query.populate({
+      path: "rooms",
       match: {
         $expr: {
           $gte: [
@@ -206,15 +219,10 @@ const getSingleHotel = asyncHandler(async (req, res) => {
           ],
         },
       },
-    })
-    .populate("periods")
-    .populate({
-      path: "hotelServices",
-      populate: {
-        path: "category",
-        model: "Category",
-      },
     });
+  }
+
+  const singleHotel = await query.exec();
   res.status(200).json(singleHotel);
 });
 

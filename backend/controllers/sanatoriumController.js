@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Room = require("../models/roomModel");
 const Period = require("../models/periodModel");
+const Food = require("../models/foodModel");
 const Excursion = require("../models/excursionModel");
 
 const addSanatorium = async (req, res) => {
@@ -383,7 +384,13 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
 
   let hotels = await Sanatorium.find(query)
     .populate("locationId")
-    .populate("food")
+    .populate({
+      path: "food",
+      populate: {
+        path: "food.foodType",
+        model: "Food",
+      },
+    })
     .populate("rooms")
     .populate({
       path: "rooms",

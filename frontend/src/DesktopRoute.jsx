@@ -67,22 +67,18 @@ const DesktopRoute = () => {
           </Route>
 
           {/* Dashboard */}
-          <Route path="/dashboard" element={<Dashboard />}>
-            <Route path="/dashboard/add-hotel" element={<AddHotel />} />
-            <Route path="/dashboard/hotel/:hotelId" element={<EditHotel />} />
-            <Route path="/dashboard/add-tour" element={<AddTour />} />
-            <Route path="/dashboard/tour/:id" element={<EditTour />} />
-            <Route path="/dashboard/add-camp" element={<AddCamp />} />
-            <Route path="/dashboard/camp/:id" element={<EditCamp />} />
-            <Route
-              path="/dashboard/add-sanatorium"
-              element={<AddSanatorium />}
-            />
-            <Route
-              path="/dashboard/sanatorium/:sanatoriumId"
-              element={<EditSanatorium />}
-            />
-          </Route>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/add-hotel" element={<AddHotel />} />
+          <Route path="/dashboard/hotel/:hotelId" element={<EditHotel />} />
+          <Route path="/dashboard/add-tour" element={<AddTour />} />
+          <Route path="/dashboard/tour/:id" element={<EditTour />} />
+          <Route path="/dashboard/add-camp" element={<AddCamp />} />
+          <Route path="/dashboard/camp/:id" element={<EditCamp />} />
+          <Route path="/dashboard/add-sanatorium" element={<AddSanatorium />} />
+          <Route
+            path="/dashboard/sanatorium/:sanatoriumId"
+            element={<EditSanatorium />}
+          />
 
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />

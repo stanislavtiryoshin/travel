@@ -66,6 +66,20 @@ const Home = () => {
   }, [destination]);
 
   const location = useLocation();
+  let mode = "";
+
+  switch (location) {
+    case "/hotels":
+      mode = "hotel";
+    case "/sanatoriums":
+      mode = "sanatorium";
+    case "/tour":
+      mode = "tour";
+    case "/camp":
+      mode = "camp";
+    default:
+      mode = "hotel";
+  }
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -79,7 +93,7 @@ const Home = () => {
       <section className="all_hotels_section">
         <div className="main_wrapper wrapper">
           <div className="main_side">
-            <Filter mode={chosenTag === "Туры" ? "tour" : ""} />
+            <Filter mode={mode} />
           </div>
           <div className="container main_container">
             <Outlet />

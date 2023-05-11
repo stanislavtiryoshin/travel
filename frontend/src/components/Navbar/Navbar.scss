@@ -80,6 +80,9 @@ header {
 
 .header_bot-wrapper.wrapper {
   justify-content: space-between;
+  .search_box {
+    margin-bottom: 0;
+  }
 }
 
 .header_bot-photo {

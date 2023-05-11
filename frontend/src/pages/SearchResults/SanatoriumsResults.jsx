@@ -12,11 +12,14 @@ import { useNavigate } from "react-router-dom";
 import {
   getSanatoriums,
   getSearchedSanatoriums,
+  selectSanatoriums,
 } from "../../features/sanatorium/sanatoriumSlice";
 
 const SanatoriumResults = ({ mode }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const selectedSanatoriums = useSelector(selectSanatoriums);
 
   const [hotelsToShow, setHotelsToShow] = useState(5);
   const { sanatoriums, isError } = useSelector((state) => state.sanatoriums);
@@ -46,13 +49,13 @@ const SanatoriumResults = ({ mode }) => {
 
       <div className="all_hotels-top">
         <div className="all_hotels-num">
-          Найдено: <span>{sanatoriums?.length}</span>
+          Найдено: <span>{selectedSanatoriums?.length}</span>
         </div>
         <SortBtn mode={mode} />
       </div>
 
-      {sanatoriums && sanatoriums.length > 0 ? (
-        sanatoriums
+      {selectedSanatoriums && selectedSanatoriums.length > 0 ? (
+        selectedSanatoriums
           .filter((hotel, idx) => idx < hotelsToShow)
           .map((hotel, idx) => {
             return (
@@ -85,7 +88,7 @@ const SanatoriumResults = ({ mode }) => {
         <div>😭 Ничего не найдено...</div>
       )}
 
-      {sanatoriums.length >= hotelsToShow ? (
+      {selectedSanatoriums?.length >= hotelsToShow ? (
         <button
           className="sort-btn"
           onClick={() => setHotelsToShow(hotelsToShow + 5)}

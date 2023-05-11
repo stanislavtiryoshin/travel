@@ -77,6 +77,25 @@ const Navbar = ({ isSearch }) => {
   const location = useLocation();
 
   // Check if the current url is "/dashboard"
+  const [showMainCta] = useState(
+    location.pathname === "/hotels" ||
+      location.pathname === "/sanatoriums" ||
+      location.pathname === "/camps" ||
+      location.pathname === "/tours" ||
+      location.pathname === "/add-order"
+  );
+
+  console.log(location.pathname);
+
+  const [showSearchPanel] = useState(
+    location.pathname.includes("/hotels/") ||
+      location.pathname.includes("/sanatoriums/") ||
+      location.pathname.includes("/camps/") ||
+      location.pathname.includes("/tours/")
+  );
+
+  const [showDashNav] = useState(location.pathname.includes("/dashboard"));
+
   const isDashboard =
     location.pathname === "/dashboard" || location.pathname === "/dashboard/";
   const containsDashboard = location.pathname.includes("/dashboard");
@@ -97,7 +116,7 @@ const Navbar = ({ isSearch }) => {
               </select>
               <img src={logo} alt="" className="header_logo" />
             </div>
-            {isDashboard ? (
+            {showDashNav ? (
               <div className="nav_tabs">{renderTabs()}</div>
             ) : null}
             <div className="nav_right">
@@ -114,16 +133,13 @@ const Navbar = ({ isSearch }) => {
           </div>
         </div>
       </header>
-      {!containsDashboard ? (
+      {!showDashNav ? (
         <>
-          <div
-            className="header_bot"
-            style={isHome || isOrder ? { padding: "10px" } : { padding: 0 }}
-          >
+          <div className="header_bot">
             <div className="container">
               <div className="header_bot-wrapper wrapper">
                 <div className="header_bot-left wrapper">
-                  {(!isDashboard && isHome) || (!isDashboard && !isHotels) ? (
+                  {showMainCta ? (
                     <>
                       <img src={photo} alt="" className="header_bot-photo" />
                       <div className="header_bot-left-text">
@@ -132,16 +148,9 @@ const Navbar = ({ isSearch }) => {
                     </>
                   ) : null}
 
-                  {isHotels && (
-                    <SearchPanel
-                      style={{
-                        margin: "10px 0px",
-                      }}
-                      isUserLook
-                    />
-                  )}
+                  {showSearchPanel && <SearchPanel isUserLook />}
                 </div>
-                {!isDashboard ? (
+                {!showDashNav ? (
                   <form
                     className="header_bot-right wrapper"
                     onSubmit={(e) => {

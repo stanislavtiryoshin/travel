@@ -6,11 +6,18 @@ const user = JSON.parse(localStorage.getItem("user"));
 const initialState = {
   sanatoriums: [],
   singleSanatorium: {},
+  filterData: {
+    filterRating: [],
+    filterMaxPrice: null,
+    filterMinPrice: null,
+    filterFood: [],
+    filterStars: null,
+  },
   isError: false,
   isSuccess: false,
   isLoading: false,
   message: "",
-  filteredHotels: [],
+  filteredSanatoriums: [],
   filterType: null,
 };
 
@@ -140,6 +147,41 @@ export const sanatoriumSlice = createSlice({
     });
   },
 });
+
+export const selectSanatoriums = (state) => {
+  const {
+    filterMaxPrice,
+    filterMinPrice,
+    filterFood,
+    filterRating,
+    filterStars,
+  } = state.sanatoriums.filterData;
+  let filteredSanatoriums = state.sanatoriums.sanatoriums;
+
+  // Filter the hotels array based on the filter data
+
+  if (filterMaxPrice) {
+    filteredSanatoriums = filteredSanatoriums.filter(
+      (hotel) => hotel.totalPrice <= filterMaxPrice
+    );
+  }
+  if (filterMinPrice) {
+    filteredSanatoriums = filteredSanatoriums.filter(
+      (hotel) => hotel.totalPrice >= filterMinPrice
+    );
+  }
+  if (filterFood && filterFood.length > 0) {
+    filteredSanatoriums = filteredSanatoriums.filter((hotel) => {
+      return filterFood.some((el) => hotel?.food?.foodType === el);
+    });
+  }
+  // if (filterStars) {
+  //   filteredSanatoriums = filteredSanatoriums.filter((hotel) => {
+  //     return hotel.hotelStars === filterStars;
+  //   });
+  // }
+  return filteredSanatoriums;
+};
 
 export const {
   reset,

@@ -98,7 +98,6 @@ const AddHotel = ({
   const [allServices, setAllServices] = useState([]);
 
   const [servicesObjs, setServicesObjs] = useState([]);
-  const [selectedOptions, setSelectedOptions] = useState([]);
 
   // console.log(selectedOptions);
 
@@ -116,40 +115,6 @@ const AddHotel = ({
     });
     setServicesObjs(services);
   }, [allServices]);
-
-  useEffect(() => {
-    let services = [];
-    selectedOptions.map((serv, idx) => {
-      services.push({ serviceId: serv.servId });
-    });
-    setNewServices(services);
-  }, [selectedOptions]);
-
-  // For react-select
-  function handleSelect(data) {
-    setSelectedOptions(data);
-  }
-
-  const [newServices, setNewServices] = useState([
-    { serviceId: "64258af02ba7928f871a09cd" },
-  ]);
-
-  const [addedServices, setAddedServices] = useState([
-    { serviceId: "64258af02ba7928f871a09cd" },
-  ]);
-
-  // If the hotel already has services, insert them into addedServices
-  useEffect(() => {
-    if (fetchedHotelData && fetchedHotelData?.hotelServices?.length > 0) {
-      setAddedServices(fetchedHotelData.hotelServices);
-      setNewServices(fetchedHotelData.hotelServices);
-    }
-  }, [fetchedHotelData]);
-  // console.log(newServices);
-
-  useEffect(() => {
-    setHotelData({ ...hotelData, hotelServices: newServices });
-  }, [newServices]);
 
   // Fetching all categories, services, locations
   useEffect(() => {
