@@ -207,6 +207,7 @@ const Hotel = () => {
   const {
     data: price,
     isLoading: priceIsLoading,
+    isFetching: priceIsFetching,
     refetch,
   } = useGetHotelPriceQuery(priceData);
 
@@ -575,7 +576,7 @@ const Hotel = () => {
                   price={price}
                   priceData={priceData}
                   clientRoom={clientRoom}
-                  priceIsLoading={priceIsLoading}
+                  priceIsLoading={priceIsFetching}
                   orderTerms={orderTerms}
                 />
 

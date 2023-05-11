@@ -66,20 +66,29 @@ const Home = () => {
   }, [destination]);
 
   const location = useLocation();
-  let mode = "";
+  const [mode, setMode] = useState("");
 
-  switch (location) {
-    case "/hotels":
-      mode = "hotel";
-    case "/sanatoriums":
-      mode = "sanatorium";
-    case "/tour":
-      mode = "tour";
-    case "/camp":
-      mode = "camp";
-    default:
-      mode = "hotel";
-  }
+  useEffect(() => {
+    switch (location.pathname) {
+      case "/hotels":
+        setMode("hotel");
+        break;
+      case "/sanatoriums":
+        setMode("sanatorium");
+        break;
+      case "/tour":
+        setMode("tour");
+        break;
+      case "/camp":
+        setMode("camp");
+        break;
+      default:
+        setMode("hotel");
+        break;
+    }
+  }, [location.pathname]);
+
+  console.log(location.pathname);
 
   useEffect(() => {
     if (location.pathname === "/") {

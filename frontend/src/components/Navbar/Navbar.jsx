@@ -85,7 +85,7 @@ const Navbar = ({ isSearch }) => {
       location.pathname === "/add-order"
   );
 
-  console.log(location.pathname);
+  console.log(showMainCta);
 
   const [showSearchPanel] = useState(
     location.pathname.includes("/hotels/") ||

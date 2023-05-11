@@ -41,56 +41,73 @@ const Filter = ({ mode }) => {
   const selectedHotels = useSelector(selectHotels);
   const selectedSanatoriums = useSelector(selectSanatoriums);
 
-  let maxPrice;
-  let minPrice;
+  const [maxPrice, setMaxPrice] = useState(100);
+  const [minPrice, setMinPrice] = useState(0);
 
-  switch (mode) {
-    case "hotel":
-      maxPrice = selectedHotels?.reduce(
-        (acc, curr) => {
-          if (curr.totalPrice > acc.totalPrice) {
-            return curr;
-          } else {
-            return acc;
-          }
-        },
-        { totalPrice: 0 }
-      ).totalPrice;
-      minPrice = selectedHotels?.reduce(
-        (acc, curr) => {
-          if (curr.totalPrice < acc.totalPrice) {
-            return curr;
-          } else {
-            return acc;
-          }
-        },
-        { totalPrice: 0 }
-      ).totalPrice;
+  console.log(minPrice, maxPrice, "min max");
 
-    case "sanatorium":
-      maxPrice = selectedSanatoriums?.reduce(
-        (acc, curr) => {
-          if (curr.totalPrice > acc.totalPrice) {
-            return curr;
-          } else {
-            return acc;
-          }
-        },
-        { totalPrice: 0 }
-      ).totalPrice;
-      minPrice = selectedSanatoriums?.reduce(
-        (acc, curr) => {
-          if (curr.totalPrice < acc.totalPrice) {
-            return curr;
-          } else {
-            return acc;
-          }
-        },
-        { totalPrice: 0 }
-      ).totalPrice;
-  }
+  useEffect(() => {
+    switch (mode) {
+      case "hotel":
+        setMaxPrice(
+          selectedHotels?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice > acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        setMinPrice(
+          selectedHotels?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice < acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        break;
+      case "sanatorium":
+        setMaxPrice(
+          selectedSanatoriums?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice > acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        setMinPrice(
+          selectedSanatoriums?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice < acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        break;
+    }
+  }, [mode, selectedHotels, selectedSanatoriums]);
 
   const [value, setValue] = useState([minPrice, maxPrice]);
+
+  useEffect(() => {
+    setValue([minPrice, maxPrice]);
+  }, [minPrice, maxPrice]);
 
   const { filterData } = useSelector((state) => state.tour);
   const [tourFilter, setTourFilter] = useState({
@@ -248,13 +265,15 @@ const Filter = ({ mode }) => {
         <div className="filter_row">
           <div className="filter_title">Цена</div>
           <div className="filter_content price_range">
-            <RangeSlider
-              onInput={setValue}
-              value={value}
-              min={minPrice}
-              max={maxPrice}
-              step={100}
-            />
+            {selectedHotels || (selectedSanatoriums && maxPrice !== 100) ? (
+              <RangeSlider
+                onInput={setValue}
+                value={value}
+                min={minPrice}
+                max={maxPrice}
+                step={100}
+              />
+            ) : null}
             <div className="price-box">
               <div className="price-col left">
                 <div className="price-col-title">от</div>
