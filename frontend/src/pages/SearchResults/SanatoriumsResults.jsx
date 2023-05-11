@@ -90,7 +90,7 @@ const SanatoriumResults = ({ mode }) => {
           className="sort-btn"
           onClick={() => setHotelsToShow(hotelsToShow + 5)}
         >
-          Загрузить еще...
+          Загрузить еще
         </button>
       ) : null}
     </div>
