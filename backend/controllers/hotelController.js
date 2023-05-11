@@ -630,13 +630,14 @@ const getRoomsByLimit = async (req, res) => {
             },
           },
         },
+        { $limit: parseInt(limit) }, // Add a $limit stage to restrict the number of returned documents
       ]);
+
+      console.log(rooms.length, "room len");
       res.status(200).json(rooms);
     } catch (error) {
       res.status(500).json(error);
     }
-
-    console.log(roomData);
   } catch (err) {
     res.sendStatus(404);
   }
