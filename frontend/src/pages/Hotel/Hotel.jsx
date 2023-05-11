@@ -537,7 +537,7 @@ const Hotel = () => {
                     />
                     {console.log(roomsData, "roomsData")}
                     {roomsData &&
-                      roomsData.map((room) => {
+                      roomsData.rooms.map((room) => {
                         return (
                           <Room
                             key={room._id}
@@ -559,11 +559,11 @@ const Hotel = () => {
                       })}
                   </div>
 
-                  {roomsData.filter((room) => room !== null).length === 0 ? (
-                    "В данном отеле нету комнат"
+                  {roomsData.rooms.length === 0 ? (
+                    <div>В данном отеле нет комнат</div>
                   ) : (
                     <>
-                      {roomCount < 100 ? (
+                      {roomCount < roomsData.totalRooms && (
                         <div className="load-more-row">
                           <button
                             className="load-more-btn"
@@ -572,7 +572,7 @@ const Hotel = () => {
                             Показать остальные
                           </button>
                         </div>
-                      ) : null}
+                      )}
                     </>
                   )}
                 </div>
