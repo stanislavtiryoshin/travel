@@ -415,3 +415,16 @@ body {
     font-size: 14px;
   }
 }
+
+.status-select {
+  border: none;
+  background: transparent;
+  outline: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  outline-style: none;
+  &:focus {
+    outline: none;
+  }
+}

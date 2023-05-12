@@ -241,24 +241,23 @@ const Filter = ({ mode }) => {
         <div className="filter_content users">
           <div className="filter_userAmount">
             <img src={person2} alt="Люди" />
-            {
+            {localStorage.getItem("agesArray") &&
               JSON.parse(localStorage.getItem("agesArray")).filter(
                 (age) => age === 1000
-              ).length
-            }{" "}
+              ).length}{" "}
             взр.
-            {JSON.parse(localStorage.getItem("agesArray")).filter(
-              (age) => age !== 1000
-            ).length !== 0 && (
-              <>
-                {
-                  JSON.parse(localStorage.getItem("agesArray")).filter(
-                    (age) => age !== 1000
-                  ).length
-                }{" "}
-                дет.
-              </>
-            )}
+            {localStorage.getItem("agesArray") &&
+              JSON.parse(localStorage.getItem("agesArray")).filter(
+                (age) => age !== 1000
+              ).length !== 0 && (
+                <>
+                  {localStorage.getItem("agesArray") &&
+                    JSON.parse(localStorage.getItem("agesArray")).filter(
+                      (age) => age !== 1000
+                    ).length}{" "}
+                  дет.
+                </>
+              )}
           </div>
         </div>
       </div>

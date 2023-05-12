@@ -30,7 +30,7 @@ const Requests = () => {
   const [orders, setOrders] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
-  const [fetchOrders] = useLazyGetOrdersByQueryQuery();
+  const [fetchOrders, { isFetching }] = useLazyGetOrdersByQueryQuery();
 
   const [updateStatus] = useUpdateStatusMutation();
 
@@ -42,9 +42,9 @@ const Requests = () => {
     })
       .then(({ data }) => setOrders(data))
       .then(() => setIsLoading(false));
-  }, []);
+  }, [orders]);
 
-  console.log(orders);
+  // console.log(orders);
 
   const statuses = [
     {
@@ -159,15 +159,7 @@ const Requests = () => {
               )[0]?.style
             } status-btn`}
           >
-            {row.original.status}
-          </button>
-        ),
-      },
-      {
-        id: "changeStatus",
-        header: "Изменить статус",
-        Cell: ({ row }) => (
-          <>
+            {/* {row.original.status} */}
             <select
               className="status-select"
               onChange={(e) => handleUpdate(row.original._id, e.target.value)}
@@ -183,9 +175,32 @@ const Requests = () => {
                 </option>
               ))}
             </select>
-          </>
+          </button>
         ),
       },
+      // {
+      //   id: "changeStatus",
+      //   header: "Изменить статус",
+      //   Cell: ({ row }) => (
+      //     <>
+      //       <select
+      //         className="status-select"
+      //         onChange={(e) => handleUpdate(row.original._id, e.target.value)}
+      //       >
+      //         {statuses.map((stat) => (
+      //           <option
+      //             key={stat.label}
+      //             value={stat.label}
+      //             className={stat.style}
+      //             selected={stat.label === row.original.status}
+      //           >
+      //             {stat.label}
+      //           </option>
+      //         ))}
+      //       </select>
+      //     </>
+      //   ),
+      // },
     ],
     []
   );
@@ -216,7 +231,7 @@ const Requests = () => {
       />
 
       <section className="dash_section">
-        {isLoading ? (
+        {isFetching ? (
           <Loader />
         ) : (
           <RequestTable columns={columns} data={orders} />

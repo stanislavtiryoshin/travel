@@ -626,16 +626,74 @@ const getRoomsByLimit = async (req, res) => {
           },
         },
       ]);
-      res.status(200).json(rooms);
+
+      const realLimit = Math.min(rooms.length, parseInt(limit));
+
+      const limitedRooms = rooms.slice(0, realLimit);
+
+      console.log(limitedRooms.length, "room len");
+
+      const response = {
+        totalRooms: rooms.length, // Include the total number of rooms in the response
+        rooms: limitedRooms,
+      };
+
+      res.status(200).json(response);
     } catch (error) {
       res.status(500).json(error);
     }
-
-    console.log(roomData);
   } catch (err) {
     res.sendStatus(404);
   }
 };
+
+// const getRoomsByLimit = async (req, res) => {
+//   const { limit, capacity } = req.query;
+//   const { hotelId } = req.params;
+//   let roomData = [];
+
+//   try {
+//     const hotel = await Hotel.findOne({ _id: hotelId });
+
+//     try {
+//       const rooms = await Room.aggregate([
+//         {
+//           $match: {
+//             _id: {
+//               $in: hotel.rooms,
+//             },
+//             $expr: {
+//               $gte: [
+//                 {
+//                   $sum: [
+//                     "$capacity",
+//                     {
+//                       $size: {
+//                         $filter: {
+//                           input: "$extraPlaces",
+//                           as: "extraPlace",
+//                           cond: { $ne: ["$$extraPlace.isBabyPlace", true] },
+//                         },
+//                       },
+//                     },
+//                   ],
+//                 },
+//                 parseInt(capacity),
+//               ],
+//             },
+//           },
+//         },
+//         { $limit: parseInt(limit) }, // Add a $limit stage to restrict the number of returned documents
+//       ]);
+
+//       res.status(200).json(rooms);
+//     } catch (error) {
+//       res.status(500).json(error);
+//     }
+//   } catch (err) {
+//     res.sendStatus(404);
+//   }
+// };
 
 // Get recommended hotels
 

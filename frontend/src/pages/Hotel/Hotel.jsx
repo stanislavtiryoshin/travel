@@ -535,11 +535,11 @@ const Hotel = () => {
                       text="Выберите номер, который вам нравится и мы автоматически
                         рассчитаем цену в блоке “Бронирование”"
                     />
+                    {console.log(roomsData, "roomsData")}
                     {roomsData &&
-                      roomsData.map((room) => {
+                      roomsData.rooms.map((room) => {
                         return (
                           <Room
-                            // setRoomId={setPriceData}
                             key={room._id}
                             room={room}
                             active={clientRoom?._id === room._id}
@@ -558,16 +558,23 @@ const Hotel = () => {
                         );
                       })}
                   </div>
-                  {roomCount < 100 ? (
-                    <div className="load-more-row">
-                      <button
-                        className="load-more-btn"
-                        onClick={() => setRoomCount((prev) => prev + 100)}
-                      >
-                        Показать остальные
-                      </button>
-                    </div>
-                  ) : null}
+
+                  {roomsData.rooms.length === 0 ? (
+                    <div>В данном отеле нет комнат</div>
+                  ) : (
+                    <>
+                      {roomCount < roomsData.totalRooms && (
+                        <div className="load-more-row">
+                          <button
+                            className="load-more-btn"
+                            onClick={() => setRoomCount((prev) => prev + 100)}
+                          >
+                            Показать остальные
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
 
