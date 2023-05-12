@@ -3,6 +3,9 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const Period = require("../models/periodModel");
 const { Hotel } = require("../models/hotelModel");
+const { Sanatorium } = require("../models/sanatoriumModel");
+const Tour = require("../models/tourModel");
+const Camp = require("../models/campModel");
 const Room = require("../models/roomModel");
 
 //@desc   Get periods
@@ -14,11 +17,22 @@ const getPeriods = asyncHandler(async (req, res) => {
   res.status(200).json(period);
 });
 
-//@desc   Add new periods
+//@desc   Get periods by hotel
+//@route  GET /api/periods/:hotelId
+//@access Public
+
+const getPeriodsByHotel = asyncHandler(async (req, res) => {
+  const period = await Period.find({ hotel: req.params.hotelId });
+  res.status(200).json(period);
+});
+
+/***************************************** ADDING PERIODS *****************************************/
+
+//@desc   Add new hotel periods
 //@route  POST /api/periods
 //@access Private
 
-const addPeriod = asyncHandler(async (req, res) => {
+const addPeriods = asyncHandler(async (req, res) => {
   const { periods } = req.body;
 
   if (periods) {
@@ -64,7 +78,153 @@ const addPeriod = asyncHandler(async (req, res) => {
   }
 });
 
-//@desc   Delete period
+//@desc   Add new sanatorium periods
+//@route  POST /api/periods/sanatorium
+//@access Private
+
+const addSanatoriumPeriods = asyncHandler(async (req, res) => {
+  const { periods } = req.body;
+
+  if (periods) {
+    try {
+      const newPeriods = await Promise.all(
+        periods.map(async (period) => {
+          let periodObj;
+          if (!period._id) {
+            periodObj = await Period.create(period);
+            const sanatorium = await Sanatorium.findOneAndUpdate(
+              { _id: periodObj.hotel },
+              {
+                $push: {
+                  periods: periodObj,
+                },
+              }
+            );
+
+            if (sanatorium && sanatorium.rooms) {
+              for (const room of sanatorium.rooms) {
+                await Room.findByIdAndUpdate(room, {
+                  $push: {
+                    periodPrices: {
+                      period: periodObj._id,
+                      roomPrice: 0,
+                      adultPrice: 0,
+                      kidPrice: 0,
+                    },
+                  },
+                });
+              }
+            }
+
+            return periodObj;
+          } else return;
+        })
+      );
+
+      res.status(200).json(newPeriods);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+});
+
+//@desc   Add new tour periods
+//@route  POST /api/periods/tour
+//@access Private
+
+const addTourPeriods = asyncHandler(async (req, res) => {
+  const { periods } = req.body;
+
+  if (periods) {
+    try {
+      const newPeriods = await Promise.all(
+        periods.map(async (period) => {
+          let periodObj;
+
+          if (!period._id) {
+            periodObj = await Period.create(period);
+            console.log(periodObj);
+            if (periodObj.hotel) {
+              const tour = await Tour.findOneAndUpdate(
+                { _id: periodObj.hotel },
+                {
+                  $push: {
+                    periodPrices: {
+                      period: periodObj._id,
+                      adultPrice: 0,
+                      kidPrice: 0,
+                    },
+                  },
+                }
+              );
+            }
+
+            return periodObj;
+          } else return;
+        })
+      );
+
+      res.status(200).json(newPeriods);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+});
+
+//@desc   Add new camp periods
+//@route  POST /api/periods/camp
+//@access Private
+
+const addCampPeriods = asyncHandler(async (req, res) => {
+  const { periods } = req.body;
+
+  if (periods) {
+    try {
+      const newPeriods = await Promise.all(
+        periods.map(async (period) => {
+          let periodObj;
+
+          if (!period._id) {
+            periodObj = await Period.create(period);
+            if (periodObj.hotel) {
+              const camp = await Camp.findOne({
+                _id: periodObj.hotel,
+              });
+
+              let campPrices = camp.ages.map((el) => ({
+                minAge: el.minAge,
+                maxAge: el.maxAge,
+                campPrice: 0,
+              }));
+
+              await Camp.findOneAndUpdate(
+                { _id: periodObj.hotel },
+                {
+                  $push: {
+                    periodPrices: {
+                      period: periodObj._id,
+                      prices: campPrices,
+                    },
+                  },
+                }
+              );
+            }
+
+            return periodObj;
+          } else return;
+        })
+      );
+
+      res.status(200).json(newPeriods);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+});
+
+/***************************************** DELETING PERIODS *****************************************/
+
+//@desc   Delete hotel period
 //@route  DELETE /api/periods
 //@access Public
 
@@ -100,18 +260,93 @@ const deletePeriod = asyncHandler(async (req, res) => {
   res.status(200).send("Deleted successfully");
 });
 
-//@desc   Get periods by hotel
-//@route  GET /api/periods/:hotelId
+//@desc   Delete sanatorium period
+//@route  DELETE /api/periods
 //@access Public
 
-const getPeriodsByHotel = asyncHandler(async (req, res) => {
-  const period = await Period.find({ hotel: req.params.hotelId });
-  res.status(200).json(period);
+const deleteSanatoriumPeriod = asyncHandler(async (req, res) => {
+  const { periodId } = req.params;
+
+  const period = await Period.findById(periodId);
+  await Period.deleteOne({ _id: periodId });
+
+  const sanatorium = await Sanatorium.findByIdAndUpdate(period.hotel, {
+    $pull: {
+      periods: periodId,
+    },
+  });
+
+  if (sanatorium.rooms && sanatorium.rooms.length > 0) {
+    try {
+      for (const roomId of sanatorium.rooms) {
+        console.log(roomId);
+        await Room.findByIdAndUpdate(roomId, {
+          $pull: {
+            periodPrices: {
+              period: periodId,
+            },
+          },
+        });
+      }
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  res.status(200).send("Deleted successfully");
+});
+
+//@desc   Delete sanatorium period
+//@route  DELETE /api/periods
+//@access Public
+
+const deleteTourPeriod = asyncHandler(async (req, res) => {
+  const { periodId } = req.params;
+
+  const period = await Period.findById(periodId);
+  await Period.deleteOne({ _id: periodId });
+
+  const tour = await Tour.findByIdAndUpdate(period.hotel, {
+    $pull: {
+      periodPrices: {
+        period: periodId,
+      },
+    },
+  });
+
+  res.status(200).send("Deleted successfully");
+});
+
+//@desc   Delete sanatorium period
+//@route  DELETE /api/periods
+//@access Public
+
+const deleteCampPeriod = asyncHandler(async (req, res) => {
+  const { periodId } = req.params;
+
+  const period = await Period.findById(periodId);
+  await Period.deleteOne({ _id: periodId });
+
+  const camp = await Camp.findByIdAndUpdate(period.hotel, {
+    $pull: {
+      periodPrices: {
+        period: periodId,
+      },
+    },
+  });
+
+  res.status(200).send("Deleted successfully");
 });
 
 module.exports = {
   getPeriods,
-  addPeriod,
+  addPeriods,
   getPeriodsByHotel,
   deletePeriod,
+  addSanatoriumPeriods,
+  deleteSanatoriumPeriod,
+  addTourPeriods,
+  deleteTourPeriod,
+  addCampPeriods,
+  deleteCampPeriod,
 };

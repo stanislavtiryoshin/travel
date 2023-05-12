@@ -6,6 +6,12 @@ const campSchema = Schema({
     type: Schema.Types.ObjectId,
     ref: "Location",
   },
+  ages: [
+    {
+      minAge: Number,
+      maxAge: Number,
+    },
+  ],
   periodPrices: [
     {
       period: {

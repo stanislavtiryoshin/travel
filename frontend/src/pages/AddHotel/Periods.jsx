@@ -11,6 +11,7 @@ import Section from "../../components/Section";
 
 const Periods = ({ periods, setPeriods, updateHotelData, hotelId }) => {
   const dispatch = useDispatch();
+  console.log(periods);
   return (
     <Section section="periods_section" wrapper="periods_wrapper ver">
       <div className="periods_top">
