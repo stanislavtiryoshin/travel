@@ -14,7 +14,7 @@ import "swiper/css/scrollbar";
 
 import GallerySlider from "./GallerySlider";
 
-const GalleryBox = ({ sources }) => {
+const GalleryBox = ({ sources, isSmall }) => {
   const [lightboxController, setLightboxController] = useState({
     toggler: false,
     slide: 1,
@@ -42,17 +42,21 @@ const GalleryBox = ({ sources }) => {
           slide={lightboxController.slide}
         />
       )}
-      <div className="gen_img-box">
-        {sources && (
-          <img
-            src={imgSources[0]}
-            alt=""
-            onClick={() => openLightboxOnSlide(1)}
-            className="primary_img"
-          />
-        )}
-        <GallerySlider sources={imgSources} />
-      </div>
+      {isSmall ? (
+        <></>
+      ) : (
+        <div className="gen_img-box">
+          {sources && (
+            <img
+              src={imgSources[0]}
+              alt=""
+              onClick={() => openLightboxOnSlide(1)}
+              className="primary_img"
+            />
+          )}
+          <GallerySlider sources={imgSources} />
+        </div>
+      )}
     </>
   );
 };

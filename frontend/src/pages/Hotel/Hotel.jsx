@@ -535,7 +535,6 @@ const Hotel = () => {
                       text="Выберите номер, который вам нравится и мы автоматически
                         рассчитаем цену в блоке “Бронирование”"
                     />
-                    {console.log(roomsData, "roomsData")}
                     {roomsData &&
                       roomsData.rooms.map((room) => {
                         return (

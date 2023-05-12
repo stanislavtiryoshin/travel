@@ -111,15 +111,25 @@ const tourSchema = Schema({
         ref: "Room",
       },
     },
-  ], // я что то не понял
-
+  ],
+  tourServices: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "HotelService",
+    },
+  ],
   food: [
     {
       type: Schema.Types.ObjectId,
       ref: "Food",
     },
   ],
-  comforts: [String],
+  comforts: [
+    {
+      name: String,
+      priority: Number,
+    },
+  ],
   img: [String],
 });
 

@@ -27,6 +27,8 @@ import media1 from "../../assets/media1.svg";
 import media2 from "../../assets/media2.svg";
 import ad from "../../assets/ad.png";
 
+import pti4ka from "../../assets/hotel/pti4ka.svg";
+
 import hotel from "../../assets/hotel.png";
 import "./../Hotel/Hotel.scss";
 // import Room from "./Room";
@@ -42,15 +44,15 @@ import Room from "../Hotel/Room";
 import Hotels from "./Hotels";
 import { useGetTourByTagMutation } from "../../features/services/edit.service";
 
+import Sum from "../../components/HotelPage/Sum";
+
 import style from "./Hotel.module.scss";
 
 const Tour = () => {
-  // const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [points, setPoints] = React.useState([]);
   const { tourId } = useParams();
-  // console.log(tourId);
   const { data: singleTour, isLoading, isError } = useGetTourByIdQuery(tourId);
 
   const [roomCount, setRoomCount] = useState(3);
@@ -261,26 +263,25 @@ const Tour = () => {
                       </a>
                     </div>
                     <div className="top_tags-row">
-                      <div className="hotel_tag">
-                        <img src={tag} alt="" />
-                        Ресторан
-                      </div>
-                      <div className="hotel_tag">
-                        <img src={tag} alt="" />
-                        Ресторан
-                      </div>
-                      <div className="hotel_tag">
-                        <img src={tag} alt="" />
-                        Ресторан
-                      </div>
-                      <div className="hotel_tag">
-                        <img src={tag} alt="" />
-                        Ресторан
-                      </div>
-                      <div className="hotel_tag">
-                        <img src={tag} alt="" />
-                        Ресторан
-                      </div>
+                      {singleTour && singleTour?.tourServices
+                        ? singleTour?.tourServices
+                            ?.filter((serv) => serv.priority === 1)
+                            .map((serv) => {
+                              console.log(serv, "mapped");
+                              return (
+                                <div className="hotel_tag" key={serv._id}>
+                                  {serv.icon ? (
+                                    <div
+                                      dangerouslySetInnerHTML={{
+                                        __html: serv.icon,
+                                      }}
+                                    />
+                                  ) : null}
+                                  {serv.hotelServiceName}
+                                </div>
+                              );
+                            })
+                        : null}
                     </div>
                   </div>
                 </div>
@@ -294,7 +295,7 @@ const Tour = () => {
                   </div>
                 </div>
                 <div className="hotel_page-gen shadowed_box">
-                  <div className="gen_chosen-row">
+                  {/* <div className="gen_chosen-row">
                     <div className="body_title-box">
                       {singleTour.hotelId && (
                         <>
@@ -329,6 +330,9 @@ const Tour = () => {
                                     padding: "4px",
                                     width: "100%",
                                     color: "black",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
                                   }}
                                   disabled
                                 >
@@ -340,7 +344,7 @@ const Tour = () => {
                         </>
                       )}
                     </div>
-                  </div>
+                  </div> */}
                   <div className="gen_info-row">
                     <div className="body_title-box">
                       <div className="body_title">Об туре</div>
@@ -372,40 +376,28 @@ const Tour = () => {
                           Питание
                         </div>
                         <ul className="services-list">
-                          {singleTour?.food.map((foo) => (
-                            <li>{foo.label}</li>
-                          ))}
+                          {singleTour &&
+                            singleTour?.food.map((foo) => <li>{foo.label}</li>)}
                         </ul>
                       </div>
                       <div className="services_col">
                         <div className="services_col-title">
                           <img src={serv} alt="" />
-                          Питание
+                          Доп. услуги
                         </div>
                         <ul className="services-list">
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                        </ul>
-                      </div>
-                      <div className="services_col">
-                        <div className="services_col-title">
-                          <img src={serv} alt="" />
-                          Питание
-                        </div>
-                        <ul className="services-list">
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
-                          <li>главный ресторан</li>
+                          {console.log(singleTour.tourServices)}
+                          {singleTour &&
+                            singleTour.tourServices
+                              .filter((service) => service.priority !== 1)
+                              .map((serv) => <li>{serv.hotelServiceName}</li>)}
                         </ul>
                       </div>
                     </div>
                   </div>
                   <div className="hotel_services-row">
                     {points.map((point, idx) => (
-                      <div>
+                      <div className="program-tour">
                         <div
                           onClick={() => {
                             if (programIdx === idx) {
@@ -420,13 +412,22 @@ const Tour = () => {
                                   borderRadius: "0px",
                                   borderTopLeftRadius: "16px",
                                   borderTopRightRadius: "16px",
+                                  boxShadow: "none",
                                 }
                               : {}
                           }
                           className="tour-program"
                         >
                           <div className="tour_day">{idx + 1} день</div>
-                          <div className="tour_expand">V</div>
+                          <div className="tour_expand">
+                            <img
+                              src={pti4ka}
+                              alt=""
+                              className={`tour-arrow ${
+                                programIdx === idx ? "rotate" : ""
+                              }`}
+                            />
+                          </div>
                         </div>
                         {programIdx === idx && (
                           <>
@@ -438,17 +439,47 @@ const Tour = () => {
                                         borderBottomLeftRadius: "16px",
                                         borderBottomRightRadius: "16px",
                                       }
-                                    : { borderRadius: "0px" }
+                                    : { borderRadius: "0px", boxShadow: "none" }
                                 }
                                 className="tour_info"
                               >
-                                <div className="tour_info-time">
+                                <div
+                                  className="tour_info-time"
+                                  style={
+                                    point.points &&
+                                    point.points.length - 1 === infoIdx
+                                      ? {
+                                          boxShadow: "none",
+                                        }
+                                      : {}
+                                  }
+                                >
                                   {info.time}
                                 </div>
-                                <div className="tour_info-title">
+                                <div
+                                  className="tour_info-title"
+                                  style={
+                                    point.points &&
+                                    point.points.length - 1 === infoIdx
+                                      ? {
+                                          boxShadow: "none",
+                                        }
+                                      : {}
+                                  }
+                                >
                                   {info.pointName}
                                 </div>
-                                <div className="tour_info-desc">
+                                <div
+                                  className="tour_info-desc"
+                                  style={
+                                    point.points &&
+                                    point.points.length - 1 === infoIdx
+                                      ? {
+                                          boxShadow: "none",
+                                        }
+                                      : {}
+                                  }
+                                >
                                   {info.pointDescription}
                                 </div>
                               </div>
@@ -462,28 +493,11 @@ const Tour = () => {
                   {/* <div className="hotel_page-rooms">
                     <Hotels hotel={singleTour.hotelId} />
                   </div> */}
-                  {/* <div className="hotel_page-rooms">
-                    <div className="body_title-box">
-                      <div className="body_title">Варианты номеров</div>
-                      <div className="body_title-text">
-                        Выберите номер, который вам нравится и мы автоматически
-                        рассчитаем цену в блоке “Бронирование”
-                      </div>
-                    </div>
-
-                    {roomsData &&
-                      roomsData.map((room) => {
-                        return (
-                          <Room
-                            key={room._id}
-                            room={room}
-                            active={clientRooms.some(
-                              (clientRoom) => clientRoom._id === room._id
-                            )}
-                          />
-                        );
-                      })}
-                  </div> */}
+                  {/*ANCHOR */}
+                  <div className="hotel_page-rooms">
+                    {singleTour &&
+                      singleTour.hotels.map((hotels) => console.log(hotels))}
+                  </div>
                   {/* <button
                     className="load-more-btn"
                     onClick={() => setRoomCount((prev) => prev + 1)}
@@ -492,60 +506,8 @@ const Tour = () => {
                   </button> */}
                 </div>
               </div>
-
               <div className="hotel_side_wrapper wrapper ver">
-                <div className="hotel_side-top shadowed_box">
-                  <div className="hotel_side-title">Бронирование</div>
-                  <div className="hotel_side-row">
-                    {/* {clientStartingDate &&
-                      clientStartingDate.toLocaleString(undefined, {
-                        month: "numeric",
-                        day: "numeric",
-                      })}{" "}
-                    -{" "} */}
-                    {/* {clientEndingDate &&
-                      clientEndingDate.toLocaleString(undefined, {
-                        month: "numeric",
-                        day: "numeric",
-                      })} */}
-                  </div>
-                  {/* <div className="hotel_side-row">
-                    <img src={person} alt="" /> {orderTerms?.amount} взр.
-                  </div> */}
-                  {/* <div className="hotel_side-row total">
-                    Итого: <span>{sum} тг.</span>
-                  </div> */}
-                  {/* <Link
-                    to="/orders/new-order"
-                    className="primary-btn yellow"
-                    onClick={handleOrder}
-                  > */}
-                  {/* Забронировать
-                  </Link> */}
-                  <div className="side-top-bot">
-                    <img src={check} alt="" />У нас самые выгодные цены!
-                  </div>
-                </div>
-                <div className="side_price-box shadowed_box small">
-                  <div className="body_title-box">
-                    <div className="body_title">Лучшая цена в Июле!</div>
-                    <div className="body_title-text">
-                      Lorem ipsum dolor sit amet, id dicant splendide cum.{" "}
-                    </div>
-                  </div>
-                </div>
-
-                {singleTour?.locationId?._id ? (
-                  <Excursions locationId={singleTour?.locationId?._id} />
-                ) : (
-                  "Экскурсии загружаются"
-                )}
-
-                <ExpandableText text="Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum. Lorem ipsum dolor sit amet, id dicant splendide cum." />
-
-                <div className="kids_box">
-                  <img src={kids} alt="" />
-                </div>
+                <Sum />
               </div>
             </div>
           ) : null}

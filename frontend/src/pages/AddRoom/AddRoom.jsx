@@ -51,7 +51,6 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
     comforts: [],
     comment: "",
     prices: [],
-    roomDescription: "",
     roomServices: [],
     roomDescription: "",
     bathExtras: "",

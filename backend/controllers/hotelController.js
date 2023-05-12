@@ -631,8 +631,6 @@ const getRoomsByLimit = async (req, res) => {
 
       const limitedRooms = rooms.slice(0, realLimit);
 
-      console.log(limitedRooms.length, "room len");
-
       const response = {
         totalRooms: rooms.length, // Include the total number of rooms in the response
         rooms: limitedRooms,

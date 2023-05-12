@@ -111,7 +111,6 @@ const EditTour = () => {
       comforts: comfortsData.map(({ value }) => value),
       food: foodData.map(({ _id }) => _id),
       id,
-      token: user.token,
       img: tourData?.img ? tourData?.img : [],
       price: tourData?.price ? tourData?.price : [],
       rooms: tourData?.rooms ? tourData?.rooms : [],

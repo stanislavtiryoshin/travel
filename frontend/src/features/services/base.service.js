@@ -83,13 +83,7 @@ export const baseApi = createApi({
       query: () => ({
         url: "/tour",
       }),
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ _id }) => ({ type: "tour", _id })),
-              { type: "tour", id: "LIST" },
-            ]
-          : [{ type: "tour", id: "LIST" }],
+      providesTags: [{ type: "tour", id: "LIST" }],
     }),
     getCamp: builder.query({
       query: () => ({

@@ -30,6 +30,8 @@ const HotelCard = ({
   program,
   hotelServices,
   hotel,
+  isTour,
+  days,
 }) => {
   const [cheapestRoom, setCheapestRoom] = useState();
 
@@ -117,12 +119,26 @@ const HotelCard = ({
           {description.length > 100 ? "..." : ""}
         </div>
         <div className="card_mid-tags">
-          {mode === "tour" ? (
-            <div className="card_tag">
-              <img src={tag} alt="" />
-              `${tourDays} ${declOfNum(tourDays)}`
-            </div>
-          ) : null}
+          {/* {mode === "tour" ? (
+            <>
+              {hotelServices && hotelServices.length > 0
+                ? hotelServices?.slice(0, 4).map((serv) => {
+                    return (
+                      <div className="card_tag" key={serv}>
+                        {serv.icon ? (
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: serv.icon,
+                            }}
+                          />
+                        ) : null}
+                        {serv.name}
+                      </div>
+                    );
+                  })
+                : null}
+            </>
+          ) : null} */}
           {hotelServices && hotelServices.length > 0
             ? hotelServices?.slice(0, 4).map((serv) => {
                 return (
@@ -168,14 +184,14 @@ const HotelCard = ({
           <div className="card_days">
             <img src={sun} alt="" />
             <span>
-              {hotel.daysAmount} {declOfNum(hotel.daysAmount)}
+              {isTour ? days : hotel.daysAmount}{" "}
+              {declOfNum(isTour ? days : hotel.daysAmount)}
             </span>
           </div>
           <div className="card_days nights">
             <img src={moon} alt="" />
             <span>
-              {hotel.nightsAmount}{" "}
-              {declOfNum(hotel.nightsAmount, ["ночь", "ночи", "ночей"])}
+              {days - 1} {declOfNum(days - 1, ["ночь", "ночи", "ночей"])}
             </span>
           </div>
         </div>
