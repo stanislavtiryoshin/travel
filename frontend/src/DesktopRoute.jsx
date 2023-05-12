@@ -67,18 +67,27 @@ const DesktopRoute = () => {
           </Route>
 
           {/* Dashboard */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/add-hotel" element={<AddHotel />} />
-          <Route path="/dashboard/hotel/:hotelId" element={<EditHotel />} />
-          <Route path="/dashboard/add-tour" element={<AddTour />} />
-          <Route path="/dashboard/tour/:id" element={<EditTour />} />
-          <Route path="/dashboard/add-camp" element={<AddCamp />} />
-          <Route path="/dashboard/camp/:id" element={<EditCamp />} />
-          <Route path="/dashboard/add-sanatorium" element={<AddSanatorium />} />
-          <Route
-            path="/dashboard/sanatorium/:sanatoriumId"
-            element={<EditSanatorium />}
-          />
+          <Route path="/dashboard" element={<Dashboard />}>
+            <Route path="/dashboard/add-hotel" element={<AddHotel />} />
+            <Route path="/dashboard/hotel/:hotelId" element={<EditHotel />} />
+            <Route path="/dashboard/add-tour" element={<AddTour />} />
+            <Route path="/dashboard/tour/:id" element={<EditTour />} />
+            <Route path="/dashboard/add-camp" element={<AddCamp />} />
+            <Route path="/dashboard/camp/:id" element={<EditCamp />} />
+            <Route
+              path="/dashboard/add-sanatorium"
+              element={<AddSanatorium />}
+            />
+            <Route
+              path="/dashboard/sanatorium/:sanatoriumId"
+              element={<EditSanatorium />}
+            />
+            <Route
+              path="/dashboard/hotel/:hotelId/add-room"
+              element={<AddRoom />}
+            />
+            <Route path="/dashboard/room/:roomId" element={<AdminRoom />} />
+          </Route>
 
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
@@ -88,12 +97,6 @@ const DesktopRoute = () => {
           <Route path="/sanatoriums/:sanatoriumId" element={<Sanatorium />} />
           <Route path="/tour/:tourId" element={<Tour />} />
           <Route path="/camp/:campId" element={<Camp />} />
-
-          <Route
-            path="/dashboard/hotel/:hotelId/add-room"
-            element={<AddRoom />}
-          />
-          <Route path="/dashboard/room/:roomId" element={<AdminRoom />} />
 
           <Route path="/dashboard/managers" element={<Manager />} />
           <Route path="/test" element={<Test />} />

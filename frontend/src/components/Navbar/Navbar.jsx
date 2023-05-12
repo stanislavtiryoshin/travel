@@ -63,13 +63,13 @@ const Navbar = ({ isSearch }) => {
     return tabsContent.map((tab, index) => {
       const isActive = currentTab === index;
       return (
-        <button
+        <Link
           className={`tab-btn ${isActive ? "active" : ""}`}
           onClick={() => dispatch(setCurrentTab(index))}
           key={tab.label}
         >
           {tab.label}
-        </button>
+        </Link>
       );
     });
   };
