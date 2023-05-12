@@ -20,7 +20,7 @@ const getSearchedSanatoriums = async (
   locationId,
   peopleAmount,
   daysAmount,
-  startDate,
+  start,
   adultsAmount,
   kidsAmount
 ) => {
@@ -28,7 +28,7 @@ const getSearchedSanatoriums = async (
     locationId,
     peopleAmount,
     daysAmount,
-    startDate,
+    start,
     adultsAmount,
     kidsAmount,
   };

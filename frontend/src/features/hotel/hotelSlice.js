@@ -130,7 +130,7 @@ export const getSearchedHotels = createAsyncThunk(
         searchData.locationId,
         searchData.peopleAmount,
         searchData.daysAmount,
-        searchData.startDate,
+        searchData.start,
         searchData.adultsAmount,
         searchData.kidsAmount
       );

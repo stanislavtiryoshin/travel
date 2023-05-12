@@ -6,6 +6,11 @@ const asyncHandler = require("express-async-handler");
 
 const fs = require("fs");
 const csv = require("fast-csv");
+const { isDateInRange } = require("../dateUtils");
+
+//@desc Get all tours
+//@route GET /api/tour/
+//@access Public
 
 const getTour = (req, res) => {
   Tour.find({})
@@ -14,7 +19,10 @@ const getTour = (req, res) => {
     .populate("hotels")
     .populate("food")
     .populate("hotelId")
-
+    .populate({
+      path: "periodPrices",
+      populate: { path: "period", model: "Period" },
+    })
     .populate("comforts")
     .then((response) => res.status(200).json(response))
     .catch((err) => res.send(err));
@@ -244,13 +252,7 @@ const getPrice = asyncHandler(async (req, res) => {
           const endMonth = el.period.endMonth;
           const endDay = el.period.endDay;
 
-          if (
-            (date.getMonth() + 1 > startMonth ||
-              (date.getMonth() + 1 === startMonth &&
-                date.getDate() >= startDay)) &&
-            (date.getMonth() + 1 < endMonth ||
-              (date.getMonth() + 1 === endMonth && date.getDate() <= endDay))
-          ) {
+          if (isDateInRange(date, startMonth, startDay, endMonth, endDay)) {
             console.log(startDay, startMonth, endDay, endMonth, "period");
             console.log(date.getMonth() + 1, date.getDate(), "date");
 
@@ -265,7 +267,7 @@ const getPrice = asyncHandler(async (req, res) => {
                 sum += el.kidPrice;
                 console.log(el.kidPrice);
               } else {
-                console.log("not found");
+                console.log("baby for free");
               }
             });
 
@@ -273,19 +275,117 @@ const getPrice = asyncHandler(async (req, res) => {
           }
         });
         if (!priceFound) {
-          res.status(404).send("could not calculate");
+          res.status(404).json("Could not find period for these dates");
         }
       } else {
-        res.status(404).send("could not calculate");
+        res.status(404).json("This tour has no prices set");
       }
     };
+
     for (let i = 0; i < daysAmount; i++) {
       findPriceByDate(daysArray[i]);
     }
+
     console.log(daysArray);
   })(1);
 
   res.status(200).json(sum);
+});
+
+//@desc   Get searched tours
+//@route  GET /api/tour/searched
+//@access Public
+
+const getSearchedTours = asyncHandler(async (req, res) => {
+  const {
+    peopleAmount,
+    daysAmount,
+    start,
+    locationId,
+    adultsAmount,
+    kidsAmount,
+  } = req.query;
+
+  const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
+    let daysArray = [];
+    const startingDate = new Date(+start);
+
+    for (let i = 0; i < daysNum; i++) {
+      let date = new Date(startingDate.getTime());
+      date.setDate(startingDate.getDate() + i);
+      daysArray.push(date);
+    }
+
+    let sum = 0;
+
+    const findPriceByDate = (date) => {
+      if (pricesArray && pricesArray.length > 0) {
+        let priceFound = false;
+        pricesArray.forEach((el) => {
+          const startMonth = el.period.startMonth;
+          const startDay = el.period.startDay;
+          const endMonth = el.period.endMonth;
+          const endDay = el.period.endDay;
+
+          console.log(startDay, startMonth, endDay, endMonth, "period");
+          console.log(date.getMonth() + 1, date.getDate(), "date");
+
+          if (isDateInRange(date, startMonth, startDay, endMonth, endDay)) {
+            sum += el.adultPrice * adultsAmount;
+            sum += el.kidPrice * kidsAmount;
+            priceFound = true;
+            console.log("price was found");
+          }
+        });
+        if (!priceFound) {
+          sum += basePrice;
+        }
+      } else {
+        sum += basePrice;
+      }
+    };
+
+    for (let i = 0; i < daysNum; i++) {
+      findPriceByDate(daysArray[i]);
+    }
+
+    return sum;
+  };
+
+  const query = {};
+
+  if (locationId && locationId !== "") {
+    query.locationId = locationId;
+  }
+
+  let hotels = await Tour.find(query).populate({
+    path: "periodPrices",
+    populate: { path: "period", model: "Period" },
+  });
+
+  const newHotels = hotels.map((hotel) => {
+    const newHotel = hotel.toObject();
+
+    const pricesArray = hotel?.periodPrices;
+
+    const costOfStay = calculatePrice(start, daysAmount, 1, pricesArray);
+
+    if (pricesArray) {
+      newHotel.totalPrice = costOfStay;
+    } else {
+      newHotel.totalPrice = 22800;
+    }
+
+    return {
+      ...newHotel,
+      daysAmount: +daysAmount,
+      nightsAmount: daysAmount - 1,
+      adultsAmount: +adultsAmount,
+      kidsAmount: +kidsAmount,
+    };
+  });
+
+  res.status(200).send(newHotels);
 });
 
 module.exports = {
@@ -297,6 +397,6 @@ module.exports = {
   insertTourPrices,
   getSearchedTour,
   getPrice,
-
+  getSearchedTours,
   tourByTagRecommendation,
 };

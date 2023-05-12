@@ -39,7 +39,9 @@ const Filter = ({ mode }) => {
   const dispatch = useDispatch();
 
   const selectedHotels = useSelector(selectHotels);
+  const { hotels } = useSelector((state) => state.hotels);
   const selectedSanatoriums = useSelector(selectSanatoriums);
+  const { sanatoriums } = useSelector((state) => state.sanatoriums);
 
   const [maxPrice, setMaxPrice] = useState(100);
   const [minPrice, setMinPrice] = useState(0);
@@ -50,7 +52,7 @@ const Filter = ({ mode }) => {
     switch (mode) {
       case "hotel":
         setMaxPrice(
-          selectedHotels?.reduce(
+          hotels?.reduce(
             (acc, curr) => {
               if (curr.totalPrice > acc.totalPrice) {
                 return curr;
@@ -62,7 +64,7 @@ const Filter = ({ mode }) => {
           ).totalPrice
         );
         setMinPrice(
-          selectedHotels?.reduce(
+          hotels?.reduce(
             (acc, curr) => {
               if (curr.totalPrice < acc.totalPrice) {
                 return curr;
@@ -76,7 +78,7 @@ const Filter = ({ mode }) => {
         break;
       case "sanatorium":
         setMaxPrice(
-          selectedSanatoriums?.reduce(
+          sanatoriums?.reduce(
             (acc, curr) => {
               if (curr.totalPrice > acc.totalPrice) {
                 return curr;
@@ -88,7 +90,7 @@ const Filter = ({ mode }) => {
           ).totalPrice
         );
         setMinPrice(
-          selectedSanatoriums?.reduce(
+          sanatoriums?.reduce(
             (acc, curr) => {
               if (curr.totalPrice < acc.totalPrice) {
                 return curr;
@@ -101,7 +103,7 @@ const Filter = ({ mode }) => {
         );
         break;
     }
-  }, [mode, selectedHotels, selectedSanatoriums]);
+  }, [mode, hotels, sanatoriums]);
 
   const [value, setValue] = useState([minPrice, maxPrice]);
 

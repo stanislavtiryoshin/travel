@@ -69,7 +69,7 @@ export const getSearchedSanatoriums = createAsyncThunk(
         searchData.locationId,
         searchData.peopleAmount,
         searchData.daysAmount,
-        searchData.startDate,
+        searchData.start,
         searchData.adultsAmount,
         searchData.kidsAmount
       );

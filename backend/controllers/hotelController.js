@@ -13,6 +13,7 @@ const csv = require("fast-csv");
 const Tour = require("../models/tourModel");
 const queryString = require("querystring");
 const mongoose = require("mongoose");
+const { isDateInRange } = require("../dateUtils");
 
 //@desc   Add new hotel
 //@route  POST /api/hotels
@@ -234,7 +235,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
   const {
     peopleAmount,
     daysAmount,
-    startDate,
+    start,
     locationId,
     adultsAmount,
     kidsAmount,
@@ -336,7 +337,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     const pricesArray = cheapestRoom?.periodPrices;
 
     const costOfStay = calculatePrice(
-      startDate,
+      start,
       daysAmount,
       basePrice,
       pricesArray
@@ -492,13 +493,7 @@ const getPrice = asyncHandler(async (req, res) => {
           const endMonth = el.period.endMonth;
           const endDay = el.period.endDay;
 
-          if (
-            (date.getMonth() + 1 > startMonth ||
-              (date.getMonth() + 1 === startMonth &&
-                date.getDate() >= startDay)) &&
-            (date.getMonth() + 1 < endMonth ||
-              (date.getMonth() + 1 === endMonth && date.getDate() <= endDay))
-          ) {
+          if (isDateInRange(date, startMonth, startDay, endMonth, endDay)) {
             if (!personMode) {
               sum += el.roomPrice;
               roomSum += el.roomPrice;

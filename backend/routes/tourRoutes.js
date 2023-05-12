@@ -6,7 +6,7 @@ const {
   getSingleTour,
   getTour,
   updateTour,
-  getSearchedTour,
+  getSearchedTours,
   insertTourPrices,
   tourByTagRecommendation,
   getPrice,
@@ -18,7 +18,7 @@ const { upload } = require("./uploadRoutes");
 router.get("/", getTour);
 router.post("/", protect, addTour);
 router.get("/price", getPrice);
-router.get("/searched", getSearchedTour);
+router.get("/searched", getSearchedTours);
 
 router.get("/:id", getSingleTour);
 router.delete("/:id", protect, deleteTour);

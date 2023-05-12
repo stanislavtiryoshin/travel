@@ -35,7 +35,7 @@ const SanatoriumResults = ({ mode }) => {
         locationId: "",
         peopleAmount: 1,
         daysAmount: 2,
-        startDate: Date.parse(new Date()),
+        start: Date.parse(new Date()),
         adultsAmount: 1,
         kidsAmount: 0,
       })

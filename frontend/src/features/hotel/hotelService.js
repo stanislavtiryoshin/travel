@@ -75,7 +75,7 @@ const getSearchedHotels = async (
   locationId,
   peopleAmount,
   daysAmount,
-  startDate,
+  start,
   adultsAmount,
   kidsAmount
 ) => {
@@ -83,7 +83,7 @@ const getSearchedHotels = async (
     locationId,
     peopleAmount,
     daysAmount,
-    startDate,
+    start,
     adultsAmount,
     kidsAmount,
   };
