@@ -9,6 +9,7 @@ const {
   getCamps,
   getCampByTags,
   getPrice,
+  getSearchedCamps,
 } = require("../controllers/campController");
 const Camp = require("../models/campModel");
 const { protect } = require("../middleware/authMiddleware");
@@ -17,6 +18,7 @@ const { upload } = require("./uploadRoutes");
 router.post("/", protect, addCamp);
 router.get("/", getCamps);
 router.get("/price", getPrice);
+router.get("/searched", getSearchedCamps);
 router.get("/:id", getSingleCamp);
 router.delete("/:id", protect, deleteCamp);
 router.patch("/:id", protect, updateCamp);

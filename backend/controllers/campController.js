@@ -2,6 +2,7 @@ const Camp = require("../models/campModel");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { isDateInRange } = require("../dateUtils");
 
 //@desc   Get all camps
 //@route  GET /api/camp
@@ -126,51 +127,152 @@ const getPrice = asyncHandler(async (req, res) => {
           const endMonth = el.period.endMonth;
           const endDay = el.period.endDay;
 
+          let allAgesMatched = true;
+
           if (isDateInRange(date, startMonth, startDay, endMonth, endDay)) {
-            el.prices.forEach((price) => {
-              ages.forEach((age) => {
+            ages.forEach((age) => {
+              let ageMatchedToPrice = false; // Flag to track if the age matches with any price
+              el.prices.forEach((price) => {
                 if (age >= price.minAge && age <= price.maxAge) {
                   sum += price.campPrice;
-                } else {
-                  res.status(400).json("Not all the ages fit this camp");
+                  ageMatchedToPrice = true; // Set the flag to true if the age matches with any price
                 }
               });
+              if (!ageMatchedToPrice) {
+                console.log(`Age ${age} doesn't fit`);
+                allAgesMatched = false; // Set the flag to false if any age doesn't match any price
+              }
             });
-
-            // ages.forEach((age) => {
-            //   if (age > tour.kids.kidMaxAge) {
-            //     sum += el.adultPrice;
-            //     console.log(el.adultPrice);
-            //   } else if (
-            //     age <= tour.kids.kidMaxAge &&
-            //     age > tour.kids.babyMaxAge
-            //   ) {
-            //     sum += el.kidPrice;
-            //     console.log(el.kidPrice);
-            //   } else {
-            //     console.log("baby for free");
-            //   }
-            // });
 
             priceFound = true;
           }
+          if (!allAgesMatched) {
+            return res.status(404).json("Not all ages fit this camp");
+          }
         });
         if (!priceFound) {
-          res.status(404).json("Could not find periods for these dates");
+          return res.status(404).json("Could not find periods for these dates");
         }
       } else {
-        res.status(404).json("This camp has no prices set");
+        return res.status(404).json("This camp has no prices set");
       }
     };
 
     for (let i = 0; i < daysAmount; i++) {
       findPriceByDate(daysArray[i]);
     }
-
-    console.log(daysArray);
   })(1);
 
-  res.status(200).json(sum);
+  return res.status(200).json(sum);
+});
+
+//@desc   Get searched camps
+//@route  GET /api/camps/searched
+//@access Public
+
+const getSearchedCamps = asyncHandler(async (req, res) => {
+  const {
+    agesArray,
+    peopleAmount,
+    daysAmount,
+    start,
+    locationId,
+    adultsAmount,
+    kidsAmount,
+  } = req.query;
+
+  ages = agesArray.split(",").map(Number);
+  console.log(ages, "ages");
+
+  const calculatePrice = (start, daysNum, pricesArray) => {
+    let daysArray = [];
+    const startingDate = new Date(+start);
+
+    for (let i = 0; i < daysNum; i++) {
+      let date = new Date(startingDate.getTime());
+      date.setDate(startingDate.getDate() + i);
+      daysArray.push(date);
+    }
+
+    let sum = 0;
+
+    const findPriceByDate = (date) => {
+      if (pricesArray && pricesArray.length > 0) {
+        let priceFound = false;
+        pricesArray.forEach((el) => {
+          const startMonth = el.period.startMonth;
+          const startDay = el.period.startDay;
+          const endMonth = el.period.endMonth;
+          const endDay = el.period.endDay;
+
+          let allAgesMatched = true;
+
+          if (isDateInRange(date, startMonth, startDay, endMonth, endDay)) {
+            ages.forEach((age) => {
+              let ageMatchedToPrice = false; // Flag to track if the age matches with any price
+              el.prices.forEach((price) => {
+                if (age >= price.minAge && age <= price.maxAge) {
+                  sum += price.campPrice;
+                  ageMatchedToPrice = true; // Set the flag to true if the age matches with any price
+                }
+              });
+              if (!ageMatchedToPrice) {
+                console.log(`Age ${age} doesn't fit`);
+                allAgesMatched = false; // Set the flag to false if any age doesn't match any price
+              }
+            });
+
+            priceFound = true;
+          }
+          if (!allAgesMatched) {
+            console.log("Not all ages fit this camp");
+          }
+        });
+        if (!priceFound) {
+          console.log("Could not find periods for these dates");
+        }
+      } else {
+        console.log("This camp has no prices set");
+      }
+    };
+
+    for (let i = 0; i < daysNum; i++) {
+      findPriceByDate(daysArray[i]);
+    }
+
+    return sum;
+  };
+
+  const query = {};
+
+  if (locationId && locationId !== "") {
+    query.locationId = locationId;
+  }
+
+  let camps = await Camp.find(query)
+    .populate({
+      path: "periodPrices",
+      populate: { path: "period", model: "Period" },
+    })
+    .populate("locationId");
+
+  const newCamps = camps.map((camp) => {
+    const newCamp = camp.toObject();
+    const pricesArray = camp.periodPrices;
+
+    const costOfStay = calculatePrice(start, daysAmount, pricesArray);
+
+    return {
+      ...newCamp,
+      totalPrice: costOfStay,
+      daysAmount: +daysAmount,
+      nightsAmount: daysAmount - 1,
+      adultsAmount: +adultsAmount,
+      kidsAmount: +kidsAmount,
+    };
+  });
+
+  res.status(200).send(newCamps);
 });
 
 module.exports = {
@@ -181,4 +283,5 @@ module.exports = {
   updateCamp,
   getCampByTags,
   getPrice,
+  getSearchedCamps,
 };

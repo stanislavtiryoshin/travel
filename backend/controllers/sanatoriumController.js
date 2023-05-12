@@ -6,6 +6,7 @@ const Room = require("../models/roomModel");
 const Period = require("../models/periodModel");
 const Food = require("../models/foodModel");
 const Excursion = require("../models/excursionModel");
+const { isDateInRange } = require("../dateUtils");
 
 const addSanatorium = async (req, res) => {
   const post = await Sanatorium.create(req.body);
@@ -350,13 +351,7 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
           const endMonth = el.period.endMonth;
           const endDay = el.period.endDay;
 
-          if (
-            (date.getMonth() + 1 > startMonth ||
-              (date.getMonth() + 1 === startMonth &&
-                date.getDate() >= startDay)) &&
-            (date.getMonth() + 1 < endMonth ||
-              (date.getMonth() + 1 === endMonth && date.getDate() <= endDay))
-          ) {
+          if (isDateInRange(date, startMonth, startDay, endMonth, endDay)) {
             sum += el.roomPrice;
             priceFound = true;
           }
