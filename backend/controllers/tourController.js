@@ -12,8 +12,8 @@ const { isDateInRange } = require("../dateUtils");
 //@route GET /api/tour/
 //@access Public
 
-const getTour = (req, res) => {
-  Tour.find({})
+const getTour = asyncHandler(async (req, res) => {
+  const tours = await Tour.find()
     .populate("rooms")
     .populate("locationId")
     .populate("hotels")
@@ -23,10 +23,16 @@ const getTour = (req, res) => {
       path: "periodPrices",
       populate: { path: "period", model: "Period" },
     })
-    .populate("comforts")
-    .then((response) => res.status(200).json(response))
-    .catch((err) => res.send(err));
-};
+    .populate({
+      path: "tourServices",
+      populate: {
+        path: "category",
+        model: "Category",
+      },
+    });
+
+  res.status(200).json(tours);
+});
 
 const addTour = (req, res) => {
   Tour.create(req.body)

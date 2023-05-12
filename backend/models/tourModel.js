@@ -4,6 +4,12 @@ const tourSchema = Schema({
   name: {
     type: String,
   },
+  tourServices: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "HotelService",
+    },
+  ],
   periodPrices: [
     {
       period: {
