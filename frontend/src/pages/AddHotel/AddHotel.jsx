@@ -237,6 +237,8 @@ const AddHotel = ({
     setPeriods(hotelData.periods);
   }, [hotelData]);
 
+  console.log(hotelData.periods, "hotelData.periods");
+
   const [servs, setServs] = useState();
 
   useEffect(() => {
@@ -321,7 +323,7 @@ const AddHotel = ({
                     );
                   })
                 ) : (
-                  <p>Locations are loading</p>
+                  <>Locations are loading</>
                 )}
               </select>
               <input

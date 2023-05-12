@@ -28,8 +28,8 @@ router.get("/price", getPrice);
 router.get("/searched", getSearchedHotels);
 router.get("/admin", getAdminHotels);
 router.patch("/:hotelId", protect, updateHotel);
-router.patch("/:hotelId/periods", protect, updateHotelPeriods);
-router.patch("/:hotelId/delete-period", protect, deletePeriod);
+// router.patch("/:hotelId/periods", protect, updateHotelPeriods);
+// router.patch("/:hotelId/delete-period", protect, deletePeriod);
 router.get("/:id", getSingleHotel);
 
 //test

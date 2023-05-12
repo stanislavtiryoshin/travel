@@ -11,6 +11,6 @@ const { protect } = require("../middleware/authMiddleware");
 router.get("/", getPeriods);
 router.post("/", protect, addPeriod);
 router.get("/:hotelId", getPeriodsByHotel);
-router.delete("/", protect, deletePeriod);
+router.delete("/:periodId", protect, deletePeriod);
 
 module.exports = router;

@@ -21,12 +21,6 @@ const campSchema = Schema({
       ],
     },
   ],
-  // food: [
-  //   {
-  //     type: Schema.Types.ObjectId,
-  //     ref: "Food",
-  //   },
-  // ],
   locationFeature: {
     type: String,
   },

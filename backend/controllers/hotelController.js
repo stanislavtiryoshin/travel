@@ -39,83 +39,83 @@ const updateHotel = asyncHandler(async (req, res) => {
 //@route  PATCH /api/hotels/:hotelId/delete-period
 //@access Private
 
-const deletePeriod = asyncHandler(async (req, res) => {
-  await Period.findByIdAndDelete(req.body.periodId);
+// const deletePeriod = asyncHandler(async (req, res) => {
+//   await Period.findByIdAndDelete(req.body.periodId);
 
-  // Delete period from hotel
-  const hotel = await Hotel.findByIdAndUpdate(
-    req.params.hotelId,
-    {
-      $pull: {
-        periods: req.body.periodId,
-      },
-    },
-    { new: true }
-  );
+//   // Delete period from hotel
+//   const hotel = await Hotel.findByIdAndUpdate(
+//     req.params.hotelId,
+//     {
+//       $pull: {
+//         periods: req.body.periodId,
+//       },
+//     },
+//     { new: true }
+//   );
 
-  // Delete periodPrices with the received periodId from this hotel's rooms
-  try {
-    for (const roomId of hotel.rooms) {
-      await Room.findByIdAndUpdate(roomId, {
-        $pull: {
-          periodPrices: {
-            period: req.body.periodId,
-          },
-        },
-      });
-    }
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+//   // Delete periodPrices with the received periodId from this hotel's rooms
+//   try {
+//     for (const roomId of hotel.rooms) {
+//       await Room.findByIdAndUpdate(roomId, {
+//         $pull: {
+//           periodPrices: {
+//             period: req.body.periodId,
+//           },
+//         },
+//       });
+//     }
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
 
-  res.status(200).json(hotel);
-});
+//   res.status(200).json(hotel);
+// });
 
 //@desc   Update hotel periods
 //@route  PATCH /api/hotels/:hotelId/periods
 //@access Private
 
-const updateHotelPeriods = asyncHandler(async (req, res) => {
-  try {
-    for (let period of req.body.periods) {
-      if (!period._id) {
-        const newPeriod = new Period({
-          startDay: +period.startDay,
-          startMonth: +period.startMonth,
-          endDay: +period.endDay,
-          endMonth: +period.endMonth,
-          hotel: req.params.hotelId,
-        });
-        await newPeriod.save();
-      }
-    }
+// const updateHotelPeriods = asyncHandler(async (req, res) => {
+//   try {
+//     for (let period of req.body.periods) {
+//       if (!period._id) {
+//         const newPeriod = new Period({
+//           startDay: +period.startDay,
+//           startMonth: +period.startMonth,
+//           endDay: +period.endDay,
+//           endMonth: +period.endMonth,
+//           hotel: req.params.hotelId,
+//         });
+//         await newPeriod.save();
+//       }
+//     }
 
-    const hotel = await Hotel.findByIdAndUpdate(
-      req.params.hotelId,
-      { periods: req.body.periods },
-      {
-        new: true,
-      }
-    );
+//     const hotel = await Hotel.findByIdAndUpdate(
+//       req.params.hotelId,
+//       { periods: req.body.periods },
+//       {
+//         new: true,
+//       }
+//     );
 
-    // hotel.rooms.forEach((roomId) =>
-    //   Room.findByIdAndUpdate(roomId, {
-    //     $pull: {
-    //       periodPrices: {
-    //         periodId: {
-    //           $nin: req.body.periods
-    //             .filter((period) => period._id)
-    //             .map((period) => mongoose.Types.ObjectId(period._id)),
-    //         },
-    //       },
-    //     },
-    //   })
-    // );
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-  res.status(200).json("successfull");
-});
+//     // hotel.rooms.forEach((roomId) =>
+//     //   Room.findByIdAndUpdate(roomId, {
+//     //     $pull: {
+//     //       periodPrices: {
+//     //         periodId: {
+//     //           $nin: req.body.periods
+//     //             .filter((period) => period._id)
+//     //             .map((period) => mongoose.Types.ObjectId(period._id)),
+//     //         },
+//     //       },
+//     //     },
+//     //   })
+//     // );
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
+//   res.status(200).json("successfull");
+// });
 
 //@desc   Get all hotels
 //@route  GET /api/hotels
@@ -757,8 +757,8 @@ module.exports = {
   getSingleHotel,
   getAdminHotels,
   updateHotel,
-  updateHotelPeriods,
-  deletePeriod,
+  // updateHotelPeriods,
+  // deletePeriod,
   getPrice,
   //test
   getRoomPrices,

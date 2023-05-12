@@ -31,6 +31,26 @@ export const addPeriods = createAsyncThunk(
   }
 );
 
+// Delete a period
+
+export const deletePeriod = createAsyncThunk(
+  "periods/delete",
+  async (periodId, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await periodService.deletePeriod(periodId, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const periodSlice = createSlice({
   name: "period",
   initialState,
@@ -43,11 +63,19 @@ export const periodSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(addPeriods.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.periods.push(action.payload);
-    });
+    builder
+      .addCase(addPeriods.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.periods.push(action.payload);
+      })
+      .addCase(deletePeriod.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.periods = state.periods.filter(
+          (per) => per._id !== action.payload
+        );
+      });
   },
 });
 

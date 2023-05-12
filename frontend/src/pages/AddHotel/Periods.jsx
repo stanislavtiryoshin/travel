@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { addPeriods } from "../../features/periods/periodSlice";
 import {
   addHotel,
-  deletePeriod,
   updateHotel,
   updateHotelPeriods,
 } from "../../features/hotel/hotelSlice";
+import { deletePeriod } from "../../features/periods/periodSlice";
 import Section from "../../components/Section";
 
 const Periods = ({ periods, setPeriods, updateHotelData, hotelId }) => {
@@ -56,12 +56,10 @@ const Periods = ({ periods, setPeriods, updateHotelData, hotelId }) => {
                     {`Период ${idx + 1}`}
                     <button
                       onClick={() => {
-                        dispatch(
-                          deletePeriod({
-                            hotelId: hotelId,
-                            periodId: per._id,
-                          })
-                        ).then((response) => updateHotelData());
+                        dispatch(deletePeriod(per._id)).then(() => {
+                          updateHotelData();
+                          console.log("updated");
+                        });
                       }}
                     >
                       X

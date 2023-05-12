@@ -14,8 +14,20 @@ const addPeriods = async (periods, token) => {
   return response.data;
 };
 
+// Delete period
+
+const deletePeriod = async (periodId, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  await axios.delete(API_URL + periodId, config);
+};
+
 const periodService = {
   addPeriods,
+  deletePeriod,
 };
 
 export default periodService;

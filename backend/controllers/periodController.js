@@ -69,16 +69,21 @@ const addPeriod = asyncHandler(async (req, res) => {
 //@access Public
 
 const deletePeriod = asyncHandler(async (req, res) => {
-  const { hotelId, periodId } = req.body;
+  const { periodId } = req.params;
+
+  const period = await Period.findById(periodId);
   await Period.deleteOne({ _id: periodId });
-  const hotel = await Hotel.findByIdAndUpdate(hotelId, {
+
+  const hotel = await Hotel.findByIdAndUpdate(period.hotel, {
     $pull: {
       periods: periodId,
     },
   });
+
   if (hotel.rooms && hotel.rooms.length > 0) {
     try {
       for (const roomId of hotel.rooms) {
+        console.log(roomId);
         await Room.findByIdAndUpdate(roomId, {
           $pull: {
             periodPrices: {
@@ -91,6 +96,7 @@ const deletePeriod = asyncHandler(async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   }
+
   res.status(200).send("Deleted successfully");
 });
 
