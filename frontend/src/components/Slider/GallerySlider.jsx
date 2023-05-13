@@ -12,7 +12,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 
-const GallerySlider = ({ sources }) => {
+const GallerySlider = ({ sources, isSmall }) => {
   const [lightboxController, setLightboxController] = useState({
     toggler: false,
     slide: 1,
@@ -45,7 +45,7 @@ const GallerySlider = ({ sources }) => {
                 slidesPerView: 3,
               },
               1024: {
-                slidesPerView: 4,
+                slidesPerView: isSmall ? 3 : 4,
               },
             }}
           >

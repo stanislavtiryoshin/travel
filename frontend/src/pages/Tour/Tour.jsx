@@ -31,6 +31,8 @@ import room1 from "../../assets/room/1.jpg";
 import room2 from "../../assets/room/2.jpg";
 import room3 from "../../assets/room/3.jpg";
 
+import TourImage from "../../assets/tour/tour.png";
+
 import pti4ka from "../../assets/hotel/pti4ka.svg";
 
 import hotel from "../../assets/hotel.png";
@@ -52,6 +54,7 @@ import Sum from "../../components/HotelPage/Sum";
 
 import style from "./Hotel.module.scss";
 import GalleryBox from "../../components/Slider/GalleryBox";
+import { useGetTourPriceQuery } from "../../features/services/price.service";
 
 const Tour = () => {
   const navigate = useNavigate();
@@ -103,132 +106,48 @@ const Tour = () => {
   }, [singleTour]);
 
   const [programIdx, setProgramIdx] = useState(null);
+  const [priceData, setPriceData] = useState({
+    tourId,
+    agesArray: localStorage.getItem("agesArray")
+      ? JSON.parse(localStorage.getItem("agesArray"))
+      : [1000],
+    daysAmount: singleTour && singleTour.duration ? singleTour.duration : 1,
+    start: localStorage.getItem("startDate")
+      ? JSON.parse(localStorage.getItem("startDate"))
+      : Date.now(),
+  });
 
-  // console.log(points, "points");
-  // const { data: roomsData, isLoading: roomIsLoading } =
-  //   useGetRoomByHotelIdLimitQuery({
-  //     tourId,
-  //     limit: roomCount,
-  //   });
+  useEffect(() => {
+    setPriceData((prev) => ({
+      ...prev,
+      agesArray: JSON.parse(localStorage.getItem("agesArray")),
+    }));
+  }, [localStorage.getItem("agesArray")]);
+
+  useEffect(() => {
+    setPriceData((prev) => ({
+      ...prev,
+      daysAmount: JSON.parse(localStorage.getItem("daysAmount")),
+    }));
+  }, [localStorage.getItem("daysAmount")]);
+
+  useEffect(() => {
+    setPriceData((prev) => ({
+      ...prev,
+      start: JSON.parse(localStorage.getItem("startDate")),
+    }));
+  }, [localStorage.getItem("startDate")]);
+
+  const {
+    data: price,
+    isFetching,
+    isLoading: priceIsLoading,
+  } = useGetTourPriceQuery(priceData);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  // const [
-  //   getData,
-  //   {
-  //     data: recommendation,
-  //     isLoading: recommendationIsLoading,
-  //     isSuccess: recommendationSuccess,
-  //   },
-  // ] = useGetHotelsByTagMutation();
 
-  // useEffect(() => {
-  //   getData({
-  //     food: singleHotel && singleHotel.food && singleHotel.food._id,
-  //     comforts: singleHotel && singleHotel.comforts && singleHotel.comforts,
-  //   });
-  // }, [singleHotel]);
-
-  // useEffect(() => {
-  //   if (isError) {
-  //     console.log(message);
-  //   }
-  //   if (tourId) dispatch(getSingleHotel(tourId));
-  //   dispatch(reset());
-  // }, [tourId, isError, isSuccess, message, navigate, dispatch]);
-
-  // const handleOrder = (e) => {
-  //   e.preventDefault();
-  //   dispatch(addOrder(orderTerms));
-  // };
-
-  // const [orderTerms, setOrderTerms] = useState({
-  //   amount: 1,
-  //   days: 2,
-  //   startDate: null,
-  //   endDate: null,
-  //   name: "",
-  //   room: "",
-  //   sum: null,
-  // });
-
-  // const [clientData, setClientData] = useState({
-  //   endDate: 0,
-  //   startDate: 0,
-  //   peopleAmount: 1,
-  //   daysAmount: 2,
-  // });
-
-  // useEffect(() => {
-  //   setClientData({
-  //     ...clientData,
-  //     startDate: window.localStorage.getItem("startDate"),
-  //     endDate: window.localStorage.getItem("endDate"),
-  //     peopleAmount: window.localStorage.getItem("peopleAmount"),
-  //     daysAmount: window.localStorage.getItem("daysAmount"),
-  //   });
-  // }, []);
-
-  // useEffect(() => {
-  //   setOrderTerms({
-  //     ...orderTerms,
-  //     amount: clientData.peopleAmount,
-  //     days: clientData.daysAmount,
-  //     startDate: clientData.startDate,
-  //     endDate: clientData.endDate,
-  //   });
-  // }, [clientData]);
-
-  // useEffect(() => {
-  //   if (singleHotel?.rooms && singleHotel?.rooms.length > 0) {
-  //     setClientRoom(
-  //       singleHotel?.rooms
-  //         // .filter((room) => room.capacity >= clientData.peopleAmount)
-  //         ?.reduce(function (prev, current) {
-  //           return prev.roomPrice < current.roomPrice ? prev : current;
-  //         })
-  //     );
-  //   }
-  // }, [singleHotel.rooms]);
-
-  // const [clientStartingDate, setClientStartingDate] = useState(
-  //   Date.parse(new Date())
-  // );
-  // const [clientEndingDate, setClientEndingDate] = useState(
-  //   Date.parse(new Date(Date.now() + 3600 * 1000 * 24))
-  // );
-
-  // useEffect(() => {
-  //   setClientStartingDate(new Date(+clientData.startDate));
-  //   setClientEndingDate(new Date(+clientData.endDate));
-  // }, [clientData.startDate, clientData.endDate]);
-
-  // const [sum, setSum] = useState(0);
-
-  // const { clientExcursions, clientRooms, excSum } = useSelector(
-  //   (state) => state.client
-  // );
-
-  // useEffect(() => {
-  //   window.localStorage.setItem("sum", sum);
-  //   // if (clientRooms && clientRooms.length > 0)
-  //   //   window.localStorage.setItem("rooms", JSON.stringify(clientRooms));
-  //   if (singleTour) window.localStorage.setItem("tour", singleTour?._id);
-  //   // if (clientExcursions)
-  //   //   window.localStorage.setItem(
-  //   //     "excursions",
-  //   //     JSON.stringify(clientExcursions)
-  //   //   );
-  // }, [sum, singleTour]);
-
-  // if (roomIsLoading) {
-  //   return <div>Loading...</div>;
-  // }
-
-  // if (recommendationIsLoading) {
-  //   return <div>Loading...</div>;
-  // }
   return (
     <div className="hotel_page page">
       <section className="hotel_section">
@@ -238,7 +157,7 @@ const Tour = () => {
               <div className="hotel_main_wrapper wrapper ver">
                 <div className="hotel_page_top shadowed_box">
                   <div className="top_img-box">
-                    <img src={hotel} alt="" className="hotel_img-main" />
+                    <img src={TourImage} alt="" className="hotel_img-main" />
                   </div>
                   <div className="top_content">
                     <div className="top_heading-row row">
@@ -353,7 +272,7 @@ const Tour = () => {
                   </div> */}
                   <div className="gen_info-row">
                     <div className="body_title-box">
-                      <div className="body_title">Об туре</div>
+                      <div className="body_title">О туре</div>
                       <div className="body_title-text">
                         Расположение: {singleTour?.locationId?.locationName},{" "}
                         {singleTour?.locationId?.locationCountry}
@@ -502,7 +421,7 @@ const Tour = () => {
                   {/*ANCHOR */}
                   <div className="hotel_page-rooms">
                     {singleTour &&
-                      singleTour.hotels.map((hotels) => (
+                      singleTour.hotels.map((hotels, idx) => (
                         <div
                           className={`hotel_page-rooms_hotel ${
                             activeId === hotels._id ? "activeRoom" : ""
@@ -515,6 +434,9 @@ const Tour = () => {
                             }
                           }}
                         >
+                          <div className="hotel_page-rooms_counter">
+                            Отель {idx + 1}
+                          </div>
                           <div className="slider_rooms">
                             <GalleryBox
                               sources={[room1, room2, room3]}
@@ -535,7 +457,8 @@ const Tour = () => {
                 </div>
               </div>
               <div className="hotel_side_wrapper wrapper ver">
-                <Sum />
+                {console.log(price, "price of tour")}
+                <Sum priceIsLoading={isFetching} price={price} />
               </div>
             </div>
           ) : null}

@@ -78,6 +78,14 @@
   align-items: unset;
 }
 
+.hotel_page-rooms_counter {
+  font-family: $main-font;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 0 10px;
+  margin: 0 0 10px 0;
+}
+
 .hotel_page-rooms {
   width: 80%;
   display: flex;
@@ -85,13 +93,15 @@
   row-gap: 12px;
 
   .hotel_page-rooms_hotel {
+    width: 100%;
     cursor: pointer;
     padding: 5px;
     .slider_rooms {
       padding: 0 10px;
     }
+
     &.activeRoom {
-      border: 2px solid $base-green;
+      outline: 2px solid $base-green;
       border-radius: 16px;
     }
   }
