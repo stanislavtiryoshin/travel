@@ -27,6 +27,10 @@ import media1 from "../../assets/media1.svg";
 import media2 from "../../assets/media2.svg";
 import ad from "../../assets/ad.png";
 
+import room1 from "../../assets/room/1.jpg";
+import room2 from "../../assets/room/2.jpg";
+import room3 from "../../assets/room/3.jpg";
+
 import pti4ka from "../../assets/hotel/pti4ka.svg";
 
 import hotel from "../../assets/hotel.png";
@@ -47,9 +51,11 @@ import { useGetTourByTagMutation } from "../../features/services/edit.service";
 import Sum from "../../components/HotelPage/Sum";
 
 import style from "./Hotel.module.scss";
+import GalleryBox from "../../components/Slider/GalleryBox";
 
 const Tour = () => {
   const navigate = useNavigate();
+  const [activeId, setIsActiveId] = useState(null);
 
   const [points, setPoints] = React.useState([]);
   const { tourId } = useParams();
@@ -496,7 +502,29 @@ const Tour = () => {
                   {/*ANCHOR */}
                   <div className="hotel_page-rooms">
                     {singleTour &&
-                      singleTour.hotels.map((hotels) => console.log(hotels))}
+                      singleTour.hotels.map((hotels) => (
+                        <div
+                          className={`hotel_page-rooms_hotel ${
+                            activeId === hotels._id ? "activeRoom" : ""
+                          }`}
+                          onClick={() => {
+                            if (activeId === hotels._id) {
+                              setIsActiveId(null);
+                            } else {
+                              setIsActiveId(hotels._id);
+                            }
+                          }}
+                        >
+                          <div className="slider_rooms">
+                            <GalleryBox
+                              sources={[room1, room2, room3]}
+                              isSmall
+                            />
+                          </div>
+
+                          <Room key={hotels._id} room={hotels.room} />
+                        </div>
+                      ))}
                   </div>
                   {/* <button
                     className="load-more-btn"

@@ -30,9 +30,11 @@ import { useGetHotelPriceQuery } from "../../features/services/price.service";
 
 import { setRefetch } from "../../features/search/searchSlice";
 import { addClientRoom } from "../../features/clientSlice";
-import Services from "../../components/Services/Services";
+import Services from "../../components/HotelPage/Services";
 import { ExpandableText } from "../../components/HotelPage/ExpandableText";
 import Sum from "../../components/HotelPage/Sum";
+import ServiceTags from "../../components/HotelPage/TopTags";
+import TopTags from "../../components/HotelPage/TopTags";
 
 const Hotel = () => {
   const dispatch = useDispatch();
@@ -290,34 +292,10 @@ const Hotel = () => {
                       </a>
                     </div>
                     <div className="top_tags-row">
-                      {singleHotel && singleHotel?.hotelServices
-                        ? singleHotel?.hotelServices
-                            ?.filter((serv) => serv.priority === 1)
-                            .map((serv) => {
-                              return (
-                                <div className="hotel_tag" key={serv._id}>
-                                  {serv.icon ? (
-                                    <div
-                                      dangerouslySetInnerHTML={{
-                                        __html: serv.icon,
-                                      }}
-                                    />
-                                  ) : null}
-                                  {serv.hotelServiceName}
-                                </div>
-                              );
-                            })
-                        : null}
+                      <TopTags services={singleHotel?.hotelServices} />
                     </div>
                   </div>
                 </div>
-                {/* <div className="hotel_page-price shadowed_box">
-                  <BodyTitle
-                    title="Цена"
-                    text="Выберите что хотите добавить в свой тур, чтобы рассчитать
-                      стоимость и сравните периоды"
-                  />
-                </div> */}
                 <div className="hotel_page-gen shadowed_box">
                   {clientRoom?._id ? (
                     <>

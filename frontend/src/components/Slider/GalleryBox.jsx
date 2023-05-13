@@ -42,21 +42,22 @@ const GalleryBox = ({ sources, isSmall }) => {
           slide={lightboxController.slide}
         />
       )}
-      {isSmall ? (
-        <></>
-      ) : (
-        <div className="gen_img-box">
-          {sources && (
-            <img
-              src={imgSources[0]}
-              alt=""
-              onClick={() => openLightboxOnSlide(1)}
-              className="primary_img"
-            />
-          )}
-          <GallerySlider sources={imgSources} />
-        </div>
-      )}
+
+      <div className={`${isSmall ? "isTour" : ""} gen_img-box`}>
+        {!isSmall && (
+          <>
+            {sources && (
+              <img
+                src={imgSources[0]}
+                alt=""
+                onClick={() => openLightboxOnSlide(1)}
+                className="primary_img"
+              />
+            )}
+          </>
+        )}
+        <GallerySlider sources={imgSources} />
+      </div>
     </>
   );
 };

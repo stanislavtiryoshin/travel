@@ -83,6 +83,18 @@
   display: flex;
   flex-direction: column;
   row-gap: 12px;
+
+  .hotel_page-rooms_hotel {
+    cursor: pointer;
+    padding: 5px;
+    .slider_rooms {
+      padding: 0 10px;
+    }
+    &.activeRoom {
+      border: 2px solid $base-green;
+      border-radius: 16px;
+    }
+  }
 }
 
 .hotel_main_container.container {

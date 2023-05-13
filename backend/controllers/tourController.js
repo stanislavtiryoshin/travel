@@ -327,7 +327,10 @@ const getPrice = asyncHandler(async (req, res) => {
     console.log(daysArray);
   })(1);
 
-  res.status(200).json(sum);
+  res.status(200).json({
+    sum: sum * 1.1,
+    margeSum: sum * 0.1,
+  });
 });
 
 //@desc   Get searched tours

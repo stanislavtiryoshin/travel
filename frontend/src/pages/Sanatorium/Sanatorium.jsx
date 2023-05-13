@@ -39,7 +39,7 @@ import Loader from "../../components/Loader";
 
 import { setRefetch } from "../../features/search/searchSlice";
 import { addClientRoom } from "../../features/clientSlice";
-import Services from "../../components/Services/Services";
+import Services from "../../components/HotelPage/Services";
 import { ExpandableText } from "../../components/HotelPage/ExpandableText";
 import Sum from "../../components/HotelPage/Sum";
 

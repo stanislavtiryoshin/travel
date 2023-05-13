@@ -723,9 +723,9 @@ const AddHotel = ({
               >
                 <div className="periods_top">
                   <div className="gen_title">Номера </div>
-                  <div className="periods_btns">
+                  {/* <div className="periods_btns">
                     <button className="primary-btn black">Сохранить</button>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="table_wrapper">
                   <table className="periods_table">

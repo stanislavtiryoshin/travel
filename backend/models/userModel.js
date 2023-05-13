@@ -15,29 +15,6 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "Add a password"],
     },
-    trackedCoins: [
-      {
-        coinId: {
-          type: String,
-        },
-      },
-    ],
-    boughtCoins: [
-      {
-        coinId: {
-          type: String,
-        },
-        priceBought: {
-          type: Number,
-        },
-        amount: {
-          type: Number,
-        },
-        value: {
-          type: Number,
-        },
-      },
-    ],
   },
   {
     timestamps: true,

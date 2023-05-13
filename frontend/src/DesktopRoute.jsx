@@ -92,12 +92,6 @@ const DesktopRoute = () => {
           <Route path="/tour/:tourId" element={<Tour />} />
           <Route path="/camp/:campId" element={<Camp />} />
 
-          <Route
-            path="/dashboard/hotel/:hotelId/add-room"
-            element={<AddRoom />}
-          />
-          <Route path="/dashboard/room/:roomId" element={<AdminRoom />} />
-
           <Route path="/dashboard/managers" element={<Manager />} />
           <Route path="/test" element={<Test />} />
         </Routes>
