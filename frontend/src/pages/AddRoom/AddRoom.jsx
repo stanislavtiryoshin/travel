@@ -20,6 +20,14 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
   const navigate = useNavigate();
   const { hotelId } = useParams();
 
+  const [hotelPeriods, setHotelPeriods] = useState();
+
+  useEffect(() => {
+    if (fetchedRoomData?.hotel?.periods) {
+      setHotelPeriods(fetchedRoomData?.hotel?.periods);
+    }
+  }, [fetchedRoomData]);
+
   const [uploadImage] = useUploadImageMutation();
 
   const [roomData, setRoomData] = useState({
@@ -133,7 +141,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
 
   useEffect(() => {
     let services = [];
-    if (roomData.roomServices.length > 0)
+    if (roomData?.roomServices?.length > 0)
       roomData.roomServices.forEach((tag) =>
         services.push({ value: tag, label: tag })
       );
@@ -249,7 +257,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 <select
                   name="roomsNumber"
                   className="primary-input"
-                  value={roomData.beds.bedsType}
+                  value={roomData?.beds?.bedsType}
                   onChange={(e) =>
                     setRoomData({
                       ...roomData,
@@ -276,7 +284,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 <select
                   name="roomsNumber"
                   className="primary-input"
-                  value={roomData.beds.largeBeds}
+                  value={roomData?.beds?.largeBeds}
                   onChange={(e) =>
                     setRoomData({
                       ...roomData,
@@ -294,7 +302,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 <select
                   name="roomsNumber"
                   className="primary-input"
-                  value={roomData.beds.smallBeds}
+                  value={roomData?.beds?.smallBeds}
                   onChange={(e) =>
                     setRoomData({
                       ...roomData,
@@ -327,7 +335,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   name="roomsNumber"
                   className="primary-input"
                   placeholder="Макс. кол-во взрослых"
-                  value={roomData.people.adultMax}
+                  value={roomData?.people?.adultMax}
                   onChange={(e) =>
                     setRoomData({
                       ...roomData,
@@ -351,7 +359,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   name="roomsNumber"
                   className="primary-input"
                   placeholder="Макс. кол-во взрослых"
-                  value={roomData.people.babyMax}
+                  value={roomData?.people?.babyMax}
                   onChange={(e) =>
                     setRoomData({
                       ...roomData,
@@ -375,7 +383,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   name="roomsNumber"
                   className="primary-input"
                   placeholder="Макс. кол-во взрослых"
-                  value={roomData.people.kidsMax}
+                  value={roomData?.people?.kidsMax}
                   onChange={(e) =>
                     setRoomData({
                       ...roomData,
@@ -422,7 +430,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 <select
                   name="roomsNumber"
                   className="primary-input"
-                  value={roomData.smokingPolicy}
+                  value={roomData?.smokingPolicy}
                   onChange={(e) =>
                     setRoomData({
                       ...roomData,
@@ -460,7 +468,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 <select
                   name="roomsNumber"
                   className="primary-input"
-                  value={roomData.bathroom.availablity}
+                  value={roomData ? roomData?.bathroom?.availablity : null}
                   onChange={(e) =>
                     setRoomData({
                       ...roomData,
@@ -523,15 +531,13 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 <thead>
                   <tr>
                     <th>Room</th>
-                    {fetchedRoomData &&
-                      fetchedRoomData?.hotel &&
-                      fetchedRoomData?.hotel.periods &&
-                      fetchedRoomData?.hotel?.periods?.map((period) => (
-                        <th key={period._id}>
-                          {period.startDay}/{period.startMonth} -{" "}
-                          {period.endDay}/{period.endMonth}
-                        </th>
-                      ))}
+                    {console.log(fetchedRoomData, "fetchedRoomData")}
+                    {hotelPeriods?.map((period) => (
+                      <th key={period._id}>
+                        {period.startDay}/{period.startMonth} - {period.endDay}/
+                        {period.endMonth}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
@@ -609,7 +615,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                     name=""
                     id=""
                     className="primary-input"
-                    value={roomData.bathroom.type}
+                    value={roomData?.bathroom?.type}
                     onChange={(e) => {
                       setRoomData({
                         ...roomData,

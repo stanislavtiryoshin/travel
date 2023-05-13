@@ -82,6 +82,11 @@ const DesktopRoute = () => {
             path="/dashboard/sanatorium/:sanatoriumId"
             element={<EditSanatorium />}
           />
+          <Route
+            path="/dashboard/hotel/:hotelId/add-room"
+            element={<AddRoom />}
+          />
+          <Route path="/dashboard/room/:roomId" element={<AdminRoom />} />
 
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />

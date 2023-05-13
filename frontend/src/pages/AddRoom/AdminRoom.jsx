@@ -19,6 +19,7 @@ const AdminRoom = () => {
 
   useEffect(() => {
     dispatch(getSingleRoom(roomId));
+    console.log("refetched room");
   }, [roomId]);
 
   return (

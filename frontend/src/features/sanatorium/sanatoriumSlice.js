@@ -130,21 +130,22 @@ export const sanatoriumSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getSanatoriums.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.sanatoriums = action.payload;
-    });
-    builder.addCase(getSingleSanatorium.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.singleSanatorium = action.payload;
-    });
-    builder.addCase(getSearchedSanatoriums.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.sanatoriums = action.payload;
-    });
+    builder
+      .addCase(getSanatoriums.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.sanatoriums = action.payload;
+      })
+      .addCase(getSingleSanatorium.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.singleSanatorium = action.payload;
+      })
+      .addCase(getSearchedSanatoriums.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.sanatoriums = action.payload;
+      });
   },
 });
 
