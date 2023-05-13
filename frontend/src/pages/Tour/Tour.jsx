@@ -55,6 +55,7 @@ import Sum from "../../components/HotelPage/Sum";
 import style from "./Hotel.module.scss";
 import GalleryBox from "../../components/Slider/GalleryBox";
 import { useGetTourPriceQuery } from "../../features/services/price.service";
+import Services from "../../components/HotelPage/Services";
 
 const Tour = () => {
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ const Tour = () => {
   const { data: singleTour, isLoading, isError } = useGetTourByIdQuery(tourId);
 
   const [roomCount, setRoomCount] = useState(3);
-
+  const { clientRoom } = useSelector((state) => state.client);
   const [recommendation, setRecommendation] = useState([]);
   const [getTour, { isLoading: recommendationIsLoading }] =
     useGetTourByTagMutation();
@@ -192,7 +193,6 @@ const Tour = () => {
                         ? singleTour?.tourServices
                             ?.filter((serv) => serv.priority === 1)
                             .map((serv) => {
-                              console.log(serv, "mapped");
                               return (
                                 <div className="hotel_tag" key={serv._id}>
                                   {serv.icon ? (
@@ -294,29 +294,29 @@ const Tour = () => {
                     <div className="body_title-box">
                       <div className="body_title">Услуги тура</div>
                     </div>
-                    <div className="services_box">
-                      <div className="services_col">
-                        <div className="services_col-title">
-                          <img src={serv} alt="" />
-                          Питание
-                        </div>
-                        <ul className="services-list">
-                          {singleTour &&
-                            singleTour?.food.map((foo) => <li>{foo.label}</li>)}
-                        </ul>
+
+                    <Services hotelServices={singleTour.tourServices} />
+                  </div>
+
+                  <div className="hotel_food-row">
+                    <div className="body_title-box">
+                      <div className="body_title">
+                        Питание{" "}
+                        <div className={`food_tag allIn`}>3-х разовое </div>
                       </div>
-                      <div className="services_col">
-                        <div className="services_col-title">
-                          <img src={serv} alt="" />
-                          Доп. услуги
-                        </div>
-                        <ul className="services-list">
-                          {console.log(singleTour.tourServices)}
-                          {singleTour &&
-                            singleTour.tourServices
-                              .filter((service) => service.priority !== 1)
-                              .map((serv) => <li>{serv.hotelServiceName}</li>)}
-                        </ul>
+                      <div className="body_title-text">
+                        <span>
+                          Наш отель предлагает гостям уютные номера и
+                          великолепный сервис, включая 3-х разовое питание на
+                          каждый день пребывания.
+                        </span>
+                        <span>
+                          Мы заботимся о качестве и свежести нашей еды, чтобы
+                          гости могли насладиться здоровым и вкусным питанием в
+                          течение всего пребывания. Наш шеф-повар готовит блюда
+                          из натуральных и свежих ингредиентов, а также
+                          учитывает предпочтения и потребности каждого гостя.
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -414,26 +414,10 @@ const Tour = () => {
                       </div>
                     ))}
                   </div>
-
-                  {/* <div className="hotel_page-rooms">
-                    <Hotels hotel={singleTour.hotelId} />
-                  </div> */}
-                  {/*ANCHOR */}
                   <div className="hotel_page-rooms">
                     {singleTour &&
                       singleTour.hotels.map((hotels, idx) => (
-                        <div
-                          className={`hotel_page-rooms_hotel ${
-                            activeId === hotels._id ? "activeRoom" : ""
-                          }`}
-                          onClick={() => {
-                            if (activeId === hotels._id) {
-                              setIsActiveId(null);
-                            } else {
-                              setIsActiveId(hotels._id);
-                            }
-                          }}
-                        >
+                        <div className={`hotel_page-rooms_hotel `}>
                           <div className="hotel_page-rooms_counter">
                             Отель {idx + 1}
                           </div>
@@ -444,16 +428,15 @@ const Tour = () => {
                             />
                           </div>
 
-                          <Room key={hotels._id} room={hotels.room} />
+                          <Room
+                            active={clientRoom?._id === hotels?.room?._id}
+                            isDivided
+                            key={hotels._id}
+                            room={hotels.room}
+                          />
                         </div>
                       ))}
                   </div>
-                  {/* <button
-                    className="load-more-btn"
-                    onClick={() => setRoomCount((prev) => prev + 1)}
-                  >
-                    Показать остальные
-                  </button> */}
                 </div>
               </div>
               <div className="hotel_side_wrapper wrapper ver">

@@ -13,6 +13,13 @@
   &.active {
     border: solid 2px rgba(94, 178, 21, 1);
   }
+
+  &.divided_room {
+    border: 2px solid rgba(41, 45, 50, 0.06);
+    -webkit-box-shadow: 4px 4px 16px -10px rgba(34, 60, 80, 0.2);
+    -moz-box-shadow: 4px 4px 16px -10px rgba(34, 60, 80, 0.2);
+    box-shadow: 4px 4px 16px -10px rgba(34, 60, 80, 0.2);
+  }
 }
 
 .rooms_top {

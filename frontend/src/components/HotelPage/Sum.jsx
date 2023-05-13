@@ -21,8 +21,6 @@ const Sum = ({ price, priceData, clientRoom, priceIsLoading, orderTerms }) => {
     console.log(values);
   };
 
-  console.log(orderTerms, "price emae work");
-
   return (
     <div className="hotel_side-top shadowed_box">
       <div className="hotel_side-title">Бронирование</div>

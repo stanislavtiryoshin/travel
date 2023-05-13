@@ -83,7 +83,7 @@
   font-weight: 700;
   font-size: 18px;
   padding: 0 10px;
-  margin: 0 0 10px 0;
+  margin-bottom: 10px;
 }
 
 .hotel_page-rooms {
@@ -97,6 +97,7 @@
     cursor: pointer;
     padding: 5px;
     .slider_rooms {
+      margin-bottom: 40px;
       padding: 0 10px;
     }
 
@@ -564,6 +565,11 @@
   &.incl {
     color: rgba(94, 178, 21, 1);
     background-color: rgba(94, 178, 21, 0.08);
+  }
+
+  &.allIn {
+    color: #2569d7;
+    background-color: #659ffe0f;
   }
 }
 
