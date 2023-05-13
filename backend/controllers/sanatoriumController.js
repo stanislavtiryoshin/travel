@@ -13,6 +13,40 @@ const addSanatorium = async (req, res) => {
   res.status(200).json(post);
 };
 
+//@desc   Update sanatorium
+//@route  PATCH /api/sanatoriums/:sanatoriumId
+//@access Private
+
+const updateSanatorium = asyncHandler(async (req, res) => {
+  const hotel = await Sanatorium.findByIdAndUpdate(
+    req.params.sanatoriumId,
+    req.body,
+    {
+      new: true,
+    }
+  )
+    .populate("locationId")
+    .populate("rooms")
+    .populate("sanatoriumProgram.programId")
+    .populate("food.foodType")
+    .populate("periods")
+    .populate({
+      path: "rooms",
+      populate: {
+        path: "periodPrices.period",
+        model: "Period",
+      },
+    })
+    .populate({
+      path: "sanatoriumServices.serviceType",
+      populate: {
+        path: "category",
+        model: "Category",
+      },
+    });
+  res.status(200).json(hotel);
+});
+
 //@desc   Get sanatoriums
 //@route  GET /api/sanatoriums
 //@access Private
@@ -41,22 +75,58 @@ const getAdminSanatoriums = (req, res) => {
 //@route  GET /api/sanatoriums/:sanatoriumId
 //@access Public
 
-const getSingleSanatorium = (req, res) => {
-  Sanatorium.findById(req.params.sanatoriumId)
+const getSingleSanatorium = asyncHandler(async (req, res) => {
+  let query = Sanatorium.findById(req.params.sanatoriumId)
     .populate("locationId")
     .populate("rooms")
     .populate("sanatoriumProgram.programId")
     .populate("food.foodType")
+    .populate("periods")
+    .populate({
+      path: "rooms",
+      populate: {
+        path: "periodPrices.period",
+        model: "Period",
+      },
+    })
     .populate({
       path: "sanatoriumServices.serviceType",
       populate: {
         path: "category",
         model: "Category",
       },
-    })
-    .then((response) => res.status(200).json(response))
-    .catch((err) => res.sendStatus(403));
-};
+    });
+
+  if (req.query.agesArray) {
+    query = query.populate({
+      path: "rooms",
+      match: {
+        $expr: {
+          $gte: [
+            {
+              $sum: [
+                "$capacity",
+                {
+                  $size: {
+                    $filter: {
+                      input: "$extraPlaces",
+                      as: "extraPlace",
+                      cond: { $ne: ["$$extraPlace.isBabyPlace", true] },
+                    },
+                  },
+                },
+              ],
+            },
+            { $size: req.query.agesArray },
+          ],
+        },
+      },
+    });
+  }
+
+  const singleSanatorium = await query.exec();
+  res.status(200).json(singleSanatorium);
+});
 
 //@desc   Calculate the price of hotel
 //@route  GET /api/hotels/:hotelId/price
@@ -458,6 +528,7 @@ module.exports = {
   getPrice,
   getRoomsByLimit,
   getSearchedSanatoriums,
+  updateSanatorium,
   // TODO!: Спросить
   // getAdminSanatoriums,
 };

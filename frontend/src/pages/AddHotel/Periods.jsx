@@ -1,17 +1,44 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addPeriods } from "../../features/periods/periodSlice";
+import {
+  addPeriods,
+  addSanatoriumPeriods,
+} from "../../features/periods/periodSlice";
 import {
   addHotel,
   updateHotel,
   updateHotelPeriods,
 } from "../../features/hotel/hotelSlice";
+import { getSingleSanatorium } from "../../features/sanatorium/sanatoriumSlice";
 import { deletePeriod } from "../../features/periods/periodSlice";
 import Section from "../../components/Section";
 
-const Periods = ({ periods, setPeriods, updateHotelData, hotelId }) => {
+const Periods = ({ periods, setPeriods, updateHotelData, hotelId, mode }) => {
   const dispatch = useDispatch();
   console.log(periods);
+
+  const addNewPeriods = () => {
+    switch (mode) {
+      case "hotel":
+        dispatch(addPeriods({ periods: periods })).then(() => {
+          updateHotelData();
+          console.log("updated hotel periods");
+        });
+        break;
+      case "sanatorium":
+        dispatch(addSanatoriumPeriods({ periods: periods })).then(() => {
+          updateHotelData();
+          console.log("updated sanatorium periods");
+        });
+        break;
+      default:
+        dispatch(addPeriods({ periods: periods })).then(() => {
+          updateHotelData();
+          console.log("updated hotel periods");
+        });
+        break;
+    }
+  };
   return (
     <Section section="periods_section" wrapper="periods_wrapper ver">
       <div className="periods_top">
@@ -27,7 +54,13 @@ const Periods = ({ periods, setPeriods, updateHotelData, hotelId }) => {
                   startMonth: null,
                   endDay: null,
                   endMonth: null,
-                  hotel: hotelId,
+                  [mode === "hotel"
+                    ? "hotel"
+                    : mode === "sanatorium"
+                    ? "sanatorium"
+                    : mode === "tour"
+                    ? "tour"
+                    : "camp"]: hotelId,
                 },
               ]);
             }}
@@ -37,10 +70,7 @@ const Periods = ({ periods, setPeriods, updateHotelData, hotelId }) => {
           <button
             className="primary-btn black"
             onClick={() => {
-              dispatch(addPeriods({ periods: periods })).then(() => {
-                updateHotelData();
-                console.log(singleHotel);
-              });
+              addNewPeriods();
             }}
           >
             Сохранить

@@ -258,7 +258,7 @@ const tourByTagRecommendation = async (req, res) => {
 //@access Public
 
 const getPrice = asyncHandler(async (req, res) => {
-  const { tourId, agesArray, start, daysAmount } = req.query;
+  const { tourId, agesArray, start, daysAmount, roomId } = req.query;
 
   ages = agesArray.split(",").map(Number);
   console.log(ages, "ages");
@@ -267,6 +267,8 @@ const getPrice = asyncHandler(async (req, res) => {
     path: "periodPrices",
     populate: { path: "period", model: "Period" },
   });
+
+  // res.status(200).json(tour);
 
   const pricesArray = tour.periodPrices;
   let sum = 0;
@@ -280,6 +282,8 @@ const getPrice = asyncHandler(async (req, res) => {
       date.setDate(startingDate.getDate() + i);
       daysArray.push(date);
     }
+
+    console.log(pricesArray);
 
     const findPriceByDate = (date) => {
       if (pricesArray && pricesArray.length > 0) {

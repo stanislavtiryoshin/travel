@@ -107,7 +107,7 @@ const Home = () => {
           <div className="container main_container">
             <Outlet />
           </div>
-          <div className="hotel_ad_wrapper wrapper ver">
+          {/* <div className="hotel_ad_wrapper wrapper ver">
             <div className="hotel_ad_top shadowed_box">
               <a href="">
                 <img src={media} alt="" />
@@ -128,7 +128,7 @@ const Home = () => {
             <div className="hotel_ad-box shadowed_box">
               <img src={ad} alt="" />
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
     </div>

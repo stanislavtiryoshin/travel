@@ -6,6 +6,18 @@ const periodSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Hotel",
     },
+    sanatorium: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Sanatorium",
+    },
+    tour: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tour",
+    },
+    camp: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Camp",
+    },
     startDay: {
       type: Number,
     },

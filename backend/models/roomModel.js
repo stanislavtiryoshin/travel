@@ -5,7 +5,18 @@ const roomSchema = mongoose.Schema(
     hotel: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Hotel",
-      required: true,
+    },
+    sanatorium: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Sanatorium",
+    },
+    tour: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tour",
+    },
+    camp: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Camp",
     },
     img: [String],
     extraFoodIncluded: Boolean,

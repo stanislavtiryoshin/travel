@@ -91,7 +91,7 @@ const Navbar = ({ isSearch }) => {
     location.pathname.includes("/hotels/") ||
       location.pathname.includes("/sanatoriums/") ||
       location.pathname.includes("/camps/") ||
-      location.pathname.includes("/tours/")
+      location.pathname.includes("/tour/")
   );
 
   const [showDashNav] = useState(location.pathname.includes("/dashboard"));

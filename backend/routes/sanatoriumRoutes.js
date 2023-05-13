@@ -8,6 +8,7 @@ const {
   getPrice,
   getRoomsByLimit,
   getSearchedSanatoriums,
+  updateSanatorium,
 } = require("../controllers/sanatoriumController");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -20,6 +21,7 @@ router.get("/", getSanatoriums);
 router.get("/searched", getSearchedSanatoriums);
 router.get("/price", getPrice);
 router.get("/:sanatoriumId", getSingleSanatorium);
+router.patch("/:sanatoriumId", protect, updateSanatorium);
 router.get("/:sanatoriumId/room", getRoomsByLimit);
 
 router.patch("/:id/upload", upload.array("images", 5), (req, res) => {

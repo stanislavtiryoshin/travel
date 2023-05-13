@@ -30,11 +30,13 @@ import ServiceSelector from "../AddHotel/Selector";
 import { useUploadImageMutation } from "../../features/services/upload.service";
 import GalleryBox from "../../components/Slider/GalleryBox";
 import e from "cors";
+import Periods from "../AddHotel/Periods";
+import { updateSanatorium } from "../../features/sanatorium/sanatoriumSlice";
 
 const AddSanatorium = ({
   fetchedSanatoriumData,
   editMode,
-  updateHotelData,
+  updateSanatoriumData,
   handleUploadImage,
 }) => {
   const uid = new ShortUniqueId({
@@ -133,22 +135,6 @@ const AddSanatorium = ({
     { serviceId: "64258af02ba7928f871a09cd" },
   ]);
 
-  // If the hotel already has services, insert them into addedServices
-  // useEffect(() => {
-  //   if (
-  //     fetchedSanatoriumData &&
-  //     fetchedSanatoriumData?.hotelServices?.length > 0
-  //   ) {
-  //     setAddedServices(fetchedSanatoriumData.hotelServices);
-  //     setNewServices(fetchedSanatoriumData.hotelServices);
-  //   }
-  // }, [fetchedSanatoriumData]);
-  // console.log(newServices);
-
-  // useEffect(() => {
-  //   setHotelData({ ...hotelData, hotelServices: newServices });
-  // }, [newServices]);
-
   // Fetching all categories, services, locations
   useEffect(() => {
     axios
@@ -200,7 +186,7 @@ const AddSanatorium = ({
   const [fetchedSanatoriumServices, setFetchedSanatoriumServices] = useState();
 
   useEffect(() => {
-    setAddedSanServices(fetchedSanatoriumData.sanatoriumServices);
+    setAddedSanServices(fetchedSanatoriumData?.sanatoriumServices);
   }, [fetchedSanatoriumData, editMode]);
 
   useEffect(() => {
@@ -263,7 +249,7 @@ const AddSanatorium = ({
           !editMode ? "Создание нового санатория" : "Редактирование санатория"
         }
         onClick={() => {
-          !editMode ? handleSubmit() : dispatch(updateHotel(hotelData));
+          !editMode ? handleSubmit() : dispatch(updateSanatorium(hotelData));
         }}
       />
       <div className="add_hotel-page">
@@ -691,35 +677,6 @@ const AddSanatorium = ({
                 />
               );
             })}
-            {/* {editMode &&
-            fetchedSanatoriumData &&
-            fetchedSanatoriumServices &&
-            fetchedSanatoriumServices.length > 0
-              ? fetchedSanatoriumServices.map((serv, idx) => {
-                  return (
-                    <ServiceCard
-                      setIsOpen={setIsOpen}
-                      number={idx + 1}
-                      setAddedSanServices={setAddedSanServices}
-                      fetchedSanatoriumServices={fetchedSanatoriumServices}
-                      setFetchedSanatoriumServices={
-                        setFetchedSanatoriumServices
-                      }
-                      addedSanServices={addedSanServices}
-                      allCategories={allCategories}
-                      allServices={allServices}
-                      optionList={servicesObjs}
-                      allSanServices={allSanServices}
-                      selectedOptions={selectedOptions}
-                      handleSelect={handleSelect}
-                      setServs={setServs}
-                      servs={servs}
-                      fetchedService={serv}
-                      fetchedMode
-                    />
-                  );
-                })
-              : null} */}
             <button
               className="add_service-btn primary-btn"
               onClick={() => {
@@ -736,128 +693,13 @@ const AddSanatorium = ({
 
         {editMode ? (
           <>
-            <Section section="periods_section" wrapper="periods_wrapper ver">
-              <div className="periods_top">
-                <div className="gen_title">Периоды</div>
-                <div className="periods_btns">
-                  <button
-                    className="primary-btn black clear"
-                    onClick={() => {
-                      setPeriods([
-                        ...periods,
-                        {
-                          startDay: null,
-                          startMonth: null,
-                          endDay: null,
-                          endMonth: null,
-                        },
-                      ]);
-                    }}
-                  >
-                    + Новый период
-                  </button>
-                  <button
-                    className="primary-btn black"
-                    onClick={() => {
-                      dispatch(
-                        updateHotelPeriods({
-                          hotelId: hotelData._id,
-                          periods: periods,
-                        })
-                      ).then((response) => updateHotelData());
-                    }}
-                  >
-                    Сохранить
-                  </button>
-                </div>
-              </div>
-              <div className="periods_box">
-                {periods && periods.length > 0
-                  ? periods?.map((per, idx) => {
-                      const newPeriods = periods;
-                      return (
-                        <div className="period_card shadowed_box">
-                          <div className="period_title">
-                            {`Период ${idx + 1}`}
-                            <button
-                              onClick={() => {
-                                dispatch(
-                                  deletePeriod({
-                                    hotelId: hotelData._id,
-                                    periodId: per._id,
-                                  })
-                                ).then((response) => updateHotelData());
-                              }}
-                            >
-                              X
-                            </button>
-                          </div>
-                          <div className="inputs_row">
-                            <div className="input_col">
-                              <span>Начало</span>
-                              <div className="inputs_content">
-                                <input
-                                  type="number"
-                                  min={1}
-                                  max={31}
-                                  placeholder="d"
-                                  value={per.startDay}
-                                  inputMode="numeric"
-                                  onChange={(e) => {
-                                    newPeriods[idx].startDay = e.target.value;
-                                    setPeriods(newPeriods);
-                                  }}
-                                />
-                                /
-                                <input
-                                  type="number"
-                                  min={1}
-                                  max={31}
-                                  inputMode="numeric"
-                                  placeholder="m"
-                                  value={per.startMonth}
-                                  onChange={(e) => {
-                                    newPeriods[idx].startMonth = e.target.value;
-                                    setPeriods(newPeriods);
-                                  }}
-                                />
-                              </div>
-                            </div>
-                            <div className="input_col">
-                              <span>Конец</span>
-                              <div className="inputs_content">
-                                <input
-                                  type="number"
-                                  min={1}
-                                  max={12}
-                                  placeholder="d"
-                                  value={per.endDay}
-                                  onChange={(e) => {
-                                    newPeriods[idx].endDay = e.target.value;
-                                    setPeriods(newPeriods);
-                                  }}
-                                />
-                                /
-                                <input
-                                  type="number"
-                                  min={1}
-                                  max={12}
-                                  value={per.endMonth}
-                                  placeholder="m"
-                                  onChange={(e) => {
-                                    newPeriods[idx].endMonth = e.target.value;
-                                    setPeriods(newPeriods);
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  : null}
-              </div>
-            </Section>
+            <Periods
+              periods={periods}
+              setPeriods={setPeriods}
+              updateHotelData={updateSanatoriumData}
+              hotelId={hotelData._id}
+              mode="sanatorium"
+            />
             {fetchedSanatoriumData && fetchedSanatoriumData?.periods ? (
               <Section
                 section="tb_section"
@@ -885,7 +727,10 @@ const AddSanatorium = ({
                         hotelData.periods &&
                         prices &&
                         hotelData?.rooms?.map((room) => (
-                          <RoomRow room={room} periods={hotelData.periods} />
+                          <RoomRow
+                            room={room}
+                            periodPrices={room.periodPrices}
+                          />
                         ))}
                     </tbody>
                   </table>

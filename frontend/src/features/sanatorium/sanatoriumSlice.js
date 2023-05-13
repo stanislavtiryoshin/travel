@@ -40,6 +40,26 @@ export const getSanatoriums = createAsyncThunk(
   }
 );
 
+// Update sanatorium
+
+export const updateSanatorium = createAsyncThunk(
+  "sanatoriums/update",
+  async (hotelData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await sanatoriumService.updateSanatorium(hotelData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 // Get single sanatorium by id
 
 export const getSingleSanatorium = createAsyncThunk(
@@ -145,6 +165,11 @@ export const sanatoriumSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.sanatoriums = action.payload;
+      })
+      .addCase(updateSanatorium.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.singleSanatorium = action.payload;
       });
   },
 });

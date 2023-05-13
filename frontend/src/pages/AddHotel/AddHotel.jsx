@@ -715,6 +715,7 @@ const AddHotel = ({
               setPeriods={setPeriods}
               updateHotelData={updateHotelData}
               hotelId={hotelData._id}
+              mode="hotel"
             />
             {fetchedHotelData && fetchedHotelData?.periods ? (
               <Section

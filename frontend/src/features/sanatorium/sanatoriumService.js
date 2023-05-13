@@ -9,6 +9,22 @@ const getSanatoriums = async () => {
   return response.data;
 };
 
+// Update sanatorium
+
+const updateSanatorium = async (hotelData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.patch(
+    API_URL + hotelData._id,
+    hotelData,
+    config
+  );
+  return response.data;
+};
+
 // Get single sanatorium
 
 const getSingleSanatorium = async (sanatoriumId) => {
@@ -40,6 +56,7 @@ const sanatoriumService = {
   getSanatoriums,
   getSingleSanatorium,
   getSearchedSanatoriums,
+  updateSanatorium,
 };
 
 export default sanatoriumService;
