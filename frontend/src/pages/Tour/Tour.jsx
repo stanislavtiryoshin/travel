@@ -457,8 +457,34 @@ const Tour = () => {
                 </div>
               </div>
               <div className="hotel_side_wrapper wrapper ver">
-                {console.log(price, "price of tour")}
-                <Sum priceIsLoading={isFetching} price={price} />
+                <Sum
+                  priceIsLoading={isFetching}
+                  price={price}
+                  clientRoom={
+                    singleTour &&
+                    singleTour.hotels &&
+                    singleTour?.hotels?.find(
+                      (hotels) => hotels?._id === activeId
+                    )?.room
+                  }
+                  orderTerms={{
+                    days: singleTour && singleTour.duration,
+                    startDate: priceData.start,
+                    name: singleTour && singleTour.name,
+                    room: singleTour?.hotels?.find(
+                      (hotels) => hotels?._id === activeId
+                    )?.room?._id,
+                    sum: price.sum,
+                    foodIncluded: true,
+                    hotel: singleTour?.hotels?.find(
+                      (hotels) => hotels?._id === activeId
+                    )?.hotel?._id,
+                    tourId,
+                    endDate:
+                      priceData.start +
+                      singleTour.duration * 60 * 24 * 60 * 1000,
+                  }}
+                />
               </div>
             </div>
           ) : null}

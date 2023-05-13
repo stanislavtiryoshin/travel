@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const orderSchema = mongoose.Schema(
   {
+    tour: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tour",
+    },
     uid: String,
     hotel: {
       type: mongoose.Schema.Types.ObjectId,
@@ -19,7 +23,6 @@ const orderSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    margeSum: Number,
     sum: {
       type: Number,
       required: true,
