@@ -25,6 +25,8 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
   useEffect(() => {
     if (fetchedRoomData?.hotel?.periods) {
       setHotelPeriods(fetchedRoomData?.hotel?.periods);
+    } else if (fetchedRoomData?.sanatorium?.periods) {
+      setHotelPeriods(fetchedRoomData?.sanatorium?.periods);
     }
   }, [fetchedRoomData]);
 

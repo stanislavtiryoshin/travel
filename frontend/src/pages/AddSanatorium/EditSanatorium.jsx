@@ -11,11 +11,20 @@ const EditSanatorium = () => {
   useEffect(() => {
     dispatch(getSingleSanatorium(sanatoriumId));
   }, [sanatoriumId]);
+
+  const updateSanatoriumData = () => {
+    dispatch(getSingleSanatorium(sanatoriumId));
+  };
+
   console.log(singleSanatorium);
   return (
     <>
       <div className="admin_hotel-page page">
-        <AddSanatorium fetchedSanatoriumData={singleSanatorium} editMode />
+        <AddSanatorium
+          fetchedSanatoriumData={singleSanatorium}
+          updateSanatoriumData={updateSanatoriumData}
+          editMode
+        />
       </div>
     </>
   );

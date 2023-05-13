@@ -14,6 +14,18 @@ const addPeriods = async (periods, token) => {
   return response.data;
 };
 
+// Add new sanatorium periods
+
+const addSanatoriumPeriods = async (periods, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.post(API_URL + "sanatorium", periods, config);
+  return response.data;
+};
+
 // Delete period
 
 const deletePeriod = async (periodId, token) => {
@@ -28,6 +40,7 @@ const deletePeriod = async (periodId, token) => {
 const periodService = {
   addPeriods,
   deletePeriod,
+  addSanatoriumPeriods,
 };
 
 export default periodService;

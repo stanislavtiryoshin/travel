@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const Period = require("../models/periodModel");
 const { Hotel } = require("../models/hotelModel");
-const { Sanatorium } = require("../models/sanatoriumModel");
+const Sanatorium = require("../models/sanatoriumModel");
 const Tour = require("../models/tourModel");
 const Camp = require("../models/campModel");
 const Room = require("../models/roomModel");
@@ -93,7 +93,7 @@ const addSanatoriumPeriods = asyncHandler(async (req, res) => {
           if (!period._id) {
             periodObj = await Period.create(period);
             const sanatorium = await Sanatorium.findOneAndUpdate(
-              { _id: periodObj.hotel },
+              { _id: periodObj.sanatorium },
               {
                 $push: {
                   periods: periodObj,

@@ -11,7 +11,7 @@ const initialState = {
   message: "",
 };
 
-// Add new periods
+// Add new hotel periods
 
 export const addPeriods = createAsyncThunk(
   "periods/add",
@@ -19,6 +19,24 @@ export const addPeriods = createAsyncThunk(
     try {
       const token = thunkAPI.getState().auth.user.token;
       return await periodService.addPeriods(periods, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const addSanatoriumPeriods = createAsyncThunk(
+  "periods/addSanatorium",
+  async (periods, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await periodService.addSanatoriumPeriods(periods, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -75,6 +93,11 @@ export const periodSlice = createSlice({
         state.periods = state.periods.filter(
           (per) => per._id !== action.payload
         );
+      })
+      .addCase(addSanatoriumPeriods.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.periods.push(action.payload);
       });
   },
 });
