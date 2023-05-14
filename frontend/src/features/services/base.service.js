@@ -197,6 +197,9 @@ export const baseApi = createApi({
         };
       },
     }),
+    getHotelRooms: builder.query({
+      query: (hotelId) => {},
+    }),
     getLocationByLetter: builder.query({
       query: (letter) => ({
         url: `/locations/query/find?query=${letter}`,

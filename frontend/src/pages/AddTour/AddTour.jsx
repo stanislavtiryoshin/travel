@@ -107,6 +107,7 @@ const AddTour = () => {
       setAllServices(services);
     }
   }, [isLoadService, serviceIsLoad]);
+  const [roomId, setRoomId] = React.useState(null);
 
   const handleSubmit = async () => {
     const values = {
@@ -118,6 +119,10 @@ const AddTour = () => {
       })),
       food: foodValue.map(({ _id }) => _id),
       tourServices: comfortsValue.map(({ servId }) => servId),
+      hotels: {
+        hotel: tourData.hotelId,
+        room: roomId,
+      },
     };
     console.log(values);
     await createTour(values);
@@ -297,7 +302,34 @@ const AddTour = () => {
                       </>
                     )}
                   </select>
-
+                  <select
+                    onChange={(e) => setRoomId(e.target.value)}
+                    className="primary-input"
+                  >
+                    <option value="" selected disabled>
+                      Номер
+                    </option>
+                    {console.log(
+                      hotels?.find((hotel) => hotel._id === tourData.hotelId)
+                        ?.rooms?.length
+                    )}
+                    {hotels?.find((hotel) => hotel._id === tourData.hotelId)
+                      ?.rooms?.length > 0 ? (
+                      <>
+                        {hotels
+                          .find((hotel) => hotel._id === tourData.hotelId)
+                          .rooms.map((rooms) => (
+                            <>
+                              <option value={rooms._id}>
+                                {rooms.roomName}
+                              </option>
+                            </>
+                          ))}
+                      </>
+                    ) : (
+                      <option>В данном отеле нету номеров</option>
+                    )}
+                  </select>
                   <button
                     className="add_service-btn primary-btn"
                     onClick={() => {}}

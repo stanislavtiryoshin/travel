@@ -13,6 +13,8 @@ export default function ServiceSelector({
   const [options, setOptions] = useState([]);
   const [currCateg, setCurrCateg] = useState("Питание");
 
+  console.log(data, "food");
+
   useEffect(() => {
     if (allCategories && allCategories.length > 0) {
       const filteredOptions = data.filter(
