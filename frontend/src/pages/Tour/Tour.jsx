@@ -162,7 +162,9 @@ const Tour = () => {
                   </div>
                   <div className="top_content">
                     <div className="top_heading-row row">
-                      <div className="hotel_name">{singleTour?.name}</div>
+                      <div className="hotel_name">
+                        {singleTour && singleTour?.name}
+                      </div>
                       <RatingBox rating={singleTour?.rating} />
                     </div>
                     <div className="top_location-row row">
@@ -191,18 +193,18 @@ const Tour = () => {
                     <div className="top_tags-row">
                       {singleTour && singleTour?.tourServices
                         ? singleTour?.tourServices
-                            ?.filter((serv) => serv.priority === 1)
+                            ?.filter((serv) => serv?.priority === 1)
                             .map((serv) => {
                               return (
-                                <div className="hotel_tag" key={serv._id}>
-                                  {serv.icon ? (
+                                <div className="hotel_tag" key={serv?._id}>
+                                  {serv?.icon ? (
                                     <div
                                       dangerouslySetInnerHTML={{
                                         __html: serv.icon,
                                       }}
                                     />
                                   ) : null}
-                                  {serv.hotelServiceName}
+                                  {serv?.hotelServiceName}
                                 </div>
                               );
                             })
@@ -288,14 +290,18 @@ const Tour = () => {
                         Выезд до {singleTour?.leaveTime}
                       </div>
                     </div> */}
-                    <div className="desc-row">{singleTour?.description}</div>
+                    <div className="desc-row">
+                      {singleTour && singleTour?.description}
+                    </div>
                   </div>
                   <div className="hotel_services-row">
                     <div className="body_title-box">
                       <div className="body_title">Услуги тура</div>
                     </div>
 
-                    <Services hotelServices={singleTour.tourServices} />
+                    <Services
+                      hotelServices={singleTour && singleTour.tourServices}
+                    />
                   </div>
 
                   <div className="hotel_food-row">
@@ -356,59 +362,64 @@ const Tour = () => {
                         </div>
                         {programIdx === idx && (
                           <>
-                            {point.points.map((info, infoIdx) => (
-                              <div
-                                style={
-                                  point.points.length - 1 === infoIdx
-                                    ? {
-                                        borderBottomLeftRadius: "16px",
-                                        borderBottomRightRadius: "16px",
-                                      }
-                                    : { borderRadius: "0px", boxShadow: "none" }
-                                }
-                                className="tour_info"
-                              >
+                            {point &&
+                              point.points &&
+                              point.points.map((info, infoIdx) => (
                                 <div
-                                  className="tour_info-time"
                                   style={
-                                    point.points &&
                                     point.points.length - 1 === infoIdx
                                       ? {
+                                          borderBottomLeftRadius: "16px",
+                                          borderBottomRightRadius: "16px",
+                                        }
+                                      : {
+                                          borderRadius: "0px",
                                           boxShadow: "none",
                                         }
-                                      : {}
                                   }
+                                  className="tour_info"
                                 >
-                                  {info.time}
+                                  <div
+                                    className="tour_info-time"
+                                    style={
+                                      point.points &&
+                                      point.points.length - 1 === infoIdx
+                                        ? {
+                                            boxShadow: "none",
+                                          }
+                                        : {}
+                                    }
+                                  >
+                                    {info?.time}
+                                  </div>
+                                  <div
+                                    className="tour_info-title"
+                                    style={
+                                      point.points &&
+                                      point.points.length - 1 === infoIdx
+                                        ? {
+                                            boxShadow: "none",
+                                          }
+                                        : {}
+                                    }
+                                  >
+                                    {info?.pointName}
+                                  </div>
+                                  <div
+                                    className="tour_info-desc"
+                                    style={
+                                      point.points &&
+                                      point.points.length - 1 === infoIdx
+                                        ? {
+                                            boxShadow: "none",
+                                          }
+                                        : {}
+                                    }
+                                  >
+                                    {info?.pointDescription}
+                                  </div>
                                 </div>
-                                <div
-                                  className="tour_info-title"
-                                  style={
-                                    point.points &&
-                                    point.points.length - 1 === infoIdx
-                                      ? {
-                                          boxShadow: "none",
-                                        }
-                                      : {}
-                                  }
-                                >
-                                  {info.pointName}
-                                </div>
-                                <div
-                                  className="tour_info-desc"
-                                  style={
-                                    point.points &&
-                                    point.points.length - 1 === infoIdx
-                                      ? {
-                                          boxShadow: "none",
-                                        }
-                                      : {}
-                                  }
-                                >
-                                  {info.pointDescription}
-                                </div>
-                              </div>
-                            ))}
+                              ))}
                           </>
                         )}
                       </div>
@@ -429,10 +440,15 @@ const Tour = () => {
                           </div>
 
                           <Room
-                            active={clientRoom?._id === hotels?.room?._id}
+                            active={
+                              hotels &&
+                              hotels.room &&
+                              clientRoom &&
+                              clientRoom?._id === hotels?.room?._id
+                            }
                             isDivided
-                            key={hotels._id}
-                            room={hotels.room}
+                            key={hotels && hotels._id}
+                            room={hotels && hotels.room}
                           />
                         </div>
                       ))}
@@ -442,7 +458,7 @@ const Tour = () => {
               <div className="hotel_side_wrapper wrapper ver">
                 <Sum
                   priceIsLoading={isFetching}
-                  price={price}
+                  price={price && price}
                   clientRoom={
                     singleTour &&
                     singleTour.hotels &&
@@ -452,16 +468,21 @@ const Tour = () => {
                   }
                   orderTerms={{
                     days: singleTour && singleTour.duration,
-                    startDate: priceData.start,
+                    startDate: priceData && priceData.start,
                     name: singleTour && singleTour.name,
-                    room: singleTour?.hotels?.find(
-                      (hotels) => hotels?._id === activeId
-                    )?.room?._id,
-                    sum: price.sum,
+                    room:
+                      singleTour &&
+                      singleTour.hotels &&
+                      singleTour?.hotels?.find(
+                        (hotels) => hotels?._id === activeId
+                      )?.room?._id,
+                    sum: price && price?.sum,
                     foodIncluded: true,
-                    hotel: singleTour?.hotels?.find(
-                      (hotels) => hotels?._id === activeId
-                    )?.hotel?._id,
+                    hotel:
+                      singleTour &&
+                      singleTour?.hotels?.find(
+                        (hotels) => hotels?._id === activeId
+                      )?.hotel?._id,
                     tourId,
                     endDate:
                       priceData.start +
@@ -479,17 +500,17 @@ const Tour = () => {
           Мы подобрали вам похожие туры. Взгляните, чтобы сравнить
         </div>
         <div className="hotel_similar-body">
-          {recommendation?.map((recomm) => (
+          {recommendation?.map((recomm, idx) => (
             <>
-              {recomm._id !== singleTour._id && (
+              {recomm._id !== tourId && (
                 <Card
-                  comforts={recomm.comforts}
-                  id={recomm._id}
+                  comforts={recomm && recomm.comforts.map((c) => c.name)}
+                  id={recomm && recomm._id}
                   isTour
-                  stars={recomm.rating}
-                  key={recomm._id}
-                  name={recomm.name}
-                  // description={recomm.description}
+                  stars={recomm && recomm.rating}
+                  key={recomm && recomm._id}
+                  name={recomm && recomm.name}
+                  description={recomm.description}
                   location={`${
                     recomm.locationId && recomm.locationId.locationName
                   }, ${recomm.locationId && recomm.locationId.locationCountry}`}

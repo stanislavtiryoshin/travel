@@ -113,9 +113,13 @@ const AddTour = () => {
       ...tourData,
       program: [...addedServices],
       token: user.token,
-      comforts: comfortsValue.map(({ servId }) => servId),
+      comforts: comfortsValue.map(({ label }) => ({
+        name: label,
+      })),
       food: foodValue.map(({ _id }) => _id),
+      tourServices: comfortsValue.map(({ servId }) => servId),
     };
+    console.log(values);
     await createTour(values);
 
     if (!addLoad) {
@@ -123,7 +127,7 @@ const AddTour = () => {
       navigate(`/tour/${addedTour._id}`);
     }
   };
-
+  console.log(comfortsValue);
   const handleDelPoint = (idx, dayIdx) => {
     let newProgram = [...addedServices];
     if (idx !== 0) {

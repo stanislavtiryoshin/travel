@@ -60,7 +60,7 @@ const getTour = asyncHandler(async (req, res) => {
 const addTour = (req, res) => {
   Tour.create(req.body)
     .then((response) => res.status(201).json(response))
-    .catch(() => res.sendStatus(403));
+    .catch((err) => res.status(403).send(err));
 };
 
 const getSingleTour = (req, res) => {
@@ -240,12 +240,15 @@ const tourByTagRecommendation = async (req, res) => {
       .populate("hotels")
       .populate("food")
       .populate("hotelId")
-
-      .populate("comforts");
+      .populate("hotels.room")
+      .populate("hotels.hotel")
+      .populate("comforts")
+      .populate("tourServices");
 
     if (tours.length === 0) {
       return res.sendStatus(404);
     } else {
+      console.log(tours);
       return res.status(200).json(tours);
     }
   } catch (error) {
