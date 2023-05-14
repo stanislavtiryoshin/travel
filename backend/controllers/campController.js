@@ -135,12 +135,19 @@ const getPrice = asyncHandler(async (req, res) => {
   ages = agesArray.split(",").map(Number);
   console.log(ages, "ages");
 
-  const camp = await Camp.findById(campId).populate({
-    path: "periodPrices",
-    populate: { path: "period", model: "Period" },
-  });
+  const camp = await Camp.findById(campId)
+    .populate("periods")
+    .populate({
+      path: "agePrices",
+      populate: {
+        path: "periodPrices.period",
+        model: "Period",
+      },
+    });
 
-  const pricesArray = camp.periodPrices;
+  // res.status(200).json(camp);
+
+  const agePrices = camp.agePrices;
   let sum = 0;
 
   (function calculatePrice(basePrice) {
@@ -154,33 +161,46 @@ const getPrice = asyncHandler(async (req, res) => {
     }
 
     const findPriceByDate = (date) => {
-      if (pricesArray && pricesArray.length > 0) {
+      if (agePrices && agePrices.length > 0) {
         let priceFound = false;
-        pricesArray.forEach((el) => {
-          const startMonth = el.period.startMonth;
-          const startDay = el.period.startDay;
-          const endMonth = el.period.endMonth;
-          const endDay = el.period.endDay;
 
+        agePrices.forEach((el) => {
           let allAgesMatched = true;
 
-          if (isDateInRange(date, startMonth, startDay, endMonth, endDay)) {
-            ages.forEach((age) => {
-              let ageMatchedToPrice = false; // Flag to track if the age matches with any price
-              el.prices.forEach((price) => {
-                if (age >= price.minAge && age <= price.maxAge) {
-                  sum += price.campPrice;
-                  ageMatchedToPrice = true; // Set the flag to true if the age matches with any price
+          ages.forEach((age) => {
+            if (age >= el.minAge && age <= el.maxAge) {
+              const pricesArray = el.periodPrices;
+
+              pricesArray.forEach((p) => {
+                // console.log(p, "p in periodPrices");
+
+                const startDay = p.period.startDay;
+                const startMonth = p.period.startMonth;
+                const endDay = p.period.endDay;
+                const endMonth = p.period.endMonth;
+
+                console.log(
+                  startDay,
+                  "/",
+                  startMonth,
+                  endDay,
+                  "/",
+                  endMonth,
+                  "period date"
+                );
+
+                if (
+                  isDateInRange(date, startMonth, startDay, endMonth, endDay)
+                ) {
+                  sum += p.campPrice;
+                  ageMatchedToPrice = true;
                 }
               });
-              if (!ageMatchedToPrice) {
-                console.log(`Age ${age} doesn't fit`);
-                allAgesMatched = false; // Set the flag to false if any age doesn't match any price
-              }
-            });
+            }
+          });
 
-            priceFound = true;
-          }
+          priceFound = true;
+
           if (!allAgesMatched) {
             return res.status(404).json("Not all ages fit this camp");
           }
