@@ -199,7 +199,18 @@
     margin-bottom: 0;
   }
 }
+.program {
+  display: flex;
+  justify-content: space-between;
+}
+.sdf {
+  width: 10px;
+}
 
+.del-btn-program {
+  display: flex;
+  justify-content: space-between;
+}
 /* DASHBOARD HOTEL ROOM CARD */
 
 .admin_room-card {

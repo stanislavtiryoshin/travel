@@ -42,7 +42,12 @@ const EditCamp = () => {
   const [campData, setCampByData] = useState([]);
   const [fetchCampById, { isLoading: byIdLoaded }] = useLazyGetCampByIdQuery();
 
-  // const [campData, setCampData] = React.useState({});
+  const refetchCamp = () => {
+    fetchCampById(id)
+      .then(({ data }) => setCampByData(data))
+      .catch((err) => console.error(err));
+  };
+
   useEffect(() => {
     fetchCampById(id)
       .then(({ data }) => setCampByData(data))
@@ -94,8 +99,9 @@ const EditCamp = () => {
       ...campData,
       token: user.token,
     };
-    console.table(values);
-    await createCamp(values);
+    //FIXME - After program
+    console.log(values, "submit handle");
+    // await createCamp(values);
   };
 
   const imageRef = React.useRef(null);
@@ -127,8 +133,6 @@ const EditCamp = () => {
       setPeriods(campData?.periods);
     }
   }, [campData]);
-
-  console.log(campData, "camp");
 
   if (byIdLoaded && !campData) {
     return <div> Loading...</div>;
@@ -276,58 +280,6 @@ const EditCamp = () => {
                       }));
                     }}
                   />
-                  {/* <div className="input_title">Тип питания</div> */}
-                  {/* <Selector
-                      optionList={food}
-                      placeholder={`Введите значение`}
-                      styles={{
-                        control: (baseStyles) => ({
-                          ...baseStyles,
-                          width: `${550}px`,
-                        }),
-                      }}
-                    /> */}
-                  {/* <Selector2
-                      data={food}
-                      value={foodData}
-                      placeholder={`Введите значение`}
-                      onChange={setFoodData}
-                      styles={{
-                        control: (baseStyles) => ({
-                          ...baseStyles,
-                          width: `${550}px`,
-                        }),
-                      }}
-                    /> */}
-                  {/* <div className="input_title">Удобства</div>
-                    <Selector2
-                      data={allServices}
-                      value={comforts}
-                      placeholder={`Введите значение`}
-                      onChange={setComforts}
-                      styles={{
-                        control: (baseStyles) => ({
-                          ...baseStyles,
-                          width: `${550}px`,
-                        }),
-                      }}
-                    /> */}
-                  {/* <Selector
-                      optionList={allServices}
-                      placeholder={`Введите значение`}
-                      queryOption={campById.comforts.map((c) => {
-                        return {
-                          label: c,
-                          value: c,
-                        };
-                      })}
-                      styles={{
-                        control: (baseStyles) => ({
-                          ...baseStyles,
-                          width: `${550}px`,
-                        }),
-                      }} */}
-                  {/* /> */}
                   <div className="input_title">Дети</div>
                   <div className="input_row">
                     <select
@@ -515,140 +467,76 @@ const EditCamp = () => {
               </div>
               <div className="add_more-col categ-col shadowed_box">
                 <div className="gen_title">Программа лагеря</div>
-                {campData?.program &&
-                  campData?.program.map((serv, idx) => (
-                    <div className="input_box">
-                      <div className={style.days}>День {idx + 1}</div>
-                      {serv.days.map((points, pointIdx) => (
-                        <>
-                          <div className="input_title">
-                            Пункт {pointIdx + 1}
-                          </div>
-                          <div className="input_row">
-                            <select
-                              className="primary-input"
-                              onChange={(e) => {
-                                serv.days[pointIdx].points = {
-                                  day: idx + 1,
-                                  time: e.target.value,
-                                  pointName: "",
-                                  pointDescription: "",
-                                };
-                              }}
-                            >
-                              <option value="" selected disabled>
-                                Время
-                              </option>
-                              <option value="07:00">07:00</option>
-                              <option value="08:00">08:00</option>
-                              <option value="09:00">09:00</option>
-                              <option value="10:00">10:00</option>
-                            </select>
-                            <Input
-                              placeholder="Название пункта"
-                              value={
-                                serv.days[pointIdx] &&
-                                serv.days[pointIdx].points &&
-                                serv.days[pointIdx].points.pointName
-                              }
-                              onChange={(e) => {
-                                setCampByData((prev) => ({
-                                  ...prev,
-                                  program: [
-                                    ...prev.program.map((d, id) => {
-                                      if (id === idx) {
-                                        return {
-                                          ...d,
-                                          days: [
-                                            ...d.days.map((p, pIdx) => {
-                                              if (pIdx === pointIdx) {
-                                                return {
-                                                  ...p,
-                                                  points: {
-                                                    ...p.points,
-                                                    pointName: e.target.value,
-                                                  },
-                                                };
-                                              }
-                                              return p;
-                                            }),
-                                          ],
-                                        };
-                                      }
-                                      return d;
-                                    }),
-                                  ],
-                                }));
-                              }}
-                            />
-                          </div>
-                          <div className="input_row">
-                            <textarea
-                              className="primary-input"
-                              cols="30"
-                              rows="5"
-                              value={
-                                serv.days[pointIdx] &&
-                                serv.days[pointIdx].points &&
-                                serv.days[pointIdx].points.pointDescription
-                              }
-                              placeholder="Описание"
-                              onChange={(e) => {
-                                setCampByData((prev) => ({
-                                  ...prev,
-                                  program: [
-                                    ...prev.program.map((d, id) => {
-                                      if (id === idx) {
-                                        return {
-                                          ...d,
-                                          days: [
-                                            ...d.days.map((p, pIdx) => {
-                                              if (pIdx === pointIdx) {
-                                                return {
-                                                  ...p,
-                                                  points: {
-                                                    ...p.points,
-                                                    pointDescription:
-                                                      e.target.value,
-                                                  },
-                                                };
-                                              }
-                                              return p;
-                                            }),
-                                          ],
-                                        };
-                                      }
-                                      return d;
-                                    }),
-                                  ],
-                                }));
-                              }}
-                            />
-                          </div>
-                          <button
-                            className={`add_service-btn ${style.bordered_btn}`}
-                            onClick={() => {
-                              setAddedServices((prev) => {
-                                prev.map((d, id) => {
-                                  d.days[id + 1] = {
-                                    points: {
-                                      day: id + 1,
-                                      time: "",
-                                      pointName: "",
-                                      pointDescription: "",
-                                    },
-                                  };
-                                });
-                                return [...prev];
-                              });
+                {addedServices.map((serv, idx) => (
+                  <div className="input_box">
+                    <div className={style.days}>День {idx + 1}</div>
+                    {serv.days.map((points, pointIdx) => (
+                      <>
+                        <div className="input_title">Пункт {pointIdx + 1}</div>
+                        <div className="input_row">
+                          <select
+                            className="primary-input"
+                            onChange={(e) => {
+                              serv.days[pointIdx].points = {
+                                day: idx + 1,
+                                time: e.target.value,
+                                pointName: "",
+                                pointDescription: "",
+                              };
                             }}
                           >
-                            Добавить пункт
-                          </button>
-                        </>
-                      ))}
-                    </div>
-                  ))}
+                            <option value="" selected disabled>
+                              Время
+                            </option>
+                            <option value="07:00">07:00</option>
+                            <option value="08:00">08:00</option>
+                            <option value="09:00">09:00</option>
+                            <option value="10:00">10:00</option>
+                          </select>
+                          <Input
+                            placeholder="Название пункта"
+                            onChange={(e) => {
+                              serv.days[pointIdx].points.pointName =
+                                e.target.value;
+                            }}
+                          />
+                        </div>
+                        <div className="input_row">
+                          <textarea
+                            className="primary-input"
+                            cols="30"
+                            rows="5"
+                            placeholder="Описание"
+                            onChange={(e) => {
+                              serv.days[pointIdx].points.pointDescription =
+                                e.target.value;
+                            }}
+                          />
+                        </div>
+                        <button
+                          className={`add_service-btn ${style.bordered_btn}`}
+                          onClick={() => {
+                            setAddedServices((prev) => {
+                              prev.map((d, id) => {
+                                d.days[id + 1] = {
+                                  points: {
+                                    day: id + 1,
+                                    time: "",
+                                    pointName: "",
+                                    pointDescription: "",
+                                  },
+                                };
+                              });
+                              return [...prev];
+                            });
+                          }}
+                        >
+                          Добавить пункт
+                        </button>
+                      </>
+                    ))}
+                  </div>
+                ))}
                 <button
                   onClick={() =>
                     setAddedServices((prev) => {
@@ -682,6 +570,7 @@ const EditCamp = () => {
           setPeriods={setPeriods}
           hotelId={campData?._id}
           mode="camp"
+          refetch={refetchCamp}
         />
         {campData && campData?.agePrices ? (
           <CampTable

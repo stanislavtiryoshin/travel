@@ -15,7 +15,14 @@ import {
 import { getSingleSanatorium } from "../../features/sanatorium/sanatoriumSlice";
 import Section from "../../components/Section";
 
-const Periods = ({ periods, setPeriods, updateHotelData, hotelId, mode }) => {
+const Periods = ({
+  periods,
+  setPeriods,
+  updateHotelData,
+  hotelId,
+  mode,
+  refetch,
+}) => {
   console.log(hotelId, "hotel ids");
   const dispatch = useDispatch();
   console.log(periods);
@@ -35,7 +42,10 @@ const Periods = ({ periods, setPeriods, updateHotelData, hotelId, mode }) => {
         });
         break;
       case "camp":
-        dispatch(addCampPeriods({ periods: periods }));
+        dispatch(addCampPeriods({ periods: periods })).then(() => {
+          refetch();
+          console.log("updated camp periods");
+        });
         break;
       default:
         dispatch(addPeriods({ periods: periods })).then(() => {

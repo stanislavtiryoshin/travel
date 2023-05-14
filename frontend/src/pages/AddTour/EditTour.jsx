@@ -537,11 +537,12 @@ const EditTour = () => {
               </div>
               <div className="add_more-col categ-col shadowed_box">
                 <div className="gen_title">Программа тура</div>
-                {tourData.program &&
-                  tourData.program.map((serv, idx) => (
-                    <div className="input_box">
+                {addedServices.map((serv, idx) => (
+                  <div className="input_box program">
+                    <div className="program">
                       <div className={style.days}>День {idx + 1}</div>
                       <button
+                        className="sdf"
                         onClick={() => {
                           setDayIdx(idx);
                           setIsOpen(true);
@@ -549,142 +550,83 @@ const EditTour = () => {
                       >
                         ...
                       </button>
-                      {serv.days.map((points, pointIdx) => (
-                        <>
+                    </div>
+
+                    {serv.days.map((points, pointIdx) => (
+                      <>
+                        <div className="del-btn-program">
                           <div className="input_title">
                             Пункт {pointIdx + 1}
                           </div>
                           <button onClick={() => handleDelPoint(pointIdx, idx)}>
                             X
                           </button>
-                          <div className="input_row">
-                            <select
-                              className="primary-input"
-                              onChange={(e) => {
-                                serv.days[pointIdx].points = {
-                                  day: idx + 1,
-                                  time: e.target.value,
-                                  pointName: "",
-                                  pointDescription: "",
-                                };
-                              }}
-                            >
-                              <option value="" selected disabled>
-                                Время
-                              </option>
-                              <option value="07:00">07:00</option>
-                              <option value="08:00">08:00</option>
-                              <option value="09:00">09:00</option>
-                              <option value="10:00">10:00</option>
-                            </select>
-                            {/* {console.log(points.points.pointName)} */}
-                            <Input
-                              placeholder="Название пункта"
-                              value={
-                                serv.days[pointIdx] &&
-                                serv.days[pointIdx].points &&
-                                serv.days[pointIdx].points.pointName
-                              }
-                              onChange={(e) => {
-                                setTourData((prev) => ({
-                                  ...prev,
-                                  program: [
-                                    ...prev.program.map((d, id) => {
-                                      if (id === idx) {
-                                        return {
-                                          ...d,
+                        </div>
 
-                                          days: [
-                                            ...d.days.map((p, pIdx) => {
-                                              if (pIdx === pointIdx) {
-                                                return {
-                                                  ...p,
-                                                  points: {
-                                                    ...p.points,
-                                                    pointName: e.target.value,
-                                                  },
-                                                };
-                                              }
-                                              return p;
-                                            }),
-                                          ],
-                                        };
-                                      }
-                                      return d;
-                                    }),
-                                  ],
-                                }));
-                              }}
-                            />
-                          </div>
-                          <div className="input_row">
-                            <textarea
-                              className="primary-input"
-                              cols="30"
-                              rows="5"
-                              value={
-                                serv.days[pointIdx] &&
-                                serv.days[pointIdx].points &&
-                                serv.days[pointIdx].points.pointDescription
-                              }
-                              placeholder="Описание"
-                              onChange={(e) => {
-                                setTourData((prev) => ({
-                                  ...prev,
-                                  program: [
-                                    ...prev.program.map((d, id) => {
-                                      if (id === idx) {
-                                        return {
-                                          ...d,
-
-                                          days: [
-                                            ...d.days.map((p, pIdx) => {
-                                              if (pIdx === pointIdx) {
-                                                return {
-                                                  ...p,
-                                                  points: {
-                                                    ...p.points,
-                                                    pointDescription:
-                                                      e.target.value,
-                                                  },
-                                                };
-                                              }
-                                              return p;
-                                            }),
-                                          ],
-                                        };
-                                      }
-                                      return d;
-                                    }),
-                                  ],
-                                }));
-                              }}
-                            />
-                          </div>
-                          <button
-                            className={`add_service-btn ${style.bordered_btn}`}
-                            onClick={() => {
-                              setAddedServices((prev) => {
-                                prev.map((d, id) => {
-                                  d.days[id + 1] = {
-                                    points: {
-                                      day: id + 1,
-                                      time: "",
-                                      pointName: "",
-                                      pointDescription: "",
-                                    },
-                                  };
-                                });
-                                return [...prev];
-                              });
+                        <div className="input_row">
+                          <select
+                            className="primary-input"
+                            onChange={(e) => {
+                              serv.days[pointIdx].points = {
+                                day: idx + 1,
+                                time: e.target.value,
+                                pointName: "",
+                                pointDescription: "",
+                              };
                             }}
                           >
-                            Добавить пункт
-                          </button>
-                        </>
-                      ))}
-                    </div>
-                  ))}
+                            <option value="" selected disabled>
+                              Время
+                            </option>
+                            <option value="07:00">07:00</option>
+                            <option value="08:00">08:00</option>
+                            <option value="09:00">09:00</option>
+                            <option value="10:00">10:00</option>
+                          </select>
+                          <Input
+                            placeholder="Название пункта"
+                            onChange={(e) => {
+                              serv.days[pointIdx].points.pointName =
+                                e.target.value;
+                            }}
+                          />
+                        </div>
+                        <div className="input_row">
+                          <textarea
+                            className="primary-input"
+                            cols="30"
+                            rows="5"
+                            placeholder="Описание"
+                            onChange={(e) => {
+                              serv.days[pointIdx].points.pointDescription =
+                                e.target.value;
+                            }}
+                          />
+                        </div>
+                        <button
+                          className={`add_service-btn ${style.bordered_btn}`}
+                          onClick={() => {
+                            setAddedServices((prev) => {
+                              prev.map((d, id) => {
+                                d.days[id + 1] = {
+                                  points: {
+                                    day: id + 1,
+                                    time: "",
+                                    pointName: "",
+                                    pointDescription: "",
+                                  },
+                                };
+                              });
+                              return [...prev];
+                            });
+                          }}
+                        >
+                          Добавить пункт
+                        </button>
+                      </>
+                    ))}
+                  </div>
+                ))}
                 <button
                   onClick={() =>
                     setAddedServices((prev) => {

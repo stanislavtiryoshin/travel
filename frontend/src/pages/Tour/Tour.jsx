@@ -56,6 +56,7 @@ import style from "./Hotel.module.scss";
 import GalleryBox from "../../components/Slider/GalleryBox";
 import { useGetTourPriceQuery } from "../../features/services/price.service";
 import Services from "../../components/HotelPage/Services";
+import { setRefetch } from "../../features/search/searchSlice";
 
 const Tour = () => {
   const navigate = useNavigate();
@@ -125,12 +126,7 @@ const Tour = () => {
     }));
   }, [localStorage.getItem("agesArray")]);
 
-  useEffect(() => {
-    setPriceData((prev) => ({
-      ...prev,
-      daysAmount: JSON.parse(localStorage.getItem("daysAmount")),
-    }));
-  }, [localStorage.getItem("daysAmount")]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setPriceData((prev) => ({
@@ -143,7 +139,12 @@ const Tour = () => {
     data: price,
     isFetching,
     isLoading: priceIsLoading,
+    refetch,
   } = useGetTourPriceQuery(priceData);
+
+  useEffect(() => {
+    dispatch(setRefetch(refetch));
+  }, [price]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -463,8 +464,8 @@ const Tour = () => {
                     singleTour &&
                     singleTour.hotels &&
                     singleTour?.hotels?.find(
-                      (hotels) => hotels?._id === activeId
-                    )?.room
+                      (hotel) => hotel.room._id === clientRoom._id
+                    ).room
                   }
                   orderTerms={{
                     days: singleTour && singleTour.duration,
