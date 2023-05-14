@@ -25,6 +25,7 @@ const Room = ({
   extraPlaces,
   changeExtraFood,
   extraFoodActive,
+  isDivided,
 }) => {
   const [uploadImage] = useUploadImageMutation();
   const dispatch = useDispatch();
@@ -40,7 +41,9 @@ const Room = ({
 
   return (
     <div
-      className={`room_box ${active ? "active" : ""}`}
+      className={`room_box  ${
+        active ? "active" : isDivided ? "divided_room" : ""
+      }`}
       onClick={() => {
         active
           ? dispatch(removeClientRoom(room._id))

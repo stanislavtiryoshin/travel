@@ -31,6 +31,8 @@ import room1 from "../../assets/room/1.jpg";
 import room2 from "../../assets/room/2.jpg";
 import room3 from "../../assets/room/3.jpg";
 
+import TourImage from "../../assets/tour/tour.png";
+
 import pti4ka from "../../assets/hotel/pti4ka.svg";
 
 import hotel from "../../assets/hotel.png";
@@ -52,6 +54,8 @@ import Sum from "../../components/HotelPage/Sum";
 
 import style from "./Hotel.module.scss";
 import GalleryBox from "../../components/Slider/GalleryBox";
+import { useGetTourPriceQuery } from "../../features/services/price.service";
+import Services from "../../components/HotelPage/Services";
 
 const Tour = () => {
   const navigate = useNavigate();
@@ -62,7 +66,7 @@ const Tour = () => {
   const { data: singleTour, isLoading, isError } = useGetTourByIdQuery(tourId);
 
   const [roomCount, setRoomCount] = useState(3);
-
+  const { clientRoom } = useSelector((state) => state.client);
   const [recommendation, setRecommendation] = useState([]);
   const [getTour, { isLoading: recommendationIsLoading }] =
     useGetTourByTagMutation();
@@ -103,132 +107,48 @@ const Tour = () => {
   }, [singleTour]);
 
   const [programIdx, setProgramIdx] = useState(null);
+  const [priceData, setPriceData] = useState({
+    tourId,
+    agesArray: localStorage.getItem("agesArray")
+      ? JSON.parse(localStorage.getItem("agesArray"))
+      : [1000],
+    daysAmount: singleTour && singleTour.duration ? singleTour.duration : 1,
+    start: localStorage.getItem("startDate")
+      ? JSON.parse(localStorage.getItem("startDate"))
+      : Date.now(),
+  });
 
-  // console.log(points, "points");
-  // const { data: roomsData, isLoading: roomIsLoading } =
-  //   useGetRoomByHotelIdLimitQuery({
-  //     tourId,
-  //     limit: roomCount,
-  //   });
+  useEffect(() => {
+    setPriceData((prev) => ({
+      ...prev,
+      agesArray: JSON.parse(localStorage.getItem("agesArray")),
+    }));
+  }, [localStorage.getItem("agesArray")]);
+
+  useEffect(() => {
+    setPriceData((prev) => ({
+      ...prev,
+      daysAmount: JSON.parse(localStorage.getItem("daysAmount")),
+    }));
+  }, [localStorage.getItem("daysAmount")]);
+
+  useEffect(() => {
+    setPriceData((prev) => ({
+      ...prev,
+      start: JSON.parse(localStorage.getItem("startDate")),
+    }));
+  }, [localStorage.getItem("startDate")]);
+
+  const {
+    data: price,
+    isFetching,
+    isLoading: priceIsLoading,
+  } = useGetTourPriceQuery(priceData);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  // const [
-  //   getData,
-  //   {
-  //     data: recommendation,
-  //     isLoading: recommendationIsLoading,
-  //     isSuccess: recommendationSuccess,
-  //   },
-  // ] = useGetHotelsByTagMutation();
 
-  // useEffect(() => {
-  //   getData({
-  //     food: singleHotel && singleHotel.food && singleHotel.food._id,
-  //     comforts: singleHotel && singleHotel.comforts && singleHotel.comforts,
-  //   });
-  // }, [singleHotel]);
-
-  // useEffect(() => {
-  //   if (isError) {
-  //     console.log(message);
-  //   }
-  //   if (tourId) dispatch(getSingleHotel(tourId));
-  //   dispatch(reset());
-  // }, [tourId, isError, isSuccess, message, navigate, dispatch]);
-
-  // const handleOrder = (e) => {
-  //   e.preventDefault();
-  //   dispatch(addOrder(orderTerms));
-  // };
-
-  // const [orderTerms, setOrderTerms] = useState({
-  //   amount: 1,
-  //   days: 2,
-  //   startDate: null,
-  //   endDate: null,
-  //   name: "",
-  //   room: "",
-  //   sum: null,
-  // });
-
-  // const [clientData, setClientData] = useState({
-  //   endDate: 0,
-  //   startDate: 0,
-  //   peopleAmount: 1,
-  //   daysAmount: 2,
-  // });
-
-  // useEffect(() => {
-  //   setClientData({
-  //     ...clientData,
-  //     startDate: window.localStorage.getItem("startDate"),
-  //     endDate: window.localStorage.getItem("endDate"),
-  //     peopleAmount: window.localStorage.getItem("peopleAmount"),
-  //     daysAmount: window.localStorage.getItem("daysAmount"),
-  //   });
-  // }, []);
-
-  // useEffect(() => {
-  //   setOrderTerms({
-  //     ...orderTerms,
-  //     amount: clientData.peopleAmount,
-  //     days: clientData.daysAmount,
-  //     startDate: clientData.startDate,
-  //     endDate: clientData.endDate,
-  //   });
-  // }, [clientData]);
-
-  // useEffect(() => {
-  //   if (singleHotel?.rooms && singleHotel?.rooms.length > 0) {
-  //     setClientRoom(
-  //       singleHotel?.rooms
-  //         // .filter((room) => room.capacity >= clientData.peopleAmount)
-  //         ?.reduce(function (prev, current) {
-  //           return prev.roomPrice < current.roomPrice ? prev : current;
-  //         })
-  //     );
-  //   }
-  // }, [singleHotel.rooms]);
-
-  // const [clientStartingDate, setClientStartingDate] = useState(
-  //   Date.parse(new Date())
-  // );
-  // const [clientEndingDate, setClientEndingDate] = useState(
-  //   Date.parse(new Date(Date.now() + 3600 * 1000 * 24))
-  // );
-
-  // useEffect(() => {
-  //   setClientStartingDate(new Date(+clientData.startDate));
-  //   setClientEndingDate(new Date(+clientData.endDate));
-  // }, [clientData.startDate, clientData.endDate]);
-
-  // const [sum, setSum] = useState(0);
-
-  // const { clientExcursions, clientRooms, excSum } = useSelector(
-  //   (state) => state.client
-  // );
-
-  // useEffect(() => {
-  //   window.localStorage.setItem("sum", sum);
-  //   // if (clientRooms && clientRooms.length > 0)
-  //   //   window.localStorage.setItem("rooms", JSON.stringify(clientRooms));
-  //   if (singleTour) window.localStorage.setItem("tour", singleTour?._id);
-  //   // if (clientExcursions)
-  //   //   window.localStorage.setItem(
-  //   //     "excursions",
-  //   //     JSON.stringify(clientExcursions)
-  //   //   );
-  // }, [sum, singleTour]);
-
-  // if (roomIsLoading) {
-  //   return <div>Loading...</div>;
-  // }
-
-  // if (recommendationIsLoading) {
-  //   return <div>Loading...</div>;
-  // }
   return (
     <div className="hotel_page page">
       <section className="hotel_section">
@@ -238,11 +158,13 @@ const Tour = () => {
               <div className="hotel_main_wrapper wrapper ver">
                 <div className="hotel_page_top shadowed_box">
                   <div className="top_img-box">
-                    <img src={hotel} alt="" className="hotel_img-main" />
+                    <img src={TourImage} alt="" className="hotel_img-main" />
                   </div>
                   <div className="top_content">
                     <div className="top_heading-row row">
-                      <div className="hotel_name">{singleTour?.name}</div>
+                      <div className="hotel_name">
+                        {singleTour && singleTour?.name}
+                      </div>
                       <RatingBox rating={singleTour?.rating} />
                     </div>
                     <div className="top_location-row row">
@@ -271,19 +193,18 @@ const Tour = () => {
                     <div className="top_tags-row">
                       {singleTour && singleTour?.tourServices
                         ? singleTour?.tourServices
-                            ?.filter((serv) => serv.priority === 1)
+                            ?.filter((serv) => serv?.priority === 1)
                             .map((serv) => {
-                              console.log(serv, "mapped");
                               return (
-                                <div className="hotel_tag" key={serv._id}>
-                                  {serv.icon ? (
+                                <div className="hotel_tag" key={serv?._id}>
+                                  {serv?.icon ? (
                                     <div
                                       dangerouslySetInnerHTML={{
                                         __html: serv.icon,
                                       }}
                                     />
                                   ) : null}
-                                  {serv.hotelServiceName}
+                                  {serv?.hotelServiceName}
                                 </div>
                               );
                             })
@@ -353,7 +274,7 @@ const Tour = () => {
                   </div> */}
                   <div className="gen_info-row">
                     <div className="body_title-box">
-                      <div className="body_title">Об туре</div>
+                      <div className="body_title">О туре</div>
                       <div className="body_title-text">
                         Расположение: {singleTour?.locationId?.locationName},{" "}
                         {singleTour?.locationId?.locationCountry}
@@ -369,35 +290,39 @@ const Tour = () => {
                         Выезд до {singleTour?.leaveTime}
                       </div>
                     </div> */}
-                    <div className="desc-row">{singleTour?.description}</div>
+                    <div className="desc-row">
+                      {singleTour && singleTour?.description}
+                    </div>
                   </div>
                   <div className="hotel_services-row">
                     <div className="body_title-box">
                       <div className="body_title">Услуги тура</div>
                     </div>
-                    <div className="services_box">
-                      <div className="services_col">
-                        <div className="services_col-title">
-                          <img src={serv} alt="" />
-                          Питание
-                        </div>
-                        <ul className="services-list">
-                          {singleTour &&
-                            singleTour?.food.map((foo) => <li>{foo.label}</li>)}
-                        </ul>
+
+                    <Services
+                      hotelServices={singleTour && singleTour.tourServices}
+                    />
+                  </div>
+
+                  <div className="hotel_food-row">
+                    <div className="body_title-box">
+                      <div className="body_title">
+                        Питание{" "}
+                        <div className={`food_tag allIn`}>3-х разовое </div>
                       </div>
-                      <div className="services_col">
-                        <div className="services_col-title">
-                          <img src={serv} alt="" />
-                          Доп. услуги
-                        </div>
-                        <ul className="services-list">
-                          {console.log(singleTour.tourServices)}
-                          {singleTour &&
-                            singleTour.tourServices
-                              .filter((service) => service.priority !== 1)
-                              .map((serv) => <li>{serv.hotelServiceName}</li>)}
-                        </ul>
+                      <div className="body_title-text">
+                        <span>
+                          Наш отель предлагает гостям уютные номера и
+                          великолепный сервис, включая 3-х разовое питание на
+                          каждый день пребывания.
+                        </span>
+                        <span>
+                          Мы заботимся о качестве и свежести нашей еды, чтобы
+                          гости могли насладиться здоровым и вкусным питанием в
+                          течение всего пребывания. Наш шеф-повар готовит блюда
+                          из натуральных и свежих ингредиентов, а также
+                          учитывает предпочтения и потребности каждого гостя.
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -437,84 +362,76 @@ const Tour = () => {
                         </div>
                         {programIdx === idx && (
                           <>
-                            {point.points.map((info, infoIdx) => (
-                              <div
-                                style={
-                                  point.points.length - 1 === infoIdx
-                                    ? {
-                                        borderBottomLeftRadius: "16px",
-                                        borderBottomRightRadius: "16px",
-                                      }
-                                    : { borderRadius: "0px", boxShadow: "none" }
-                                }
-                                className="tour_info"
-                              >
+                            {point &&
+                              point.points &&
+                              point.points.map((info, infoIdx) => (
                                 <div
-                                  className="tour_info-time"
                                   style={
-                                    point.points &&
                                     point.points.length - 1 === infoIdx
                                       ? {
+                                          borderBottomLeftRadius: "16px",
+                                          borderBottomRightRadius: "16px",
+                                        }
+                                      : {
+                                          borderRadius: "0px",
                                           boxShadow: "none",
                                         }
-                                      : {}
                                   }
+                                  className="tour_info"
                                 >
-                                  {info.time}
+                                  <div
+                                    className="tour_info-time"
+                                    style={
+                                      point.points &&
+                                      point.points.length - 1 === infoIdx
+                                        ? {
+                                            boxShadow: "none",
+                                          }
+                                        : {}
+                                    }
+                                  >
+                                    {info?.time}
+                                  </div>
+                                  <div
+                                    className="tour_info-title"
+                                    style={
+                                      point.points &&
+                                      point.points.length - 1 === infoIdx
+                                        ? {
+                                            boxShadow: "none",
+                                          }
+                                        : {}
+                                    }
+                                  >
+                                    {info?.pointName}
+                                  </div>
+                                  <div
+                                    className="tour_info-desc"
+                                    style={
+                                      point.points &&
+                                      point.points.length - 1 === infoIdx
+                                        ? {
+                                            boxShadow: "none",
+                                          }
+                                        : {}
+                                    }
+                                  >
+                                    {info?.pointDescription}
+                                  </div>
                                 </div>
-                                <div
-                                  className="tour_info-title"
-                                  style={
-                                    point.points &&
-                                    point.points.length - 1 === infoIdx
-                                      ? {
-                                          boxShadow: "none",
-                                        }
-                                      : {}
-                                  }
-                                >
-                                  {info.pointName}
-                                </div>
-                                <div
-                                  className="tour_info-desc"
-                                  style={
-                                    point.points &&
-                                    point.points.length - 1 === infoIdx
-                                      ? {
-                                          boxShadow: "none",
-                                        }
-                                      : {}
-                                  }
-                                >
-                                  {info.pointDescription}
-                                </div>
-                              </div>
-                            ))}
+                              ))}
                           </>
                         )}
                       </div>
                     ))}
                   </div>
-
-                  {/* <div className="hotel_page-rooms">
-                    <Hotels hotel={singleTour.hotelId} />
-                  </div> */}
-                  {/*ANCHOR */}
                   <div className="hotel_page-rooms">
                     {singleTour &&
-                      singleTour.hotels.map((hotels) => (
-                        <div
-                          className={`hotel_page-rooms_hotel ${
-                            activeId === hotels._id ? "activeRoom" : ""
-                          }`}
-                          onClick={() => {
-                            if (activeId === hotels._id) {
-                              setIsActiveId(null);
-                            } else {
-                              setIsActiveId(hotels._id);
-                            }
-                          }}
-                        >
+                      singleTour.hotels.map((hotels, idx) => (
+                        <div className={`hotel_page-rooms_hotel `}>
+                          <div className="hotel_page-rooms_counter">
+                            Отель {idx + 1}
+                          </div>
                           <div className="slider_rooms">
                             <GalleryBox
                               sources={[room1, room2, room3]}
@@ -522,20 +439,56 @@ const Tour = () => {
                             />
                           </div>
 
-                          <Room key={hotels._id} room={hotels.room} />
+                          <Room
+                            active={
+                              hotels &&
+                              hotels.room &&
+                              clientRoom &&
+                              clientRoom?._id === hotels?.room?._id
+                            }
+                            isDivided
+                            key={hotels && hotels._id}
+                            room={hotels && hotels.room}
+                          />
                         </div>
                       ))}
                   </div>
-                  {/* <button
-                    className="load-more-btn"
-                    onClick={() => setRoomCount((prev) => prev + 1)}
-                  >
-                    Показать остальные
-                  </button> */}
                 </div>
               </div>
               <div className="hotel_side_wrapper wrapper ver">
-                <Sum />
+                <Sum
+                  priceIsLoading={isFetching}
+                  price={price && price}
+                  clientRoom={
+                    singleTour &&
+                    singleTour.hotels &&
+                    singleTour?.hotels?.find(
+                      (hotels) => hotels?._id === activeId
+                    )?.room
+                  }
+                  orderTerms={{
+                    days: singleTour && singleTour.duration,
+                    startDate: priceData && priceData.start,
+                    name: singleTour && singleTour.name,
+                    room:
+                      singleTour &&
+                      singleTour.hotels &&
+                      singleTour?.hotels?.find(
+                        (hotels) => hotels?._id === activeId
+                      )?.room?._id,
+                    sum: price && price?.sum,
+                    foodIncluded: true,
+                    hotel:
+                      singleTour &&
+                      singleTour?.hotels?.find(
+                        (hotels) => hotels?._id === activeId
+                      )?.hotel?._id,
+                    tourId,
+                    endDate:
+                      priceData.start +
+                      singleTour.duration * 60 * 24 * 60 * 1000,
+                  }}
+                />
               </div>
             </div>
           ) : null}
@@ -547,17 +500,17 @@ const Tour = () => {
           Мы подобрали вам похожие туры. Взгляните, чтобы сравнить
         </div>
         <div className="hotel_similar-body">
-          {recommendation?.map((recomm) => (
+          {recommendation?.map((recomm, idx) => (
             <>
-              {recomm._id !== singleTour._id && (
+              {recomm._id !== tourId && (
                 <Card
-                  comforts={recomm.comforts}
-                  id={recomm._id}
+                  comforts={recomm && recomm.comforts.map((c) => c.name)}
+                  id={recomm && recomm._id}
                   isTour
-                  stars={recomm.rating}
-                  key={recomm._id}
-                  name={recomm.name}
-                  // description={recomm.description}
+                  stars={recomm && recomm.rating}
+                  key={recomm && recomm._id}
+                  name={recomm && recomm.name}
+                  description={recomm.description}
                   location={`${
                     recomm.locationId && recomm.locationId.locationName
                   }, ${recomm.locationId && recomm.locationId.locationCountry}`}

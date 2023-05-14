@@ -133,7 +133,7 @@ const tourSchema = Schema({
   comforts: [
     {
       name: String,
-      priority: Number,
+      // priority: Number,
     },
   ],
   img: [String],

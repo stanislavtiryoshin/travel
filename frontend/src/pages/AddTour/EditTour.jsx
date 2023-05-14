@@ -30,11 +30,10 @@ import GalleryBox from "../../components/Slider/GalleryBox";
 
 const EditTour = () => {
   const { data: food = [], isLoading: isLoadFood } = useGetFoodQuery();
-
+  console.log(food, "food");
   const { id } = useParams("id");
   const [dayIDX, setDayIdx] = React.useState(0);
 
-  // const { data: tourIdData, isLoading: IdTourLoaded } = useGetTourByIdQuery(id);
   const [tourData, setTourData] = React.useState({});
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -47,7 +46,7 @@ const EditTour = () => {
   useEffect(() => {
     fetchTourById(id).then(({ data }) => setTourData(data));
   }, []);
-
+  console.log(tourData.hotels, "tour data");
   const handleDelPoint = (idx, dayIdx) => {
     let newProgram = [...addedServices];
     if (idx !== 0) {
@@ -103,19 +102,28 @@ const EditTour = () => {
     }
   }, [isLoadService]);
 
+  const [roomId, setRoomId] = React.useState(null);
+
   const handleSubmit = async () => {
     const values = {
       ...tourData,
-      // program: [...addedServices],
       token: user.token,
-      comforts: comfortsData.map(({ value }) => value),
+      comforts: comfortsData.map(({ value }) => ({
+        name: value,
+      })),
       food: foodData.map(({ _id }) => _id),
       id,
       img: tourData?.img ? tourData?.img : [],
       price: tourData?.price ? tourData?.price : [],
       rooms: tourData?.rooms ? tourData?.rooms : [],
       locationId: tourData?.locationId,
+      tourServices: comfortsData.map(({ servId }) => servId),
+      hotels: {
+        hotel: tourData.hotelId,
+        room: roomId,
+      },
     };
+    // ANCHOR
     console.table(values);
     await editTour(values);
 
@@ -356,7 +364,38 @@ const EditTour = () => {
                       </>
                     )}
                   </select>
-
+                  {console.log(tourData.hotels)}
+                  <select
+                    onChange={(e) => setRoomId(e.target.value)}
+                    className="primary-input"
+                  >
+                    <option value="" selected disabled>
+                      Номер
+                    </option>
+                    {console.log(
+                      hotels.find(
+                        (hotel) => hotel?._id === tourData?.hotelId?._id
+                      )?.rooms,
+                      "rooms"
+                    )}
+                    {hotels?.find(
+                      (hotel) => hotel?._id === tourData?.hotelId?._id
+                    )?.rooms.length > 0 ? (
+                      <>
+                        {hotels
+                          ?.find((hotel) => hotel._id === tourData.hotelId._id)
+                          ?.rooms.map((rooms) => (
+                            <>
+                              <option value={rooms._id}>
+                                {rooms.roomName}
+                              </option>
+                            </>
+                          ))}
+                      </>
+                    ) : (
+                      <option>В данном отеле нету номеров</option>
+                    )}
+                  </select>
                   <button
                     className="add_service-btn primary-btn"
                     onClick={() => {}}
@@ -364,23 +403,26 @@ const EditTour = () => {
                     Добавить отель
                   </button>
                   <div className="input_title">Тип питания</div>
-
-                  <Selector2
-                    data={food}
-                    value={foodData}
-                    placeholder={`Введите значение`}
-                    onChange={setFoodData}
-                    styles={{
-                      control: (baseStyles) => ({
-                        ...baseStyles,
-                        width: `${550}px`,
-                      }),
-                    }}
-                  />
+                  {!isLoadFood && (
+                    <Selector2
+                      food
+                      data={food}
+                      value={foodData}
+                      placeholder={`Введите значение`}
+                      onChange={setFoodData}
+                      styles={{
+                        control: (baseStyles) => ({
+                          ...baseStyles,
+                          width: `${550}px`,
+                        }),
+                      }}
+                    />
+                  )}
 
                   <div className="input_title">Удобства</div>
 
                   <Selector2
+                    isServ
                     data={allServices}
                     placeholder={`Введите значение`}
                     value={comfortsData}

@@ -46,6 +46,15 @@ export const priceApi = createApi({
         }&excursionsArray=${body.excursionsArray}`,
       }),
     }),
+    getTourPrice: builder.query({
+      query: (body) => ({
+        url: `/tour/price?tourId=${
+          body.tourId !== "" && body.tourId
+        }&agesArray=${body.agesArray !== "" && body.agesArray}&start=${
+          body.start !== "" && body.start
+        }&daysAmount=${body.daysAmount !== "" && body.daysAmount}`,
+      }),
+    }),
   }),
 });
 
@@ -54,4 +63,6 @@ export const {
   useLazyGetHotelPriceQuery,
   useGetSanatoriumPriceQuery,
   useLazyGetSanatoriumPriceQuery,
+  useGetTourPriceQuery,
+  useLazyGetTourPriceQuery,
 } = priceApi;

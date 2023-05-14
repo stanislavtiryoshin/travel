@@ -56,7 +56,7 @@ const GalleryBox = ({ sources, isSmall }) => {
             )}
           </>
         )}
-        <GallerySlider sources={imgSources} />
+        <GallerySlider isSmall sources={imgSources} />
       </div>
     </>
   );
