@@ -179,7 +179,11 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
           to={
             mode === "hotel"
               ? `/dashboard/hotel/${_id}`
-              : `/dashboard/sanatorium/${_id}`
+              : mode === "tour"
+              ? `/dashboard/tour/${_id}`
+              : mode === "sanatorium"
+              ? `/dashboard/sanatorium/${_id}`
+              : `/dashboard/camp/${_id}`
           }
           className="primary-btn clear"
         >

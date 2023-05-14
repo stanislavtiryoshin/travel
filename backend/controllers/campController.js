@@ -3,6 +3,8 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { isDateInRange } = require("../dateUtils");
+const Period = require("../models/periodModel");
+const mongoose = require("mongoose");
 
 //@desc   Get all camps
 //@route  GET /api/camp
@@ -40,16 +42,19 @@ const addCamp = (req, res) => {
 
 const getSingleCamp = (req, res) => {
   const id = req.params.id;
+
   Camp.findById(id)
-    // .populate("food.foodId")
     .populate("locationId")
+    .populate("periods")
     .populate({
-      path: "periodPrices",
-      populate: { path: "period", model: "Period" },
+      path: "agePrices",
+      populate: {
+        path: "periodPrices.period",
+        model: "Period",
+      },
     })
-    // .populate("comforts")
     .then((response) => res.status(200).json(response))
-    .catch(() => res.sendStatus(403));
+    .catch((er) => res.status(403).json(er));
 };
 
 const deleteCamp = (req, res) => {
@@ -89,6 +94,36 @@ const getCampByTags = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
+//@desc   Update individual agePrice
+//@route  PATCH /api/camps/ageprice/:campId
+//@access Public
+
+const updateAgePriceById = asyncHandler(async (req, res) => {
+  const { campId } = req.params;
+  const { periodPrices } = req.body;
+  const agePriceId = new mongoose.Types.ObjectId(req.body.agePriceId);
+  const newCampId = new mongoose.Types.ObjectId(campId);
+
+  // const newageprice = await Camp.findOne({
+  //   _id: newCampId,
+  //   "agePrices._id": agePriceId,
+  // });
+
+  // console.log(newageprice, "newageprice");
+
+  const agePrice = await Camp.findOneAndUpdate(
+    { _id: newCampId, "agePrices._id": agePriceId },
+    { $set: { "agePrices.$.periodPrices": periodPrices } },
+    { new: true }
+  );
+
+  if (!agePrice) {
+    return res.status(404).json({ error: "Age price not found" });
+  }
+
+  res.status(200).json(agePrice);
+});
 
 //@desc   Get camp price
 //@route  GET /api/camps/price
@@ -284,4 +319,5 @@ module.exports = {
   getCampByTags,
   getPrice,
   getSearchedCamps,
+  updateAgePriceById,
 };

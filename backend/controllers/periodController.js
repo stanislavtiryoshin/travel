@@ -175,6 +175,54 @@ const addTourPeriods = asyncHandler(async (req, res) => {
 //@route  POST /api/periods/camp
 //@access Private
 
+// const addCampPeriods = asyncHandler(async (req, res) => {
+//   const { periods } = req.body;
+
+//   if (periods) {
+//     try {
+//       const newPeriods = await Promise.all(
+//         periods.map(async (period) => {
+//           let periodObj;
+
+//           if (!period._id) {
+//             periodObj = await Period.create(period);
+//             if (periodObj.camp) {
+//               const camp = await Camp.findOne({
+//                 _id: periodObj.camp,
+//               });
+
+//               let campPrices = camp.ages.map((el) => ({
+//                 minAge: el.minAge,
+//                 maxAge: el.maxAge,
+//                 campPrice: 0,
+//               }));
+
+//               await Camp.findOneAndUpdate(
+//                 { _id: periodObj.camp },
+//                 {
+//                   $push: {
+//                     periodPrices: {
+//                       period: periodObj._id,
+//                       prices: campPrices,
+//                     },
+//                     periods: periodObj._id,
+//                   },
+//                 }
+//               );
+//             }
+
+//             return periodObj;
+//           } else return;
+//         })
+//       );
+
+//       res.status(200).json(newPeriods);
+//     } catch (error) {
+//       res.status(400).json({ error: error.message });
+//     }
+//   }
+// });
+
 const addCampPeriods = asyncHandler(async (req, res) => {
   const { periods } = req.body;
 
@@ -186,24 +234,16 @@ const addCampPeriods = asyncHandler(async (req, res) => {
 
           if (!period._id) {
             periodObj = await Period.create(period);
-            if (periodObj.hotel) {
-              const camp = await Camp.findOne({
-                _id: periodObj.hotel,
-              });
 
-              let campPrices = camp.ages.map((el) => ({
-                minAge: el.minAge,
-                maxAge: el.maxAge,
-                campPrice: 0,
-              }));
-
+            if (periodObj.camp) {
               await Camp.findOneAndUpdate(
-                { _id: periodObj.hotel },
+                { _id: periodObj.camp },
                 {
-                  $push: {
-                    periodPrices: {
+                  $push: { periods: periodObj._id },
+                  $addToSet: {
+                    "agePrices.$[].periodPrices": {
                       period: periodObj._id,
-                      prices: campPrices,
+                      campPrice: 0,
                     },
                   },
                 }
@@ -211,7 +251,9 @@ const addCampPeriods = asyncHandler(async (req, res) => {
             }
 
             return periodObj;
-          } else return;
+          } else {
+            return;
+          }
         })
       );
 
@@ -327,13 +369,18 @@ const deleteCampPeriod = asyncHandler(async (req, res) => {
   const period = await Period.findById(periodId);
   await Period.deleteOne({ _id: periodId });
 
-  const camp = await Camp.findByIdAndUpdate(period.hotel, {
-    $pull: {
-      periodPrices: {
-        period: periodId,
+  const camp = await Camp.findOneAndUpdate(
+    { _id: period.camp },
+    {
+      $pull: {
+        periods: periodId,
+        "agePrices.$[].periodPrices": {
+          period: periodId,
+        },
       },
     },
-  });
+    { new: true }
+  );
 
   res.status(200).send("Deleted successfully");
 });

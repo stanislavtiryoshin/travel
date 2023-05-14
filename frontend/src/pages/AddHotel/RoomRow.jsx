@@ -18,7 +18,7 @@ const RoomRow = ({
     setNewPeriodPrices(periodPrices);
   }, [periodPrices]);
 
-  console.log(newPeriodPrices);
+  console.log(newPeriodPrices, "newPeriodPrices");
 
   return (
     <>
@@ -141,7 +141,7 @@ const RoomRow = ({
                         setNewPeriodPrices((prevPrices) =>
                           prevPrices.map((prevPeriod) =>
                             prevPeriod._id === period._id
-                              ? { ...prevPeriod, kidPrice: newPrice }
+                              ? { ...prevPeriod, kidPrice: +newPrice }
                               : prevPeriod
                           )
                         );
@@ -204,7 +204,7 @@ const RoomRow = ({
                         setNewPeriodPrices((prevPrices) =>
                           prevPrices.map((prevPeriod) =>
                             prevPeriod._id === period._id
-                              ? { ...prevPeriod, adultPrice: newPrice }
+                              ? { ...prevPeriod, adultPrice: +newPrice }
                               : prevPeriod
                           )
                         );

@@ -12,16 +12,22 @@ const campSchema = Schema({
       maxAge: Number,
     },
   ],
-  periodPrices: [
+  periods: [
     {
-      period: {
-        type: Schema.Types.ObjectId,
-        ref: "Period",
-      },
-      prices: [
+      type: Schema.Types.ObjectId,
+      ref: "Period",
+    },
+  ],
+  agePrices: [
+    {
+      minAge: Number,
+      maxAge: Number,
+      periodPrices: [
         {
-          minAge: Number,
-          maxAge: Number,
+          period: {
+            type: Schema.Types.ObjectId,
+            ref: "Period",
+          },
           campPrice: Number,
         },
       ],

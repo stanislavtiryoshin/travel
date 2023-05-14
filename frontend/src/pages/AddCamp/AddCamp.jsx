@@ -109,83 +109,81 @@ const AddCamp = () => {
       <AdminHead text="Создание лагеря" onClick={handleSubmit} />
       <div className="add_hotel-page page">
         <section className="add_gen-section">
-          <div className="container">
-            <div className="add_gen-wrapper wrapper shadow_box">
-              <AdminAddForm img={addhotel}>
-                <div className="gen_content-box">
-                  <div className="gen_title">Основное о лагере</div>
-                  <div className="input_row">
-                    <Input
-                      placeholder="Название"
-                      onChange={(e) =>
-                        setCampData({ ...campData, name: e.target.value })
-                      }
-                    />
-                    <Input
-                      placeholder="Особенность местоположения"
-                      onChange={(e) =>
-                        setCampData({
-                          ...campData,
-                          locationFeature: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="input_row">
-                    <select
-                      className="primary-input"
-                      type="text"
-                      placeholder="Местоположение"
-                      name="destination"
-                      value={campData.locationId}
-                      onChange={(e) => {
-                        setCampData({
-                          ...campData,
-                          locationId: e.target.value,
-                        });
-                      }}
-                    >
-                      {allLocations.map((location, idx) => {
-                        return (
-                          <option value={location._id} key={idx}>
-                            {location.locationName}
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    <Input
-                      placeholder="Ссылка на карту"
-                      onChange={(e) =>
-                        setCampData({ ...campData, mapLink: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="input_row">
-                    <Input
-                      placeholder="Рейтинг лагеря"
-                      onChange={(e) =>
-                        setCampData({ ...campData, rating: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="input_row">
-                    <textarea
-                      className="primary-input"
-                      cols="30"
-                      rows="5"
-                      placeholder="Описание"
-                      onChange={(e) =>
-                        setCampData({
-                          ...campData,
-                          description: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
+          <div className="add_gen-wrapper wrapper shadow_box">
+            <AdminAddForm img={addhotel}>
+              <div className="gen_content-box">
+                <div className="gen_title">Основное о лагере</div>
+                <div className="input_row">
+                  <Input
+                    placeholder="Название"
+                    onChange={(e) =>
+                      setCampData({ ...campData, name: e.target.value })
+                    }
+                  />
+                  <Input
+                    placeholder="Особенность местоположения"
+                    onChange={(e) =>
+                      setCampData({
+                        ...campData,
+                        locationFeature: e.target.value,
+                      })
+                    }
+                  />
                 </div>
-              </AdminAddForm>
-            </div>
+                <div className="input_row">
+                  <select
+                    className="primary-input"
+                    type="text"
+                    placeholder="Местоположение"
+                    name="destination"
+                    value={campData.locationId}
+                    onChange={(e) => {
+                      setCampData({
+                        ...campData,
+                        locationId: e.target.value,
+                      });
+                    }}
+                  >
+                    {allLocations.map((location, idx) => {
+                      return (
+                        <option value={location._id} key={idx}>
+                          {location.locationName}
+                        </option>
+                      );
+                    })}
+                  </select>
+
+                  <Input
+                    placeholder="Ссылка на карту"
+                    onChange={(e) =>
+                      setCampData({ ...campData, mapLink: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="input_row">
+                  <Input
+                    placeholder="Рейтинг лагеря"
+                    onChange={(e) =>
+                      setCampData({ ...campData, rating: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="input_row">
+                  <textarea
+                    className="primary-input"
+                    cols="30"
+                    rows="5"
+                    placeholder="Описание"
+                    onChange={(e) =>
+                      setCampData({
+                        ...campData,
+                        description: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </AdminAddForm>
           </div>
         </section>
         <section className="add_more-section">

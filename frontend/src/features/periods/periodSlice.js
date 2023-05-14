@@ -31,6 +31,8 @@ export const addPeriods = createAsyncThunk(
   }
 );
 
+// Add new sanatorium periods
+
 export const addSanatoriumPeriods = createAsyncThunk(
   "periods/addSanatorium",
   async (periods, thunkAPI) => {
@@ -49,14 +51,54 @@ export const addSanatoriumPeriods = createAsyncThunk(
   }
 );
 
+// Add new camp periods
+
+export const addCampPeriods = createAsyncThunk(
+  "periods/addCamp",
+  async (periods, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await periodService.addCampPeriods(periods, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 // Delete a period
 
-export const deletePeriod = createAsyncThunk(
+export const deleteHotelPeriod = createAsyncThunk(
   "periods/delete",
   async (periodId, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
       return await periodService.deletePeriod(periodId, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Delete a period
+
+export const deleteCampPeriod = createAsyncThunk(
+  "periods/deleteCamp",
+  async (periodId, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await periodService.deleteCampPeriod(periodId, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -87,7 +129,7 @@ export const periodSlice = createSlice({
         state.isSuccess = true;
         state.periods.push(action.payload);
       })
-      .addCase(deletePeriod.fulfilled, (state, action) => {
+      .addCase(deleteHotelPeriod.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.periods = state.periods.filter(

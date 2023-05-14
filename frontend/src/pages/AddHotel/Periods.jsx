@@ -1,8 +1,11 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  addCampPeriods,
   addPeriods,
   addSanatoriumPeriods,
+  deleteCampPeriod,
+  deleteHotelPeriod,
 } from "../../features/periods/periodSlice";
 import {
   addHotel,
@@ -10,10 +13,10 @@ import {
   updateHotelPeriods,
 } from "../../features/hotel/hotelSlice";
 import { getSingleSanatorium } from "../../features/sanatorium/sanatoriumSlice";
-import { deletePeriod } from "../../features/periods/periodSlice";
 import Section from "../../components/Section";
 
 const Periods = ({ periods, setPeriods, updateHotelData, hotelId, mode }) => {
+  console.log(hotelId, "hotel ids");
   const dispatch = useDispatch();
   console.log(periods);
 
@@ -31,6 +34,9 @@ const Periods = ({ periods, setPeriods, updateHotelData, hotelId, mode }) => {
           console.log("updated sanatorium periods");
         });
         break;
+      case "camp":
+        dispatch(addCampPeriods({ periods: periods }));
+        break;
       default:
         dispatch(addPeriods({ periods: periods })).then(() => {
           updateHotelData();
@@ -39,6 +45,25 @@ const Periods = ({ periods, setPeriods, updateHotelData, hotelId, mode }) => {
         break;
     }
   };
+
+  const deletePeriod = (periodId) => {
+    switch (mode) {
+      case "hotel":
+        dispatch(deleteHotelPeriod(periodId));
+        break;
+      case "sanatorium":
+        console.log("updated sanatorium periods");
+        break;
+      case "camp":
+        dispatch(deleteCampPeriod(periodId));
+        break;
+      default:
+        dispatch(deleteHotelPeriod(periodId));
+        console.log("updated hotel periods");
+        break;
+    }
+  };
+
   return (
     <Section section="periods_section" wrapper="periods_wrapper ver">
       <div className="periods_top">
@@ -82,19 +107,10 @@ const Periods = ({ periods, setPeriods, updateHotelData, hotelId, mode }) => {
           ? periods?.map((per, idx) => {
               const newPeriods = periods;
               return (
-                <div className="period_card shadowed_box">
+                <div className="period_card shadowed_box" key={per._id || idx}>
                   <div className="period_title">
                     {`Период ${idx + 1}`}
-                    <button
-                      onClick={() => {
-                        dispatch(deletePeriod(per._id)).then(() => {
-                          updateHotelData();
-                          console.log("updated");
-                        });
-                      }}
-                    >
-                      X
-                    </button>
+                    <button onClick={() => deletePeriod(per._id)}>X</button>
                   </div>
                   <div className="inputs_row">
                     <div className="input_col">

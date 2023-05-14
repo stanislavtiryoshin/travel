@@ -234,7 +234,9 @@ const AddHotel = ({
   const [periods, setPeriods] = useState([]);
 
   useEffect(() => {
-    setPeriods(hotelData.periods);
+    if (hotelData?.periods && hotelData?.periods?.length > 0) {
+      setPeriods(hotelData.periods);
+    }
   }, [hotelData]);
 
   console.log(hotelData.periods, "hotelData.periods");

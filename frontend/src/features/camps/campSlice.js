@@ -32,6 +32,26 @@ export const getCamps = createAsyncThunk(
   }
 );
 
+// Update camp's agePrices
+
+export const updateAgePriceById = createAsyncThunk(
+  "camps/updateAgePriceById",
+  async (agePriceData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await campService.updateAgePriceById(agePriceData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const campSlice = createSlice({
   name: "camp",
   initialState,

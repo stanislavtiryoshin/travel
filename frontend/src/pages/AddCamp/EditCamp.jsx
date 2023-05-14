@@ -25,6 +25,8 @@ import { useSelector } from "react-redux";
 
 import { useParams, useNavigate } from "react-router-dom";
 import { useUploadImageMutation } from "../../features/services/upload.service";
+import Periods from "../AddHotel/Periods";
+import CampTable from "./CampTable";
 
 const EditCamp = () => {
   const [foodData, setFoodData] = useState([]);
@@ -74,8 +76,8 @@ const EditCamp = () => {
       setAllServices([]);
     } else {
       let services = [];
-      service.map((serv) => {
-        services.push({
+      service?.map((serv) => {
+        services?.push({
           value: serv.hotelServiceName,
           label: serv.hotelServiceName,
           category: serv.category.categoryName,
@@ -117,6 +119,16 @@ const EditCamp = () => {
       .then((imageRef.current.value = null))
       .catch((err) => console.error(err));
   };
+
+  const [periods, setPeriods] = useState([]);
+
+  useEffect(() => {
+    if (campData?.periods && campData?.periods?.length > 0) {
+      setPeriods(campData?.periods);
+    }
+  }, [campData]);
+
+  console.log(campData, "camp");
 
   if (byIdLoaded && !campData) {
     return <div> Loading...</div>;
@@ -665,6 +677,19 @@ const EditCamp = () => {
             </div>
           </div>
         </section>
+        <Periods
+          periods={periods}
+          setPeriods={setPeriods}
+          hotelId={campData?._id}
+          mode="camp"
+        />
+        {campData && campData?.agePrices ? (
+          <CampTable
+            periods={periods}
+            campId={campData?._id}
+            agePrices={campData.agePrices}
+          />
+        ) : null}
       </div>
     </>
   );
