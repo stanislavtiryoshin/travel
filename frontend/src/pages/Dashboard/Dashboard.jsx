@@ -17,10 +17,11 @@ import { getCamps } from "../../features/camps/campSlice";
 import { getSanatoriums } from "../../features/sanatorium/sanatoriumSlice";
 import Manager from "../Manager/Manager";
 
+import { Outlet } from "react-router-dom";
+
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const selectedHotels = useSelector(selectHotels);
   // const selectedTours = useSelector(selectTours);
 
@@ -54,8 +55,11 @@ const Dashboard = () => {
   const { currentTab } = useSelector((state) => state.admin);
 
   return (
-    <div className="dashboard_page page">
-      {currentTab === 1 && (
+    <>
+      <div className="dashboard_page page">
+        <Outlet />
+
+        {/* {currentTab === 1 && (
         <div className="hotels_tab tab">
           <HotelSearch hotelMode />
           <Section section="dash_section" wrapper="dash_wrapper">
@@ -71,13 +75,13 @@ const Dashboard = () => {
             </div>
           </Section>
         </div>
-      )}
-      {currentTab === 0 && (
-        <div className="reqs_tab tab">
-          <Requests />
-        </div>
-      )}
-      {currentTab === 5 && (
+      )} */}
+        {/* {currentTab === 0 && ( */}
+        {/* <div className="reqs_tab tab">
+        <Requests />
+      </div> */}
+        {/* )}*/}
+        {/* {currentTab === 5 && (
         <div className="reqs_tab tab">
           <Manager hotelMode />
         </div>
@@ -142,8 +146,9 @@ const Dashboard = () => {
             </div>
           </Section>
         </div>
-      )}
-    </div>
+      )} */}
+      </div>
+    </>
   );
 };
 

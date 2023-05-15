@@ -51,11 +51,11 @@ const Navbar = ({ isSearch }) => {
   const { currentTab } = useSelector((state) => state.admin);
 
   const tabsContent = [
-    { id: 0, label: "Заявки" },
-    { id: 1, label: "Отели" },
-    { id: 2, label: "1-3 туры" },
-    { id: 3, label: "Лагеря" },
-    { id: 4, label: "Санатории" },
+    { id: 0, label: "Заявки", path: "/dashboard/requests" },
+    { id: 1, label: "Отели", path: "/dashboard/hotels" },
+    { id: 2, label: "1-3 туры", path: "/dashboard/tours" },
+    { id: 3, label: "Лагеря", path: "/dashboard/camps" },
+    { id: 4, label: "Санатории", path: "/dashboard/sanatoriums" },
     // { id: 5, label: "Менеджеры" },
   ];
 
@@ -64,6 +64,7 @@ const Navbar = ({ isSearch }) => {
       const isActive = currentTab === index;
       return (
         <Link
+          to={tab.path}
           className={`tab-btn ${isActive ? "active" : ""}`}
           onClick={() => dispatch(setCurrentTab(index))}
           key={tab.label}
