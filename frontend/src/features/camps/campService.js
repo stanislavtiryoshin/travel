@@ -9,6 +9,13 @@ const getCamps = async () => {
   return response.data;
 };
 
+// Get single camp
+
+const getSingleCamp = async (campId) => {
+  const response = await axios.get(API_URL + campId);
+  return response.data;
+};
+
 // Update age prices of one camp
 
 const updateAgePriceById = async (agePriceData, token) => {
@@ -31,6 +38,7 @@ const updateAgePriceById = async (agePriceData, token) => {
 const campService = {
   getCamps,
   updateAgePriceById,
+  getSingleCamp,
 };
 
 export default campService;

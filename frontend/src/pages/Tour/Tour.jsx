@@ -57,6 +57,7 @@ import GalleryBox from "../../components/Slider/GalleryBox";
 import { useGetTourPriceQuery } from "../../features/services/price.service";
 import Services from "../../components/HotelPage/Services";
 import { setRefetch } from "../../features/search/searchSlice";
+import Program from "../../components/HotelPage/Program";
 
 const Tour = () => {
   const navigate = useNavigate();
@@ -328,7 +329,8 @@ const Tour = () => {
                     </div>
                   </div>
                   <div className="hotel_services-row">
-                    {points.map((point, idx) => (
+                    <Program points={points} />
+                    {/* {points.map((point, idx) => (
                       <div className="program-tour">
                         <div
                           onClick={() => {
@@ -424,7 +426,7 @@ const Tour = () => {
                           </>
                         )}
                       </div>
-                    ))}
+                    ))} */}
                   </div>
                   <div className="hotel_page-rooms">
                     {singleTour &&

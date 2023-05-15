@@ -33,6 +33,8 @@ const campSchema = Schema({
       ],
     },
   ],
+  enterTime: String,
+  leaveTime: String,
   locationFeature: {
     type: String,
   },

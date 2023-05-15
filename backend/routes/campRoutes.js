@@ -11,6 +11,8 @@ const {
   getPrice,
   getSearchedCamps,
   updateAgePriceById,
+  addAge,
+  deleteAge,
 } = require("../controllers/campController");
 const Camp = require("../models/campModel");
 const { protect } = require("../middleware/authMiddleware");
@@ -24,6 +26,8 @@ router.get("/:id", getSingleCamp);
 router.delete("/:id", protect, deleteCamp);
 router.patch("/:id", protect, updateCamp);
 router.patch("/ageprice/:campId", protect, updateAgePriceById);
+router.patch("/age/:campId", protect, addAge);
+router.delete("/age/:campId", protect, deleteAge);
 
 router.patch("/:id/upload", upload.array("images", 5), (req, res) => {
   const filePath = req.files.map(

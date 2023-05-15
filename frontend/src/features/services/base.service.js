@@ -217,6 +217,11 @@ export const baseApi = createApi({
         url: "/tour/" + id,
       }),
     }),
+    getCampById: builder.query({
+      query: (id) => ({
+        url: "/camps/" + id,
+      }),
+    }),
     addHotelService: builder.mutation({
       query: (body) => ({
         url: "/hotelServices",
@@ -261,6 +266,7 @@ export const {
 
   useGetLocationByLetterQuery,
   useGetTourByIdQuery,
+  useGetCampByIdQuery,
 
   useUpdateStatusMutation,
   useLazyGetOrderByIdQuery,
