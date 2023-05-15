@@ -210,8 +210,6 @@ const Filter = ({ mode }) => {
     });
   };
 
-  console.log(tourFilter);
-
   const setFilter = () => {
     switch (mode) {
       case "tour":
@@ -318,7 +316,6 @@ const Filter = ({ mode }) => {
           </div>
         </div>
       ) : null}
-      {console.log(mode, "mode")}
       {mode === "tour" ? (
         <div className="filter_row">
           <div className="filter_title">Длительность тура</div>

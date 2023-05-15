@@ -17,30 +17,40 @@ import {
 import { useGetTourQuery } from "../../features/services/base.service";
 import Loader from "../../components/Loader";
 
+import { useGetTourByFilterQuery } from "../../features/services/filter.service";
+
 // import {setTour}
 
 const TourResults = ({ mode }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { data: tours = [], isLoading: LoadingTours } = useGetTourQuery();
+  const { data: tours = [], isLoading: LoadingTours } = useGetTourByFilterQuery(
+    {
+      locationId: "",
+      duration: "",
+      rating: "",
+      food: [],
+      paymentType: "",
+    }
+  );
+
   const [tourData, setTourData] = useState([]);
 
-  const { tours: tour, isLoading: tourIsLoad } = useSelector(
-    (state) => state.tour
-  );
+  // const { tours: tour, isLoading: tourIsLoad } = useSelector(
+  //   (state) => state.tour
+  // );
 
   useEffect(() => {
     if (!LoadingTours) setTourData(tours);
   }, [tours, LoadingTours]);
 
-  useEffect(() => {
-    if (!tourIsLoad) {
-      setTourData(tour);
-    }
-  }, [tour, tourIsLoad]);
+  // useEffect(() => {
+  //   if (!tourIsLoad) {
+  //     setTourData(tour);
+  //   }
+  // }, [tour, tourIsLoad]);
 
-  console.log(tourData, "tourData in results");
   const [hotelsToShow, setHotelsToShow] = useState(5);
   const { sanatoriums, isError } = useSelector((state) => state.sanatoriums);
   const { startDate, endDate, peopleAmount, daysAmount, destination } =
@@ -60,15 +70,15 @@ const TourResults = ({ mode }) => {
         </div>
         <SortBtn mode={mode} />
       </div>
-      {tourData && tourData.length > 0 ? (
+      {tourData ? (
         tourData
           .filter((hotel, idx) => idx < hotelsToShow)
           .map((hotel, idx) => {
-            console.log(hotel);
+            console.log(hotel.locationId);
             return (
               <HotelCard
                 program={hotel.program}
-                key={idx}
+                key={hotel._id}
                 hotelId={hotel._id}
                 name={hotel.name}
                 locationId={hotel.locationId}
@@ -83,6 +93,11 @@ const TourResults = ({ mode }) => {
                 oldPrice={hotel.oldPrice}
                 hotelStars={hotel.hotelStars}
                 mode="tour"
+                adultsAmount={
+                  localStorage.getItem("agesArray")
+                    ? JSON.parse(localStorage.getItem("agesArray")).length
+                    : 1
+                }
                 // hotelServices={hotel.comforts
                 //   .filter((comfort) => comfort.priority === 1)
                 //   .map((comfort) => ({

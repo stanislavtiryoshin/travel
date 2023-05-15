@@ -32,6 +32,7 @@ const HotelCard = ({
   hotel,
   isTour,
   days,
+  adultsAmount,
 }) => {
   const [cheapestRoom, setCheapestRoom] = useState();
 
@@ -174,7 +175,7 @@ const HotelCard = ({
           )}
 
           <div className="card_right-people">
-            На {hotel.adultsAmount} взр.
+            На {adultsAmount ? adultsAmount : 1} взр.
             {hotel.kidsAmount && hotel.kidsAmount > 0
               ? `, ${hotel.kidsAmount} дет.`
               : null}

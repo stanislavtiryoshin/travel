@@ -57,19 +57,33 @@ const HotelsResults = ({ mode }) => {
             return (
               <HotelCard
                 program={hotel.program}
-                key={idx}
+                key={hotel._id}
                 hotelId={hotel._id}
                 name={hotel.name}
                 locationId={hotel.locationId}
-                price={hotel.price * peopleAmount}
-                amount={peopleAmount}
+                price={
+                  hotel.price *
+                  (localStorage.getItem("agesArray")
+                    ? JSON.parse(localStorage.getItem("agesArray")).length
+                    : 1)
+                }
+                adultsAmount={
+                  localStorage.getItem("agesArray")
+                    ? JSON.parse(localStorage.getItem("agesArray")).length
+                    : 1
+                }
                 days={daysAmount}
                 description={hotel.description}
                 rating={hotel.rating}
                 startDate={startDate}
                 endDate={endDate}
                 rooms={hotel.rooms}
-                totalPrice={hotel.totalPrice}
+                totalPrice={
+                  hotel.totalPrice *
+                  (localStorage.getItem("agesArray")
+                    ? JSON.parse(localStorage.getItem("agesArray")).length
+                    : 1)
+                }
                 oldPrice={hotel.oldPrice}
                 hotelStars={hotel.hotelStars}
                 mode={mode}

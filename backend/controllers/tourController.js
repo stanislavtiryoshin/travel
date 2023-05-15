@@ -422,10 +422,12 @@ const getSearchedTours = asyncHandler(async (req, res) => {
     };
   }
 
-  let hotels = await Tour.find(query).populate({
-    path: "periodPrices",
-    populate: { path: "period", model: "Period" },
-  });
+  let hotels = await Tour.find(query)
+    .populate({
+      path: "periodPrices",
+      populate: { path: "period", model: "Period" },
+    })
+    .populate("locationId");
 
   const newHotels = hotels.map((hotel) => {
     const newHotel = hotel.toObject();
