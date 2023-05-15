@@ -98,10 +98,11 @@ const EditCamp = () => {
       id: id,
       ...campData,
       token: user.token,
+      program: addedServices,
     };
-    //FIXME - After program
-    console.log(values, "submit handle");
-    // await createCamp(values);
+
+    // console.log(values, "submit handle");
+    await createCamp(values);
   };
 
   const imageRef = React.useRef(null);

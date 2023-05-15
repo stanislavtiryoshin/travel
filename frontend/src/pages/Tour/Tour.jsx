@@ -88,14 +88,14 @@ const Tour = () => {
         singleTour?.program &&
         singleTour?.program
           ?.map((item) =>
-            item.days.length > 0 ? item.days.map((day) => day.points) : []
+            item?.days?.length > 0 ? item?.days?.map((day) => day?.points) : []
           )
           .reduce((prev, curr) => prev.concat(curr));
 
-      const days = [...new Set(points?.map((point) => point.day))];
+      const days = [...new Set(points?.map((point) => point?.day))];
 
       const result = days.map((day) => {
-        const pointsForDay = points.filter((point) => point.day === day);
+        const pointsForDay = points.filter((point) => point?.day === day);
         const totalPoints = pointsForDay.length;
         return {
           day,

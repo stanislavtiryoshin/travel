@@ -122,9 +122,10 @@ const EditTour = () => {
         hotel: tourData.hotelId,
         room: roomId,
       },
+      program: addedServices,
     };
     // ANCHOR
-    console.table(values);
+    console.log(values, "handling submit button");
     await editTour(values);
 
     // if (!addLoad) {

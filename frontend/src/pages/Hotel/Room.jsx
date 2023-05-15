@@ -35,8 +35,8 @@ const Room = ({
 
   const [tags] = React.useState([
     `${room?.bathroom?.type === "Ванна" ? "Ванна" : "Душ"}`,
-    room.bathExtras,
-    room.roomServices,
+    room?.bathExtras,
+    room?.roomServices,
   ]);
 
   return (
