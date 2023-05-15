@@ -337,6 +337,9 @@ const getPrice = asyncHandler(async (req, res) => {
   res.status(200).json({
     sum: sum * 1.1,
     margeSum: sum * 0.1,
+    livingSum: sum,
+    kidsAmount: ages.filter((age) => age < 1000).length,
+    adultsAmount: ages.filter((age) => age === 1000).length,
   });
 });
 

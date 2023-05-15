@@ -16,7 +16,7 @@ const Sum = ({
   orderTerms,
   campMode,
 }) => {
-  console.log(price);
+  console.log(clientRoom, "clientRoom");
   const formatter = Intl.NumberFormat("ru-RU");
   const handleOrder = (e) => {
     e.preventDefault();
@@ -45,14 +45,38 @@ const Sum = ({
           }}
         >
           <div>
-            {!campMode && clientRoom?._id && (
+            {!campMode &&
+            clientRoom?._id &&
+            !price?.error &&
+            !price?.sumError ? (
               <>
-                <div className="hotel_side-checksum">
-                  <span>{clientRoom.roomName}</span>
-                  <span className="price_span">
-                    {formatter.format(price?.roomSum)} тг.
-                  </span>
-                </div>
+                {price?.roomSum ? (
+                  <div className="hotel_side-checksum">
+                    <span>{clientRoom.roomName}</span>
+                    <span className="price_span">
+                      {formatter.format(price?.roomSum)} тг.
+                    </span>
+                  </div>
+                ) : null}
+                {price?.livingSum ? (
+                  <>
+                    <div className="hotel_side-checksum">
+                      <span>Проживание</span>
+                      <span className="price_span">
+                        {formatter.format(price?.livingSum)} тг.
+                      </span>
+                    </div>
+                    <div className="hotel_side-extraPlace">
+                      для{" "}
+                      {price?.adultsAmount > 0 ? (
+                        <>{price?.adultsAmount} взр.</>
+                      ) : null}
+                      {price?.kidsAmount > 0 ? (
+                        <>, {price?.kidsAmount} дет.</>
+                      ) : null}{" "}
+                    </div>
+                  </>
+                ) : null}
                 {price?.extraPlacesSum && price?.extraPlacesSum !== 0 ? (
                   <div className="hotel_side-extraPlace">
                     <span>
@@ -132,16 +156,16 @@ const Sum = ({
                   </>
                 ) : null}
               </>
-            )}
+            ) : null}
 
             {campMode ? (
               <>
-                {!price?.error ? (
+                {!price?.error && !price?.sumError ? (
                   <>
                     <div className="hotel_side-checksum">
                       <span>Проживание</span>
                       <span className="price_span">
-                        {formatter.format(price?.campSum)} тг.
+                        {formatter.format(price?.livingSum)} тг.
                       </span>
                     </div>
                     <div className="hotel_side-extraPlace">
@@ -171,7 +195,7 @@ const Sum = ({
             ) : null}
           </div>
 
-          {!price?.error ? (
+          {!price?.error && !price?.sumError ? (
             <div className="hotel_side-row total">
               Итого:
               <div>
@@ -181,6 +205,8 @@ const Sum = ({
                 </span>
               </div>
             </div>
+          ) : price.sumError ? (
+            <>Не удалось посчитать</>
           ) : null}
         </div>
         {priceIsLoading ? <SumLoader /> : null}

@@ -35,6 +35,7 @@ import { ExpandableText } from "../../components/HotelPage/ExpandableText";
 import Sum from "../../components/HotelPage/Sum";
 import ServiceTags from "../../components/HotelPage/TopTags";
 import TopTags from "../../components/HotelPage/TopTags";
+import Program from "../../components/HotelPage/Program";
 
 const Camp = () => {
   const dispatch = useDispatch();
@@ -212,6 +213,34 @@ const Camp = () => {
       }));
     }
   }, [orderTerms.foodIncluded]);
+
+  const [points, setPoints] = React.useState([]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      const points =
+        singleCamp?.program &&
+        singleCamp?.program
+          ?.map((item) =>
+            item.days.length > 0 ? item.days.map((day) => day.points) : []
+          )
+          .reduce((prev, curr) => prev.concat(curr));
+
+      const days = [...new Set(points?.map((point) => point.day))];
+
+      const result = days.map((day) => {
+        const pointsForDay = points.filter((point) => point.day === day);
+        const totalPoints = pointsForDay.length;
+        return {
+          day,
+          points: pointsForDay,
+          totalPoints,
+        };
+      });
+
+      setPoints(result);
+    }
+  }, [singleCamp]);
 
   if (isLoading) {
     return <HotelLoader />;
@@ -426,6 +455,8 @@ const Camp = () => {
                       </div>
                     </div>
                   </div>
+                  <img src={divider} alt="" />
+                  <Program points={points} />
                 </div>
               </div>
 
@@ -438,21 +469,14 @@ const Camp = () => {
                   campMode
                 />
 
-                {singleCamp?.locationId?._id ? (
-                  <Excursions
-                    locationId={singleCamp?.locationId?._id}
-                    refetch={refetch}
+                {singleCamp?.locationId?.locationDescription ? (
+                  <ExpandableText
+                    locationName={singleCamp?.locationId?.locationName}
+                    locationDescription={
+                      singleCamp?.locationId?.locationDescription
+                    }
                   />
-                ) : (
-                  "Экскурсии загружаются"
-                )}
-
-                <ExpandableText
-                  locationName={singleCamp?.locationId?.locationName}
-                  locationDescription={
-                    singleCamp?.locationId?.locationDescription
-                  }
-                />
+                ) : null}
 
                 <div className="kids_box">
                   <img src={kids} alt="" />

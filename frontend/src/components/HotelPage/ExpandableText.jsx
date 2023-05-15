@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./HotelPage.scss";
 
 export const ExpandableText = ({ locationDescription, locationName }) => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -7,7 +8,9 @@ export const ExpandableText = ({ locationDescription, locationName }) => {
   const displayText = isExpanded ? locationDescription : truncatedText;
 
   return (
-    <div className={`side_about-box shadowed_box small`}>
+    <div
+      className={`side_about-box shadowed_box ${isExpanded ? "long" : "short"}`}
+    >
       <div className="body_title-box">
         <div className="body_title">Про {locationName} </div>
         <div className="body_title-text">
