@@ -37,6 +37,11 @@ import Hotels from "./pages/Home/Hotels";
 import HotelsResults from "./pages/SearchResults/HotelsResults";
 import SanatoriumsResults from "./pages/SearchResults/SanatoriumsResults";
 import TourResults from "./pages/SearchResults/TourResults";
+import HotelRes from "./pages/DashBoardResults/HotelRes";
+import RequestsRes from "./pages/DashBoardResults/RequestsRes";
+import TourRes from "./pages/DashBoardResults/TourRes";
+import SanatoriumRes from "./pages/DashBoardResults/SanatoriumRes";
+import CampRes from "./pages/DashBoardResults/CampRes";
 
 // const Dashboard = lazy(() => import("./pages/Dashboard/Dashboard"));
 // const Home = lazy(() => import("./pages/Home/Home"));
@@ -73,7 +78,51 @@ const DesktopRoute = () => {
           <Route path="/camps/:campId" element={<Camp />} />
 
           {/* Dashboard */}
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />}>
+            <Route path="/dashboard/requests" element={<RequestsRes />} />
+            <Route path="/dashboard/hotels" element={<HotelRes />} />
+            <Route path="/dashboard/tours" element={<TourRes />} />
+            <Route path="/dashboard/sanatoriums" element={<SanatoriumRes />} />
+            <Route path="/dashboard/camps" element={<CampRes />} />
+
+            <Route path="/dashboard/add-hotel" element={<AddHotel />} />
+            <Route path="/dashboard/hotel/:hotelId" element={<EditHotel />} />
+            <Route path="/dashboard/add-tour" element={<AddTour />} />
+            <Route path="/dashboard/tour/:id" element={<EditTour />} />
+            <Route path="/dashboard/add-camp" element={<AddCamp />} />
+            <Route path="/dashboard/camp/:id" element={<EditCamp />} />
+            <Route
+              path="/dashboard/add-sanatorium"
+              element={<AddSanatorium />}
+            />
+            <Route
+              path="/dashboard/sanatorium/:sanatoriumId"
+              element={<EditSanatorium />}
+            />
+            <Route
+              path="/dashboard/hotel/:hotelId/add-room"
+              element={<AddRoom />}
+            />
+            <Route path="/dashboard/room/:roomId" element={<AdminRoom />} />
+          </Route>
+
+          {/* <Route path="/dashboard/add-hotel" element={<AddHotel />} />
+          <Route path="/dashboard/hotel/:hotelId" element={<EditHotel />} />
+          <Route path="/dashboard/add-tour" element={<AddTour />} />
+          <Route path="/dashboard/tour/:id" element={<EditTour />} />
+          <Route path="/dashboard/add-camp" element={<AddCamp />} />
+          <Route path="/dashboard/camp/:id" element={<EditCamp />} />
+          <Route path="/dashboard/add-sanatorium" element={<AddSanatorium />} />
+          <Route
+            path="/dashboard/sanatorium/:sanatoriumId"
+            element={<EditSanatorium />}
+          />
+          <Route
+            path="/dashboard/hotel/:hotelId/add-room"
+            element={<AddRoom />}
+          />
+          <Route path="/dashboard/room/:roomId" element={<AdminRoom />} /> */}
+          {/* <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/add-hotel" element={<AddHotel />} />
           <Route path="/dashboard/hotel/:hotelId" element={<EditHotel />} />
           <Route path="/dashboard/add-tour" element={<AddTour />} />
@@ -90,7 +139,7 @@ const DesktopRoute = () => {
             path="/dashboard/hotel/:hotelId/add-room"
             element={<AddRoom />}
           />
-          <Route path="/dashboard/room/:roomId" element={<AdminRoom />} />
+          <Route path="/dashboard/room/:roomId" element={<AdminRoom />} /> */}
 
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
