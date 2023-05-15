@@ -55,6 +55,15 @@ export const priceApi = createApi({
         }&daysAmount=${body.daysAmount !== "" && body.daysAmount}`,
       }),
     }),
+    getCampPrice: builder.query({
+      query: (body) => ({
+        url: `/camps/price?campId=${
+          body.campId !== "" && body.campId
+        }&agesArray=${body.agesArray !== "" && body.agesArray}&start=${
+          body.start !== "" && body.start
+        }&daysAmount=${body.daysAmount !== "" && body.daysAmount}`,
+      }),
+    }),
   }),
 });
 
@@ -65,4 +74,6 @@ export const {
   useLazyGetSanatoriumPriceQuery,
   useGetTourPriceQuery,
   useLazyGetTourPriceQuery,
+  useGetCampPriceQuery,
+  useLazyGetCampPriceQuery,
 } = priceApi;

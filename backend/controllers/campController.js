@@ -132,7 +132,7 @@ const updateAgePriceById = asyncHandler(async (req, res) => {
 const getPrice = asyncHandler(async (req, res) => {
   const { campId, agesArray, start, daysAmount } = req.query;
 
-  ages = agesArray.split(",").map(Number);
+  let ages = agesArray.split(",").map(Number);
   console.log(ages, "ages");
 
   const camp = await Camp.findById(campId)
@@ -150,6 +150,19 @@ const getPrice = asyncHandler(async (req, res) => {
   const agePrices = camp.agePrices;
   let sum = 0;
 
+  let allAgesMatched = true;
+
+  for (const age of ages) {
+    if (!camp.ages.some((el) => age >= el.minAge && age <= el.maxAge)) {
+      allAgesMatched = false;
+      break;
+    }
+  }
+
+  if (!allAgesMatched) {
+    return res.status(200).json({ error: "Not all ages fit this camp" });
+  }
+
   (function calculatePrice(basePrice) {
     let daysArray = [];
     const startingDate = new Date(+start);
@@ -165,7 +178,7 @@ const getPrice = asyncHandler(async (req, res) => {
         let priceFound = false;
 
         agePrices.forEach((el) => {
-          let allAgesMatched = true;
+          let allAgesMatchedcInside = true;
 
           ages.forEach((age) => {
             if (age >= el.minAge && age <= el.maxAge) {
@@ -201,8 +214,8 @@ const getPrice = asyncHandler(async (req, res) => {
 
           priceFound = true;
 
-          if (!allAgesMatched) {
-            return res.status(404).json("Not all ages fit this camp");
+          if (!allAgesMatchedcInside) {
+            return res.status(404).json("Not all ages fit this camp inside");
           }
         });
         if (!priceFound) {
@@ -218,7 +231,12 @@ const getPrice = asyncHandler(async (req, res) => {
     }
   })(1);
 
-  return res.status(200).json(sum);
+  return res.status(200).json({
+    sum: sum * 1.1,
+    campSum: sum,
+    margeSum: sum * 0.1,
+    kidsAmount: ages.filter((age) => age !== 1000).length,
+  });
 });
 
 //@desc   Get searched camps

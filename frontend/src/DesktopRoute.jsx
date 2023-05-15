@@ -67,6 +67,10 @@ const DesktopRoute = () => {
             <Route path="/sanatoriums" element={<SanatoriumsResults />} />
             <Route path="/tours" element={<TourResults />} />
           </Route>
+          <Route path="/hotels/:hotelId" element={<Hotel />} />
+          <Route path="/sanatoriums/:sanatoriumId" element={<Sanatorium />} />
+          <Route path="/tour/:tourId" element={<Tour />} />
+          <Route path="/camps/:campId" element={<Camp />} />
 
           {/* Dashboard */}
           <Route path="/dashboard" element={<Dashboard />} />
@@ -91,11 +95,6 @@ const DesktopRoute = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/orders/new-order" element={<Order />} />
-
-          <Route path="/hotels/:hotelId" element={<Hotel />} />
-          <Route path="/sanatoriums/:sanatoriumId" element={<Sanatorium />} />
-          <Route path="/tour/:tourId" element={<Tour />} />
-          <Route path="/camp/:campId" element={<Camp />} />
 
           <Route path="/dashboard/managers" element={<Manager />} />
           <Route path="/test" element={<Test />} />

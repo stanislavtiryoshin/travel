@@ -8,7 +8,15 @@ import check from "../../assets/check.svg";
 import person from "../../assets/person.svg";
 import SumLoader from "../SumLoader";
 
-const Sum = ({ price, priceData, clientRoom, priceIsLoading, orderTerms }) => {
+const Sum = ({
+  price,
+  priceData,
+  clientRoom,
+  priceIsLoading,
+  orderTerms,
+  campMode,
+}) => {
+  console.log(price);
   const formatter = Intl.NumberFormat("ru-RU");
   const handleOrder = (e) => {
     e.preventDefault();
@@ -37,7 +45,7 @@ const Sum = ({ price, priceData, clientRoom, priceIsLoading, orderTerms }) => {
           }}
         >
           <div>
-            {clientRoom?._id && (
+            {!campMode && clientRoom?._id && (
               <>
                 <div className="hotel_side-checksum">
                   <span>{clientRoom.roomName}</span>
@@ -125,17 +133,55 @@ const Sum = ({ price, priceData, clientRoom, priceIsLoading, orderTerms }) => {
                 ) : null}
               </>
             )}
+
+            {campMode ? (
+              <>
+                {!price?.error ? (
+                  <>
+                    <div className="hotel_side-checksum">
+                      <span>Проживание</span>
+                      <span className="price_span">
+                        {formatter.format(price?.campSum)} тг.
+                      </span>
+                    </div>
+                    <div className="hotel_side-extraPlace">
+                      для{" "}
+                      {price?.kidsAmount > 0 ? (
+                        <>{price?.kidsAmount} дет.</>
+                      ) : null}
+                    </div>
+                    {price?.margeSum && price?.margeSum !== 0 ? (
+                      <>
+                        <div className="hotel_side-checksum">
+                          <div>Маржа</div>
+                          <span className="price_span">
+                            {price && formatter.format(price?.margeSum)} тг.
+                          </span>
+                        </div>
+                        <div className="hotel_side-extraPlace">
+                          <span>10 %</span>
+                        </div>
+                      </>
+                    ) : null}
+                  </>
+                ) : (
+                  <>Не все возраста в запросе подходят этому лагерю</>
+                )}
+              </>
+            ) : null}
           </div>
 
-          <div className="hotel_side-row total">
-            Итого:
-            <div>
-              <span>
-                {price?.sum ? formatter.format(price?.sum) : "0"}
-                тг.
-              </span>
+          {!price?.error ? (
+            <div className="hotel_side-row total">
+              Итого:
+              <div>
+                <span>
+                  {price?.sum ? formatter.format(price?.sum) : "0"}
+                  тг.
+                </span>
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
         {priceIsLoading ? <SumLoader /> : null}
       </div>
