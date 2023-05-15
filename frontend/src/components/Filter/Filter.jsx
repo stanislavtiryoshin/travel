@@ -42,11 +42,9 @@ const Filter = ({ mode }) => {
   const { hotels } = useSelector((state) => state.hotels);
   const selectedSanatoriums = useSelector(selectSanatoriums);
   const { sanatoriums } = useSelector((state) => state.sanatoriums);
-
+  const { tours } = useSelector((state) => state.tour);
   const [maxPrice, setMaxPrice] = useState(100);
   const [minPrice, setMinPrice] = useState(0);
-
-  console.log(minPrice, maxPrice, "min max");
 
   useEffect(() => {
     switch (mode) {
@@ -102,8 +100,34 @@ const Filter = ({ mode }) => {
           ).totalPrice
         );
         break;
+      case "tour":
+        setMaxPrice(
+          tours?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice > acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        setMinPrice(
+          tours?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice < acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        break;
     }
-  }, [mode, hotels, sanatoriums]);
+  }, [mode, hotels, sanatoriums, tours]);
 
   const [value, setValue] = useState([minPrice, maxPrice]);
 
@@ -116,7 +140,7 @@ const Filter = ({ mode }) => {
     locationId: "",
     duration: "",
     rating: "",
-    food: "",
+    food: [],
     paymentType: "",
   });
 
@@ -181,18 +205,24 @@ const Filter = ({ mode }) => {
 
   const applyFilter = () => {
     filterTours(tourFilter).then(({ data }) => {
+      console.log(data, "filtered tours data");
       dispatch(setTourFilterData(data));
     });
   };
+
+  console.log(tourFilter);
 
   const setFilter = () => {
     switch (mode) {
       case "tour":
         applyFilter();
+        break;
       case "hotel":
         dispatch(setFilterData(filterObj));
+        break;
       case "sanatorium":
         dispatch(setSanFilterData(filterObj));
+        break;
     }
   };
 
@@ -288,9 +318,16 @@ const Filter = ({ mode }) => {
           </div>
         </div>
       ) : null}
+      {console.log(mode, "mode")}
       {mode === "tour" ? (
         <div className="filter_row">
           <div className="filter_title">Длительность тура</div>
+          <div
+            className="filter_content"
+            onClick={() => setTourFilter((prev) => ({ ...prev, duration: "" }))}
+          >
+            <button className="check-btn"></button>Все
+          </div>
           <div
             className="filter_content"
             onClick={() => setTourFilter((prev) => ({ ...prev, duration: 3 }))}
@@ -347,10 +384,17 @@ const Filter = ({ mode }) => {
                   className="filter_content"
                   onClick={() => {
                     if (mode === "tour") {
-                      setTourFilter((prev) => ({
-                        ...prev,
-                        food: food._id,
-                      }));
+                      if (!tourFilter.food.includes(food._id)) {
+                        setTourFilter((prev) => ({
+                          ...prev,
+                          food: [...prev.food, food._id],
+                        }));
+                      } else {
+                        setTourFilter((prev) => ({
+                          ...prev,
+                          food: prev.food.filter((el) => el !== food._id),
+                        }));
+                      }
                     } else {
                       if (isActive) {
                         setFilterObj((prevState) => ({
@@ -402,11 +446,13 @@ const Filter = ({ mode }) => {
                 <div
                   key={star}
                   className="filter_content"
-                  onClick={() =>
-                    mode === "tour"
-                      ? setTourFilter((prev) => ({ ...prev, rating: star }))
-                      : setFilterObj({ ...filterObj, filterStars: star })
-                  }
+                  onClick={() => {
+                    console.log(star, "star");
+                    if (mode === "tour") {
+                      setTourFilter((prev) => ({ ...prev, rating: star }));
+                    }
+                    setFilterObj({ ...filterObj, filterStars: star });
+                  }}
                 >
                   <CheckBtn isActive={isActive} />
                   <HotelStars number={star} />

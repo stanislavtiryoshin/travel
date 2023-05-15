@@ -10,7 +10,7 @@ export const filterApi = createApi({
   endpoints: (builder) => ({
     getTourByFilter: builder.query({
       query: (filter) => ({
-        url: `/tour/searched/query?locationId=${
+        url: `/tour/searched?locationId=${
           filter.locationId && filter.locationId
         }&duration=${filter.duration && filter.duration}&rating=${
           filter.rating && filter.rating
@@ -18,13 +18,7 @@ export const filterApi = createApi({
           filter.paymentType && filter.paymentType
         }`,
       }),
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ _id }) => ({ type: "Filter", _id })),
-              { type: "Filter", id: "LIST" },
-            ]
-          : [{ type: "Filter", id: "LIST" }],
+      providesTags: [{ type: "Filter", id: "LIST" }],
     }),
   }),
 });

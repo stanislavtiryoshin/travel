@@ -76,7 +76,7 @@ const Home = () => {
       case "/sanatoriums":
         setMode("sanatorium");
         break;
-      case "/tour":
+      case "/tours":
         setMode("tour");
         break;
       case "/camp":

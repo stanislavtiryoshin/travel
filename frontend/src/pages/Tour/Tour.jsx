@@ -464,9 +464,9 @@ const Tour = () => {
                   price={price && price}
                   clientRoom={
                     singleTour &&
-                    singleTour.hotels &&
+                    singleTour?.hotels &&
                     singleTour?.hotels?.find(
-                      (hotel) => hotel.room._id === clientRoom._id
+                      (hotel) => hotel?.room?._id === clientRoom?._id
                     )?.room
                   }
                   orderTerms={{
