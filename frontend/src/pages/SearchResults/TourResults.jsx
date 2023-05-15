@@ -24,7 +24,23 @@ const TourResults = ({ mode }) => {
   const navigate = useNavigate();
 
   const { data: tours = [], isLoading: LoadingTours } = useGetTourQuery();
+  const [tourData, setTourData] = useState([]);
 
+  const { tours: tour, isLoading: tourIsLoad } = useSelector(
+    (state) => state.tour
+  );
+
+  useEffect(() => {
+    if (!LoadingTours) setTourData(tours);
+  }, [tours, LoadingTours]);
+
+  useEffect(() => {
+    if (!tourIsLoad) {
+      setTourData(tour);
+    }
+  }, [tour, tourIsLoad]);
+
+  console.log(tourData, "tourData in results");
   const [hotelsToShow, setHotelsToShow] = useState(5);
   const { sanatoriums, isError } = useSelector((state) => state.sanatoriums);
   const { startDate, endDate, peopleAmount, daysAmount, destination } =
@@ -40,15 +56,15 @@ const TourResults = ({ mode }) => {
 
       <div className="all_hotels-top">
         <div className="all_hotels-num">
-          Найдено: <span>{""}</span>
+          Найдено: <span>{tourData.length}</span>
         </div>
         <SortBtn mode={mode} />
       </div>
-      {tours && tours.length > 0 ? (
-        tours
+      {tourData && tourData.length > 0 ? (
+        tourData
           .filter((hotel, idx) => idx < hotelsToShow)
           .map((hotel, idx) => {
-            console.log(hotel, "tours");
+            console.log(hotel);
             return (
               <HotelCard
                 program={hotel.program}

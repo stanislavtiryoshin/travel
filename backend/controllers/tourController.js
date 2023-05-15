@@ -352,6 +352,9 @@ const getSearchedTours = asyncHandler(async (req, res) => {
     locationId,
     adultsAmount,
     kidsAmount,
+    rating,
+    duration,
+    food,
   } = req.query;
 
   const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
@@ -404,6 +407,19 @@ const getSearchedTours = asyncHandler(async (req, res) => {
 
   if (locationId && locationId !== "") {
     query.locationId = locationId;
+  }
+
+  if (duration && duration !== "") {
+    query.duration = duration;
+  }
+  if (rating && rating !== "") {
+    query.rating = rating;
+  }
+
+  if (food && food !== "") {
+    query.food = {
+      $in: food.split(","),
+    };
   }
 
   let hotels = await Tour.find(query).populate({
