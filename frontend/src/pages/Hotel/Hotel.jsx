@@ -436,7 +436,6 @@ const Hotel = () => {
                 ) : (
                   "Экскурсии загружаются"
                 )}
-
                 <ExpandableText
                   locationName={singleHotel?.locationId?.locationName}
                   locationDescription={

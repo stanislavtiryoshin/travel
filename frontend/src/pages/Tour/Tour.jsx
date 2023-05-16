@@ -34,6 +34,7 @@ import room3 from "../../assets/room/3.jpg";
 import TourImage from "../../assets/tour/tour.png";
 
 import pti4ka from "../../assets/hotel/pti4ka.svg";
+// import kids from "../../assets/kids.png";
 
 import hotel from "../../assets/hotel.png";
 import "./../Hotel/Hotel.scss";
@@ -58,6 +59,7 @@ import { useGetTourPriceQuery } from "../../features/services/price.service";
 import Services from "../../components/HotelPage/Services";
 import { setRefetch } from "../../features/search/searchSlice";
 import Program from "../../components/HotelPage/Program";
+import { ExpandableText } from "../../components/HotelPage/ExpandableText";
 
 const Tour = () => {
   const navigate = useNavigate();
@@ -492,6 +494,16 @@ const Tour = () => {
                       singleTour.duration * 60 * 24 * 60 * 1000,
                   }}
                 />
+
+                <ExpandableText
+                  locationName={singleTour?.locationId?.locationName}
+                  locationDescription={
+                    singleTour?.locationId?.locationDescription
+                  }
+                />
+                <div className="kids_box">
+                  <img src={kids} alt="" />
+                </div>
               </div>
             </div>
           ) : null}
@@ -532,26 +544,26 @@ const Tour = () => {
   );
 };
 
-export const ExpandableText = ({ text }) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+// export const ExpandableText = ({ text }) => {
+//   const [isExpanded, setIsExpanded] = useState(true);
 
-  const truncatedText = text.slice(0, 200);
-  const displayText = isExpanded ? text : truncatedText;
+//   const truncatedText = text?.slice(0, 200);
+//   const displayText = isExpanded ? text : truncatedText;
 
-  return (
-    <div className={`side_about-box shadowed_box small`}>
-      <div className="body_title-box">
-        <div className="body_title">Про Туркестан </div>
-        <div className="body_title-text">
-          {displayText}
-          {!isExpanded ? "..." : ""}
-        </div>
-        <button className="more-btn" onClick={() => setIsExpanded(!isExpanded)}>
-          {isExpanded ? "Свернуть" : "Больше"}
-        </button>
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div className={`side_about-box shadowed_box small`}>
+//       <div className="body_title-box">
+//         <div className="body_title">Про Туркестан </div>
+//         <div className="body_title-text">
+//           {displayText}
+//           {!isExpanded ? "..." : ""}
+//         </div>
+//         <button className="more-btn" onClick={() => setIsExpanded(!isExpanded)}>
+//           {isExpanded ? "Свернуть" : "Больше"}
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
 
 export default Tour;
