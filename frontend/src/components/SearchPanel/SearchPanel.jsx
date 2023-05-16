@@ -30,6 +30,7 @@ import PeopleSelect from "./PeopleSelect";
 import { getTours } from "../../features/tour/tourSlice";
 import { useLocation } from "react-router-dom";
 import { getSearchedSanatoriums } from "../../features/sanatorium/sanatoriumSlice";
+import { API_URL_PROXY } from "../../config/config";
 
 const SearchPanel = ({ isUserLook, style }) => {
   const dispatch = useDispatch();
@@ -42,7 +43,7 @@ const SearchPanel = ({ isUserLook, style }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/locations`)
+      .get(`${API_URL_PROXY}/locations`)
       .then((response) => {
         setAllLocations(response.data);
       })

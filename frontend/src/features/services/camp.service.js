@@ -1,9 +1,10 @@
 import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/dist/query/react";
+import { API_URL_BASE, API_URL_PROXY } from "../../config/config";
 
 export const campApi = createApi({
   reducerPath: "campApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api",
+    baseUrl: `${API_URL_PROXY}`,
     credentials: "include",
   }),
   tagTypes: ["Camp"],
