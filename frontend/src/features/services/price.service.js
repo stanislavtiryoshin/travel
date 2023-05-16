@@ -1,9 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
+import { API_URL_BASE, API_URL_PROXY } from "../../config/config";
 
 export const priceApi = createApi({
   reducerPath: "priceApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api",
+    baseUrl: `${API_URL_PROXY}`,
   }),
   tagTypes: ["hotelPrice"],
   endpoints: (builder) => ({

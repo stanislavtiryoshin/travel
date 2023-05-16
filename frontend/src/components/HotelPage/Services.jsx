@@ -30,8 +30,6 @@ const Services = ({ hotelServices, title }) => {
     if (hotelServices) setServicesToRender(arrayResult);
   }, [hotelServices]);
 
-  console.log(servicesToRender, "servicesToRender");
-
   return (
     <div className="hotel_services-row">
       <div className="body_title-box">

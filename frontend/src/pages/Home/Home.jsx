@@ -19,6 +19,7 @@ import { getSearchedHotels } from "../../features/hotel/hotelSlice";
 import { getSanatoriums } from "../../features/sanatorium/sanatoriumSlice";
 import { getCamps } from "../../features/camps/campSlice";
 import { getTours } from "../../features/tour/tourSlice";
+import { API_URL_PROXY } from "../../config/config";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -56,7 +57,7 @@ const Home = () => {
   useEffect(() => {
     if (destination)
       axios
-        .get(`http://localhost:3000/api/locations/${destination}`)
+        .get(`${API_URL_PROXY}/locations/${destination}`)
         .then((response) => {
           setCurrentLocation(response.data);
         })

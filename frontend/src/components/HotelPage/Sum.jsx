@@ -16,7 +16,6 @@ const Sum = ({
   orderTerms,
   campMode,
 }) => {
-  console.log(clientRoom, "clientRoom");
   const formatter = Intl.NumberFormat("ru-RU");
   const handleOrder = (e) => {
     e.preventDefault();

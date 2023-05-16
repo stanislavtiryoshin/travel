@@ -21,6 +21,7 @@ import { useUploadImageMutation } from "../../features/services/upload.service";
 import GalleryBox from "../../components/Slider/GalleryBox";
 import { setCurrServices } from "../../features/adminSlice";
 import Periods from "./Periods";
+import { API_URL_PROXY } from "../../config/config";
 
 const AddHotel = ({
   fetchedHotelData,
@@ -119,7 +120,7 @@ const AddHotel = ({
   // Fetching all categories, services, locations
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/locations`)
+      .get(`${API_URL_PROXY}/locations`)
       .then((response) => {
         setAllLocations(response.data);
       })
@@ -127,7 +128,7 @@ const AddHotel = ({
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/api/categories`)
+      .get(`${API_URL_PROXY}/categories`)
       .then(({ data }) => {
         setAllCategories(data);
         // console.log(data);
@@ -136,7 +137,7 @@ const AddHotel = ({
         console.log(error);
       });
     axios
-      .get(`http://localhost:3000/api/hotelServices`)
+      .get(`${API_URL_PROXY}/hotelServices`)
       .then((response) => {
         setAllServices(response.data);
       })

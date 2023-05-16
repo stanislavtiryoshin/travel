@@ -43,7 +43,7 @@ const HotelCard = ({
     if (mode === "tour") {
       program.forEach((item) => {
         item.days.forEach((day) => {
-          uniqueDays[day.points.day] = true;
+          uniqueDays[day?.points?.day] = true;
         });
       });
     }
