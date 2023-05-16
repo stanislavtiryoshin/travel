@@ -23,9 +23,9 @@ const Periods = ({
   mode,
   refetch,
 }) => {
-  console.log(hotelId, "hotel ids");
+  // console.log(hotelId, "hotel ids");
   const dispatch = useDispatch();
-  console.log(periods);
+  // console.log(periods);
 
   const addNewPeriods = () => {
     switch (mode) {

@@ -97,6 +97,8 @@ const AddCamp = () => {
     await createCamp(values);
   };
 
+  console.log(addedServices), "program";
+
   useEffect(() => {
     if (camp) navigate(`/dashboard/camp/${camp._id}`);
   }, [addLoad]);

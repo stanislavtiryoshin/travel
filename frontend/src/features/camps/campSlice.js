@@ -52,6 +52,46 @@ export const updateAgePriceById = createAsyncThunk(
   }
 );
 
+// Add new age to camp
+
+export const addAge = createAsyncThunk(
+  "camps/addAge",
+  async (ageData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await campService.addAge(ageData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Delete age from camp
+
+export const deleteAge = createAsyncThunk(
+  "camps/deleteAge",
+  async (ageData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await campService.deleteAge(ageData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const campSlice = createSlice({
   name: "camp",
   initialState,

@@ -99,7 +99,7 @@ const getCampByTags = async (req, res) => {
 //@route  PATCH /api/camps/age/:campId
 //@access Private
 
-const addAge = asyncHandler(async (req, res) => {
+const addAge1 = asyncHandler(async (req, res) => {
   const { campId } = req.params;
 
   let camp = await Camp.findById(campId);
@@ -119,21 +119,57 @@ const addAge = asyncHandler(async (req, res) => {
   res.status(200).json(camp);
 });
 
+const addAge = asyncHandler(async (req, res) => {
+  const { campId } = req.params;
+  const ages = req.body;
+
+  let camp = await Camp.findById(campId);
+
+  if (ages) {
+    const newAges = await Promise.all(
+      ages.map(async (age) => {
+        if (!age._id) {
+          camp.ages.push(age);
+          camp.agePrices.push({
+            minAge: age.minAge,
+            maxAge: age.maxAge,
+            periodPrices: camp.periods.map((period) => ({
+              period: period,
+              campPrice: 0,
+            })),
+          });
+          return age;
+        }
+      })
+    );
+  }
+
+  camp = await camp.save();
+
+  res.status(200).json(camp);
+});
+
 //@desc   Add new age to camp
 //@route  DELETE /api/camps/age/:campId
 //@access Private
 
 const deleteAge = asyncHandler(async (req, res) => {
-  const { campId } = req.params;
-  const ageId = req.body.ageId;
+  const { campId, ageId } = req.params;
 
   let camp = await Camp.findById(campId);
+
+  const foundAge = camp.ages.find((age) => age._id.toString() === ageId);
+  // console.log(foundAge, "found Age");
+  const agePriceId = camp.agePrices.find(
+    (age) => age.minAge === foundAge.minAge && age.maxAge === foundAge.maxAge
+  )._id;
+
+  console.log(agePriceId, "agePriceId");
 
   camp.ages = camp.ages.filter((age) => age._id.toString() !== ageId);
 
   camp.agePrices = camp.agePrices.filter(
-    (agePrice) =>
-      agePrice.minAge !== req.body.minAge && agePrice.maxAge !== req.body.maxAge
+    (agePrice) => agePrice._id !== agePriceId
   );
 
   camp = await camp.save();

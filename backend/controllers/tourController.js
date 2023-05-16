@@ -437,7 +437,7 @@ const getSearchedTours = asyncHandler(async (req, res) => {
 
     const pricesArray = hotel?.periodPrices;
 
-    const costOfStay = calculatePrice(start, daysAmount, 1, pricesArray);
+    const costOfStay = calculatePrice(start, hotel.duration, 1, pricesArray);
 
     if (pricesArray) {
       newHotel.totalPrice = costOfStay;

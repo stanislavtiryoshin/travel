@@ -13,8 +13,6 @@ const CampRow = ({ age, campId }) => {
     setNewPeriodPrices(age?.periodPrices);
   }, [age]);
 
-  console.log(newPeriodPrices, "newPeriodPrices");
-
   return (
     <>
       <tr key={age.minAge} style={{ margin: "5px" }}>
@@ -30,11 +28,6 @@ const CampRow = ({ age, campId }) => {
                   agePriceId: age._id,
                 })
               ).then(() => dispatch(getSingleCamp(campId)));
-              console.log({
-                campId: campId,
-                agePrices: newPeriodPrices,
-                agePriceId: age._id,
-              });
             }}
           >
             <svg
