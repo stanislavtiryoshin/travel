@@ -35,6 +35,7 @@ const registerUser = asyncHandler(async (req, res) => {
       _id: user.id,
       name: user.name,
       email: user.email,
+      phone: user.phone,
       token: generateToken(user._id),
     });
   } else {
@@ -51,11 +52,15 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ email });
 
+  console.log(user);
+
   if (user && (await bcrypt.compare(password, user.password))) {
     res.json({
       _id: user.id,
       name: user.name,
       email: user.email,
+      phone: user.phone,
+      role: user.role,
       token: generateToken(user._id),
     });
   } else {
@@ -71,7 +76,22 @@ const generateToken = (id) => {
   });
 };
 
+const getUsers = (req, res) => {
+  User.find({})
+    .then((data) => res.status(200).json(data))
+    .catch((err) => res.status(500).json(err));
+};
+
+const deleteUsers = async (req, res) => {
+  const { managerIds } = req.body;
+  console.log(managerIds, "managerIds");
+  const del = await User.deleteMany({ _id: { $in: managerIds } });
+  res.status(200).json(del);
+};
+
 module.exports = {
   registerUser,
   loginUser,
+  getUsers,
+  deleteUsers,
 };

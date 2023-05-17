@@ -15,6 +15,13 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "Add a password"],
     },
+    role: {
+      type: String,
+      default: "Manager",
+    },
+    phone: {
+      type: String,
+    },
   },
   {
     timestamps: true,

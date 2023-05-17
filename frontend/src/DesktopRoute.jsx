@@ -42,6 +42,7 @@ import RequestsRes from "./pages/DashBoardResults/RequestsRes";
 import TourRes from "./pages/DashBoardResults/TourRes";
 import SanatoriumRes from "./pages/DashBoardResults/SanatoriumRes";
 import CampRes from "./pages/DashBoardResults/CampRes";
+import ManagersRes from "./pages/DashBoardResults/ManagersRes";
 
 // const Dashboard = lazy(() => import("./pages/Dashboard/Dashboard"));
 // const Home = lazy(() => import("./pages/Home/Home"));
@@ -84,6 +85,7 @@ const DesktopRoute = () => {
             <Route path="/dashboard/tours" element={<TourRes />} />
             <Route path="/dashboard/sanatoriums" element={<SanatoriumRes />} />
             <Route path="/dashboard/camps" element={<CampRes />} />
+            <Route path="/dashboard/managers" element={<ManagersRes />} />
 
             <Route path="/dashboard/add-hotel" element={<AddHotel />} />
             <Route path="/dashboard/hotel/:hotelId" element={<EditHotel />} />

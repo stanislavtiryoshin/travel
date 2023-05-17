@@ -21,6 +21,7 @@ import { priceApi } from "../features/services/price.service";
 
 import { uploadApi } from "../features/services/upload.service";
 import { filterApi } from "../features/services/filter.service";
+import { userApi } from "../features/services/user.service";
 
 export const store = configureStore({
   reducer: {
@@ -43,6 +44,7 @@ export const store = configureStore({
     [campApi.reducerPath]: campApi.reducer,
     [filterApi.reducerPath]: filterApi.reducer,
     [priceApi.reducerPath]: priceApi.reducer,
+    [userApi.reducerPath]: userApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -55,5 +57,6 @@ export const store = configureStore({
       campApi.middleware,
       filterApi.middleware,
       priceApi.middleware,
+      userApi.middleware,
     ]),
 });
