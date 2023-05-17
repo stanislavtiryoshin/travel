@@ -9,6 +9,7 @@ const RoomRow = ({
   periodPrices,
   prices,
   roomMode,
+  buttonRef,
 }) => {
   const dispatch = useDispatch();
 
@@ -18,7 +19,10 @@ const RoomRow = ({
     setNewPeriodPrices(periodPrices);
   }, [periodPrices]);
 
-  console.log(newPeriodPrices, "newPeriodPrices");
+  // console.log(newPeriodPrices, "newPeriodPrices");
+  function handleClick() {
+    console.log("Button clicked in child");
+  }
 
   return (
     <>
@@ -30,6 +34,7 @@ const RoomRow = ({
             {room._id && (
               <button
                 className="price-btn"
+                ref={buttonRef}
                 onClick={() => {
                   dispatch(
                     updateRoom({

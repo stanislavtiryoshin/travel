@@ -31,6 +31,7 @@ import { getTours } from "../../features/tour/tourSlice";
 import { useLocation } from "react-router-dom";
 import { getSearchedSanatoriums } from "../../features/sanatorium/sanatoriumSlice";
 import { API_URL_PROXY } from "../../config/config";
+import { useLazyGetTourByFilterQuery } from "../../features/services/filter.service";
 
 const SearchPanel = ({ isUserLook, style }) => {
   const dispatch = useDispatch();
@@ -108,6 +109,8 @@ const SearchPanel = ({ isUserLook, style }) => {
     }
   };
 
+  const [trigger, { data }] = useLazyGetTourByFilterQuery();
+
   useEffect(() => {
     setClientData({
       ...clientData,
@@ -161,6 +164,7 @@ const SearchPanel = ({ isUserLook, style }) => {
           kidsAmount,
         })
       );
+    } else if (location.pathname === "/tours") {
     }
   };
 

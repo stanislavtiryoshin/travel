@@ -35,10 +35,41 @@ const updateAgePriceById = async (agePriceData, token) => {
   return response.data;
 };
 
+// Add age to camp
+
+const addAge = async (ageData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.patch(
+    `${API_URL}age/${ageData.campId}`,
+    ageData.ages,
+    config
+  );
+  return response.data;
+};
+
+const deleteAge = async (ageData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.delete(
+    `${API_URL}age/${ageData.campId}/${ageData.ageId}`,
+    config
+  );
+  return response.data;
+};
+
 const campService = {
   getCamps,
   updateAgePriceById,
   getSingleCamp,
+  addAge,
+  deleteAge,
 };
 
 export default campService;
