@@ -27,7 +27,7 @@ const SanatoriumRes = () => {
   }
   return (
     <div className="tours_tab tab">
-      <HotelSearch sanMode />
+      <HotelSearch mode="sanatorium" />
       <Section section="dash_section" wrapper="dash_wrapper">
         <div className="dash_side">
           <Filter sanMode />

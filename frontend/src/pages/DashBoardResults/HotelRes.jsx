@@ -32,7 +32,7 @@ const HotelRes = () => {
 
   return (
     <div className="hotels_tab tab">
-      <HotelSearch hotelMode />
+      <HotelSearch mode="hotel" />
       <Section section="dash_section" wrapper="dash_wrapper">
         <div className="dash_side">
           <Filter hotelMode />

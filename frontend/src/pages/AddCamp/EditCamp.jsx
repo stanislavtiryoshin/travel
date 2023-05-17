@@ -143,7 +143,18 @@ const EditCamp = () => {
     setSources(campData?.img ? campData?.img : []);
   }, [campData]);
 
-  const [programList, setProgramList] = useState([]);
+  const [programList, setProgramList] = useState([
+    {
+      day: 1,
+      points: [
+        {
+          time: null,
+          pointName: null,
+          pointDescription: null,
+        },
+      ],
+    },
+  ]);
   useEffect(() => {
     if (campData?.programTest && campData?.programTest?.length > 0) {
       setProgramList(campData?.programTest);

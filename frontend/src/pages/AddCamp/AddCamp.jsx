@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import style from "../AddTour/AddTour.module.scss";
 
 import { AdminHead } from "../../components/Admin";

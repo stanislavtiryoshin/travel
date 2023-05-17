@@ -223,7 +223,7 @@ const Requests = () => {
   return (
     <>
       <HotelSearch
-        reqMode
+        mode="request"
         handleQuery={setQuery}
         handleStatus={setStatus}
         find={handleSearch}
