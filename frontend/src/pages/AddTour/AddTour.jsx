@@ -8,6 +8,7 @@ import addhotel from "../../assets/addhotel.png";
 import { Input } from "../../components/Form";
 import Selector from "../AddHotel/Select";
 import Selector2 from "../AddHotel/Selector";
+import ProgramTest from "../AddCamp/ProgramTest";
 
 import {
   useAddTourMutation,
@@ -112,7 +113,7 @@ const AddTour = () => {
   const handleSubmit = async () => {
     const values = {
       ...tourData,
-      program: [...addedServices],
+      program: programList,
       token: user.token,
       comforts: comfortsValue.map(({ label }) => ({
         name: label,
@@ -124,7 +125,6 @@ const AddTour = () => {
         room: roomId,
       },
     };
-    console.log(values);
     await createTour(values);
 
     if (!addLoad) {
@@ -132,7 +132,20 @@ const AddTour = () => {
       navigate(`/tour/${addedTour._id}`);
     }
   };
-  console.log(comfortsValue);
+
+  const [programList, setProgramList] = React.useState([
+    {
+      day: 1,
+      points: [
+        {
+          time: null,
+          pointName: null,
+          pointDescription: null,
+        },
+      ],
+    },
+  ]);
+
   const handleDelPoint = (idx, dayIdx) => {
     let newProgram = [...addedServices];
     if (idx !== 0) {
@@ -475,115 +488,10 @@ const AddTour = () => {
                   </div>
                 </div>
               </div>
-              <div className="add_more-col categ-col shadowed_box">
-                <div className="gen_title">Программа тура</div>
-
-                {addedServices.map((serv, idx) => (
-                  <div className="input_box">
-                    <div className={style.days}>День {idx + 1}</div>
-                    <button
-                      onClick={() => {
-                        setDayIdx(idx);
-                        setIsOpen(true);
-                      }}
-                    >
-                      ...
-                    </button>
-                    {serv.days.map((points, pointIdx) => (
-                      <>
-                        <div className="input_title">Пункт {pointIdx + 1}</div>
-                        <button onClick={() => handleDelPoint(pointIdx, idx)}>
-                          X
-                        </button>
-                        <div className="input_row">
-                          <select
-                            className="primary-input"
-                            onChange={(e) => {
-                              serv.days[pointIdx].points = {
-                                day: idx + 1,
-                                time: e.target.value,
-                                pointName: "",
-                                pointDescription: "",
-                              };
-                            }}
-                          >
-                            <option value="" selected disabled>
-                              Время
-                            </option>
-                            <option value="07:00">07:00</option>
-                            <option value="08:00">08:00</option>
-                            <option value="09:00">09:00</option>
-                            <option value="10:00">10:00</option>
-                          </select>
-                          <Input
-                            placeholder="Название пункта"
-                            onChange={(e) => {
-                              serv.days[pointIdx].points.pointName =
-                                e.target.value;
-                            }}
-                          />
-                        </div>
-                        <div className="input_row">
-                          <textarea
-                            className="primary-input"
-                            cols="30"
-                            rows="5"
-                            placeholder="Описание"
-                            onChange={(e) => {
-                              serv.days[pointIdx].points.pointDescription =
-                                e.target.value;
-                            }}
-                          />
-                        </div>
-                        <button
-                          className={`add_service-btn ${style.bordered_btn}`}
-                          onClick={() => {
-                            setAddedServices((prev) => {
-                              prev.map((d, id) => {
-                                d.days[id + 1] = {
-                                  points: {
-                                    day: id + 1,
-                                    time: "",
-                                    pointName: "",
-                                    pointDescription: "",
-                                  },
-                                };
-                              });
-                              return [...prev];
-                            });
-                          }}
-                        >
-                          Добавить пункт
-                        </button>
-                      </>
-                    ))}
-                  </div>
-                ))}
-                <button
-                  onClick={() =>
-                    setAddedServices((prev) => {
-                      return [
-                        ...prev,
-                        {
-                          days: [
-                            {
-                              points: {
-                                day: null,
-                                time: "",
-                                pointName: "",
-                                pointDescription: "",
-                              },
-                            },
-                          ],
-                        },
-                      ];
-                    })
-                  }
-                  className="primary-btn"
-                >
-                  Добавить день
-                </button>
-              </div>
+              <ProgramTest
+                programList={programList}
+                setProgramList={setProgramList}
+              />
             </div>
           </div>
         </section>

@@ -27,6 +27,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal";
 import { useUploadImageMutation } from "../../features/services/upload.service";
 import GalleryBox from "../../components/Slider/GalleryBox";
+import ProgramTest from "../AddCamp/ProgramTest";
 
 const EditTour = () => {
   const { data: food = [], isLoading: isLoadFood } = useGetFoodQuery();
@@ -122,10 +123,8 @@ const EditTour = () => {
         hotel: tourData.hotelId,
         room: roomId,
       },
-      program: addedServices,
+      program: programList,
     };
-    // ANCHOR
-    console.log(values, "handling submit button");
     await editTour(values);
 
     // if (!addLoad) {
@@ -153,11 +152,29 @@ const EditTour = () => {
   };
 
   const [sources, setSources] = useState([]);
+
   useEffect(() => {
     setSources(tourData.img ? tourData.img : []);
   }, [tourData]);
 
-  console.log(sources);
+  const [programList, setProgramList] = useState([
+    {
+      day: 1,
+      points: [
+        {
+          time: null,
+          pointName: null,
+          pointDescription: null,
+        },
+      ],
+    },
+  ]);
+
+  useEffect(() => {
+    if (tourData?.program && tourData?.program?.length > 0) {
+      setProgramList(tourData?.program);
+    }
+  }, [tourData]);
 
   return (
     <>
@@ -536,123 +553,11 @@ const EditTour = () => {
                   </div>
                 </div>
               </div>
-              <div className="add_more-col categ-col shadowed_box">
-                <div className="gen_title">Программа тура</div>
-                {addedServices.map((serv, idx) => (
-                  <div className="input_box program">
-                    <div className="program">
-                      <div className={style.days}>День {idx + 1}</div>
-                      <button
-                        className="sdf"
-                        onClick={() => {
-                          setDayIdx(idx);
-                          setIsOpen(true);
-                        }}
-                      >
-                        ...
-                      </button>
-                    </div>
-
-                    {serv.days.map((points, pointIdx) => (
-                      <>
-                        <div className="del-btn-program">
-                          <div className="input_title">
-                            Пункт {pointIdx + 1}
-                          </div>
-                          <button onClick={() => handleDelPoint(pointIdx, idx)}>
-                            X
-                          </button>
-                        </div>
-
-                        <div className="input_row">
-                          <select
-                            className="primary-input"
-                            onChange={(e) => {
-                              serv.days[pointIdx].points = {
-                                day: idx + 1,
-                                time: e.target.value,
-                                pointName: "",
-                                pointDescription: "",
-                              };
-                            }}
-                          >
-                            <option value="" selected disabled>
-                              Время
-                            </option>
-                            <option value="07:00">07:00</option>
-                            <option value="08:00">08:00</option>
-                            <option value="09:00">09:00</option>
-                            <option value="10:00">10:00</option>
-                          </select>
-                          <Input
-                            placeholder="Название пункта"
-                            onChange={(e) => {
-                              serv.days[pointIdx].points.pointName =
-                                e.target.value;
-                            }}
-                          />
-                        </div>
-                        <div className="input_row">
-                          <textarea
-                            className="primary-input"
-                            cols="30"
-                            rows="5"
-                            placeholder="Описание"
-                            onChange={(e) => {
-                              serv.days[pointIdx].points.pointDescription =
-                                e.target.value;
-                            }}
-                          />
-                        </div>
-                        <button
-                          className={`add_service-btn ${style.bordered_btn}`}
-                          onClick={() => {
-                            setAddedServices((prev) => {
-                              prev.map((d, id) => {
-                                d.days[id + 1] = {
-                                  points: {
-                                    day: id + 1,
-                                    time: "",
-                                    pointName: "",
-                                    pointDescription: "",
-                                  },
-                                };
-                              });
-                              return [...prev];
-                            });
-                          }}
-                        >
-                          Добавить пункт
-                        </button>
-                      </>
-                    ))}
-                  </div>
-                ))}
-                <button
-                  onClick={() =>
-                    setAddedServices((prev) => {
-                      return [
-                        ...prev,
-                        {
-                          days: [
-                            {
-                              points: {
-                                day: null,
-                                time: "",
-                                pointName: "",
-                                pointDescription: "",
-                              },
-                            },
-                          ],
-                        },
-                      ];
-                    })
-                  }
-                  className="primary-btn"
-                >
-                  Добавить день
-                </button>
-              </div>
+              <ProgramTest
+                programList={programList}
+                setProgramList={setProgramList}
+                style={style}
+              />
             </div>
           </div>
         </section>

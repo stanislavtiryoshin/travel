@@ -142,6 +142,15 @@ const Filter = ({ mode }) => {
     rating: "",
     food: [],
     paymentType: "",
+    start: JSON.parse(localStorage.getItem("startDate")) || "",
+    adultsAmount:
+      JSON.parse(localStorage.getItem("agesArray")).filter(
+        (age) => age === 1000
+      ).length || 1,
+    kidsAmount:
+      JSON.parse(localStorage.getItem("agesArray")).filter(
+        (age) => age !== 1000
+      ).length || 0,
   });
 
   const [filterTours, { isLoading: tourIsLoading }] =
@@ -205,7 +214,6 @@ const Filter = ({ mode }) => {
 
   const applyFilter = () => {
     filterTours(tourFilter).then(({ data }) => {
-      console.log(data, "filtered tours data");
       dispatch(setTourFilterData(data));
     });
   };
@@ -444,7 +452,6 @@ const Filter = ({ mode }) => {
                   key={star}
                   className="filter_content"
                   onClick={() => {
-                    console.log(star, "star");
                     if (mode === "tour") {
                       setTourFilter((prev) => ({ ...prev, rating: star }));
                     }

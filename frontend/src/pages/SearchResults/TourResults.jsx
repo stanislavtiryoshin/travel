@@ -3,27 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 import banner from "../../assets/banner.png";
 import SortBtn from "../../components/Filter/SortBtn";
 import HotelCard from "../../components/HotelCard/HotelCard";
-import {
-  getSearchedHotels,
-  reset,
-  selectHotels,
-} from "../../features/hotel/hotelSlice";
+import { setFilterData } from "../../features/tour/tourSlice";
+
 import { useNavigate } from "react-router-dom";
-import {
-  getSanatoriums,
-  getSearchedSanatoriums,
-  selectSanatoriums,
-} from "../../features/sanatorium/sanatoriumSlice";
-import { useGetTourQuery } from "../../features/services/base.service";
+
 import Loader from "../../components/Loader";
-
 import { useGetTourByFilterQuery } from "../../features/services/filter.service";
-
-// import {setTour}
 
 const TourResults = ({ mode }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const { data: tours = [], isLoading: LoadingTours } = useGetTourByFilterQuery(
     {
@@ -46,22 +34,15 @@ const TourResults = ({ mode }) => {
 
   const [tourData, setTourData] = useState([]);
 
-  // const { tours: tour, isLoading: tourIsLoad } = useSelector(
-  //   (state) => state.tour
-  // );
+  const { tours: tour, isLoading: tourIsLoad } = useSelector(
+    (state) => state.tour
+  );
 
   useEffect(() => {
-    if (!LoadingTours) setTourData(tours);
+    if (!LoadingTours) dispatch(setFilterData(tours));
   }, [tours, LoadingTours]);
 
-  // useEffect(() => {
-  //   if (!tourIsLoad) {
-  //     setTourData(tour);
-  //   }
-  // }, [tour, tourIsLoad]);
-
   const [hotelsToShow, setHotelsToShow] = useState(5);
-  const { sanatoriums, isError } = useSelector((state) => state.sanatoriums);
   const { startDate, endDate, peopleAmount, daysAmount, destination } =
     useSelector((state) => state.client);
 
@@ -79,11 +60,10 @@ const TourResults = ({ mode }) => {
         </div>
         <SortBtn mode={mode} />
       </div>
-      {tourData ? (
-        tourData
+      {tour && tour.length > 0 ? (
+        tour
           .filter((hotel, idx) => idx < hotelsToShow)
           .map((hotel, idx) => {
-            console.log(hotel.locationId);
             return (
               <HotelCard
                 program={hotel.program}
@@ -107,12 +87,6 @@ const TourResults = ({ mode }) => {
                     ? JSON.parse(localStorage.getItem("agesArray")).length
                     : 1
                 }
-                // hotelServices={hotel.comforts
-                //   .filter((comfort) => comfort.priority === 1)
-                //   .map((comfort) => ({
-                //     name: comfort.name,
-                //     icon: comfort.icon,
-                //   }))}
                 hotelServices={hotel.tourServices}
                 hotel={hotel}
               />

@@ -30,7 +30,7 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
     const uniqueDays = {};
     if (mode === "tour" && hotel) {
       hotel?.program.forEach((item) => {
-        item.days.forEach((day) => {
+        item?.days?.forEach((day) => {
           uniqueDays[day?.points?.day] = true;
         });
       });

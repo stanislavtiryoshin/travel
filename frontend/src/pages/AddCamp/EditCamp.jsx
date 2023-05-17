@@ -145,8 +145,8 @@ const EditCamp = () => {
 
   const [programList, setProgramList] = useState([]);
   useEffect(() => {
-    if (campData?.programTest && campData?.programTest?.length > 0) {
-      setProgramList(campData?.programTest);
+    if (campData?.program && campData?.program?.length > 0) {
+      setProgramList(campData?.program);
     }
   }, [campData]);
 
