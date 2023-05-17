@@ -229,8 +229,8 @@ const Camp = () => {
 
   const [programList, setProgramList] = useState([]);
   useEffect(() => {
-    if (singleCamp?.programTest && singleCamp?.programTest?.length > 0) {
-      setProgramList(singleCamp?.programTest);
+    if (singleCamp?.program && singleCamp?.program?.length > 0) {
+      setProgramList(singleCamp?.program);
     }
   }, [singleCamp]);
 

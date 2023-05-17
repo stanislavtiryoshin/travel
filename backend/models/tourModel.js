@@ -50,16 +50,8 @@ const tourSchema = Schema({
   ],
   program: [
     {
-      days: [
-        {
-          points: {
-            day: Number,
-            time: String,
-            pointName: String,
-            pointDescription: String,
-          },
-        },
-      ],
+      day: Number,
+      points: [{ time: String, pointName: String, pointDescription: String }],
     },
   ],
   ratingVotes: {

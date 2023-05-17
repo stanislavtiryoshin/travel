@@ -60,6 +60,7 @@ import Services from "../../components/HotelPage/Services";
 import { setRefetch } from "../../features/search/searchSlice";
 import { ExpandableText } from "../../components/HotelPage/ExpandableText";
 import ClientProgram from "../../components/HotelPage/ClientProgram";
+import ClientProgramTest from "../../components/HotelPage/ClientProgramTest";
 
 const Tour = () => {
   const navigate = useNavigate();
@@ -148,6 +149,13 @@ const Tour = () => {
   useEffect(() => {
     dispatch(setRefetch(refetch));
   }, [price]);
+
+  const [programList, setProgramList] = useState([]);
+  useEffect(() => {
+    if (singleTour?.program && singleTour?.program?.length > 0) {
+      setProgramList(singleTour?.program);
+    }
+  }, [singleTour]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -331,7 +339,7 @@ const Tour = () => {
                     </div>
                   </div>
                   <div className="hotel_services-row">
-                    <ClientProgram points={points} />
+                    <ClientProgramTest programList={programList} />
                     {/* {points.map((point, idx) => (
                       <div className="program-tour">
                         <div

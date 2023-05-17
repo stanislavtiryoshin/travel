@@ -84,20 +84,6 @@ const campSchema = Schema({
   },
   program: [
     {
-      days: [
-        {
-          points: {
-            day: Number,
-            time: String,
-            pointName: String,
-            pointDescription: String,
-          },
-        },
-      ],
-    },
-  ],
-  programTest: [
-    {
       day: Number,
       points: [{ time: String, pointName: String, pointDescription: String }],
     },
