@@ -17,7 +17,9 @@ export const filterApi = createApi({
           filter.rating && filter.rating
         }&food=${filter.food && filter.food}&paymentType=${
           filter.paymentType && filter.paymentType
-        }`,
+        }&start=${filter.start && filter.start}&adultsAmount=${
+          filter.adultsAmount && filter.adultsAmount
+        }&kidsAmount=${filter.kidsAmount && filter.kidsAmount}`,
       }),
       providesTags: [{ type: "Filter", id: "LIST" }],
     }),

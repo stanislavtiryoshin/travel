@@ -32,6 +32,15 @@ const TourResults = ({ mode }) => {
       rating: "",
       food: [],
       paymentType: "",
+      start: JSON.parse(localStorage.getItem("startDate")) || "",
+      adultsAmount:
+        JSON.parse(localStorage.getItem("agesArray")).filter(
+          (age) => age === 1000
+        ).length || 1,
+      kidsAmount:
+        JSON.parse(localStorage.getItem("agesArray")).filter(
+          (age) => age !== 1000
+        ).length || 1,
     }
   );
 
