@@ -70,6 +70,12 @@ const AddHotel = ({
     hotelStars: 5,
   });
 
+  const buttonRef = useRef(null);
+
+  function handleClick() {
+    buttonRef.current.click();
+  }
+
   const [fetchedOptions, setFetchedOptions] = useState([]);
 
   useEffect(() => {
@@ -727,9 +733,10 @@ const AddHotel = ({
               >
                 <div className="periods_top">
                   <div className="gen_title">Номера </div>
-                  {/* <div className="periods_btns">
+                  <div className="periods_btns">
                     <button className="primary-btn black">Сохранить</button>
-                  </div> */}
+                    <button onClick={handleClick}>AAAA</button>
+                  </div>
                 </div>
                 <div className="table_wrapper">
                   <table className="periods_table">
@@ -753,6 +760,7 @@ const AddHotel = ({
                         prices &&
                         fetchedHotelData?.rooms?.map((room) => (
                           <RoomRow
+                            buttonRef={buttonRef}
                             room={room}
                             periodPrices={room.periodPrices}
                           />

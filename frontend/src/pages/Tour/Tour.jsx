@@ -58,8 +58,8 @@ import GalleryBox from "../../components/Slider/GalleryBox";
 import { useGetTourPriceQuery } from "../../features/services/price.service";
 import Services from "../../components/HotelPage/Services";
 import { setRefetch } from "../../features/search/searchSlice";
-import Program from "../../components/HotelPage/Program";
 import { ExpandableText } from "../../components/HotelPage/ExpandableText";
+import ClientProgram from "../../components/HotelPage/ClientProgram";
 
 const Tour = () => {
   const navigate = useNavigate();
@@ -331,7 +331,7 @@ const Tour = () => {
                     </div>
                   </div>
                   <div className="hotel_services-row">
-                    <Program points={points} />
+                    <ClientProgram points={points} />
                     {/* {points.map((point, idx) => (
                       <div className="program-tour">
                         <div

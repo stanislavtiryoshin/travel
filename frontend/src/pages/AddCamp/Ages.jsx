@@ -25,7 +25,7 @@ const Ages = ({ ages, setAges, refetch, campId }) => {
     dispatch(addAge(ageData)).then(() => refetch());
   };
 
-  console.log({ ages: ages, campId: campId }, "ages");
+  // console.log({ ages: ages, campId: campId }, "ages");
 
   return (
     <Section section="periods_section" wrapper="periods_wrapper ver">
@@ -76,7 +76,8 @@ const Ages = ({ ages, setAges, refetch, campId }) => {
                     </button>
                   </div>
                   <div className="inputs_row">
-                    <div className="input_col">
+                    <div className="input_col ages">
+                      <span>Минимальный</span>
                       <div className="inputs_content">
                         <input
                           type="number"
@@ -90,7 +91,11 @@ const Ages = ({ ages, setAges, refetch, campId }) => {
                             setAges(newAges);
                           }}
                         />
-                        -
+                      </div>
+                    </div>
+                    <div className="input_col ages">
+                      <span>Максимальный</span>
+                      <div className="inputs_content">
                         <input
                           type="number"
                           min={1}

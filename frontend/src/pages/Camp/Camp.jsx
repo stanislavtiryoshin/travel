@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 import RatingBox from "../../components/HotelCard/RatingBox";
@@ -12,30 +11,22 @@ import kids from "../../assets/kids.png";
 import divider from "../../assets/hotel/divider.svg";
 
 import "./Camp.scss";
-import Room from "../Hotel/Room";
-import Excursions from "../../components/Excursions/Excursions";
 import {
   useGetCampByIdQuery,
   useGetHotelsByTagMutation,
-  useGetRoomByHotelIdLimitQuery,
 } from "../../features/services/base.service";
 import GalleryBox from "../../components/Slider/GalleryBox";
 import Recommendation from "../../components/Recommendation/Recommendation";
 import HotelLoader from "../../components/Loader/HotelLoader";
-import RoomLoader from "../../components/Loader/RoomLoader";
-import RecommLoader from "../../components/Loader/RecommLoader";
-import BodyTitle from "../../components/BodyTitle/BodyTitle";
 import CheckBtn from "../../components/Filter/CheckBtn";
 import { useGetCampPriceQuery } from "../../features/services/price.service";
 
 import { setRefetch } from "../../features/search/searchSlice";
-import { addClientRoom } from "../../features/clientSlice";
-import Services from "../../components/HotelPage/Services";
 import { ExpandableText } from "../../components/HotelPage/ExpandableText";
 import Sum from "../../components/HotelPage/Sum";
-import ServiceTags from "../../components/HotelPage/TopTags";
 import TopTags from "../../components/HotelPage/TopTags";
-import Program from "../../components/HotelPage/Program";
+import ClientProgram from "../../components/HotelPage/ClientProgram";
+import ClientProgramTest from "../../components/HotelPage/ClientProgramTest";
 
 const Camp = () => {
   const dispatch = useDispatch();
@@ -53,8 +44,6 @@ const Camp = () => {
       setSources([]);
     }
   }, [singleCamp]);
-
-  const [roomCount, setRoomCount] = useState(3);
 
   const [
     getData,
@@ -133,10 +122,6 @@ const Camp = () => {
     adultsFoodAmount: 0,
   });
 
-  const changeExtraFood = () => [
-    setPriceData({ ...priceData, addExtraFood: !priceData.addExtraFood }),
-  ];
-
   useEffect(() => {
     setPriceData((prev) => ({
       ...prev,
@@ -214,31 +199,38 @@ const Camp = () => {
     }
   }, [orderTerms.foodIncluded]);
 
-  const [points, setPoints] = React.useState([]);
+  // const [points, setPoints] = React.useState([]);
 
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //     const points =
+  //       singleCamp?.program &&
+  //       singleCamp?.program
+  //         ?.map((item) =>
+  //           item.days.length > 0 ? item.days.map((day) => day.points) : []
+  //         )
+  //         .reduce((prev, curr) => prev.concat(curr));
+
+  //     const days = [...new Set(points?.map((point) => point.day))];
+
+  //     const result = days.map((day) => {
+  //       const pointsForDay = points.filter((point) => point.day === day);
+  //       const totalPoints = pointsForDay.length;
+  //       return {
+  //         day,
+  //         points: pointsForDay,
+  //         totalPoints,
+  //       };
+  //     });
+
+  //     setPoints(result);
+  //   }
+  // }, [singleCamp]);
+
+  const [programList, setProgramList] = useState([]);
   useEffect(() => {
-    if (!isLoading) {
-      const points =
-        singleCamp?.program &&
-        singleCamp?.program
-          ?.map((item) =>
-            item.days.length > 0 ? item.days.map((day) => day.points) : []
-          )
-          .reduce((prev, curr) => prev.concat(curr));
-
-      const days = [...new Set(points?.map((point) => point.day))];
-
-      const result = days.map((day) => {
-        const pointsForDay = points.filter((point) => point.day === day);
-        const totalPoints = pointsForDay.length;
-        return {
-          day,
-          points: pointsForDay,
-          totalPoints,
-        };
-      });
-
-      setPoints(result);
+    if (singleCamp?.programTest && singleCamp?.programTest?.length > 0) {
+      setProgramList(singleCamp?.programTest);
     }
   }, [singleCamp]);
 
@@ -456,7 +448,7 @@ const Camp = () => {
                     </div>
                   </div>
                   <img src={divider} alt="" />
-                  <Program points={points} />
+                  <ClientProgramTest programList={programList} />
                 </div>
               </div>
 

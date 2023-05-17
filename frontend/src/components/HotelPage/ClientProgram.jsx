@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import pti4ka from "../../assets/hotel/pti4ka.svg";
 
-const Program = ({ points }) => {
+const ClientProgram = ({ points }) => {
   const [programIdx, setProgramIdx] = useState(null);
+  console.log(points, "points");
   return (
     <>
-      {points.map((point, idx) => (
+      {points?.map((point, idx) => (
         <div className="program-tour">
           <div
             onClick={() => {
@@ -101,4 +102,4 @@ const Program = ({ points }) => {
   );
 };
 
-export default Program;
+export default ClientProgram;

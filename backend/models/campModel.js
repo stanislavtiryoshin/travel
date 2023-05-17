@@ -96,6 +96,12 @@ const campSchema = Schema({
       ],
     },
   ],
+  programTest: [
+    {
+      day: Number,
+      points: [{ time: String, pointName: String, pointDescription: String }],
+    },
+  ],
 });
 
 module.exports = new model("Camp", campSchema);
