@@ -56,23 +56,31 @@ const Navbar = ({ isSearch }) => {
     { id: 2, label: "1-3 туры", path: "/dashboard/tours" },
     { id: 3, label: "Лагеря", path: "/dashboard/camps" },
     { id: 4, label: "Санатории", path: "/dashboard/sanatoriums" },
-    // { id: 5, label: "Менеджеры" },
+    { id: 5, label: "Менеджеры", path: "/dashboard/managers" },
   ];
 
   const renderTabs = () => {
-    return tabsContent.map((tab, index) => {
-      const isActive = currentTab === index;
-      return (
-        <Link
-          to={tab.path}
-          className={`tab-btn ${isActive ? "active" : ""}`}
-          onClick={() => dispatch(setCurrentTab(index))}
-          key={tab.label}
-        >
-          {tab.label}
-        </Link>
-      );
-    });
+    return tabsContent
+      .filter((tabs) => {
+        if (user?.role !== "Admin") {
+          return tabs.id !== 5;
+        } else {
+          return tabs;
+        }
+      })
+      .map((tab, index) => {
+        const isActive = currentTab === index;
+        return (
+          <Link
+            to={tab.path}
+            className={`tab-btn ${isActive ? "active" : ""}`}
+            onClick={() => dispatch(setCurrentTab(index))}
+            key={tab.label}
+          >
+            {tab.label}
+          </Link>
+        );
+      });
   };
 
   const location = useLocation();

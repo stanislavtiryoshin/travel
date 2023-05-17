@@ -4,19 +4,10 @@ import RequestTable from "../Requests/RequestTable";
 import HotelSearch from "../../components/SearchPanel/HotelSearch";
 
 import Loader from "../../components/Loader";
+import { useDeleteManagersMutation } from "../../features/services/user.service";
 
-const Manager = () => {
-  const [fakeManagers, setFakeManagers] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((json) => {
-        setFakeManagers(json);
-        setIsLoading(false);
-      });
-  }, []);
+const Manager = ({ users, isLoading }) => {
+  const [managerIds, setManagerIds] = useState([]);
 
   const columns = [
     {
@@ -25,15 +16,22 @@ const Manager = () => {
       Cell: ({ row }) => (
         <input
           type="checkbox"
-          value={row.original.id}
-          onChange={(e) => console.log(e.target.value)}
+          value={row.original._id}
+          checked={managerIds.includes(row.original._id)}
+          onChange={(e) => {
+            if (e.target.checked) {
+              setManagerIds([...managerIds, e.target.value]);
+            } else {
+              setManagerIds(managerIds.filter((id) => id !== e.target.value));
+            }
+          }}
         />
       ),
     },
     {
-      id: "id",
+      id: "_id",
       header: "ID",
-      accessor: "id",
+      accessor: "_id",
     },
     {
       id: "name",
@@ -41,16 +39,27 @@ const Manager = () => {
       accessor: "name",
     },
     {
+      id: "phone",
+      header: "Номер Телефона",
+      accessor: "phone",
+    },
+    {
       id: "email",
       header: "Email",
       accessor: "email",
     },
     {
-      id: "phone",
-      header: "Телефон",
-      accessor: "phone",
+      id: "delete",
+      header: "Удалить",
+      Cell: () => <button onClick={handleDeleteManager}>...</button>,
     },
   ];
+
+  const [deleteManagers] = useDeleteManagersMutation();
+
+  const handleDeleteManager = async () => {
+    await deleteManagers({ managerIds });
+  };
 
   return (
     <>
@@ -67,7 +76,7 @@ const Manager = () => {
         {isLoading ? (
           <Loader />
         ) : (
-          <RequestTable columns={columns} data={fakeManagers} isManager />
+          <RequestTable columns={columns} data={users} isManager />
         )}
       </section>
     </>
