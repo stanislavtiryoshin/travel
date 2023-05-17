@@ -16,10 +16,7 @@ import tag5 from "../../assets/tags/tag5.svg";
 import { getAdminHotels, reset } from "../../features/hotel/hotelSlice";
 
 const HotelSearch = ({
-  hotelMode,
-  tourMode,
-  campMode,
-  sanMode,
+  mode,
   reqMode,
   handleStatus,
   handleQuery,
@@ -112,11 +109,26 @@ const HotelSearch = ({
     console.log(searchTerms);
   };
 
+  const renderTitle = () => {
+    switch (mode) {
+      case "hotel":
+        return "Отели";
+      case "tour":
+        return "Туры";
+      case "sanatorium":
+        return "Санатории";
+      case "camp":
+        return "Лагеря";
+      case "request":
+        return "Заявки";
+    }
+  };
+
   return (
     <section className="dash_search_section">
       <div className="container">
         <div className="dash_search_wrapper wrapper ver">
-          <div className="dash_heading">{reqMode ? "Заявки" : "Отели"}</div>
+          <div className="dash_heading">{renderTitle()}</div>
           <div className={reqMode ? "search_box req" : "search_box"}>
             <div className="search_bot">
               <div className="search_col">

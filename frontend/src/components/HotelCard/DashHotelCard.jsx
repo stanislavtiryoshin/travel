@@ -29,7 +29,7 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
   useEffect(() => {
     const uniqueDays = {};
     if (mode === "tour" && hotel) {
-      hotel?.program.forEach((item) => {
+      hotel?.program?.forEach((item) => {
         item?.days?.forEach((day) => {
           uniqueDays[day?.points?.day] = true;
         });

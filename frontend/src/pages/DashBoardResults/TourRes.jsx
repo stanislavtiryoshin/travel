@@ -24,7 +24,7 @@ const TourRes = () => {
   }
   return (
     <div className="tours_tab tab">
-      <HotelSearch tourMode />
+      <HotelSearch mode="tour" />
       <Section section="dash_section" wrapper="dash_wrapper">
         <div className="dash_side">
           <Filter tourMode />

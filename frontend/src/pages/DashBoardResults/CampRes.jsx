@@ -25,7 +25,7 @@ const CampRes = () => {
   }
   return (
     <div className="tours_tab tab">
-      <HotelSearch campMode />
+      <HotelSearch mode="camp" />
       <Section section="dash_section" wrapper="dash_wrapper">
         <div className="dash_side">
           <Filter campMode />
