@@ -45,7 +45,7 @@ const AddTour = () => {
     description: "",
     duration: "",
     program: [],
-    food: null,
+    food: [],
     // kidFoodPrice: null,
     // adultFoodPrice: null,
     hotelId: null,
@@ -125,10 +125,11 @@ const AddTour = () => {
         room: roomId,
       },
     };
+    console.log(values, "values");
     await createTour(values);
 
     if (!addLoad) {
-      alert("Added");
+      // alert("Added");
       navigate(`/tour/${addedTour._id}`);
     }
   };
@@ -350,6 +351,7 @@ const AddTour = () => {
                     Добавить отель
                   </button>
                   <div className="input_title">Тип питания</div>
+                  {console.log(foodValue, "foodValue")}
                   <Selector2
                     food
                     data={food}
