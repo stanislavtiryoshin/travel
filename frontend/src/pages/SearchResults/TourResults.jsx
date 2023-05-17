@@ -40,7 +40,7 @@ const TourResults = ({ mode }) => {
       kidsAmount:
         JSON.parse(localStorage.getItem("agesArray")).filter(
           (age) => age !== 1000
-        ).length || 1,
+        ).length || 0,
     }
   );
 
