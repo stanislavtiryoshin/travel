@@ -32,6 +32,7 @@ import { useLocation } from "react-router-dom";
 import { getSearchedSanatoriums } from "../../features/sanatorium/sanatoriumSlice";
 import { API_URL_PROXY } from "../../config/config";
 import { useLazyGetTourByFilterQuery } from "../../features/services/filter.service";
+import { setSearchFilter } from "../../features/search/searchSlice";
 
 const SearchPanel = ({ isUserLook, style }) => {
   const dispatch = useDispatch();
@@ -100,6 +101,13 @@ const SearchPanel = ({ isUserLook, style }) => {
       });
 
       dispatch(setStartDate(Date.parse(start)));
+      dispatch(
+        setSearchFilter({
+          ...searchFilter,
+          daysAmount:
+            (Date.parse(end) - Date.parse(start)) / 1000 / 60 / 60 / 24 + 1,
+        })
+      );
       dispatch(setEndDate(Date.parse(end)));
       dispatch(
         setDaysAmount(
@@ -120,10 +128,12 @@ const SearchPanel = ({ isUserLook, style }) => {
       kidsAmount: +localStorage.getItem("kidsAmount"),
       adultsAmount: +localStorage.getItem("adultsAmount"),
       daysAmount: +localStorage.getItem("daysAmount"),
+      locationId: +localStorage.getItem("locationId"),
     });
   }, []);
 
   useEffect(() => {
+    localStorage.setItem("locationId", clientData.locationId);
     localStorage.setItem("startDate", clientData.startDate);
     localStorage.setItem("endDate", clientData.endDate);
     localStorage.setItem("daysAmount", +clientData.daysAmount);
@@ -195,6 +205,7 @@ const SearchPanel = ({ isUserLook, style }) => {
       "agesArray",
       JSON.stringify(agesArray.filter((ages) => ages !== null))
     );
+    dispatch(setSearchFilter({ ...searchFilter, agesArray: agesArray }));
   }, [agesArray]);
 
   useEffect(() => {
@@ -206,6 +217,8 @@ const SearchPanel = ({ isUserLook, style }) => {
       })
     );
   }, [clientData]);
+
+  const { searchFilter } = useSelector((state) => state.search);
 
   return (
     <div className="search_box" style={style && { ...style }}>
@@ -265,7 +278,16 @@ const SearchPanel = ({ isUserLook, style }) => {
                         ...searchTerms,
                         destination: e.target.value,
                       });
-                      dispatch(setDestination(e.target.value));
+                      setClientData({
+                        ...clientData,
+                        locationId: e.target.value,
+                      });
+                      dispatch(
+                        setSearchFilter({
+                          ...searchFilter,
+                          locationId: e.target.value,
+                        })
+                      );
                     }}
                   >
                     <option value="" selected>

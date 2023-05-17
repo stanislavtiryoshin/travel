@@ -199,7 +199,7 @@ export const hotelSlice = createSlice({
       state.message = "";
     },
     setFilterData: (state, action) => {
-      state.filterData = action.payload;
+      state.hotels = action.payload;
     },
     clearFilterData: (state) => {
       state.filterData = {

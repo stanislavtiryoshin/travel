@@ -170,6 +170,12 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     locationId,
     adultsAmount,
     kidsAmount,
+    filterFood,
+    filterStars,
+    filterRating,
+    filterServices,
+    filterBathroom,
+    filterExtraPlaces,
   } = req.query;
 
   const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
@@ -224,6 +230,22 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
   if (locationId && locationId !== "") {
     query.locationId = locationId;
   }
+  if (filterFood && filterFood !== "") {
+    query.food = {
+      $in: filterFood.split(","),
+    };
+  }
+  if (filterStars && filterStars !== undefined) {
+    query.hotelStars = filterStars;
+  }
+  if (filterRating && filterRating !== undefined) {
+    query.rating = {
+      $in: filterRating.split(","),
+    };
+  }
+  if (filterServices && filterServices.length > 0) {
+    query.hotelServices = { $in: filterServices.split(",") };
+  }
 
   let hotels = await Hotel.find(query)
     .populate("locationId")
@@ -251,7 +273,20 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
         model: "Category",
       },
     });
-  hotels = hotels.filter((hotel) => hotel.rooms.length > 0);
+  hotels = hotels
+    .filter((hotel) =>
+      hotel.rooms.some((room) =>
+        filterBathroom ? room.bathroom.type === filterBathroom : true
+      )
+    )
+    .filter((hotel) =>
+      hotel.rooms.some((room) =>
+        filterExtraPlaces ? room.extraPlaces.length > 0 : true
+      )
+    )
+    .filter((hotel) => {
+      return hotel.rooms.length > 0;
+    });
 
   const newHotels = hotels.map((hotel) => {
     const newHotel = hotel.toObject();

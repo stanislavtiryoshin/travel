@@ -140,47 +140,49 @@ const RequestTable = ({ data, columns, isManager }) => {
         }
       }
     >
-      <table {...getTableProps()} className={styles.table}>
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr className={styles.row} {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th
-                  className={styles.head}
-                  {...column.getHeaderProps(column.getSortByToggleProps())}
-                >
-                  <div className="th-content">
-                    {column.render("header")}{" "}
-                    <span>
-                      {column.isSorted ? (
-                        column.isSortedDesc ? (
-                          <img src={sortButton} />
+      <div className="req_table-wrapper wrapper">
+        <table {...getTableProps()} className={styles.table}>
+          <thead>
+            {headerGroups.map((headerGroup) => (
+              <tr className={styles.row} {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <th
+                    className={styles.head}
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                  >
+                    <div className="th-content">
+                      {column.render("header")}{" "}
+                      <span>
+                        {column.isSorted ? (
+                          column.isSortedDesc ? (
+                            <img src={sortButton} />
+                          ) : (
+                            <img src={sortButton} />
+                          )
                         ) : (
                           <img src={sortButton} />
-                        )
-                      ) : (
-                        <img src={sortButton} />
-                      )}
-                    </span>
-                  </div>
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()} className="shadowed_box">
-          {rows.map((row) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => (
-                  <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                        )}
+                      </span>
+                    </div>
+                  </th>
                 ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()} className="shadowed_box">
+            {rows.map((row) => {
+              prepareRow(row);
+              return (
+                <tr {...row.getRowProps()}>
+                  {row.cells.map((cell) => (
+                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
