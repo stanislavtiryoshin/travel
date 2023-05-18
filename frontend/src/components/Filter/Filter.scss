@@ -1,3 +1,5 @@
+@import "../../variables.scss";
+
 .filter_box {
   width: 340px;
   background-color: #fff;
@@ -71,4 +73,13 @@
 
 .users {
   margin-top: 25px;
+}
+
+.filter_btn {
+  cursor: pointer;
+  transition: 0.2s;
+  color: $black;
+  &:hover {
+    color: #000;
+  }
 }

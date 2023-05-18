@@ -28,13 +28,13 @@ export const filterApi = createApi({
         url: `/hotels/searched?locationId=${
           filter.locationId && filter.locationId
         }&filterFood=${filter.filterFood && filter.filterFood}&filterStars=${
-          filter.filterStars && filter.filterStars
+          filter.filterStars ? filter.filterStars : ""
         }&filterRating=${filter.filterRating && filter.filterRating}&start=${
           filter.start && filter.start
         }&adultsAmount=${
           filter.adultsAmount && filter.adultsAmount
         }&kidsAmount=${filter.kidsAmount && filter.kidsAmount}&filterServices=${
-          filter.filterServices && filter.filterServices
+          filter.filterServices ? filter.filterServices : ""
         }&filterBathroom=${
           filter.filterBathroom && filter.filterBathroom
         }&filterExtraPlaces=${

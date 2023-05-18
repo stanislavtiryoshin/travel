@@ -50,8 +50,8 @@ const HotelsResults = ({ mode }) => {
         <SortBtn mode={mode} />
       </div>
 
-      {selectedHotels && selectedHotels.length > 0 ? (
-        selectedHotels
+      {hotels && hotels?.length > 0 ? (
+        hotels
           .filter((hotel, idx) => idx < hotelsToShow)
           .map((hotel, idx) => {
             return (
@@ -96,7 +96,7 @@ const HotelsResults = ({ mode }) => {
         <div>😭 Ничего не найдено...</div>
       )}
 
-      {selectedHotels.length >= hotelsToShow ? (
+      {hotels?.length >= hotelsToShow ? (
         <button
           className="sort-btn"
           onClick={() => setHotelsToShow(hotelsToShow + 5)}

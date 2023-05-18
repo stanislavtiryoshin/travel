@@ -34,6 +34,7 @@ import {
   useLazyGetHotelsByFilterQuery,
   useLazyGetTourByFilterQuery,
 } from "../../features/services/filter.service";
+import FilterBtn from "./FilterBtn";
 
 const Filter = ({ mode }) => {
   const dispatch = useDispatch();
@@ -46,88 +47,88 @@ const Filter = ({ mode }) => {
   const [maxPrice, setMaxPrice] = useState(100);
   const [minPrice, setMinPrice] = useState(0);
 
-  // useEffect(() => {
-  //   switch (mode) {
-  //     case "hotel":
-  //       setMaxPrice(
-  //         hotels?.reduce(
-  //           (acc, curr) => {
-  //             if (curr.totalPrice > acc.totalPrice) {
-  //               return curr;
-  //             } else {
-  //               return acc;
-  //             }
-  //           },
-  //           { totalPrice: 0 }
-  //         ).totalPrice
-  //       );
-  //       setMinPrice(
-  //         hotels?.reduce(
-  //           (acc, curr) => {
-  //             if (curr.totalPrice < acc.totalPrice) {
-  //               return curr;
-  //             } else {
-  //               return acc;
-  //             }
-  //           },
-  //           { totalPrice: 0 }
-  //         ).totalPrice
-  //       );
-  //       break;
-  //     case "sanatorium":
-  //       setMaxPrice(
-  //         sanatoriums?.reduce(
-  //           (acc, curr) => {
-  //             if (curr.totalPrice > acc.totalPrice) {
-  //               return curr;
-  //             } else {
-  //               return acc;
-  //             }
-  //           },
-  //           { totalPrice: 0 }
-  //         ).totalPrice
-  //       );
-  //       setMinPrice(
-  //         sanatoriums?.reduce(
-  //           (acc, curr) => {
-  //             if (curr.totalPrice < acc.totalPrice) {
-  //               return curr;
-  //             } else {
-  //               return acc;
-  //             }
-  //           },
-  //           { totalPrice: 0 }
-  //         ).totalPrice
-  //       );
-  //       break;
-  //     case "tour":
-  //       setMaxPrice(
-  //         tours?.reduce(
-  //           (acc, curr) => {
-  //             if (curr.totalPrice > acc.totalPrice) {
-  //               return curr;
-  //             } else {
-  //               return acc;
-  //             }
-  //           },
-  //           { totalPrice: 0 }
-  //         ).totalPrice
-  //       );
-  //       setMinPrice(
-  //         tours?.reduce(
-  //           (acc, curr) => {
-  //             if (curr.totalPrice < acc.totalPrice) {
-  //               return curr;
-  //             } else {
-  //               return acc;
-  //             }
-  //           },
-  //           { totalPrice: 0 }
-  //         ).totalPrice
-  //       );
-  //       break;
-  //   }
-  // }, [mode, hotels, sanatoriums, tours]);
+  useEffect(() => {
+    switch (mode) {
+      case "hotel":
+        setMaxPrice(
+          hotels?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice > acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        setMinPrice(
+          hotels?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice < acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        break;
+      case "sanatorium":
+        setMaxPrice(
+          sanatoriums?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice > acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        setMinPrice(
+          sanatoriums?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice < acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        break;
+      case "tour":
+        setMaxPrice(
+          tours?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice > acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        setMinPrice(
+          tours?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice < acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        break;
+    }
+  }, [mode, hotels, sanatoriums, tours]);
 
   const [value, setValue] = useState([minPrice, maxPrice]);
 
@@ -158,7 +159,7 @@ const Filter = ({ mode }) => {
     filterFood: [],
     filterServices: [],
     filterStars: "",
-    filterRating: "",
+    filterRating: [],
     filterExtraPlaces: true,
     filterBathroom: "",
     start: JSON.parse(localStorage.getItem("startDate")) || "",
@@ -182,7 +183,7 @@ const Filter = ({ mode }) => {
     });
   }, [searchFilter]);
 
-  console.log(hotelFilter, "hotelfilter");
+  // console.log(hotelFilter, "hotelfilter");
   // console.log(searchFilter, "filter data");
 
   const [filterTours, { isLoading: tourIsLoading }] =
@@ -266,6 +267,7 @@ const Filter = ({ mode }) => {
         break;
       case "hotel":
         applyHotelFilter(hotelFilter);
+        console.log(hotelFilter, "set filter");
         break;
       case "sanatorium":
         dispatch(setSanFilterData(filterObj));
@@ -302,47 +304,73 @@ const Filter = ({ mode }) => {
     }
   };
 
+  const handleExtraPlacesFilter = () => {
+    setHotelFilter({
+      ...hotelFilter,
+      filterExtraPlaces: !hotelFilter.filterExtraPlaces,
+    });
+  };
+
+  const handleStarsFilter = (stars) => {
+    if (hotelFilter.filterStars === stars) {
+      setHotelFilter((prevState) => ({
+        ...prevState,
+        filterStars: "",
+      }));
+    } else {
+      setHotelFilter({
+        ...hotelFilter,
+        filterStars: stars,
+      });
+    }
+  };
+
+  const handleRatingFilter = (rating) => {
+    if (
+      hotelFilter.filterRating[0] === rating[0] &&
+      hotelFilter.filterRating[1] === rating[1]
+    ) {
+      setHotelFilter({ ...hotelFilter, filterRating: [] });
+    } else {
+      setHotelFilter({ ...hotelFilter, filterRating: rating });
+    }
+  };
+
   const clearFilter = () => {
     switch (mode) {
       case "tour":
         dispatch(clearTourFilterData());
       case "hotel":
         setHotelFilter({
-          locationId: localStorage.getItem("locationId") || "",
+          ...hotelFilter,
           filterFood: [],
           filterServices: [],
           filterStars: "",
           filterRating: "",
           filterExtraPlaces: true,
           filterBathroom: "",
-          start: JSON.parse(localStorage.getItem("startDate")) || "",
-          adultsAmount:
-            JSON.parse(localStorage.getItem("agesArray")).filter(
-              (age) => age === 1000
-            ).length || 1,
-          kidsAmount:
-            JSON.parse(localStorage.getItem("agesArray")).filter(
-              (age) => age !== 1000
-            ).length || 0,
         });
         applyHotelFilter({
-          locationId: localStorage.getItem("locationId") || "",
+          ...hotelFilter,
           filterFood: [],
           filterServices: [],
           filterStars: "",
           filterRating: "",
           filterExtraPlaces: true,
           filterBathroom: "",
-          start: JSON.parse(localStorage.getItem("startDate")) || "",
-          adultsAmount:
-            JSON.parse(localStorage.getItem("agesArray")).filter(
-              (age) => age === 1000
-            ).length || 1,
-          kidsAmount:
-            JSON.parse(localStorage.getItem("agesArray")).filter(
-              (age) => age !== 1000
-            ).length || 0,
         });
+        console.log(
+          {
+            ...hotelFilter,
+            filterFood: [],
+            filterServices: [],
+            filterStars: "",
+            filterRating: "",
+            filterExtraPlaces: true,
+            filterBathroom: "",
+          },
+          "filter clear"
+        );
       case "sanatorium":
         dispatch(clearSanFilterData());
     }
@@ -350,7 +378,7 @@ const Filter = ({ mode }) => {
 
   return (
     <div className="filter_box">
-      {!mode ? (
+      {!location.pathname.includes("/dashboard") ? (
         <div>
           <div className="filter_title">Ваш запрос</div>
           <div className="filter_content">
@@ -405,7 +433,7 @@ const Filter = ({ mode }) => {
         </div>
       ) : null}
 
-      {location.pathname !== "/dashboard" ? (
+      {!location.pathname.includes("/dashboard") ? (
         <div className="filter_row">
           <div className="filter_title">Цена</div>
           <div className="filter_content price_range">
@@ -460,101 +488,95 @@ const Filter = ({ mode }) => {
             <button className="check-btn"></button>1 день
           </div>
         </div>
-      ) : (
-        <div className="filter_row">
-          <div className="filter_title">Вид отдыха</div>
-          <div className="filter_content">
-            <button className="check-btn"></button>
-            Экскурсия
-          </div>
-          <div className="filter_content">
-            <button className="check-btn"></button>
-            Конные туры
-          </div>
-          <div className="filter_content">
-            <button className="check-btn"></button>
-            Пляжные туры
-          </div>
-          <div className="filter_content">
-            <button className="check-btn"></button>
-            Пляжные туры
-          </div>
-          <div className="filter_content">
-            <button className="check-btn"></button>
-            Необычные туры
-          </div>
-        </div>
-      )}
+      ) : null}
 
       <div className="filter_row">
         <div className="filter_title">Питание</div>
         {allFoods
           ? allFoods.map((food, idx) => {
-              const isActive = filterObj.filterFood.includes(food._id);
-              const tourIsActive = tourFilter.food.includes(food._id);
+              const isActive = hotelFilter?.filterFood?.includes(food._id);
+              const tourIsActive = tourFilter?.food?.includes(food._id);
               return (
-                <div
-                  key={food._id}
-                  className="filter_content"
+                <FilterBtn
+                  isActive={isActive}
                   onClick={() => {
                     handleFoodFilter(food._id);
                   }}
-                >
-                  <CheckBtn isActive={tourIsActive || isActive} />
-                  {food.label}
-                </div>
+                  label={food.label}
+                  key={food.label}
+                />
               );
             })
           : null}
       </div>
       <div className="filter_row">
         <div className="filter_title">Количество звезд</div>
-        <div
-          className="filter_content"
-          onClick={() => {
-            mode === "tour"
-              ? setTourFilter((prev) => ({
-                  ...prev,
-                  rating: "",
-                }))
-              : setFilterObj({ ...filterObj, filterStars: null });
-          }}
-        >
-          <CheckBtn isActive={filterObj.filterStars === null} />
-          Любой класс
-        </div>
+        <FilterBtn
+          isActive={hotelFilter.filterExtraPlaces}
+          label={"Есть"}
+          onClick={() =>
+            handleExtraPlacesFilter(!hotelFilter.filterExtraPlaces)
+          }
+        />
+      </div>
+      <div className="filter_row">
+        <div className="filter_title">Количество звезд</div>
+        <FilterBtn
+          isActive={hotelFilter.filterStars === ""}
+          label={"Любой класс"}
+          key={123}
+          onClick={() => handleStarsFilter("")}
+        />
+        {console.log(hotelFilter, "hotel filter")}
         {stars
           ? stars.map((star, idx) => {
-              const isActive = filterObj.filterStars === star;
+              const isActive = hotelFilter?.filterStars === star;
               return (
-                <div
-                  key={star}
-                  className="filter_content"
-                  onClick={() => {
-                    if (mode === "tour") {
-                      setTourFilter((prev) => ({ ...prev, rating: star }));
-                    }
-                    setFilterObj({ ...filterObj, filterStars: star });
-                  }}
-                >
-                  <CheckBtn isActive={isActive} />
-                  <HotelStars number={star} />
-                </div>
+                <>
+                  <FilterBtn
+                    isActive={isActive}
+                    label={<HotelStars number={star} />}
+                    key={star}
+                    onClick={() => handleStarsFilter(star)}
+                  />
+                </>
               );
             })
           : null}
       </div>
       <div className="filter_row">
-        <div className="filter_title">Тип тура</div>
-        <div className="filter_content">
-          <button className="check-btn"></button>
-          Индивидуальный
-        </div>
-        <div className="filter_content">
-          <button className="check-btn"></button>
-          Групповой
-        </div>
+        <div className="filter_title">Рейтинг</div>
+        <FilterBtn
+          isActive={hotelFilter.filterRating.length === 0}
+          label={"Любой"}
+          onClick={() => handleRatingFilter([])}
+        />
+        <FilterBtn
+          isActive={
+            hotelFilter?.filterRating[0] === 2 &&
+            hotelFilter?.filterRating[1] === 3
+          }
+          label={"2-3"}
+          onClick={() => handleRatingFilter([2, 3])}
+        />
+        <FilterBtn
+          isActive={
+            hotelFilter?.filterRating[0] === 3 &&
+            hotelFilter?.filterRating[1] === 4
+          }
+          label={"3-4"}
+          onClick={() => handleRatingFilter([3, 4])}
+        />
+        <FilterBtn
+          isActive={
+            hotelFilter?.filterRating[0] === 4 &&
+            hotelFilter?.filterRating[1] === 5
+          }
+          label={"4-5"}
+          onClick={() => handleRatingFilter([4, 5])}
+        />
       </div>
+
       <div className="filter_row no-border">
         <button className="primary-btn" onClick={() => setFilter()}>
           Отфильтровать
@@ -568,3 +590,43 @@ const Filter = ({ mode }) => {
 };
 
 export default Filter;
+
+{
+  /* <div className="filter_row">
+  <div className="filter_title">Вид отдыха</div>
+  <div className="filter_content">
+    <button className="check-btn"></button>
+    Экскурсия
+  </div>
+  <div className="filter_content">
+    <button className="check-btn"></button>
+    Конные туры
+  </div>
+  <div className="filter_content">
+    <button className="check-btn"></button>
+    Пляжные туры
+  </div>
+  <div className="filter_content">
+    <button className="check-btn"></button>
+    Пляжные туры
+  </div>
+  <div className="filter_content">
+    <button className="check-btn"></button>
+    Необычные туры
+  </div>
+</div>; */
+}
+
+{
+  /* <div className="filter_row">
+  <div className="filter_title">Тип тура</div>
+  <div className="filter_content">
+    <button className="check-btn"></button>
+    Индивидуальный
+  </div>
+  <div className="filter_content">
+    <button className="check-btn"></button>
+    Групповой
+  </div>
+</div>; */
+}
