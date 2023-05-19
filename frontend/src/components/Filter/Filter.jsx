@@ -341,7 +341,7 @@ const Filter = ({ mode }) => {
       case "tour":
         dispatch(clearTourFilterData());
       case "hotel":
-        setHotelFilter({
+        const newHotelFilter = {
           ...hotelFilter,
           filterFood: [],
           filterServices: [],
@@ -349,32 +349,15 @@ const Filter = ({ mode }) => {
           filterRating: "",
           filterExtraPlaces: true,
           filterBathroom: "",
-        });
-        applyHotelFilter({
-          ...hotelFilter,
-          filterFood: [],
-          filterServices: [],
-          filterStars: "",
-          filterRating: "",
-          filterExtraPlaces: true,
-          filterBathroom: "",
-        });
-        console.log(
-          {
-            ...hotelFilter,
-            filterFood: [],
-            filterServices: [],
-            filterStars: "",
-            filterRating: "",
-            filterExtraPlaces: true,
-            filterBathroom: "",
-          },
-          "filter clear"
-        );
+        };
+        setHotelFilter(newHotelFilter);
+        applyHotelFilter(newHotelFilter);
       case "sanatorium":
         dispatch(clearSanFilterData());
     }
   };
+
+  console.log(hotelFilter);
 
   return (
     <div className="filter_box">
@@ -510,7 +493,7 @@ const Filter = ({ mode }) => {
           : null}
       </div>
       <div className="filter_row">
-        <div className="filter_title">Количество звезд</div>
+        <div className="filter_title">Доп. места</div>
         <FilterBtn
           isActive={hotelFilter.filterExtraPlaces}
           label={"Есть"}

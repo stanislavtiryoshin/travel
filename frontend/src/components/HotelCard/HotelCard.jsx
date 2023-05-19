@@ -158,7 +158,7 @@ const HotelCard = ({
             : null}
         </div>
       </div>
-      <img src={line} alt="" />
+      <img src={line} alt="" className="plane_divider" />
       <div className="card_right card_col">
         <div className="card_right-top">
           {oldPrice ? (

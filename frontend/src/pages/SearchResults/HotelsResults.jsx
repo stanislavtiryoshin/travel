@@ -61,12 +61,7 @@ const HotelsResults = ({ mode }) => {
                 hotelId={hotel._id}
                 name={hotel.name}
                 locationId={hotel.locationId}
-                price={
-                  hotel.price *
-                  (localStorage.getItem("agesArray")
-                    ? JSON.parse(localStorage.getItem("agesArray")).length
-                    : 1)
-                }
+                price={hotel.price}
                 adultsAmount={
                   localStorage.getItem("agesArray")
                     ? JSON.parse(localStorage.getItem("agesArray")).length
@@ -78,12 +73,7 @@ const HotelsResults = ({ mode }) => {
                 startDate={startDate}
                 endDate={endDate}
                 rooms={hotel.rooms}
-                totalPrice={
-                  hotel.totalPrice *
-                  (localStorage.getItem("agesArray")
-                    ? JSON.parse(localStorage.getItem("agesArray")).length
-                    : 1)
-                }
+                totalPrice={hotel.totalPrice}
                 oldPrice={hotel.oldPrice}
                 hotelStars={hotel.hotelStars}
                 mode={mode}

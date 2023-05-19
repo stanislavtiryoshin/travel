@@ -137,6 +137,8 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    max-width: 222px;
+    max-height: 191px;
   }
 }
 
@@ -318,4 +320,8 @@
 }
 
 .rating-star {
+}
+
+.plane_divider {
+  max-height: 180px;
 }

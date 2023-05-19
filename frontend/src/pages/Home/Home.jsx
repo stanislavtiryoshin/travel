@@ -101,14 +101,15 @@ const Home = () => {
     <div className="main_page">
       <Hero />
       <section className="all_hotels_section">
-        <div className="main_wrapper wrapper">
-          <div className="main_side">
-            <Filter mode={mode} />
-          </div>
-          <div className="container main_container">
-            <Outlet />
-          </div>
-          {/* <div className="hotel_ad_wrapper wrapper ver">
+        <div className="home_container container">
+          <div className="main_wrapper wrapper">
+            <div className="main_side">
+              <Filter mode={mode} />
+            </div>
+            <div className="container main_container">
+              <Outlet />
+            </div>
+            {/* <div className="hotel_ad_wrapper wrapper ver">
             <div className="hotel_ad_top shadowed_box">
               <a href="">
                 <img src={media} alt="" />
@@ -130,6 +131,7 @@ const Home = () => {
               <img src={ad} alt="" />
             </div>
           </div> */}
+          </div>
         </div>
       </section>
     </div>
