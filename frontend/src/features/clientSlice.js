@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialStateValues = {
-  startDate: new Date(),
-  endDate: new Date(Date.now() + 3600 * 1000 * 24),
+  startDate: new Date().getTime(),
+  endDate: new Date(Date.now() + 3600 * 1000 * 24).getTime(),
   daysAmount: 2,
   destination: "64188de62648843412b12980",
   clientExcursions: [],

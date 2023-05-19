@@ -138,11 +138,6 @@ const Filter = ({ mode }) => {
 
   const [tourFilter, setTourFilter] = useState({
     locationId: "",
-    duration: "",
-    rating: "",
-    food: [],
-    paymentType: "",
-    start: JSON.parse(localStorage.getItem("startDate")) || "",
     adultsAmount:
       JSON.parse(localStorage.getItem("agesArray")).filter(
         (age) => age === 1000
@@ -151,26 +146,36 @@ const Filter = ({ mode }) => {
       JSON.parse(localStorage.getItem("agesArray")).filter(
         (age) => age !== 1000
       ).length || 0,
+    duration: "",
+    rating: "",
+    food: [],
+    paymentType: "",
+    start: JSON.parse(localStorage.getItem("startDate")) || "",
   });
+
+  console.log(tourFilter, "tour filter");
 
   const { searchFilter } = useSelector((state) => state.search);
   const [hotelFilter, setHotelFilter] = useState({
     locationId: localStorage.getItem("locationId") || "",
+    daysAmount: localStorage.getItem("daysAmount") || 1,
+    start: JSON.parse(localStorage.getItem("startDate")) || "",
+    agesArray: JSON.parse(localStorage.getItem("agesArray")),
     filterFood: [],
     filterServices: [],
     filterStars: "",
     filterRating: [],
     filterExtraPlaces: true,
     filterBathroom: "",
+  });
+
+  const [sanatoriumFilter, setSanatoriumFilter] = useState({
+    locationId: localStorage.getItem("locationId") || "",
+    daysAmount: localStorage.getItem("daysAmount") || 1,
     start: JSON.parse(localStorage.getItem("startDate")) || "",
-    adultsAmount:
-      JSON.parse(localStorage.getItem("agesArray")).filter(
-        (age) => age === 1000
-      ).length || 1,
-    kidsAmount:
-      JSON.parse(localStorage.getItem("agesArray")).filter(
-        (age) => age !== 1000
-      ).length || 0,
+    agesArray: JSON.parse(localStorage.getItem("agesArray")),
+    filterFood: [],
+    filterServices: [],
   });
 
   useEffect(() => {
@@ -178,8 +183,13 @@ const Filter = ({ mode }) => {
       ...hotelFilter,
       locationId: searchFilter.locationId || "",
       daysAmount: searchFilter.daysAmount || 1,
-      kidsAmount: searchFilter.agesArray.filter((age) => age !== 1000).length,
-      adultsAmount: searchFilter.agesArray.filter((age) => age === 1000).length,
+      agesArray: searchFilter.agesArray || [1000],
+    });
+    setTourFilter({
+      ...tourFilter,
+      locationId: searchFilter.locationId || "",
+      daysAmount: searchFilter.daysAmount || 1,
+      agesArray: searchFilter.agesArray || [1000],
     });
   }, [searchFilter]);
 
@@ -247,6 +257,12 @@ const Filter = ({ mode }) => {
   const [currentLocation, setCurrentLocation] = useState("");
 
   const stars = [5, 4, 3, 2];
+  const durations = [
+    { value: "", label: "Любая" },
+    { value: 3, label: "3 дня" },
+    { value: 2, label: "2 дня" },
+    { value: 1, label: "1 день" },
+  ];
 
   const applyFilter = (tourFilterObj) => {
     filterTours(tourFilterObj).then(({ data }) => {
@@ -297,6 +313,18 @@ const Filter = ({ mode }) => {
           }));
         } else {
           setTourFilter((prev) => ({
+            ...prev,
+            food: [...prev.food, foodId],
+          }));
+        }
+      case "sanatorium":
+        if (sanatoriumFilter.food.some((el) => el === foodId)) {
+          setSanatoriumFilter((prevState) => ({
+            ...prevState,
+            food: prevState.food.filter((el) => el !== foodId),
+          }));
+        } else {
+          setSanatoriumFilter((prev) => ({
             ...prev,
             food: [...prev.food, foodId],
           }));
@@ -357,8 +385,6 @@ const Filter = ({ mode }) => {
     }
   };
 
-  console.log(hotelFilter);
-
   return (
     <div className="filter_box">
       {!location.pathname.includes("/dashboard") ? (
@@ -416,7 +442,7 @@ const Filter = ({ mode }) => {
         </div>
       ) : null}
 
-      {!location.pathname.includes("/dashboard") ? (
+      {!location.pathname.includes("/dashboard") && maxPrice !== minPrice ? (
         <div className="filter_row">
           <div className="filter_title">Цена</div>
           <div className="filter_content price_range">
@@ -446,30 +472,23 @@ const Filter = ({ mode }) => {
       {mode === "tour" ? (
         <div className="filter_row">
           <div className="filter_title">Длительность тура</div>
-          <div
-            className="filter_content"
-            onClick={() => setTourFilter((prev) => ({ ...prev, duration: "" }))}
-          >
-            <button className="check-btn"></button>Все
-          </div>
-          <div
-            className="filter_content"
-            onClick={() => setTourFilter((prev) => ({ ...prev, duration: 3 }))}
-          >
-            <button className="check-btn"></button>3 дня
-          </div>
-          <div
-            className="filter_content"
-            onClick={() => setTourFilter((prev) => ({ ...prev, duration: 2 }))}
-          >
-            <button className="check-btn"></button>2 дня
-          </div>
-          <div
-            className="filter_content"
-            onClick={() => setTourFilter((prev) => ({ ...prev, duration: 1 }))}
-          >
-            <button className="check-btn"></button>1 день
-          </div>
+          {durations.map((dur) => {
+            return (
+              <FilterBtn
+                key={dur.label}
+                isActive={tourFilter.duration === dur.value}
+                onClick={() =>
+                  tourFilter.duration === dur.value
+                    ? setTourFilter((prev) => ({ ...prev, duration: "" }))
+                    : setTourFilter((prev) => ({
+                        ...prev,
+                        duration: dur.value,
+                      }))
+                }
+                label={dur.label}
+              />
+            );
+          })}
         </div>
       ) : null}
 
@@ -492,41 +511,44 @@ const Filter = ({ mode }) => {
             })
           : null}
       </div>
-      <div className="filter_row">
-        <div className="filter_title">Доп. места</div>
-        <FilterBtn
-          isActive={hotelFilter.filterExtraPlaces}
-          label={"Есть"}
-          onClick={() =>
-            handleExtraPlacesFilter(!hotelFilter.filterExtraPlaces)
-          }
-        />
-      </div>
-      <div className="filter_row">
-        <div className="filter_title">Количество звезд</div>
-        <FilterBtn
-          isActive={hotelFilter.filterStars === ""}
-          label={"Любой класс"}
-          key={123}
-          onClick={() => handleStarsFilter("")}
-        />
-        {console.log(hotelFilter, "hotel filter")}
-        {stars
-          ? stars.map((star, idx) => {
-              const isActive = hotelFilter?.filterStars === star;
-              return (
-                <>
-                  <FilterBtn
-                    isActive={isActive}
-                    label={<HotelStars number={star} />}
-                    key={star}
-                    onClick={() => handleStarsFilter(star)}
-                  />
-                </>
-              );
-            })
-          : null}
-      </div>
+      {mode === "hotel" || mode === "sanatorium" ? (
+        <div className="filter_row">
+          <div className="filter_title">Доп. места</div>
+          <FilterBtn
+            isActive={hotelFilter.filterExtraPlaces}
+            label={"Есть"}
+            onClick={() =>
+              handleExtraPlacesFilter(!hotelFilter.filterExtraPlaces)
+            }
+          />
+        </div>
+      ) : null}
+      {mode === hotels ? (
+        <div className="filter_row">
+          <div className="filter_title">Количество звезд</div>
+          <FilterBtn
+            isActive={hotelFilter.filterStars === ""}
+            label={"Любой класс"}
+            key={123}
+            onClick={() => handleStarsFilter("")}
+          />
+          {stars
+            ? stars.map((star, idx) => {
+                const isActive = hotelFilter?.filterStars === star;
+                return (
+                  <>
+                    <FilterBtn
+                      isActive={isActive}
+                      label={<HotelStars number={star} />}
+                      key={star}
+                      onClick={() => handleStarsFilter(star)}
+                    />
+                  </>
+                );
+              })
+            : null}
+        </div>
+      ) : null}
       <div className="filter_row">
         <div className="filter_title">Рейтинг</div>
         <FilterBtn

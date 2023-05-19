@@ -3,12 +3,17 @@ import { useDispatch, useSelector } from "react-redux";
 import banner from "../../assets/banner.png";
 import SortBtn from "../../components/Filter/SortBtn";
 import HotelCard from "../../components/HotelCard/HotelCard";
-import {
-  getSearchedHotels,
-  reset,
-  selectHotels,
-} from "../../features/hotel/hotelSlice";
+import { getSearchedHotels } from "../../features/hotel/hotelSlice";
 import { useNavigate } from "react-router-dom";
+import {
+  useGetHotelsByFilterQuery,
+  useLazyGetHotelsByFilterQuery,
+} from "../../features/services/filter.service";
+
+import {
+  selectHotels,
+  setFilterData as setHotelFilterData,
+} from "../../features/hotel/hotelSlice";
 
 const HotelsResults = ({ mode }) => {
   const dispatch = useDispatch();
@@ -16,28 +21,22 @@ const HotelsResults = ({ mode }) => {
 
   const [hotelsToShow, setHotelsToShow] = useState(5);
   const selectedHotels = useSelector(selectHotels);
-  const { hotels, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.hotels
-  );
+  // const { hotels, isLoading, isSuccess, isError, message } = useSelector(
+  //   (state) => state.hotels
+  // );
   const { startDate, endDate, peopleAmount, daysAmount, destination } =
     useSelector((state) => state.client);
 
-  useEffect(() => {
-    if (isError) {
-      console.log(message);
-    }
-    dispatch(
-      getSearchedHotels({
-        locationId: "",
-        peopleAmount: 1,
-        daysAmount: 2,
-        start: Date.parse(new Date()),
-        adultsAmount: 1,
-        kidsAmount: 0,
-      })
-    );
-    dispatch(reset());
-  }, [dispatch]);
+  const { searchFilter } = useSelector((state) => state.search);
+
+  console.log(startDate, "startdate");
+
+  const { data: hotels = [], isLoading: hotelsIsLoading } =
+    useGetHotelsByFilterQuery({
+      daysAmount: searchFilter.daysAmount,
+      start: JSON.parse(localStorage.getItem("startDate")) || "",
+      agesArray: searchFilter.agesArray,
+    });
 
   return (
     <div className="all_hotels_wrapper wrapper ver">
@@ -52,8 +51,8 @@ const HotelsResults = ({ mode }) => {
 
       {hotels && hotels?.length > 0 ? (
         hotels
-          .filter((hotel, idx) => idx < hotelsToShow)
-          .map((hotel, idx) => {
+          ?.filter((hotel, idx) => idx < hotelsToShow)
+          ?.map((hotel, idx) => {
             return (
               <HotelCard
                 program={hotel.program}

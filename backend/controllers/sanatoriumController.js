@@ -392,13 +392,15 @@ const getRoomsByLimit = async (req, res) => {
 
 const getSearchedSanatoriums = asyncHandler(async (req, res) => {
   const {
-    peopleAmount,
+    agesArray,
     daysAmount,
     startDate,
     locationId,
     adultsAmount,
     kidsAmount,
   } = req.query;
+
+  const peopleAmount = agesArray.length;
 
   const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
     let daysArray = [];
@@ -441,7 +443,7 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
     return sum;
   };
 
-  const query = {};
+  let query = {};
 
   if (locationId && locationId !== "") {
     query.locationId = locationId;
@@ -465,7 +467,7 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
       },
       match: {
         $expr: {
-          $gte: ["$capacity", req.query.peopleAmount],
+          $gte: ["$capacity", peopleAmount],
         },
       },
     })

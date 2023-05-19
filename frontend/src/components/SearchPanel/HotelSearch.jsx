@@ -46,11 +46,6 @@ const HotelSearch = ({
     minAge: null,
   });
 
-  const [startingDate, setStartingDate] = useState(new Date());
-  const [endingDate, setEndingDate] = useState(
-    new Date(Date.now() + 3600 * 1000 * 24)
-  );
-
   const [clientData, setClientData] = useState({
     endDate: Date.parse(new Date(Date.now() + 3600 * 1000 * 24)),
     startDate: Date.parse(new Date()),
@@ -58,29 +53,6 @@ const HotelSearch = ({
     daysAmount: 2,
     destination: "",
   });
-
-  const onChange = (dates) => {
-    const [start, end] = dates;
-    setStartingDate(start);
-    setEndingDate(end);
-    if (start && end) {
-      setClientData({
-        ...clientData,
-        startDate: Date.parse(start),
-        endDate: Date.parse(end),
-        daysAmount:
-          (Date.parse(end) - Date.parse(start)) / 1000 / 60 / 60 / 24 + 1,
-      });
-
-      dispatch(setStartDate(Date.parse(start)));
-      dispatch(setEndDate(Date.parse(end)));
-      dispatch(
-        setDaysAmount(
-          (Date.parse(end) - Date.parse(start)) / 1000 / 60 / 60 / 24 + 1
-        )
-      );
-    }
-  };
 
   useEffect(() => {
     setClientData({

@@ -14,6 +14,14 @@ import {
   setSearchOptions,
 } from "../../features/clientSlice";
 
+import {
+  selectHotels,
+  setFilterData as setHotelFilterData,
+  clearFilterData,
+} from "../../features/hotel/hotelSlice";
+
+import { setFilterData as setSanatoriumFilterData } from "../../features/sanatorium/sanatoriumSlice";
+
 import { getCamps } from "../../features/camps/campSlice";
 
 import "./SearchPanel.scss";
@@ -23,7 +31,6 @@ import line from "../../assets/hero/line.svg";
 import search1 from "../../assets/search/search1.svg";
 import search2 from "../../assets/search/search2.svg";
 import search3 from "../../assets/search/search3.svg";
-import { getSearchedHotels, reset } from "../../features/hotel/hotelSlice";
 
 import { tags } from "./tags";
 import PeopleSelect from "./PeopleSelect";
@@ -31,7 +38,11 @@ import { getTours } from "../../features/tour/tourSlice";
 import { useLocation } from "react-router-dom";
 import { getSearchedSanatoriums } from "../../features/sanatorium/sanatoriumSlice";
 import { API_URL_PROXY } from "../../config/config";
-import { useLazyGetTourByFilterQuery } from "../../features/services/filter.service";
+import {
+  useLazyGetHotelsByFilterQuery,
+  useLazyGetSanatoriumsByFilterQuery,
+  useLazyGetTourByFilterQuery,
+} from "../../features/services/filter.service";
 import { setSearchFilter } from "../../features/search/searchSlice";
 
 const SearchPanel = ({ isUserLook, style }) => {
@@ -73,12 +84,27 @@ const SearchPanel = ({ isUserLook, style }) => {
     kidsAmount: 0,
   });
 
+  const [agesArray, setAgesArray] = useState(
+    localStorage.getItem("agesArray")
+      ? JSON.parse(localStorage.getItem("agesArray"))
+      : [1000]
+  );
+
+  useEffect(() => {
+    localStorage.setItem(
+      "agesArray",
+      JSON.stringify(agesArray.filter((ages) => ages !== null))
+    );
+    dispatch(setSearchFilter({ ...searchFilter, agesArray: agesArray }));
+  }, [agesArray]);
+
   const [clientData, setClientData] = useState({
     endDate: Date.parse(endingDate),
     startDate: Date.parse(startingDate),
     peopleAmount: 1,
     adultsAmount: 1,
     kidsAmount: 0,
+    agesArray: [1000],
     daysAmount: localStorage.getItem("daysAmount")
       ? JSON.parse(localStorage.getItem("daysAmount"))
       : 2,
@@ -144,69 +170,39 @@ const SearchPanel = ({ isUserLook, style }) => {
 
   const location = useLocation();
 
+  const [searchHotels, { isLoading: hotelsIsLoading }] =
+    useLazyGetHotelsByFilterQuery();
+  const [searchSanatoriums, { isLoading: sanatoriumsIsLoading }] =
+    useLazyGetSanatoriumsByFilterQuery();
+
   const handleSearch = ({
     locationId,
-    peopleAmount,
     daysAmount,
     startDate,
     adultsAmount,
     kidsAmount,
   }) => {
-    if (location.pathname === "/hotels") {
-      dispatch(
-        getSearchedHotels({
+    switch (location.pathname) {
+      case "/hotels":
+        searchHotels({
           locationId,
-          peopleAmount: kidsAmount + adultsAmount,
+          agesArray: agesArray,
           daysAmount,
           startDate,
-          adultsAmount,
-          kidsAmount,
-        })
-      );
-    } else if (location.pathname === "/sanatoriums") {
-      dispatch(
-        getSearchedSanatoriums({
+        }).then(({ data }) => {
+          dispatch(setHotelFilterData(data));
+        });
+      case "/sanatoriums":
+        searchSanatoriums({
           locationId,
-          peopleAmount: kidsAmount + adultsAmount,
+          agesArray: agesArray,
           daysAmount,
           startDate,
-          adultsAmount,
-          kidsAmount,
-        })
-      );
-    } else if (location.pathname === "/tours") {
+        }).then(({ data }) => {
+          dispatch(setSanatoriumFilterData(data));
+        });
     }
   };
-
-  const handleAdultSelect = (num) => {
-    const parsedNum = Number(num);
-    setSearchTerms({
-      ...searchTerms,
-      adultsAmount: searchTerms.adultsAmount + parsedNum,
-      peopleAmount: searchTerms.peopleAmount + parsedNum,
-    });
-    setClientData({
-      ...clientData,
-      adultsAmount: clientData.adultsAmount + parsedNum,
-      peopleAmount: clientData.peopleAmount + parsedNum,
-    });
-  };
-
-  const isHome = window.location.pathname === "/";
-
-  const [agesArray, setAgesArray] = useState(
-    localStorage.getItem("agesArray")
-      ? JSON.parse(localStorage.getItem("agesArray"))
-      : [1000]
-  );
-
-  useEffect(() => {
-    localStorage.setItem(
-      "agesArray",
-      JSON.stringify(agesArray.filter((ages) => ages !== null))
-    );
-    dispatch(setSearchFilter({ ...searchFilter, agesArray: agesArray }));
-  }, [agesArray]);
 
   useEffect(() => {
     dispatch(
@@ -274,14 +270,6 @@ const SearchPanel = ({ isUserLook, style }) => {
                     name="destination"
                     value={searchTerms.destination}
                     onChange={(e) => {
-                      setSearchTerms({
-                        ...searchTerms,
-                        destination: e.target.value,
-                      });
-                      setClientData({
-                        ...clientData,
-                        locationId: e.target.value,
-                      });
                       dispatch(
                         setSearchFilter({
                           ...searchFilter,
@@ -296,7 +284,7 @@ const SearchPanel = ({ isUserLook, style }) => {
                     {allLocations ? (
                       allLocations.map((location, idx) => {
                         return (
-                          <option value={location._id} key={idx}>
+                          <option value={location._id} key={location._id}>
                             {location.locationName}
                           </option>
                         );
@@ -341,6 +329,7 @@ const SearchPanel = ({ isUserLook, style }) => {
               peopleAmount: clientData.peopleAmount,
               daysAmount: clientData.daysAmount,
               startDate: clientData.startDate,
+              agesArray: clientData.agesArray,
               adultsAmount: agesArray.filter((age) => age === 1000).length,
               kidsAmount: agesArray.filter((age) => age !== 1000).length,
             });

@@ -116,7 +116,7 @@ export const sanatoriumSlice = createSlice({
       state.message = "";
     },
     setFilterData: (state, action) => {
-      state.filterData = action.payload;
+      state.sanatoriums = action.payload;
     },
     clearFilterData: (state) => {
       state.filterData = {

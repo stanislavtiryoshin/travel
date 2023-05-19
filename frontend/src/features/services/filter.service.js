@@ -26,20 +26,34 @@ export const filterApi = createApi({
     getHotelsByFilter: builder.query({
       query: (filter) => ({
         url: `/hotels/searched?locationId=${
-          filter.locationId && filter.locationId
-        }&filterFood=${filter.filterFood && filter.filterFood}&filterStars=${
+          filter.locationId ? filter.locationId : ""
+        }&filterFood=${
+          filter.filterFood ? filter.filterFood : ""
+        }&filterStars=${
           filter.filterStars ? filter.filterStars : ""
-        }&filterRating=${filter.filterRating && filter.filterRating}&start=${
-          filter.start && filter.start
-        }&adultsAmount=${
-          filter.adultsAmount && filter.adultsAmount
-        }&kidsAmount=${filter.kidsAmount && filter.kidsAmount}&filterServices=${
+        }&filterRating=${
+          filter.filterRating ? filter.filterRating : ""
+        }&start=${filter.start && filter.start}&agesArray=${
+          filter.agesArray && filter.agesArray
+        }&filterServices=${
           filter.filterServices ? filter.filterServices : ""
         }&filterBathroom=${
-          filter.filterBathroom && filter.filterBathroom
+          filter.filterBathroom ? filter.filterBathroom : ""
         }&filterExtraPlaces=${
-          filter.filterExtraPlaces && filter.filterExtraPlaces
+          filter.filterExtraPlaces ? filter.filterExtraPlaces : ""
         }&daysAmount=${filter.daysAmount && filter.daysAmount}`,
+      }),
+      providesTags: [{ type: "Filter", id: "LIST" }],
+    }),
+    getSanatoriumsByFilter: builder.query({
+      query: (filter) => ({
+        url: `/sanatoriums/searched?locationId=${
+          filter.locationId ? filter.locationId : ""
+        }&start=${filter.start && filter.start}&agesArray=${
+          filter.agesArray && filter.agesArray
+        }&daysAmount=${filter.daysAmount && filter.daysAmount}&filterFood=${
+          filter.filterFood ? filter.filterFood : ""
+        }&filterServices=${filter.filterServices ? filter.filterServices : ""}`,
       }),
       providesTags: [{ type: "Filter", id: "LIST" }],
     }),
@@ -51,4 +65,6 @@ export const {
   useLazyGetTourByFilterQuery,
   useGetHotelsByFilterQuery,
   useLazyGetHotelsByFilterQuery,
+  useGetSanatoriumsByFilterQuery,
+  useLazyGetSanatoriumsByFilterQuery,
 } = filterApi;

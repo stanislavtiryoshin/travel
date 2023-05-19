@@ -192,7 +192,8 @@ const HotelCard = ({
           <div className="card_days nights">
             <img src={moon} alt="" />
             <span>
-              {days - 1} {declOfNum(days - 1, ["ночь", "ночи", "ночей"])}
+              {hotel.daysAmount - 1}{" "}
+              {declOfNum(hotel.daysAmount - 1, ["ночь", "ночи", "ночей"])}
             </span>
           </div>
         </div>

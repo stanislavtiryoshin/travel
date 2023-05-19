@@ -6,6 +6,7 @@ const initialState = {
     locationId: "",
     daysAmount: 1,
     agesArray: [],
+    start: null,
   },
 };
 

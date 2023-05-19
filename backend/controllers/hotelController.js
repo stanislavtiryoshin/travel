@@ -164,7 +164,7 @@ const getSingleHotel = asyncHandler(async (req, res) => {
 
 const getSearchedHotels = asyncHandler(async (req, res) => {
   const {
-    peopleAmount,
+    agesArray,
     daysAmount,
     start,
     locationId,
@@ -177,6 +177,8 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     filterBathroom,
     filterExtraPlaces,
   } = req.query;
+
+  const peopleAmount = agesArray.split(",").map(Number);
 
   const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
     let daysArray = [];
@@ -261,7 +263,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
         $expr: {
           $gte: [
             { $sum: ["$capacity", { $size: "$extraPlaces" }] },
-            { $sum: [req.query.kidsAmount, req.query.adultsAmount] },
+            peopleAmount,
           ],
         },
       },
@@ -288,12 +290,14 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
       return hotel.rooms.length > 0;
     });
 
+  if (hotels.length === 0) res.status(404);
+
   const newHotels = hotels.map((hotel) => {
     const newHotel = hotel.toObject();
     const rooms = newHotel.rooms;
     const cheapestRoom = rooms.reduce(
       (prev, curr) =>
-        prev.periodPrices[0].roomPrice < curr.periodPrices[0].roomPrice
+        prev.periodPrices[0]?.roomPrice < curr.periodPrices[0]?.roomPrice
           ? prev
           : curr,
       rooms[0]
