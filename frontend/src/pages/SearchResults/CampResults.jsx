@@ -3,44 +3,28 @@ import { useDispatch, useSelector } from "react-redux";
 import banner from "../../assets/banner.png";
 import SortBtn from "../../components/Filter/SortBtn";
 import HotelCard from "../../components/HotelCard/HotelCard";
-import { getSearchedHotels } from "../../features/hotel/hotelSlice";
 import { useNavigate } from "react-router-dom";
-import { useLazyGetHotelsByFilterQuery } from "../../features/services/filter.service";
+import { useLazyGetCampsByFilterQuery } from "../../features/services/filter.service";
 
-import {
-  selectHotels,
-  setFilterData as setHotelFilterData,
-  clearFilterData,
-} from "../../features/hotel/hotelSlice";
+import { setFilterData as setCampFilterData } from "../../features/camps/campSlice";
+import Loader from "../../components/Loader";
 
-const HotelsResults = ({ mode }) => {
+const CampsResults = ({ mode }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [hotelsToShow, setHotelsToShow] = useState(5);
-  const selectedHotels = useSelector(selectHotels);
-  const { hotels, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.hotels
-  );
-  const { startDate, endDate, peopleAmount, daysAmount, destination } =
-    useSelector((state) => state.client);
+  const { searchData } = useSelector((state) => state.search);
+  const { camps } = useSelector((state) => state.camps);
 
-  const [searchHotels, { isLoading: hotelsIsLoading }] =
-    useLazyGetHotelsByFilterQuery();
-
+  const [searchCamps, { isLoading: campsIsLoading }] =
+    useLazyGetCampsByFilterQuery();
   useEffect(() => {
-    if (isError) {
-      console.log(message);
-    }
-    searchHotels({
-      locationId: "",
-      agesArray: [1000],
-      daysAmount: 1,
-      startDate: startDate,
-    }).then(({ data }) => {
-      dispatch(setHotelFilterData(data));
+    searchCamps(searchData).then(({ data }) => {
+      dispatch(setCampFilterData(data));
     });
-  }, [searchHotels]);
+  }, []);
+
+  if (campsIsLoading) return <Loader />;
 
   return (
     <div className="all_hotels_wrapper wrapper ver">
@@ -48,57 +32,50 @@ const HotelsResults = ({ mode }) => {
 
       <div className="all_hotels-top">
         <div className="all_hotels-num">
-          Найдено: <span>{selectedHotels?.length}</span>
+          Найдено: <span>{camps?.length}</span>
         </div>
         <SortBtn mode={mode} />
       </div>
 
-      {hotels && hotels?.length > 0 ? (
-        hotels
-          .filter((hotel, idx) => idx < hotelsToShow)
-          .map((hotel, idx) => {
-            return (
-              <HotelCard
-                program={hotel.program}
-                key={hotel._id}
-                hotelId={hotel._id}
-                name={hotel.name}
-                locationId={hotel.locationId}
-                price={hotel.price}
-                adultsAmount={
-                  localStorage.getItem("agesArray")
-                    ? JSON.parse(localStorage.getItem("agesArray")).length
-                    : 1
-                }
-                days={daysAmount}
-                description={hotel.description}
-                rating={hotel.rating}
-                startDate={startDate}
-                endDate={endDate}
-                rooms={hotel.rooms}
-                totalPrice={hotel.totalPrice}
-                oldPrice={hotel.oldPrice}
-                hotelStars={hotel.hotelStars}
-                mode={mode}
-                hotelServices={hotel.hotelServices}
-                hotel={hotel}
-              />
-            );
-          })
+      {camps && camps.length > 0 ? (
+        camps.map((hotel, idx) => {
+          return (
+            <HotelCard
+              program={hotel.program}
+              key={idx}
+              hotelId={hotel._id}
+              name={hotel.name}
+              locationId={hotel.locationId}
+              days={searchData.daysAmount}
+              description={hotel.description}
+              rating={hotel.rating}
+              startDate={searchData.start}
+              rooms={hotel.rooms}
+              totalPrice={hotel.totalPrice}
+              oldPrice={hotel.oldPrice}
+              hotelStars={hotel.hotelStars}
+              mode="sanatorium"
+              hotelServices={hotel?.sanatoriumServices?.map(
+                (serv) => serv.serviceType
+              )}
+              hotel={hotel}
+            />
+          );
+        })
       ) : (
         <div>😭 Ничего не найдено...</div>
       )}
 
-      {hotels?.length >= hotelsToShow ? (
+      {/* {selectedSanatoriums?.length >= hotelsToShow ? (
         <button
           className="sort-btn"
           onClick={() => setHotelsToShow(hotelsToShow + 5)}
         >
-          Загрузить еще...
+          Загрузить еще
         </button>
-      ) : null}
+      ) : null} */}
     </div>
   );
 };
 
-export default HotelsResults;
+export default CampsResults;

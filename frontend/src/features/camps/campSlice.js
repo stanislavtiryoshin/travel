@@ -103,7 +103,7 @@ export const campSlice = createSlice({
       state.message = "";
     },
     setFilterData: (state, action) => {
-      state.filterData = action.payload;
+      state.camps = action.payload;
     },
     clearFilterData: (state) => {
       state.filterData = {

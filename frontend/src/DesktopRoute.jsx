@@ -43,6 +43,7 @@ import TourRes from "./pages/DashBoardResults/TourRes";
 import SanatoriumRes from "./pages/DashBoardResults/SanatoriumRes";
 import CampRes from "./pages/DashBoardResults/CampRes";
 import ManagersRes from "./pages/DashBoardResults/ManagersRes";
+import CampsResults from "./pages/SearchResults/CampResults";
 
 // const Dashboard = lazy(() => import("./pages/Dashboard/Dashboard"));
 // const Home = lazy(() => import("./pages/Home/Home"));
@@ -72,6 +73,7 @@ const DesktopRoute = () => {
             <Route path="/hotels" element={<HotelsResults />} />
             <Route path="/sanatoriums" element={<SanatoriumsResults />} />
             <Route path="/tours" element={<TourResults />} />
+            <Route path="/camps" element={<CampsResults />} />
           </Route>
           <Route path="/hotels/:hotelId" element={<Hotel />} />
           <Route path="/sanatoriums/:sanatoriumId" element={<Sanatorium />} />

@@ -4,13 +4,10 @@ import axios from "axios";
 import SearchTag from "./SearchTag";
 import { useSelector, useDispatch } from "react-redux";
 
-import {
-  selectHotels,
-  setFilterData as setHotelFilterData,
-  clearFilterData,
-} from "../../features/hotel/hotelSlice";
-
+import { setFilterData as setHotelFilterData } from "../../features/hotel/hotelSlice";
 import { setFilterData as setSanatoriumFilterData } from "../../features/sanatorium/sanatoriumSlice";
+import { setSearchData } from "../../features/search/searchSlice";
+import { setFilterData as setCampFilterData } from "../../features/camps/campSlice";
 
 import "./SearchPanel.scss";
 
@@ -21,14 +18,13 @@ import search2 from "../../assets/search/search2.svg";
 import { tags } from "./tags";
 import PeopleSelect from "./PeopleSelect";
 import { useLocation } from "react-router-dom";
-import { getSearchedSanatoriums } from "../../features/sanatorium/sanatoriumSlice";
 import { API_URL_PROXY } from "../../config/config";
 import {
+  useLazyGetCampsByFilterQuery,
   useLazyGetHotelsByFilterQuery,
   useLazyGetSanatoriumsByFilterQuery,
   useLazyGetTourByFilterQuery,
 } from "../../features/services/filter.service";
-import { setSearchData } from "../../features/search/searchSlice";
 import { useGetLocationQuery } from "../../features/services/base.service";
 import DateSelect from "./DateSelect";
 
@@ -54,6 +50,10 @@ const SearchPanel = ({ isUserLook, style }) => {
     useLazyGetHotelsByFilterQuery();
   const [searchSanatoriums, { isLoading: sanatoriumsIsLoading }] =
     useLazyGetSanatoriumsByFilterQuery();
+  const [searchTours, { isLoading: toursIsLoading }] =
+    useLazyGetTourByFilterQuery();
+  const [searchCamps, { isLoading: campsIsLoading }] =
+    useLazyGetCampsByFilterQuery();
 
   const handleSearch = (searchObj) => {
     switch (location.pathname) {
@@ -61,11 +61,22 @@ const SearchPanel = ({ isUserLook, style }) => {
         searchHotels(searchObj).then(({ data }) => {
           dispatch(setHotelFilterData(data));
         });
-        console.log(searchObj, "searchObj");
+        break;
       case "/sanatoriums":
         searchSanatoriums(searchObj).then(({ data }) => {
           dispatch(setSanatoriumFilterData(data));
         });
+        break;
+      case "/tours":
+        searchTours(searchObj).then(({ data }) => {
+          dispatch(setSanatoriumFilterData(data));
+        });
+        break;
+      case "/camps":
+        searchCamps(searchObj).then(({ data }) => {
+          dispatch(setCampFilterData(data));
+        });
+        break;
     }
   };
 

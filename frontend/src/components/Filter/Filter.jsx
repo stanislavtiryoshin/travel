@@ -54,86 +54,86 @@ const Filter = ({ mode }) => {
   }, [minPrice, maxPrice]);
 
   useEffect(() => {
-    // switch (mode) {
-    //   case "hotel":
-    //     setMaxPrice(
-    //       hotels?.reduce(
-    //         (acc, curr) => {
-    //           if (curr.totalPrice > acc.totalPrice) {
-    //             return curr;
-    //           } else {
-    //             return acc;
-    //           }
-    //         },
-    //         { totalPrice: 0 }
-    //       ).totalPrice
-    //     );
-    //     setMinPrice(
-    //       hotels?.reduce(
-    //         (acc, curr) => {
-    //           if (curr.totalPrice < acc.totalPrice) {
-    //             return curr;
-    //           } else {
-    //             return acc;
-    //           }
-    //         },
-    //         { totalPrice: 0 }
-    //       ).totalPrice
-    //     );
-    //     break;
-    //   case "sanatorium":
-    //     setMaxPrice(
-    //       sanatoriums?.reduce(
-    //         (acc, curr) => {
-    //           if (curr.totalPrice > acc.totalPrice) {
-    //             return curr;
-    //           } else {
-    //             return acc;
-    //           }
-    //         },
-    //         { totalPrice: 0 }
-    //       ).totalPrice
-    //     );
-    //     setMinPrice(
-    //       sanatoriums?.reduce(
-    //         (acc, curr) => {
-    //           if (curr.totalPrice < acc.totalPrice) {
-    //             return curr;
-    //           } else {
-    //             return acc;
-    //           }
-    //         },
-    //         { totalPrice: 0 }
-    //       ).totalPrice
-    //     );
-    //     break;
-    //   case "tour":
-    //     setMaxPrice(
-    //       tours?.reduce(
-    //         (acc, curr) => {
-    //           if (curr.totalPrice > acc.totalPrice) {
-    //             return curr;
-    //           } else {
-    //             return acc;
-    //           }
-    //         },
-    //         { totalPrice: 0 }
-    //       ).totalPrice
-    //     );
-    //     setMinPrice(
-    //       tours?.reduce(
-    //         (acc, curr) => {
-    //           if (curr.totalPrice < acc.totalPrice) {
-    //             return curr;
-    //           } else {
-    //             return acc;
-    //           }
-    //         },
-    //         { totalPrice: 0 }
-    //       ).totalPrice
-    //     );
-    //     break;
-    // }
+    switch (mode) {
+      case "hotel":
+        setMaxPrice(
+          hotels?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice > acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        setMinPrice(
+          hotels?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice < acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        break;
+      case "sanatorium":
+        setMaxPrice(
+          sanatoriums?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice > acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        setMinPrice(
+          sanatoriums?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice < acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        break;
+      case "tour":
+        setMaxPrice(
+          tours?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice > acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        setMinPrice(
+          tours?.reduce(
+            (acc, curr) => {
+              if (curr.totalPrice < acc.totalPrice) {
+                return curr;
+              } else {
+                return acc;
+              }
+            },
+            { totalPrice: 0 }
+          ).totalPrice
+        );
+        break;
+    }
   }, [mode, hotels, sanatoriums, tours]);
 
   const [tourFilter, setTourFilter] = useState({

@@ -7,24 +7,26 @@ import HotelSearch from "../../components/SearchPanel/HotelSearch";
 import Section from "../../components/Section";
 import Filter from "../../components/Filter/Filter";
 import DashHotelCard from "../../components/HotelCard/DashHotelCard";
+import { useLazyGetHotelsByFilterQuery } from "../../features/services/filter.service";
 
 const HotelRes = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { hotels, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.hotels
-  );
-  const selectedHotels = useSelector(selectHotels);
-  const { user } = useSelector((state) => state.auth);
 
+  const { searchData } = useSelector((state) => state.search);
+  const { hotels } = useSelector((state) => state.hotels);
+
+  // console.log(startDate, "startdate");
+
+  const [searchHotels, { isLoading: hotelsIsLoading }] =
+    useLazyGetHotelsByFilterQuery();
   useEffect(() => {
-    if (!user) {
-      navigate("/");
-    }
-    dispatch(getAdminHotels("", "", ""));
-  }, [getAdminHotels, dispatch]);
+    searchHotels(searchData).then(({ data }) => {
+      dispatch(setHotelFilterData(data));
+    });
+  }, []);
 
-  if (isLoading) {
+  if (hotelsIsLoading) {
     return <Loader />;
   }
 
@@ -38,8 +40,8 @@ const HotelRes = () => {
           <Filter hotelMode mode="hotel" />
         </div>
         <div className="dash_main">
-          {selectedHotels && selectedHotels.length > 0
-            ? selectedHotels?.map((hotel, idx) => {
+          {hotels && hotels.length > 0
+            ? hotels?.map((hotel, idx) => {
                 return <DashHotelCard hotel={hotel} mode="hotel" />;
               })
             : "is loading"}

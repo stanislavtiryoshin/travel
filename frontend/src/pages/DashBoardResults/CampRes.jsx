@@ -6,23 +6,26 @@ import Filter from "../../components/Filter/Filter";
 import DashHotelCard from "../../components/HotelCard/DashHotelCard";
 import { useNavigate } from "react-router-dom";
 import { getCamps } from "../../features/camps/campSlice";
+import { useLazyGetSanatoriumsByFilterQuery } from "../../features/services/filter.service";
 
 const CampRes = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
-  const { camps, isLoading } = useSelector((state) => state.camps);
 
+  const { searchData } = useSelector((state) => state.search);
+  const { camps } = useSelector((state) => state.camps);
+
+  // console.log(startDate, "startdate");
+
+  const [searchCamps, { isLoading: sanatoriumsIsLoading }] =
+    useLazyGetSanatoriumsByFilterQuery();
   useEffect(() => {
-    if (!user) {
-      navigate("/");
-    }
-    dispatch(getCamps());
+    searchCamps(searchData).then(({ data }) => {
+      dispatch(setSanatoriumFilterData(data));
+    });
   }, []);
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  if (sanatoriumsIsLoading) return <Loader />;
   return (
     <div className="tours_tab tab">
       <HotelSearch mode="camp" />
