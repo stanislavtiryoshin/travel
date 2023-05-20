@@ -64,9 +64,7 @@ const TourResults = ({ mode }) => {
               hotelStars={hotel.hotelStars}
               mode="tour"
               adultsAmount={
-                localStorage.getItem("agesArray")
-                  ? JSON.parse(localStorage.getItem("agesArray")).length
-                  : 1
+                searchData?.agesArray?.filter((age) => age === 1000).length
               }
               hotelServices={hotel.tourServices}
               hotel={hotel}

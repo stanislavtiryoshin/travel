@@ -54,103 +54,103 @@ const Filter = ({ mode }) => {
   }, [minPrice, maxPrice]);
 
   useEffect(() => {
-    switch (mode) {
-      case "hotel":
-        setMaxPrice(
-          hotels?.reduce(
-            (acc, curr) => {
-              if (curr.totalPrice > acc.totalPrice) {
-                return curr;
-              } else {
-                return acc;
-              }
-            },
-            { totalPrice: 0 }
-          ).totalPrice
-        );
-        setMinPrice(
-          hotels?.reduce(
-            (acc, curr) => {
-              if (curr.totalPrice < acc.totalPrice) {
-                return curr;
-              } else {
-                return acc;
-              }
-            },
-            { totalPrice: 0 }
-          ).totalPrice
-        );
-        break;
-      case "sanatorium":
-        setMaxPrice(
-          sanatoriums?.reduce(
-            (acc, curr) => {
-              if (curr.totalPrice > acc.totalPrice) {
-                return curr;
-              } else {
-                return acc;
-              }
-            },
-            { totalPrice: 0 }
-          ).totalPrice
-        );
-        setMinPrice(
-          sanatoriums?.reduce(
-            (acc, curr) => {
-              if (curr.totalPrice < acc.totalPrice) {
-                return curr;
-              } else {
-                return acc;
-              }
-            },
-            { totalPrice: 0 }
-          ).totalPrice
-        );
-        break;
-      case "tour":
-        setMaxPrice(
-          tours?.reduce(
-            (acc, curr) => {
-              if (curr.totalPrice > acc.totalPrice) {
-                return curr;
-              } else {
-                return acc;
-              }
-            },
-            { totalPrice: 0 }
-          ).totalPrice
-        );
-        setMinPrice(
-          tours?.reduce(
-            (acc, curr) => {
-              if (curr.totalPrice < acc.totalPrice) {
-                return curr;
-              } else {
-                return acc;
-              }
-            },
-            { totalPrice: 0 }
-          ).totalPrice
-        );
-        break;
-    }
+    // switch (mode) {
+    //   case "hotel":
+    //     setMaxPrice(
+    //       hotels?.reduce(
+    //         (acc, curr) => {
+    //           if (curr.totalPrice > acc.totalPrice) {
+    //             return curr;
+    //           } else {
+    //             return acc;
+    //           }
+    //         },
+    //         { totalPrice: 0 }
+    //       ).totalPrice
+    //     );
+    //     setMinPrice(
+    //       hotels?.reduce(
+    //         (acc, curr) => {
+    //           if (curr.totalPrice < acc.totalPrice) {
+    //             return curr;
+    //           } else {
+    //             return acc;
+    //           }
+    //         },
+    //         { totalPrice: 0 }
+    //       ).totalPrice
+    //     );
+    //     break;
+    //   case "sanatorium":
+    //     setMaxPrice(
+    //       sanatoriums?.reduce(
+    //         (acc, curr) => {
+    //           if (curr.totalPrice > acc.totalPrice) {
+    //             return curr;
+    //           } else {
+    //             return acc;
+    //           }
+    //         },
+    //         { totalPrice: 0 }
+    //       ).totalPrice
+    //     );
+    //     setMinPrice(
+    //       sanatoriums?.reduce(
+    //         (acc, curr) => {
+    //           if (curr.totalPrice < acc.totalPrice) {
+    //             return curr;
+    //           } else {
+    //             return acc;
+    //           }
+    //         },
+    //         { totalPrice: 0 }
+    //       ).totalPrice
+    //     );
+    //     break;
+    //   case "tour":
+    //     setMaxPrice(
+    //       tours?.reduce(
+    //         (acc, curr) => {
+    //           if (curr.totalPrice > acc.totalPrice) {
+    //             return curr;
+    //           } else {
+    //             return acc;
+    //           }
+    //         },
+    //         { totalPrice: 0 }
+    //       ).totalPrice
+    //     );
+    //     setMinPrice(
+    //       tours?.reduce(
+    //         (acc, curr) => {
+    //           if (curr.totalPrice < acc.totalPrice) {
+    //             return curr;
+    //           } else {
+    //             return acc;
+    //           }
+    //         },
+    //         { totalPrice: 0 }
+    //       ).totalPrice
+    //     );
+    //     break;
+    // }
   }, [mode, hotels, sanatoriums, tours]);
 
   const [tourFilter, setTourFilter] = useState({
-    locationId: "",
-    adultsAmount:
-      JSON.parse(localStorage.getItem("agesArray")).filter(
-        (age) => age === 1000
-      ).length || 1,
-    kidsAmount:
-      JSON.parse(localStorage.getItem("agesArray")).filter(
-        (age) => age !== 1000
-      ).length || 0,
-    duration: "",
-    rating: "",
-    food: [],
-    paymentType: "",
-    start: JSON.parse(localStorage.getItem("startDate")) || "",
+    // locationId: "",
+    // adultsAmount:
+    //   JSON.parse(localStorage.getItem("agesArray")).filter(
+    //     (age) => age === 1000
+    //   ).length || 1,
+    // kidsAmount:
+    //   JSON.parse(localStorage.getItem("agesArray")).filter(
+    //     (age) => age !== 1000
+    //   ).length || 0,
+    // duration: "",
+    // rating: "",
+    // food: [],
+    // paymentType: "",
+    // start: JSON.parse(localStorage.getItem("startDate")) || "",
   });
 
   console.log(tourFilter, "tour filter");
@@ -226,11 +226,14 @@ const Filter = ({ mode }) => {
   };
 
   const [startTime] = useState(
-    new Date(JSON.parse(localStorage.getItem("startDate")))
+    localStorage.getItem("startDate")
+      ? new Date(JSON.parse(localStorage.getItem("startDate")))
+      : new Date()
   );
-
   const [endTime] = useState(
-    new Date(JSON.parse(localStorage.getItem("endDate")))
+    localStorage.getItem("endDate")
+      ? new Date(JSON.parse(localStorage.getItem("endDate")))
+      : new Date()
   );
 
   useEffect(() => {
@@ -442,7 +445,7 @@ const Filter = ({ mode }) => {
                 : endTime.getMonth() + 1}
             </div>
           </div>
-          <div className="filter_content users">
+          {/* <div className="filter_content users">
             <div className="filter_userAmount">
               <img src={person2} alt="Люди" />
               {localStorage.getItem("agesArray") &&
@@ -463,7 +466,7 @@ const Filter = ({ mode }) => {
                   </>
                 )}
             </div>
-          </div>
+          </div> */}
         </div>
       ) : null}
 
