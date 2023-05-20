@@ -19,24 +19,18 @@ const HotelsResults = ({ mode }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [hotelsToShow, setHotelsToShow] = useState(5);
-  const selectedHotels = useSelector(selectHotels);
-  // const { hotels, isLoading, isSuccess, isError, message } = useSelector(
-  //   (state) => state.hotels
-  // );
-  const { startDate, endDate, peopleAmount, daysAmount, destination } =
-    useSelector((state) => state.client);
+  const { searchData } = useSelector((state) => state.search);
+  const { hotels } = useSelector((state) => state.hotels);
 
-  const { searchFilter } = useSelector((state) => state.search);
+  // console.log(startDate, "startdate");
 
-  console.log(startDate, "startdate");
-
-  const { data: hotels = [], isLoading: hotelsIsLoading } =
-    useGetHotelsByFilterQuery({
-      daysAmount: searchFilter.daysAmount,
-      start: JSON.parse(localStorage.getItem("startDate")) || "",
-      agesArray: searchFilter.agesArray,
+  const [searchHotels, { isLoading: hotelsIsLoading }] =
+    useLazyGetHotelsByFilterQuery();
+  useEffect(() => {
+    searchHotels(searchData).then(({ data }) => {
+      dispatch(setHotelFilterData(data));
     });
+  }, []);
 
   return (
     <div className="all_hotels_wrapper wrapper ver">
@@ -44,55 +38,47 @@ const HotelsResults = ({ mode }) => {
 
       <div className="all_hotels-top">
         <div className="all_hotels-num">
-          Найдено: <span>{selectedHotels?.length}</span>
+          Найдено: <span>{hotels?.length}</span>
         </div>
         <SortBtn mode={mode} />
       </div>
 
       {hotels && hotels?.length > 0 ? (
-        hotels
-          ?.filter((hotel, idx) => idx < hotelsToShow)
-          ?.map((hotel, idx) => {
-            return (
-              <HotelCard
-                program={hotel.program}
-                key={hotel._id}
-                hotelId={hotel._id}
-                name={hotel.name}
-                locationId={hotel.locationId}
-                price={hotel.price}
-                adultsAmount={
-                  localStorage.getItem("agesArray")
-                    ? JSON.parse(localStorage.getItem("agesArray")).length
-                    : 1
-                }
-                days={daysAmount}
-                description={hotel.description}
-                rating={hotel.rating}
-                startDate={startDate}
-                endDate={endDate}
-                rooms={hotel.rooms}
-                totalPrice={hotel.totalPrice}
-                oldPrice={hotel.oldPrice}
-                hotelStars={hotel.hotelStars}
-                mode={mode}
-                hotelServices={hotel.hotelServices}
-                hotel={hotel}
-              />
-            );
-          })
+        hotels?.map((hotel, idx) => {
+          return (
+            <HotelCard
+              program={hotel.program}
+              key={hotel._id}
+              hotelId={hotel._id}
+              name={hotel.name}
+              locationId={hotel.locationId}
+              price={hotel.price}
+              adultsAmount={
+                localStorage.getItem("agesArray")
+                  ? JSON.parse(localStorage.getItem("agesArray")).length
+                  : 1
+              }
+              days={hotel.daysAmount}
+              description={hotel.description}
+              rating={hotel.rating}
+              startDate={searchData.start}
+              rooms={hotel.rooms}
+              totalPrice={hotel.totalPrice}
+              oldPrice={hotel.oldPrice}
+              hotelStars={hotel.hotelStars}
+              mode={mode}
+              hotelServices={hotel.hotelServices}
+              hotel={hotel}
+            />
+          );
+        })
       ) : (
         <div>😭 Ничего не найдено...</div>
       )}
 
-      {hotels?.length >= hotelsToShow ? (
-        <button
-          className="sort-btn"
-          onClick={() => setHotelsToShow(hotelsToShow + 5)}
-        >
-          Загрузить еще...
-        </button>
-      ) : null}
+      {/* {hotels?.length >= hotelsToShow ? (
+        <button className="sort-btn">Загрузить еще...</button>
+      ) : null} */}
     </div>
   );
 };

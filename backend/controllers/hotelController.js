@@ -168,8 +168,6 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     daysAmount,
     start,
     locationId,
-    adultsAmount,
-    kidsAmount,
     filterFood,
     filterStars,
     filterRating,
@@ -178,7 +176,15 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     filterExtraPlaces,
   } = req.query;
 
-  const peopleAmount = agesArray.split(",").map(Number);
+  const peopleAmount = agesArray.split(",").map(Number).length;
+  const kidsAmount = agesArray
+    .split(",")
+    .map(Number)
+    .filter((age) => age !== 1000).length;
+  const adultsAmount = agesArray
+    .split(",")
+    .map(Number)
+    .filter((age) => age === 1000).length;
 
   const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
     let daysArray = [];
@@ -285,10 +291,10 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
       hotel.rooms.some((room) =>
         filterExtraPlaces ? room.extraPlaces.length > 0 : true
       )
-    )
-    .filter((hotel) => {
-      return hotel.rooms.length > 0;
-    });
+    );
+  // .filter((hotel) => {
+  //   return hotel.rooms.length > 0;
+  // });
 
   if (hotels.length === 0) res.status(404);
 

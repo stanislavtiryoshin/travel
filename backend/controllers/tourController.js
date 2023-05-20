@@ -348,17 +348,18 @@ const getPrice = asyncHandler(async (req, res) => {
 //@access Public
 
 const getSearchedTours = asyncHandler(async (req, res) => {
-  const {
-    peopleAmount,
-    daysAmount,
-    start,
-    locationId,
-    adultsAmount,
-    kidsAmount,
-    rating,
-    duration,
-    food,
-  } = req.query;
+  const { agesArray, daysAmount, start, locationId, rating, duration, food } =
+    req.query;
+
+  const peopleAmount = agesArray.split(",").map(Number).length;
+  const kidsAmount = agesArray
+    .split(",")
+    .map(Number)
+    .filter((age) => age !== 1000).length;
+  const adultsAmount = agesArray
+    .split(",")
+    .map(Number)
+    .filter((age) => age === 1000).length;
 
   const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
     let daysArray = [];

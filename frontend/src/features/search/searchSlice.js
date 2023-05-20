@@ -2,11 +2,19 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   refetch: () => {},
-  searchFilter: {
-    locationId: "",
-    daysAmount: 1,
-    agesArray: [],
-    start: null,
+  searchData: {
+    locationId: "", // all KZ initially
+    daysAmount: 1, // 1 day initially
+    agesArray: [1000], // initially 1 adult
+    start: "1685556000000",
+    filterFood: [],
+    filterServices: [],
+    filterStars: "",
+    filterRating: [],
+    filterExtraPlaces: true,
+    filterBathroom: "",
+    filterDuration: "",
+    filterPaymentType: "",
   },
 };
 
@@ -17,10 +25,10 @@ const searchSlice = createSlice({
     setRefetch: (state, action) => {
       state.refetch = action.payload;
     },
-    setSearchFilter: (state, action) => {
-      state.searchFilter = action.payload;
+    setSearchData: (state, action) => {
+      state.searchData = action.payload;
     },
   },
 });
-export const { setRefetch, setSearchFilter } = searchSlice.actions;
+export const { setRefetch, setSearchData } = searchSlice.actions;
 export default searchSlice.reducer;

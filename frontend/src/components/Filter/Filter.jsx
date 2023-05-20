@@ -35,17 +35,22 @@ import {
   useLazyGetTourByFilterQuery,
 } from "../../features/services/filter.service";
 import FilterBtn from "./FilterBtn";
+import { setSearchData } from "../../features/search/searchSlice";
 
 const Filter = ({ mode }) => {
   const dispatch = useDispatch();
 
-  const selectedHotels = useSelector(selectHotels);
   const { hotels } = useSelector((state) => state.hotels);
-  const selectedSanatoriums = useSelector(selectSanatoriums);
   const { sanatoriums } = useSelector((state) => state.sanatoriums);
   const { tours } = useSelector((state) => state.tour);
+
+  // Setting min and max values for RangeSlider
   const [maxPrice, setMaxPrice] = useState(100);
   const [minPrice, setMinPrice] = useState(0);
+  const [value, setValue] = useState([minPrice, maxPrice]);
+  useEffect(() => {
+    setValue([minPrice, maxPrice]);
+  }, [minPrice, maxPrice]);
 
   useEffect(() => {
     switch (mode) {
@@ -130,12 +135,6 @@ const Filter = ({ mode }) => {
     }
   }, [mode, hotels, sanatoriums, tours]);
 
-  const [value, setValue] = useState([minPrice, maxPrice]);
-
-  useEffect(() => {
-    setValue([minPrice, maxPrice]);
-  }, [minPrice, maxPrice]);
-
   const [tourFilter, setTourFilter] = useState({
     locationId: "",
     adultsAmount:
@@ -155,7 +154,7 @@ const Filter = ({ mode }) => {
 
   console.log(tourFilter, "tour filter");
 
-  const { searchFilter } = useSelector((state) => state.search);
+  const { searchData } = useSelector((state) => state.search);
   const [hotelFilter, setHotelFilter] = useState({
     locationId: localStorage.getItem("locationId") || "",
     daysAmount: localStorage.getItem("daysAmount") || 1,
@@ -181,20 +180,20 @@ const Filter = ({ mode }) => {
   useEffect(() => {
     setHotelFilter({
       ...hotelFilter,
-      locationId: searchFilter.locationId || "",
-      daysAmount: searchFilter.daysAmount || 1,
-      agesArray: searchFilter.agesArray || [1000],
+      locationId: searchData.locationId || "",
+      daysAmount: searchData.daysAmount || 1,
+      agesArray: searchData.agesArray || [1000],
     });
     setTourFilter({
       ...tourFilter,
-      locationId: searchFilter.locationId || "",
-      daysAmount: searchFilter.daysAmount || 1,
-      agesArray: searchFilter.agesArray || [1000],
+      locationId: searchData.locationId || "",
+      daysAmount: searchData.daysAmount || 1,
+      agesArray: searchData.agesArray || [1000],
     });
-  }, [searchFilter]);
+  }, [searchData]);
 
   // console.log(hotelFilter, "hotelfilter");
-  // console.log(searchFilter, "filter data");
+  // console.log(searchData, "filter data");
 
   const [filterTours, { isLoading: tourIsLoading }] =
     useLazyGetTourByFilterQuery();
@@ -292,6 +291,21 @@ const Filter = ({ mode }) => {
   };
 
   const handleFoodFilter = (foodId) => {
+    if (searchData.filterFood.some((el) => el === foodId)) {
+      dispatch(
+        setSearchData((prevState) => ({
+          ...prevState,
+          filterFood: prevState.filterFood.filter((el) => el !== foodId),
+        }))
+      );
+    } else {
+      dispatch(
+        setSearchData({
+          ...searchData,
+          filterFood: [...searchData.filterFood, foodId],
+        })
+      );
+    }
     switch (mode) {
       case "hotel":
         if (hotelFilter.filterFood.some((el) => el === foodId)) {
@@ -337,6 +351,12 @@ const Filter = ({ mode }) => {
       ...hotelFilter,
       filterExtraPlaces: !hotelFilter.filterExtraPlaces,
     });
+    dispatch(
+      setSearchData({
+        ...searchData,
+        filterExtraPlaces: !searchData.filterExtraPlaces,
+      })
+    );
   };
 
   const handleStarsFilter = (stars) => {
@@ -355,12 +375,12 @@ const Filter = ({ mode }) => {
 
   const handleRatingFilter = (rating) => {
     if (
-      hotelFilter.filterRating[0] === rating[0] &&
-      hotelFilter.filterRating[1] === rating[1]
+      searchData.filterRating[0] === rating[0] &&
+      searchData.filterRating[1] === rating[1]
     ) {
-      setHotelFilter({ ...hotelFilter, filterRating: [] });
+      dispatch(setSearchData({ ...searchData, filterRating: [] }));
     } else {
-      setHotelFilter({ ...hotelFilter, filterRating: rating });
+      dispatch(setSearchData({ ...searchData, filterRating: rating }));
     }
   };
 
@@ -384,6 +404,8 @@ const Filter = ({ mode }) => {
         dispatch(clearSanFilterData());
     }
   };
+
+  console.log(searchData, "search filter");
 
   return (
     <div className="filter_box">
@@ -446,7 +468,7 @@ const Filter = ({ mode }) => {
         <div className="filter_row">
           <div className="filter_title">Цена</div>
           <div className="filter_content price_range">
-            {selectedHotels || (selectedSanatoriums && maxPrice !== 100) ? (
+            {hotels || (hotels && maxPrice !== 100) ? (
               <RangeSlider
                 onInput={setValue}
                 value={value}
@@ -496,7 +518,7 @@ const Filter = ({ mode }) => {
         <div className="filter_title">Питание</div>
         {allFoods
           ? allFoods.map((food, idx) => {
-              const isActive = hotelFilter?.filterFood?.includes(food._id);
+              const isActive = searchData?.filterFood?.includes(food._id);
               const tourIsActive = tourFilter?.food?.includes(food._id);
               return (
                 <FilterBtn
@@ -515,10 +537,10 @@ const Filter = ({ mode }) => {
         <div className="filter_row">
           <div className="filter_title">Доп. места</div>
           <FilterBtn
-            isActive={hotelFilter.filterExtraPlaces}
+            isActive={searchData.filterExtraPlaces}
             label={"Есть"}
             onClick={() =>
-              handleExtraPlacesFilter(!hotelFilter.filterExtraPlaces)
+              handleExtraPlacesFilter(!searchData.filterExtraPlaces)
             }
           />
         </div>
@@ -552,30 +574,30 @@ const Filter = ({ mode }) => {
       <div className="filter_row">
         <div className="filter_title">Рейтинг</div>
         <FilterBtn
-          isActive={hotelFilter.filterRating.length === 0}
+          isActive={searchData?.filterRating?.length === 0}
           label={"Любой"}
           onClick={() => handleRatingFilter([])}
         />
         <FilterBtn
           isActive={
-            hotelFilter?.filterRating[0] === 2 &&
-            hotelFilter?.filterRating[1] === 3
+            searchData?.filterRating[0] === 2 &&
+            searchData?.filterRating[1] === 3
           }
           label={"2-3"}
           onClick={() => handleRatingFilter([2, 3])}
         />
         <FilterBtn
           isActive={
-            hotelFilter?.filterRating[0] === 3 &&
-            hotelFilter?.filterRating[1] === 4
+            searchData?.filterRating[0] === 3 &&
+            searchData?.filterRating[1] === 4
           }
           label={"3-4"}
           onClick={() => handleRatingFilter([3, 4])}
         />
         <FilterBtn
           isActive={
-            hotelFilter?.filterRating[0] === 4 &&
-            hotelFilter?.filterRating[1] === 5
+            searchData?.filterRating[0] === 4 &&
+            searchData?.filterRating[1] === 5
           }
           label={"4-5"}
           onClick={() => handleRatingFilter([4, 5])}
