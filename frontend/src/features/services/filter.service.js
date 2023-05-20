@@ -13,13 +13,17 @@ export const filterApi = createApi({
       query: (filter) => ({
         url: `/tour/searched?locationId=${
           filter.locationId && filter.locationId
-        }&duration=${filter.duration && filter.duration}&rating=${
-          filter.rating && filter.rating
-        }&food=${filter.food && filter.food}&paymentType=${
-          filter.paymentType && filter.paymentType
-        }&start=${filter.start && filter.start}&adultsAmount=${
-          filter.adultsAmount && filter.adultsAmount
-        }&kidsAmount=${filter.kidsAmount && filter.kidsAmount}`,
+        }&filterDuration=${
+          filter.filterDuration && filter.filterDuration
+        }&filterRating=${
+          filter.filterRating && filter.filterRating
+        }&filterFood=${
+          filter.filterFood && filter.filterFood
+        }&filterPaymentType=${
+          filter.filterPaymentType && filter.filterPaymentType
+        }&start=${filter.start && filter.start}&agesArray=${
+          filter.agesArray && filter.agesArray
+        }`,
       }),
       providesTags: [{ type: "Filter", id: "LIST" }],
     }),

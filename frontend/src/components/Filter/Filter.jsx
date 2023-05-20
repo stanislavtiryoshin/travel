@@ -36,6 +36,7 @@ import {
 } from "../../features/services/filter.service";
 import FilterBtn from "./FilterBtn";
 import { setSearchData } from "../../features/search/searchSlice";
+import { useGetFoodQuery } from "../../features/services/base.service";
 
 const Filter = ({ mode }) => {
   const dispatch = useDispatch();
@@ -240,20 +241,7 @@ const Filter = ({ mode }) => {
     });
   }, [value]);
 
-  const [allFoods, setAllFoods] = useState(null);
-
-  useEffect(() => {
-    axios
-      .get(`/api/foods`)
-      .then((response) => {
-        setAllFoods(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
-  const [currentLocation, setCurrentLocation] = useState("");
+  const { data: allFoods = [], isLoading } = useGetFoodQuery();
 
   const stars = [5, 4, 3, 2];
   const durations = [
@@ -278,11 +266,10 @@ const Filter = ({ mode }) => {
   const setFilter = () => {
     switch (mode) {
       case "tour":
-        applyFilter(tourFilter);
+        applyFilter(searchData);
         break;
       case "hotel":
-        applyHotelFilter(hotelFilter);
-        console.log(hotelFilter, "set filter");
+        applyHotelFilter(searchData);
         break;
       case "sanatorium":
         dispatch(setSanFilterData(filterObj));
@@ -293,10 +280,10 @@ const Filter = ({ mode }) => {
   const handleFoodFilter = (foodId) => {
     if (searchData.filterFood.some((el) => el === foodId)) {
       dispatch(
-        setSearchData((prevState) => ({
-          ...prevState,
-          filterFood: prevState.filterFood.filter((el) => el !== foodId),
-        }))
+        setSearchData({
+          ...searchData,
+          filterFood: searchData.filterFood.filter((el) => el !== foodId),
+        })
       );
     } else {
       dispatch(
@@ -371,6 +358,21 @@ const Filter = ({ mode }) => {
         filterStars: stars,
       });
     }
+    if (searchData.filterStars === stars) {
+      dispatch(
+        setSearchData({
+          ...searchData,
+          filterStars: "",
+        })
+      );
+    } else {
+      dispatch(
+        setSearchData({
+          ...searchData,
+          filterStars: stars,
+        })
+      );
+    }
   };
 
   const handleRatingFilter = (rating) => {
@@ -389,23 +391,24 @@ const Filter = ({ mode }) => {
       case "tour":
         dispatch(clearTourFilterData());
       case "hotel":
-        const newHotelFilter = {
-          ...hotelFilter,
-          filterFood: [],
-          filterServices: [],
-          filterStars: "",
-          filterRating: "",
-          filterExtraPlaces: true,
-          filterBathroom: "",
-        };
-        setHotelFilter(newHotelFilter);
-        applyHotelFilter(newHotelFilter);
+        dispatch(
+          setSearchData({
+            ...searchData,
+            filterFood: [],
+            filterServices: [],
+            filterStars: "",
+            filterRating: [],
+            filterExtraPlaces: true,
+            filterBathroom: "",
+          })
+        );
+        applyHotelFilter(searchData);
       case "sanatorium":
         dispatch(clearSanFilterData());
     }
   };
 
-  console.log(searchData, "search filter");
+  console.log(searchData, "search data");
 
   return (
     <div className="filter_box">
@@ -545,7 +548,7 @@ const Filter = ({ mode }) => {
           />
         </div>
       ) : null}
-      {mode === hotels ? (
+      {mode === "hotel" ? (
         <div className="filter_row">
           <div className="filter_title">Количество звезд</div>
           <FilterBtn
@@ -556,7 +559,7 @@ const Filter = ({ mode }) => {
           />
           {stars
             ? stars.map((star, idx) => {
-                const isActive = hotelFilter?.filterStars === star;
+                const isActive = searchData?.filterStars === star;
                 return (
                   <>
                     <FilterBtn
@@ -580,6 +583,7 @@ const Filter = ({ mode }) => {
         />
         <FilterBtn
           isActive={
+            searchData?.filterRating?.length !== 0 &&
             searchData?.filterRating[0] === 2 &&
             searchData?.filterRating[1] === 3
           }
@@ -588,6 +592,7 @@ const Filter = ({ mode }) => {
         />
         <FilterBtn
           isActive={
+            searchData?.filterRating?.length !== 0 &&
             searchData?.filterRating[0] === 3 &&
             searchData?.filterRating[1] === 4
           }
@@ -596,6 +601,7 @@ const Filter = ({ mode }) => {
         />
         <FilterBtn
           isActive={
+            searchData?.filterRating?.length !== 0 &&
             searchData?.filterRating[0] === 4 &&
             searchData?.filterRating[1] === 5
           }
