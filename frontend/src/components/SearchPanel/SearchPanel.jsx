@@ -71,13 +71,20 @@ const SearchPanel = ({ isUserLook, style }) => {
 
   // On first render, fill searchData with localStorage data
   useEffect(() => {
+    const storedLocationId = localStorage.getItem("locationId") || "";
+    const storedDaysAmount = localStorage.getItem("daysAmount") || 1;
+    const storedStart = localStorage.getItem("start") || "1685556000000";
+    const storedAgesArray = JSON.parse(localStorage.getItem("agesArray")) || [
+      1000,
+    ];
+
     dispatch(
       setSearchData({
         ...searchData,
-        locationId: localStorage.getItem("locationId"),
-        daysAmount: localStorage.getItem("daysAmount"),
-        start: localStorage.getItem("start"),
-        agesArray: JSON.parse(localStorage.getItem("agesArray")),
+        locationId: storedLocationId,
+        daysAmount: storedDaysAmount,
+        start: storedStart,
+        agesArray: storedAgesArray,
       })
     );
   }, []);
