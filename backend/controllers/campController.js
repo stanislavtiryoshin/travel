@@ -328,18 +328,18 @@ const getPrice = asyncHandler(async (req, res) => {
 //@access Public
 
 const getSearchedCamps = asyncHandler(async (req, res) => {
-  const {
-    agesArray,
-    peopleAmount,
-    daysAmount,
-    start,
-    locationId,
-    adultsAmount,
-    kidsAmount,
-  } = req.query;
+  const { agesArray, daysAmount, start, locationId } = req.query;
 
   ages = agesArray.split(",").map(Number);
-  console.log(ages, "ages");
+  const peopleAmount = agesArray.split(",").map(Number).length;
+  const kidsAmount = agesArray
+    .split(",")
+    .map(Number)
+    .filter((age) => age !== 1000).length;
+  const adultsAmount = agesArray
+    .split(",")
+    .map(Number)
+    .filter((age) => age === 1000).length;
 
   const calculatePrice = (start, daysNum, pricesArray) => {
     let daysArray = [];
@@ -408,8 +408,11 @@ const getSearchedCamps = asyncHandler(async (req, res) => {
 
   let camps = await Camp.find(query)
     .populate({
-      path: "periodPrices",
-      populate: { path: "period", model: "Period" },
+      path: "agePrices",
+      populate: {
+        path: "periodPrices.period",
+        model: "Period",
+      },
     })
     .populate("locationId");
 

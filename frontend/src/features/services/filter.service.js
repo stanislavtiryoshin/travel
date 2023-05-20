@@ -61,6 +61,18 @@ export const filterApi = createApi({
       }),
       providesTags: [{ type: "Filter", id: "LIST" }],
     }),
+    getCampsByFilter: builder.query({
+      query: (filter) => ({
+        url: `/camps/searched?locationId=${
+          filter.locationId ? filter.locationId : ""
+        }&start=${filter.start && filter.start}&agesArray=${
+          filter.agesArray && filter.agesArray
+        }&daysAmount=${filter.daysAmount && filter.daysAmount}&filterFood=${
+          filter.filterFood ? filter.filterFood : ""
+        }&filterServices=${filter.filterServices ? filter.filterServices : ""}`,
+      }),
+      providesTags: [{ type: "Filter", id: "LIST" }],
+    }),
   }),
 });
 
@@ -71,4 +83,6 @@ export const {
   useLazyGetHotelsByFilterQuery,
   useGetSanatoriumsByFilterQuery,
   useLazyGetSanatoriumsByFilterQuery,
+  useGetCampsByFilterQuery,
+  useLazyGetCampsByFilterQuery,
 } = filterApi;

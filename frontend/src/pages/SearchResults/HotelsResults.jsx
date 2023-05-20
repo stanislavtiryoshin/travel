@@ -11,6 +11,7 @@ import {
 } from "../../features/services/filter.service";
 
 import { setFilterData as setHotelFilterData } from "../../features/hotel/hotelSlice";
+import Loader from "../../components/Loader";
 
 const HotelsResults = ({ mode }) => {
   const dispatch = useDispatch();
@@ -28,6 +29,8 @@ const HotelsResults = ({ mode }) => {
       dispatch(setHotelFilterData(data));
     });
   }, []);
+
+  if (hotelsIsLoading) return <Loader />;
 
   return (
     <div className="all_hotels_wrapper wrapper ver">
