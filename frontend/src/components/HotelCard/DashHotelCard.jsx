@@ -8,6 +8,7 @@ import HotelStars from "../HotelStars/HotelStars";
 import tag from "../../assets/tag.svg";
 import { Link } from "react-router-dom";
 import declOfNum from "../DayConfig";
+import calendar from "../../assets/calendar.svg";
 
 const DashHotelCard = ({ hotel, tour, mode }) => {
   const {
@@ -20,8 +21,10 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
     extraPlaces,
     img,
     rooms,
+    duration,
     hotelServices,
     food,
+    tourServices,
   } = hotel;
 
   const [tourDays, setTourDays] = useState(0);
@@ -83,8 +86,8 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
   //   return acc;
   // }, {});
 
-  console.log(roomsCount);
-  console.log(capCount);
+  // console.log(roomsCount);
+  // console.log(capCount);
 
   return (
     <div className="adm_hotel-card shadowed_box">
@@ -145,17 +148,28 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
           </div>
         ) : null}
         <div className="card_mid-tags">
-          {mode === "tour" ? (
+          {mode === "tour" && (
             <div className="card_tag">
-              <img src={tag} alt="" />
-              {`${tourDays} ${declOfNum(tourDays)}`}
-            </div>
-          ) : (
-            <div className="card_tag">
-              <img src={tag} alt="" />
-              {food ? food.label : null}
+              <img src={calendar} alt="" />
+              {`${duration} ${declOfNum(duration)}`}
             </div>
           )}
+
+          {tourServices &&
+            tourServices.length > 0 &&
+            tourServices?.slice(0, 4).map((serv) => (
+              <div className="card_tag">
+                {serv.icon ? (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: serv.icon,
+                    }}
+                  />
+                ) : null}
+                {serv.hotelServiceName}
+              </div>
+            ))}
+
           {hotelServices && hotelServices.length > 0
             ? hotelServices?.slice(0, 4).map((serv) => {
                 return (

@@ -28,8 +28,6 @@ const HotelRes = () => {
     return <Loader />;
   }
 
-  console.log(hotels);
-
   return (
     <div className="hotels_tab tab">
       <HotelSearch mode="hotel" />

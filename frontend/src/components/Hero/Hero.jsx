@@ -2,8 +2,7 @@ import React, { useState } from "react";
 
 import SearchPanel from "../SearchPanel/SearchPanel";
 
-import herologo from "../../assets/herologo.png";
-import bot from "../../assets/bot.svg";
+import logo from "../../assets/hero/Logo.png";
 
 import "./Hero.scss";
 
@@ -12,8 +11,7 @@ const Hero = ({ changeAmount, changeDaysAmount, changeDate, handleSearch }) => {
     <section className="hero_section">
       <div className="container hero">
         <div className="wrapper hero_wrapper ver">
-          <img src={herologo} alt="" className="hero_img" />
-          <img src={bot} alt="" className="bottom" />
+          <img src={logo} alt="" className="hero_img" />
           <SearchPanel
             changeAmount={changeAmount}
             changeDaysAmount={changeDaysAmount}
