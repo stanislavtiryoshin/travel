@@ -10,10 +10,7 @@ import {
   useLazyGetHotelsByFilterQuery,
 } from "../../features/services/filter.service";
 
-import {
-  selectHotels,
-  setFilterData as setHotelFilterData,
-} from "../../features/hotel/hotelSlice";
+import { setFilterData as setHotelFilterData } from "../../features/hotel/hotelSlice";
 
 const HotelsResults = ({ mode }) => {
   const dispatch = useDispatch();

@@ -3,50 +3,34 @@ import { useDispatch, useSelector } from "react-redux";
 import banner from "../../assets/banner.png";
 import SortBtn from "../../components/Filter/SortBtn";
 import HotelCard from "../../components/HotelCard/HotelCard";
-import { setFilterData } from "../../features/tour/tourSlice";
+import { setFilterData as setTourFilterData } from "../../features/tour/tourSlice";
 
 import { useNavigate } from "react-router-dom";
 
 import Loader from "../../components/Loader";
-import { useGetTourByFilterQuery } from "../../features/services/filter.service";
+import {
+  useGetTourByFilterQuery,
+  useLazyGetTourByFilterQuery,
+} from "../../features/services/filter.service";
 
 const TourResults = ({ mode }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const { data: tours = [], isLoading: LoadingTours } = useGetTourByFilterQuery(
-    {
-      locationId: "",
-      duration: "",
-      rating: "",
-      food: [],
-      paymentType: "",
-      start: JSON.parse(localStorage.getItem("startDate")) || "",
-      adultsAmount:
-        JSON.parse(localStorage.getItem("agesArray")).filter(
-          (age) => age === 1000
-        ).length || 1,
-      kidsAmount:
-        JSON.parse(localStorage.getItem("agesArray")).filter(
-          (age) => age !== 1000
-        ).length || 0,
-    }
-  );
+  const { searchData } = useSelector((state) => state.search);
+  const { tours } = useSelector((state) => state.tour);
 
-  const [tourData, setTourData] = useState([]);
+  // console.log(startDate, "startdate");
 
-  const { tours: tour, isLoading: tourIsLoad } = useSelector(
-    (state) => state.tour
-  );
-
+  const [searchTours, { isLoading: toursIsLoading }] =
+    useLazyGetTourByFilterQuery();
   useEffect(() => {
-    if (!LoadingTours) dispatch(setFilterData(tours));
-  }, [tours, LoadingTours]);
+    searchTours(searchData).then(({ data }) => {
+      dispatch(setTourFilterData(data));
+    });
+  }, []);
 
-  const [hotelsToShow, setHotelsToShow] = useState(5);
-  const { startDate, endDate, peopleAmount, daysAmount, destination } =
-    useSelector((state) => state.client);
-
-  if (LoadingTours) {
+  if (toursIsLoading) {
     return <Loader />;
   }
 
@@ -56,47 +40,44 @@ const TourResults = ({ mode }) => {
 
       <div className="all_hotels-top">
         <div className="all_hotels-num">
-          Найдено: <span>{tourData.length}</span>
+          Найдено: <span>{tours.length}</span>
         </div>
         <SortBtn mode={mode} />
       </div>
-      {tour && tour.length > 0 ? (
-        tour
-          .filter((hotel, idx) => idx < hotelsToShow)
-          .map((hotel, idx) => {
-            return (
-              <HotelCard
-                program={hotel.program}
-                key={hotel._id}
-                hotelId={hotel._id}
-                name={hotel.name}
-                locationId={hotel.locationId}
-                price={hotel.price}
-                days={hotel.duration ? hotel.duration : 1}
-                description={hotel.description}
-                rating={hotel.rating}
-                startDate={startDate}
-                endDate={endDate}
-                isTour
-                totalPrice={hotel.totalPrice}
-                oldPrice={hotel.oldPrice}
-                hotelStars={hotel.hotelStars}
-                mode="tour"
-                adultsAmount={
-                  localStorage.getItem("agesArray")
-                    ? JSON.parse(localStorage.getItem("agesArray")).length
-                    : 1
-                }
-                hotelServices={hotel.tourServices}
-                hotel={hotel}
-              />
-            );
-          })
+      {tours && tours.length > 0 ? (
+        tours.map((hotel, idx) => {
+          return (
+            <HotelCard
+              program={hotel.program}
+              key={hotel._id}
+              hotelId={hotel._id}
+              name={hotel.name}
+              locationId={hotel.locationId}
+              price={hotel.price}
+              days={hotel.duration ? hotel.duration : 1}
+              description={hotel.description}
+              rating={hotel.rating}
+              startDate={searchData.start}
+              isTour
+              totalPrice={hotel.totalPrice}
+              oldPrice={hotel.oldPrice}
+              hotelStars={hotel.hotelStars}
+              mode="tour"
+              adultsAmount={
+                localStorage.getItem("agesArray")
+                  ? JSON.parse(localStorage.getItem("agesArray")).length
+                  : 1
+              }
+              hotelServices={hotel.tourServices}
+              hotel={hotel}
+            />
+          );
+        })
       ) : (
         <div>😭 Ничего не найдено...</div>
       )}
 
-      {tours?.length >= hotelsToShow ? (
+      {tours?.length ? (
         <button
           className="sort-btn"
           onClick={() => setHotelsToShow(hotelsToShow + 5)}
