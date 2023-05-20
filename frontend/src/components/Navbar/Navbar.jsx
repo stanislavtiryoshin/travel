@@ -6,10 +6,16 @@ import { useNavigate } from "react-router-dom";
 import { logout, reset } from "../../features/auth/authSlice";
 import { PatternFormat } from "react-number-format";
 import { setCurrentTab } from "../../features/adminSlice";
-
+// import { Link } from "react-router-dom";
 import logo from "../../assets/logo.svg";
 import phone from "../../assets/phone.svg";
 import photo from "../../assets/photo.png";
+
+import media1 from "../../assets/media.svg";
+import media2 from "../../assets/media1.svg";
+import media3 from "../../assets/media2.svg";
+
+import menu from "../../assets/menu.svg";
 
 import "./Navbar.scss";
 import SearchPanel from "../SearchPanel/SearchPanel";
@@ -47,6 +53,8 @@ const Navbar = ({ isSearch }) => {
 
     console.log({ phone: phone });
   };
+
+  const [isOpen, setIsOpen] = useState(true);
 
   const { currentTab } = useSelector((state) => state.admin);
 
@@ -118,12 +126,17 @@ const Navbar = ({ isSearch }) => {
         <div className="container">
           <div className="nav_wrapper wrapper">
             <div className="nav_left">
-              <select name="lang" id="" className="lang_select">
-                <option value="ru">RU</option>
-                <option value="en">EN</option>
-                <option value="kz">KZ</option>
-              </select>
-              <img src={logo} alt="" className="header_logo" />
+              <div className="menu" onClick={() => setIsOpen(!isOpen)}>
+                <img src={menu} alt="" />
+              </div>
+              <img
+                onClick={() => {
+                  navigate("/");
+                }}
+                src={logo}
+                alt=""
+                className="header_logo"
+              />
             </div>
             {showDashNav ? (
               <div className="nav_tabs">{renderTabs()}</div>
@@ -137,6 +150,11 @@ const Navbar = ({ isSearch }) => {
                     +7 (700) 700-77-00
                   </a>
                 </div>
+              </div>
+              <div className="social_box">
+                <img src={media1} alt="" />
+                <img src={media2} alt="" />
+                <img src={media3} alt="" />
               </div>
             </div>
           </div>
@@ -195,6 +213,63 @@ const Navbar = ({ isSearch }) => {
           </div> */}
         </>
       ) : null}
+      <div className={`dashboard ${isOpen ? "" : "hidden"}`}>
+        <div className="container">
+          <div className="footer_wrapper wrapper">
+            <div className="footer_col footer_1">
+              <div className="footer_title">Туристам</div>
+              <div className="footer_box">
+                <ul>
+                  <li>
+                    <Link to="/tours">Туры</Link>
+                  </li>
+                  <li>
+                    <a href="">Корпоративные туры</a>
+                  </li>
+                  <li>
+                    <a href="">Экскурсии </a>
+                  </li>
+                  <li>
+                    <Link to="/camps">Лагеря</Link>
+                  </li>
+                  <li>
+                    <Link to="/sanatoriums">Санатории</Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="footer_col footer_2">
+              <div className="footer_title">Компания</div>
+              <div className="footer_box">
+                <ul>
+                  <li>
+                    <a href="">О нас</a>
+                  </li>
+                  <li>
+                    <a href="">Сотрудничество</a>
+                  </li>
+                  <li>
+                    <a href="">Политика конфиденциальности </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="footer_col footer_3">
+              <div className="footer_title">Контакты</div>
+              <div className="footer_box">
+                <ul>
+                  <li>
+                    <a href="tel:+77387477744">+7 738 747 77 44</a>
+                  </li>
+                  <li>
+                    <a href="tel:+77387477744">+7 738 747 77 44</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

@@ -5,6 +5,7 @@ import "./Footer.scss";
 import inst from "../../assets/insta.svg";
 import fb from "../../assets/facebook.svg";
 import wa from "../../assets/whatsapp.svg";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -16,7 +17,7 @@ const Footer = () => {
             <div className="footer_box">
               <ul>
                 <li>
-                  <a href="">Туры</a>
+                  <Link to="/tours">Туры</Link>
                 </li>
                 <li>
                   <a href="">Корпоративные туры</a>
@@ -25,10 +26,10 @@ const Footer = () => {
                   <a href="">Экскурсии </a>
                 </li>
                 <li>
-                  <a href="">Лагеря</a>
+                  <Link to="/camps">Лагеря</Link>
                 </li>
                 <li>
-                  <a href="">Санатории</a>
+                  <Link to="/sanatoriums">Санатории</Link>
                 </li>
               </ul>
             </div>

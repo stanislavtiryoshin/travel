@@ -55,17 +55,31 @@ const SearchPanel = ({ isUserLook, style }) => {
   const [searchSanatoriums, { isLoading: sanatoriumsIsLoading }] =
     useLazyGetSanatoriumsByFilterQuery();
 
+  const goTo = () => {
+    const sectionElement = document.querySelector(".hero_section");
+    const computedStyle = window.getComputedStyle(sectionElement);
+    const sectionHeight = computedStyle.getPropertyValue("height");
+    console.log(sectionHeight, "height");
+    window.scrollTo({
+      top: parseInt(sectionHeight),
+      behavior: "smooth",
+    });
+  };
+
   const handleSearch = (searchObj) => {
     switch (location.pathname) {
       case "/hotels":
         searchHotels(searchObj).then(({ data }) => {
           dispatch(setHotelFilterData(data));
         });
-        console.log(searchObj, "searchObj");
+        goTo();
+        break;
       case "/sanatoriums":
         searchSanatoriums(searchObj).then(({ data }) => {
           dispatch(setSanatoriumFilterData(data));
         });
+        goTo();
+        break;
     }
   };
 

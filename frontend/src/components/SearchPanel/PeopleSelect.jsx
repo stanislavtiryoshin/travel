@@ -54,15 +54,30 @@ const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
     }
   };
 
+  const [localAges, setLocalAges] = useState(
+    localStorage.getItem("agesArray")
+      ? JSON.parse(localStorage.getItem("agesArray"))
+      : [1000]
+  );
+
+  useEffect(() => {
+    setLocalAges(JSON.parse(localStorage.getItem("agesArray")));
+  }, [localStorage.getItem("agesArray")]);
+
   return (
     <div className="search_col people_col">
       <img src={search4} alt="" className="search_bot-icon" />
       <div className="people_select-box">
         <button
-          className="people-btn"
+          className="search_col-content"
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          Кто?
+          <div className="search_col-top">Кто?</div>
+          <div className="search_col-bot">
+            {localAges.filter((age) => age === 1000).length} взр.{" "}
+            {localAges.filter((age) => age !== 1000).length > 0 &&
+              localAges.filter((age) => age !== 1000).length + " реб."}
+          </div>
         </button>
       </div>
       {isExpanded ? (
@@ -86,12 +101,6 @@ const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
             </div>
           </div>
           <div className="kids_box">
-            <button
-              className="primary-btn clear"
-              onClick={() => handleAddAge()}
-            >
-              Добавить ребенка +
-            </button>
             {agesArray
               ?.filter((age) => age !== 1000)
               ?.sort((a, b) => b - a)
@@ -140,6 +149,20 @@ const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
                   </div>
                 );
               })}
+            <button
+              className="primary-btn clear"
+              onClick={() => handleAddAge()}
+            >
+              Добавить ребенка +
+            </button>
+            <button
+              className="primary-btn blue select"
+              onClick={() => {
+                setIsExpanded(false);
+              }}
+            >
+              Сохранить
+            </button>
           </div>
         </div>
       ) : null}
