@@ -1,44 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
 import RangeSlider from "react-range-slider-input";
 
 // import plane from "../../assets/plane.svg";
 
-import {
-  selectHotels,
-  setFilterData as setHotelFilterData,
-  clearFilterData,
-} from "../../features/hotel/hotelSlice";
-import {
-  setFilterData as setTourFilterData,
-  clearFilterData as clearTourFilterData,
-} from "../../features/tour/tourSlice";
-import {
-  setFilterData as setSanFilterData,
-  clearFilterData as clearSanFilterData,
-  selectSanatoriums,
-} from "../../features/sanatorium/sanatoriumSlice";
+import { setFilterData as setHotelFilterData } from "../../features/hotel/hotelSlice";
+import { setFilterData as setSanatoriumFilterData } from "../../features/sanatorium/sanatoriumSlice";
+import { setFilterData as setCampFilterData } from "../../features/camps/campSlice";
+import { setFilterData as setTourFilterData } from "../../features/tour/tourSlice";
+import { setSearchData } from "../../features/search/searchSlice";
 
-import HotelStars from "../HotelStars/HotelStars";
-import person2 from "../../assets/person2.svg";
-import calendar from "../../assets/calendar.svg";
-import plane from "../../assets/plane.svg";
-import star from "../../assets/star.svg";
-import check from "../../assets/filter/check.svg";
+import { useGetFoodQuery } from "../../features/services/base.service";
 
 import "./Filter.scss";
-import CheckBtn from "./CheckBtn";
 import {
-  useGetTourByFilterQuery,
+  useLazyGetCampsByFilterQuery,
   useLazyGetHotelsByFilterQuery,
+  useLazyGetSanatoriumsByFilterQuery,
   useLazyGetTourByFilterQuery,
 } from "../../features/services/filter.service";
 import FilterBtn from "./FilterBtn";
-import { setSearchData } from "../../features/search/searchSlice";
-import { useGetFoodQuery } from "../../features/services/base.service";
+import HotelStars from "../HotelStars/HotelStars";
 
-const Filter = ({ mode }) => {
+import plane from "../../assets/plane.svg";
+import calendar from "../../assets/calendar.svg";
+
+const Filter = ({ mode, dashMode }) => {
   const dispatch = useDispatch();
 
   const { hotels } = useSelector((state) => state.hotels);
@@ -136,71 +123,19 @@ const Filter = ({ mode }) => {
     }
   }, [mode, hotels, sanatoriums, tours]);
 
-  const [tourFilter, setTourFilter] = useState({
-    // locationId: "",
-    // adultsAmount:
-    //   JSON.parse(localStorage.getItem("agesArray")).filter(
-    //     (age) => age === 1000
-    //   ).length || 1,
-    // kidsAmount:
-    //   JSON.parse(localStorage.getItem("agesArray")).filter(
-    //     (age) => age !== 1000
-    //   ).length || 0,
-    // duration: "",
-    // rating: "",
-    // food: [],
-    // paymentType: "",
-    // start: JSON.parse(localStorage.getItem("startDate")) || "",
-  });
-
-  console.log(tourFilter, "tour filter");
-
   const { searchData } = useSelector((state) => state.search);
-  const [hotelFilter, setHotelFilter] = useState({
-    locationId: localStorage.getItem("locationId") || "",
-    daysAmount: localStorage.getItem("daysAmount") || 1,
-    start: JSON.parse(localStorage.getItem("startDate")) || "",
-    agesArray: JSON.parse(localStorage.getItem("agesArray")),
-    filterFood: [],
-    filterServices: [],
-    filterStars: "",
-    filterRating: [],
-    filterExtraPlaces: true,
-    filterBathroom: "",
-  });
-
-  const [sanatoriumFilter, setSanatoriumFilter] = useState({
-    locationId: localStorage.getItem("locationId") || "",
-    daysAmount: localStorage.getItem("daysAmount") || 1,
-    start: JSON.parse(localStorage.getItem("startDate")) || "",
-    agesArray: JSON.parse(localStorage.getItem("agesArray")),
-    filterFood: [],
-    filterServices: [],
-  });
-
-  useEffect(() => {
-    setHotelFilter({
-      ...hotelFilter,
-      locationId: searchData.locationId || "",
-      daysAmount: searchData.daysAmount || 1,
-      agesArray: searchData.agesArray || [1000],
-    });
-    setTourFilter({
-      ...tourFilter,
-      locationId: searchData.locationId || "",
-      daysAmount: searchData.daysAmount || 1,
-      agesArray: searchData.agesArray || [1000],
-    });
-  }, [searchData]);
 
   // console.log(hotelFilter, "hotelfilter");
   // console.log(searchData, "filter data");
 
   const [filterTours, { isLoading: tourIsLoading }] =
     useLazyGetTourByFilterQuery();
-
   const [filterHotels, { isLoading: hotelIsLoading }] =
     useLazyGetHotelsByFilterQuery();
+  const [filterCamps, { isLoading: campsIsLoading }] =
+    useLazyGetCampsByFilterQuery();
+  const [filterSanatoriums, { isLoading: sanatoriumsIsLoading }] =
+    useLazyGetSanatoriumsByFilterQuery();
 
   const [filterObj, setFilterObj] = useState({
     filterMaxPrice: maxPrice ? maxPrice : 600000,
@@ -209,21 +144,6 @@ const Filter = ({ mode }) => {
     filterRating: null,
     filterStars: null,
   });
-
-  // const handleSetFilterData = () => {
-  //   dispatch(setFilterData(filterObj));
-  // };
-
-  const handleClearFilterData = () => {
-    dispatch(clearFilterData());
-    setFilterObj({
-      filterMaxPrice: maxPrice ? maxPrice : 600000,
-      filterMinPrice: minPrice ? minPrice : 0,
-      filterFood: [],
-      filterRating: null,
-      filterStars: null,
-    });
-  };
 
   const [startTime] = useState(
     localStorage.getItem("startDate")
@@ -254,31 +174,138 @@ const Filter = ({ mode }) => {
     { value: 1, label: "1 день" },
   ];
 
-  const applyFilter = (tourFilterObj) => {
-    filterTours(tourFilterObj).then(({ data }) => {
+  const applyTourFilter = (filterData) => {
+    filterTours(filterData).then(({ data }) => {
       dispatch(setTourFilterData(data));
     });
   };
-
-  const applyHotelFilter = (hotelFilterObj) => {
-    filterHotels(hotelFilterObj).then(({ data }) => {
+  const applyHotelFilter = (filterData) => {
+    filterHotels(filterData).then(({ data }) => {
       dispatch(setHotelFilterData(data));
+    });
+  };
+  const applySanatoriumFilter = (filterData) => {
+    filterSanatoriums(filterData).then(({ data }) => {
+      dispatch(setSanatoriumFilterData(data));
+    });
+  };
+  const applyCampFilter = (filterData) => {
+    filterCamps(filterData).then(({ data }) => {
+      dispatch(setCampFilterData(data));
     });
   };
 
   const setFilter = () => {
     switch (mode) {
       case "tour":
-        applyFilter(searchData);
+        dashMode
+          ? applyTourFilter({
+              ...searchData,
+              locationId: searchData.locationId,
+              searchNameId: searchData.searchNameId,
+              dashMode: true,
+            })
+          : applyTourFilter(searchData);
         break;
       case "hotel":
-        applyHotelFilter(searchData);
+        dashMode
+          ? applyHotelFilter({
+              ...searchData,
+              locationId: searchData.locationId,
+              searchNameId: searchData.searchNameId,
+              dashMode: true,
+            })
+          : applyHotelFilter(searchData);
         break;
       case "sanatorium":
-        dispatch(setSanFilterData(filterObj));
+        dashMode
+          ? applySanatoriumFilter({
+              ...searchData,
+              locationId: searchData.locationId,
+              searchNameId: searchData.searchNameId,
+              dashMode: true,
+            })
+          : applySanatoriumFilter(searchData);
+        break;
+      case "camp":
+        dashMode
+          ? applyCampFilter({
+              ...searchData,
+              locationId: searchData.locationId,
+              searchNameId: searchData.searchNameId,
+              dashMode: true,
+            })
+          : applyCampFilter(searchData);
         break;
     }
   };
+
+  const clearFilter = () => {
+    dispatch(
+      setSearchData({
+        ...searchData,
+        filterFood: [],
+        filterServices: [],
+        filterStars: "",
+        filterRating: [],
+        filterExtraPlaces: true,
+        filterBathroom: "",
+      })
+    );
+    const newSearchData = {
+      ...searchData,
+      filterFood: [],
+      filterServices: [],
+      filterStars: "",
+      filterRating: [],
+      filterExtraPlaces: true,
+      filterBathroom: "",
+    };
+    switch (mode) {
+      case "tour":
+        dashMode
+          ? applyHotelFilter({
+              ...newSearchData,
+              locationId: searchData.locationId,
+              searchNameId: searchData.searchNameId,
+              dashMode: true,
+            })
+          : applyHotelFilter(searchData);
+        break;
+      case "hotel":
+        dashMode
+          ? applyHotelFilter({
+              ...newSearchData,
+              locationId: searchData.locationId,
+              searchNameId: searchData.searchNameId,
+              dashMode: true,
+            })
+          : applyHotelFilter(searchData);
+        break;
+      case "sanatorium":
+        dashMode
+          ? applySanatoriumFilter({
+              ...newSearchData,
+              locationId: searchData.locationId,
+              searchNameId: searchData.searchNameId,
+              dashMode: true,
+            })
+          : applySanatoriumFilter(searchData);
+        break;
+      case "camp":
+        dashMode
+          ? applyCampFilter({
+              ...newSearchData,
+              locationId: searchData.locationId,
+              searchNameId: searchData.searchNameId,
+              dashMode: true,
+            })
+          : applyCampFilter(searchData);
+        break;
+    }
+  };
+
+  console.log(dashMode ? "dash mode" : "no dash mode");
 
   const handleFoodFilter = (foodId) => {
     if (searchData.filterFood.some((el) => el === foodId)) {
@@ -296,51 +323,9 @@ const Filter = ({ mode }) => {
         })
       );
     }
-    switch (mode) {
-      case "hotel":
-        if (hotelFilter.filterFood.some((el) => el === foodId)) {
-          setHotelFilter((prevState) => ({
-            ...prevState,
-            filterFood: prevState.filterFood.filter((el) => el !== foodId),
-          }));
-        } else {
-          setHotelFilter({
-            ...hotelFilter,
-            filterFood: [...hotelFilter.filterFood, foodId],
-          });
-        }
-      case "tour":
-        if (tourFilter.food.some((el) => el === foodId)) {
-          setTourFilter((prevState) => ({
-            ...prevState,
-            food: prevState.food.filter((el) => el !== foodId),
-          }));
-        } else {
-          setTourFilter((prev) => ({
-            ...prev,
-            food: [...prev.food, foodId],
-          }));
-        }
-      case "sanatorium":
-        if (sanatoriumFilter.food.some((el) => el === foodId)) {
-          setSanatoriumFilter((prevState) => ({
-            ...prevState,
-            food: prevState.food.filter((el) => el !== foodId),
-          }));
-        } else {
-          setSanatoriumFilter((prev) => ({
-            ...prev,
-            food: [...prev.food, foodId],
-          }));
-        }
-    }
   };
 
   const handleExtraPlacesFilter = () => {
-    setHotelFilter({
-      ...hotelFilter,
-      filterExtraPlaces: !hotelFilter.filterExtraPlaces,
-    });
     dispatch(
       setSearchData({
         ...searchData,
@@ -350,17 +335,6 @@ const Filter = ({ mode }) => {
   };
 
   const handleStarsFilter = (stars) => {
-    if (hotelFilter.filterStars === stars) {
-      setHotelFilter((prevState) => ({
-        ...prevState,
-        filterStars: "",
-      }));
-    } else {
-      setHotelFilter({
-        ...hotelFilter,
-        filterStars: stars,
-      });
-    }
     if (searchData.filterStars === stars) {
       dispatch(
         setSearchData({
@@ -386,28 +360,6 @@ const Filter = ({ mode }) => {
       dispatch(setSearchData({ ...searchData, filterRating: [] }));
     } else {
       dispatch(setSearchData({ ...searchData, filterRating: rating }));
-    }
-  };
-
-  const clearFilter = () => {
-    switch (mode) {
-      case "tour":
-        dispatch(clearTourFilterData());
-      case "hotel":
-        dispatch(
-          setSearchData({
-            ...searchData,
-            filterFood: [],
-            filterServices: [],
-            filterStars: "",
-            filterRating: [],
-            filterExtraPlaces: true,
-            filterBathroom: "",
-          })
-        );
-        applyHotelFilter(searchData);
-      case "sanatorium":
-        dispatch(clearSanFilterData());
     }
   };
 
@@ -504,14 +456,18 @@ const Filter = ({ mode }) => {
             return (
               <FilterBtn
                 key={dur.label}
-                isActive={tourFilter.duration === dur.value}
+                isActive={searchData.filterDuration === dur.value}
                 onClick={() =>
-                  tourFilter.duration === dur.value
-                    ? setTourFilter((prev) => ({ ...prev, duration: "" }))
-                    : setTourFilter((prev) => ({
-                        ...prev,
-                        duration: dur.value,
-                      }))
+                  searchData.filterDuration === dur.value
+                    ? dispatch(
+                        setSearchData({ ...searchData, filterDuration: "" })
+                      )
+                    : dispatch(
+                        setSearchData({
+                          ...searchData,
+                          filterDuration: dur.value,
+                        })
+                      )
                 }
                 label={dur.label}
               />
@@ -525,7 +481,6 @@ const Filter = ({ mode }) => {
         {allFoods
           ? allFoods.map((food, idx) => {
               const isActive = searchData?.filterFood?.includes(food._id);
-              const tourIsActive = tourFilter?.food?.includes(food._id);
               return (
                 <FilterBtn
                   isActive={isActive}
@@ -555,7 +510,7 @@ const Filter = ({ mode }) => {
         <div className="filter_row">
           <div className="filter_title">Количество звезд</div>
           <FilterBtn
-            isActive={hotelFilter.filterStars === ""}
+            isActive={searchData.filterStars === ""}
             label={"Любой класс"}
             key={123}
             onClick={() => handleStarsFilter("")}

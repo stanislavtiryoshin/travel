@@ -328,7 +328,8 @@ const getPrice = asyncHandler(async (req, res) => {
 //@access Public
 
 const getSearchedCamps = asyncHandler(async (req, res) => {
-  const { agesArray, daysAmount, start, locationId } = req.query;
+  const { agesArray, daysAmount, start, locationId, dashMode, searchNameId } =
+    req.query;
 
   ages = agesArray.split(",").map(Number);
   const peopleAmount = agesArray.split(",").map(Number).length;
@@ -404,6 +405,22 @@ const getSearchedCamps = asyncHandler(async (req, res) => {
 
   if (locationId && locationId !== "") {
     query.locationId = locationId;
+  }
+
+  if (searchNameId && searchNameId !== "") {
+    query = {
+      ...query,
+      $or: [
+        { uid: searchNameId }, // Match by ID
+        { name: { $regex: searchNameId, $options: "i" } }, // Match by name
+      ],
+    };
+  }
+
+  let adminCamps;
+  if (dashMode && dashMode !== "false") {
+    adminCamps = await Camp.find(query);
+    return res.status(200).json(adminCamps);
   }
 
   let camps = await Camp.find(query)

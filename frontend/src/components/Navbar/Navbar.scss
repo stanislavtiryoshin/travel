@@ -146,25 +146,29 @@ header {
 .menu {
   cursor: pointer;
 }
-.dashboard {
+.mobile_menu {
   position: absolute;
   width: 100%;
-  top: 7.5%;
+  top: 76px;
   max-height: 350px;
   padding: 32px;
   z-index: 999;
   background-color: #fff;
   transition: 0.3s;
+  overflow: hidden;
+
+  .footer_wrapper.wrapper {
+    max-height: 350px;
+    transition: 0.3s;
+  }
+
   &.hidden {
     max-height: 0;
-    padding: 0;
+    padding: 0 32px;
+
     .footer_wrapper.wrapper {
       max-height: 0;
       padding: 0;
     }
-  }
-  overflow: hidden;
-  .footer_wrapper.wrapper {
-    max-height: 350px;
   }
 }

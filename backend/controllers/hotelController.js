@@ -164,6 +164,7 @@ const getSingleHotel = asyncHandler(async (req, res) => {
 
 const getSearchedHotels = asyncHandler(async (req, res) => {
   const {
+    dashMode,
     agesArray,
     daysAmount,
     start,
@@ -174,6 +175,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     filterServices,
     filterBathroom,
     filterExtraPlaces,
+    searchNameId,
   } = req.query;
 
   const peopleAmount = agesArray.split(",").map(Number).length;
@@ -233,7 +235,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     return sum;
   };
 
-  const query = {};
+  let query = {};
 
   if (locationId && locationId !== "") {
     query.locationId = locationId;
@@ -253,6 +255,39 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
   }
   if (filterServices && filterServices.length > 0) {
     query.hotelServices = { $in: filterServices.split(",") };
+  }
+
+  if (searchNameId && searchNameId !== "") {
+    query = {
+      ...query,
+      $or: [
+        { uid: searchNameId }, // Match by ID
+        { name: { $regex: searchNameId, $options: "i" } }, // Match by name
+      ],
+    };
+  }
+
+  let adminHotels;
+  if (dashMode && dashMode !== "false") {
+    adminHotels = await Hotel.find(query)
+      .populate("locationId")
+      .populate("food")
+      .populate("rooms")
+      .populate({
+        path: "rooms",
+        populate: {
+          path: "periodPrices.period",
+          model: "Period",
+        },
+      })
+      .populate({
+        path: "hotelServices",
+        populate: {
+          path: "category",
+          model: "Category",
+        },
+      });
+    return res.status(200).json(adminHotels);
   }
 
   let hotels = await Hotel.find(query)
@@ -291,10 +326,10 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
       hotel.rooms.some((room) =>
         filterExtraPlaces ? room.extraPlaces.length > 0 : true
       )
-    );
-  // .filter((hotel) => {
-  //   return hotel.rooms.length > 0;
-  // });
+    )
+    .filter((hotel) => {
+      return hotel.rooms.length > 0;
+    });
 
   if (hotels.length === 0) res.status(404);
 

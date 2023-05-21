@@ -6,8 +6,15 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { setFilterData as setHotelFilterData } from "../../features/hotel/hotelSlice";
 import { setFilterData as setSanatoriumFilterData } from "../../features/sanatorium/sanatoriumSlice";
-import { setSearchData } from "../../features/search/searchSlice";
 import { setFilterData as setCampFilterData } from "../../features/camps/campSlice";
+import { setFilterData as setTourFilterData } from "../../features/tour/tourSlice";
+import { setSearchData } from "../../features/search/searchSlice";
+import {
+  useLazyGetCampsByFilterQuery,
+  useLazyGetHotelsByFilterQuery,
+  useLazyGetSanatoriumsByFilterQuery,
+  useLazyGetTourByFilterQuery,
+} from "../../features/services/filter.service";
 
 import "./SearchPanel.scss";
 
@@ -19,12 +26,7 @@ import { tags } from "./tags";
 import PeopleSelect from "./PeopleSelect";
 import { useLocation } from "react-router-dom";
 import { API_URL_PROXY } from "../../config/config";
-import {
-  useLazyGetCampsByFilterQuery,
-  useLazyGetHotelsByFilterQuery,
-  useLazyGetSanatoriumsByFilterQuery,
-  useLazyGetTourByFilterQuery,
-} from "../../features/services/filter.service";
+
 import { useGetLocationQuery } from "../../features/services/base.service";
 import DateSelect from "./DateSelect";
 
@@ -50,6 +52,10 @@ const SearchPanel = ({ isUserLook, style }) => {
     useLazyGetHotelsByFilterQuery();
   const [searchSanatoriums, { isLoading: sanatoriumsIsLoading }] =
     useLazyGetSanatoriumsByFilterQuery();
+  const [searchCamps, { isLoading: campsIsLoading }] =
+    useLazyGetCampsByFilterQuery();
+  const [searchTours, { isLoading: toursIsLoading }] =
+    useLazyGetTourByFilterQuery();
 
   const goTo = () => {
     const sectionElement = document.querySelector(".hero_section");
@@ -73,6 +79,18 @@ const SearchPanel = ({ isUserLook, style }) => {
       case "/sanatoriums":
         searchSanatoriums(searchObj).then(({ data }) => {
           dispatch(setSanatoriumFilterData(data));
+        });
+        goTo();
+        break;
+      case "/camps":
+        searchCamps(searchObj).then(({ data }) => {
+          dispatch(setCampFilterData(data));
+        });
+        goTo();
+        break;
+      case "/tours":
+        searchTours(searchObj).then(({ data }) => {
+          dispatch(setTourFilterData(data));
         });
         goTo();
         break;

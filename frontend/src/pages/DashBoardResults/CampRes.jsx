@@ -7,6 +7,7 @@ import DashHotelCard from "../../components/HotelCard/DashHotelCard";
 import { useNavigate } from "react-router-dom";
 import { getCamps } from "../../features/camps/campSlice";
 import { useLazyGetSanatoriumsByFilterQuery } from "../../features/services/filter.service";
+import Loader from "../../components/Loader";
 
 const CampRes = () => {
   const dispatch = useDispatch();

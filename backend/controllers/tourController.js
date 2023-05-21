@@ -356,6 +356,8 @@ const getSearchedTours = asyncHandler(async (req, res) => {
     filterRating,
     filterDuration,
     filterFood,
+    dashMode,
+    searchNameId,
   } = req.query;
 
   const peopleAmount = agesArray.split(",").map(Number).length;
@@ -421,16 +423,32 @@ const getSearchedTours = asyncHandler(async (req, res) => {
   }
 
   if (filterDuration && filterDuration !== "") {
-    query.duration = duration;
+    query.duration = filterDuration;
   }
   if (filterRating && filterRating !== "") {
-    query.rating = rating;
+    query.rating = filterRating;
   }
 
   if (filterFood && filterFood !== "") {
     query.food = {
-      $in: food.split(","),
+      $in: filterFood.split(","),
     };
+  }
+
+  if (searchNameId && searchNameId !== "") {
+    query = {
+      ...query,
+      $or: [
+        { uid: searchNameId }, // Match by ID
+        { name: { $regex: searchNameId, $options: "i" } }, // Match by name
+      ],
+    };
+  }
+
+  let adminTours;
+  if (dashMode && dashMode !== "false") {
+    adminTours = await Tour.find(query);
+    return res.status(200).json(adminTours);
   }
 
   let hotels = await Tour.find(query)

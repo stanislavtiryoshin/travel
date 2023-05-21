@@ -35,7 +35,7 @@ const HotelRes = () => {
       <HotelSearch mode="hotel" />
       <Section section="dash_section" wrapper="dash_wrapper">
         <div className="dash_side">
-          <Filter hotelMode mode="hotel" />
+          <Filter hotelMode mode="hotel" dashMode />
         </div>
         <div className="dash_main">
           {hotels && hotels.length > 0

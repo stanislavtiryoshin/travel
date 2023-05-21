@@ -54,7 +54,7 @@ const Navbar = ({ isSearch }) => {
     console.log({ phone: phone });
   };
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const { currentTab } = useSelector((state) => state.admin);
 
@@ -213,7 +213,7 @@ const Navbar = ({ isSearch }) => {
           </div> */}
         </>
       ) : null}
-      <div className={`dashboard ${isOpen ? "" : "hidden"}`}>
+      <div className={`mobile_menu ${isOpen ? "" : "hidden"}`}>
         <div className="container">
           <div className="footer_wrapper wrapper">
             <div className="footer_col footer_1">

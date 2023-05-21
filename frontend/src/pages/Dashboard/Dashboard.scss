@@ -107,17 +107,18 @@
 
 .dash_wrapper.wrapper {
   align-items: unset;
+  justify-content: unset;
 }
 
 /* HOTELS */
 
 .dash_main {
-  width: 870px;
   height: fit-content;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   column-gap: 20px;
   row-gap: 20px;
+  width: 100%;
 }
 
 .reqs_tab {

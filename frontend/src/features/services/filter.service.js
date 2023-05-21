@@ -11,9 +11,11 @@ export const filterApi = createApi({
   endpoints: (builder) => ({
     getTourByFilter: builder.query({
       query: (filter) => ({
-        url: `/tour/searched?locationId=${
-          filter.locationId && filter.locationId
-        }&filterDuration=${
+        url: `/tour/searched?dashMode=${
+          filter.dashMode ? filter.dashMode : "false"
+        }&searchNameId=${
+          filter.searchNameId ? filter.searchNameId : ""
+        }&locationId=${filter.locationId && filter.locationId}&filterDuration=${
           filter.filterDuration && filter.filterDuration
         }&filterRating=${
           filter.filterRating && filter.filterRating
@@ -29,9 +31,11 @@ export const filterApi = createApi({
     }),
     getHotelsByFilter: builder.query({
       query: (filter) => ({
-        url: `/hotels/searched?locationId=${
-          filter.locationId ? filter.locationId : ""
-        }&filterFood=${
+        url: `/hotels/searched?dashMode=${
+          filter.dashMode ? filter.dashMode : "false"
+        }&searchNameId=${
+          filter.searchNameId ? filter.searchNameId : ""
+        }&locationId=${filter.locationId ? filter.locationId : ""}&filterFood=${
           filter.filterFood ? filter.filterFood : ""
         }&filterStars=${
           filter.filterStars ? filter.filterStars : ""
@@ -51,11 +55,15 @@ export const filterApi = createApi({
     }),
     getSanatoriumsByFilter: builder.query({
       query: (filter) => ({
-        url: `/sanatoriums/searched?locationId=${
-          filter.locationId ? filter.locationId : ""
-        }&start=${filter.start && filter.start}&agesArray=${
-          filter.agesArray && filter.agesArray
-        }&daysAmount=${filter.daysAmount && filter.daysAmount}&filterFood=${
+        url: `/sanatoriums/searched?dashMode=${
+          filter.dashMode ? filter.dashMode : "false"
+        }&searchNameId=${
+          filter.searchNameId ? filter.searchNameId : ""
+        }&locationId=${filter.locationId ? filter.locationId : ""}&start=${
+          filter.start && filter.start
+        }&agesArray=${filter.agesArray && filter.agesArray}&daysAmount=${
+          filter.daysAmount && filter.daysAmount
+        }&filterFood=${
           filter.filterFood ? filter.filterFood : ""
         }&filterServices=${filter.filterServices ? filter.filterServices : ""}`,
       }),
@@ -63,11 +71,15 @@ export const filterApi = createApi({
     }),
     getCampsByFilter: builder.query({
       query: (filter) => ({
-        url: `/camps/searched?locationId=${
-          filter.locationId ? filter.locationId : ""
-        }&start=${filter.start && filter.start}&agesArray=${
-          filter.agesArray && filter.agesArray
-        }&daysAmount=${filter.daysAmount && filter.daysAmount}&filterFood=${
+        url: `/camps/searched?dashMode=${
+          filter.dashMode ? filter.dashMode : "false"
+        }&searchNameId=${
+          filter.searchNameId ? filter.searchNameId : ""
+        }&locationId=${filter.locationId ? filter.locationId : ""}&start=${
+          filter.start && filter.start
+        }&agesArray=${filter.agesArray && filter.agesArray}&daysAmount=${
+          filter.daysAmount && filter.daysAmount
+        }&filterFood=${
           filter.filterFood ? filter.filterFood : ""
         }&filterServices=${filter.filterServices ? filter.filterServices : ""}`,
       }),

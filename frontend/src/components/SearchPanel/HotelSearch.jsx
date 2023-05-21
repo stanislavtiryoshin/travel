@@ -3,17 +3,24 @@ import axios from "axios";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import "./SearchPanel.scss";
 
-import tag1 from "../../assets/tags/tag1.svg";
-import tag2 from "../../assets/tags/tag2.svg";
-import tag3 from "../../assets/tags/tag3.svg";
-import tag4 from "../../assets/tags/tag4.svg";
-import tag5 from "../../assets/tags/tag5.svg";
+import { setFilterData as setHotelFilterData } from "../../features/hotel/hotelSlice";
+import { setFilterData as setSanatoriumFilterData } from "../../features/sanatorium/sanatoriumSlice";
+import { setFilterData as setCampFilterData } from "../../features/camps/campSlice";
+import { setFilterData as setTourFilterData } from "../../features/tour/tourSlice";
+import { setSearchData } from "../../features/search/searchSlice";
+import {
+  useLazyGetCampsByFilterQuery,
+  useLazyGetHotelsByFilterQuery,
+  useLazyGetSanatoriumsByFilterQuery,
+  useLazyGetTourByFilterQuery,
+} from "../../features/services/filter.service";
 
 import { getAdminHotels, reset } from "../../features/hotel/hotelSlice";
+import { useGetLocationQuery } from "../../features/services/base.service";
 
 const HotelSearch = ({
   mode,
@@ -25,60 +32,48 @@ const HotelSearch = ({
 }) => {
   const dispatch = useDispatch();
 
-  const [panelTag, setPanelTag] = useState("");
+  // Importing all locations for location select
+  const { data: allLocations = [], isLoading } = useGetLocationQuery();
 
-  const [allLocations, setAllLocations] = useState(null);
+  // Importing searchData from searchSlice
+  const { searchData } = useSelector((state) => state.search);
 
-  useEffect(() => {
-    axios
-      .get(`/api/locations`)
-      .then((response) => {
-        setAllLocations(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  const [searchHotels, { isLoading: hotelsIsLoading }] =
+    useLazyGetHotelsByFilterQuery();
+  const [searchSanatoriums, { isLoading: sanatoriumsIsLoading }] =
+    useLazyGetSanatoriumsByFilterQuery();
+  const [searchCamps, { isLoading: campsIsLoading }] =
+    useLazyGetCampsByFilterQuery();
+  const [searchTours, { isLoading: toursIsLoading }] =
+    useLazyGetTourByFilterQuery();
 
-  const [searchTerms, setSearchTerms] = useState({
-    name: "",
-    locationId: "",
-    minAge: null,
-  });
-
-  const [clientData, setClientData] = useState({
-    endDate: Date.parse(new Date(Date.now() + 3600 * 1000 * 24)),
-    startDate: Date.parse(new Date()),
-    peopleAmount: 1,
-    daysAmount: 2,
-    destination: "",
-  });
-
-  useEffect(() => {
-    setClientData({
-      ...clientData,
-      startDate: window.localStorage.getItem("startDate"),
-      endDate: window.localStorage.getItem("endDate"),
-      peopleAmount: window.localStorage.getItem("peopleAmount"),
-      daysAmount: window.localStorage.getItem("daysAmount"),
-    });
-  }, []);
-
-  useEffect(() => {
-    window.localStorage.setItem("startDate", clientData.startDate);
-    window.localStorage.setItem("endDate", clientData.endDate);
-    window.localStorage.setItem("daysAmount", clientData.daysAmount);
-    window.localStorage.setItem("peopleAmount", clientData.peopleAmount);
-  }, [clientData]);
-
-  const handleTagChange = (text) => {
-    setPanelTag(text);
-    setSearchTerms({ ...searchTerms, tag: text });
-  };
-
-  const handleSearch = () => {
-    if (hotelMode) dispatch(getAdminHotels(searchTerms));
-    console.log(searchTerms);
+  const handleSearch = (searchObj) => {
+    switch (mode) {
+      case "hotel":
+        searchHotels(searchObj).then(({ data }) => {
+          dispatch(setHotelFilterData(data));
+        });
+        goTo();
+        break;
+      case "sanatorium":
+        searchSanatoriums(searchObj).then(({ data }) => {
+          dispatch(setSanatoriumFilterData(data));
+        });
+        goTo();
+        break;
+      case "camp":
+        searchCamps(searchObj).then(({ data }) => {
+          dispatch(setCampFilterData(data));
+        });
+        goTo();
+        break;
+      case "tour":
+        searchTours(searchObj).then(({ data }) => {
+          dispatch(setTourFilterData(data));
+        });
+        goTo();
+        break;
+    }
   };
 
   const renderTitle = () => {
@@ -114,15 +109,17 @@ const HotelSearch = ({
                           : "Название или ID"
                       }
                       name="origin"
-                      value={reqMode ? query : searchTerms.name}
+                      value={reqMode ? query : searchData.searchName}
                       onChange={(e) => {
                         if (reqMode) {
                           handleQuery(e.target.value);
                         } else {
-                          setSearchTerms({
-                            ...searchTerms,
-                            name: e.target.value,
-                          });
+                          dispatch(
+                            setSearchData({
+                              ...searchData,
+                              searchNameId: e.target.value,
+                            })
+                          );
                         }
                       }}
                     />
@@ -154,12 +151,14 @@ const HotelSearch = ({
                     <select
                       type="text"
                       name="destination"
-                      value={searchTerms.locationId}
+                      value={searchData.locationId}
                       onChange={(e) => {
-                        setSearchTerms({
-                          ...searchTerms,
-                          locationId: e.target.value,
-                        });
+                        dispatch(
+                          setSearchData({
+                            ...searchData,
+                            locationId: e.target.value,
+                          })
+                        );
                       }}
                     >
                       <option value="" selected>
@@ -233,13 +232,7 @@ const HotelSearch = ({
                         min={0}
                         max={18}
                         name="number"
-                        value={searchTerms.minAge}
-                        onChange={(e) => {
-                          setSearchTerms({
-                            ...searchTerms,
-                            minAge: e.target.value,
-                          });
-                        }}
+                        value={searchData.minAge}
                       />
                     </div>
                   </div>
@@ -252,7 +245,12 @@ const HotelSearch = ({
                   if (reqMode) {
                     find();
                   } else {
-                    handleSearch();
+                    handleSearch({
+                      ...searchData,
+                      locationId: searchData.locationId,
+                      searchNameId: searchData.searchNameId,
+                      dashMode: true,
+                    });
                   }
                 }}
               >

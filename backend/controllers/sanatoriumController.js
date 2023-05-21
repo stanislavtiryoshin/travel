@@ -398,6 +398,8 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
     locationId,
     adultsAmount,
     kidsAmount,
+    dashMode,
+    searchNameId,
   } = req.query;
 
   const peopleAmount = agesArray.length;
@@ -447,6 +449,22 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
 
   if (locationId && locationId !== "") {
     query.locationId = locationId;
+  }
+
+  if (searchNameId && searchNameId !== "") {
+    query = {
+      ...query,
+      $or: [
+        { uid: searchNameId }, // Match by ID
+        { name: { $regex: searchNameId, $options: "i" } }, // Match by name
+      ],
+    };
+  }
+
+  let adminSanatoriums;
+  if (dashMode && dashMode !== "false") {
+    adminSanatoriums = await Sanatorium.find(query);
+    return res.status(200).json(adminSanatoriums);
   }
 
   let hotels = await Sanatorium.find(query)
