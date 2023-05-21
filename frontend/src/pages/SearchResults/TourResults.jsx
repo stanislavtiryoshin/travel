@@ -46,30 +46,31 @@ const TourResults = ({ mode }) => {
       </div>
       {tours && tours.length > 0 ? (
         tours.map((hotel, idx) => {
-          return (
-            <HotelCard
-              program={hotel.program}
-              key={hotel._id}
-              hotelId={hotel._id}
-              name={hotel.name}
-              locationId={hotel.locationId}
-              price={hotel.price}
-              days={hotel.duration ? hotel.duration : 1}
-              description={hotel.description}
-              rating={hotel.rating}
-              startDate={searchData.start}
-              isTour
-              totalPrice={hotel.totalPrice}
-              oldPrice={hotel.oldPrice}
-              hotelStars={hotel.hotelStars}
-              mode="tour"
-              adultsAmount={
-                searchData?.agesArray?.filter((age) => age === 1000).length
-              }
-              hotelServices={hotel.tourServices}
-              hotel={hotel}
-            />
-          );
+          if (hotel.searchable)
+            return (
+              <HotelCard
+                program={hotel.program}
+                key={hotel._id}
+                hotelId={hotel._id}
+                name={hotel.name}
+                locationId={hotel.locationId}
+                price={hotel.price}
+                days={hotel.duration ? hotel.duration : 1}
+                description={hotel.description}
+                rating={hotel.rating}
+                startDate={searchData.start}
+                isTour
+                totalPrice={hotel.totalPrice}
+                oldPrice={hotel.oldPrice}
+                hotelStars={hotel.hotelStars}
+                mode="tour"
+                adultsAmount={
+                  searchData?.agesArray?.filter((age) => age === 1000).length
+                }
+                hotelServices={hotel.tourServices}
+                hotel={hotel}
+              />
+            );
         })
       ) : (
         <div>😭 Ничего не найдено...</div>

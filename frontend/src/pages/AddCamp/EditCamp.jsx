@@ -94,6 +94,7 @@ const EditCamp = () => {
       ...campData,
       token: user.token,
       programTest: programList,
+      searchable,
     };
 
     // console.log(values, "submit handle");
@@ -165,6 +166,8 @@ const EditCamp = () => {
     return <div> Loading...</div>;
   }
 
+  const [searchable, setIsSearchable] = useState(true);
+
   return (
     <>
       <AdminHead text="Создание лагеря" onClick={() => handleSubmit()} />
@@ -176,7 +179,21 @@ const EditCamp = () => {
           <AdminAddForm img={addhotel}>
             <GalleryBox sources={sources} />
             <div className="gen_content-box">
-              <div className="gen_title">Основное о лагере</div>
+              <div className="gen_title_checkbox">
+                <div className="gen_title">Основное о лагере</div>
+
+                <div className="toggler-box">
+                  <div>Отображать при поиске</div>
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      checked={searchable}
+                      onChange={() => setIsSearchable(!searchable)}
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              </div>
               <div className="input_row">
                 <Input
                   placeholder="Название"

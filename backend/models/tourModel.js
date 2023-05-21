@@ -122,6 +122,10 @@ const tourSchema = Schema({
       ref: "Food",
     },
   ],
+  searchable: {
+    type: Boolean,
+    default: true,
+  },
   comforts: [
     {
       name: String,

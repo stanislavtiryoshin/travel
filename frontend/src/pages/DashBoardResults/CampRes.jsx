@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import HotelSearch from "../../components/SearchPanel/HotelSearch";
 import Section from "../../components/Section";
@@ -7,6 +7,7 @@ import DashHotelCard from "../../components/HotelCard/DashHotelCard";
 import { useNavigate } from "react-router-dom";
 import { getCamps } from "../../features/camps/campSlice";
 import { useLazyGetSanatoriumsByFilterQuery } from "../../features/services/filter.service";
+import Loader from "../../components/Loader";
 
 const CampRes = () => {
   const dispatch = useDispatch();
@@ -19,6 +20,8 @@ const CampRes = () => {
 
   const [searchCamps, { isLoading: sanatoriumsIsLoading }] =
     useLazyGetSanatoriumsByFilterQuery();
+
+  const [filterData, setSanatoriumFilterData] = useState();
   useEffect(() => {
     searchCamps(searchData).then(({ data }) => {
       dispatch(setSanatoriumFilterData(data));
