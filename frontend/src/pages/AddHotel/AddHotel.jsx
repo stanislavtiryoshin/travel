@@ -266,6 +266,8 @@ const AddHotel = ({
 
   const [totChosenServices, setTotChosenServices] = useState([]);
 
+  const [searchable, setIsSearchable] = useState(true);
+
   return (
     <>
       <AdminHead
@@ -274,7 +276,11 @@ const AddHotel = ({
           !editMode
             ? handleSubmit()
             : dispatch(
-                updateHotel({ ...hotelData, hotelServices: currServices })
+                updateHotel({
+                  ...hotelData,
+                  hotelServices: currServices,
+                  searchable,
+                })
               );
         }}
       />
@@ -285,7 +291,24 @@ const AddHotel = ({
         >
           <GalleryBox sources={sources} />
           <div className="gen_content-box">
-            <div className="gen_title">Основное об отеле</div>
+            <div className="gen_title_checkbox">
+              <div className="gen_title">Основное об отеле</div>
+
+              {editMode && (
+                <div className="toggler-box">
+                  <div>Отображать при поиске</div>
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      checked={searchable}
+                      onChange={() => setIsSearchable(!searchable)}
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              )}
+            </div>
+
             <div className="input_row">
               <input
                 type="text"

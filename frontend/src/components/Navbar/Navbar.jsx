@@ -54,7 +54,7 @@ const Navbar = ({ isSearch }) => {
     console.log({ phone: phone });
   };
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const { currentTab } = useSelector((state) => state.admin);
 
