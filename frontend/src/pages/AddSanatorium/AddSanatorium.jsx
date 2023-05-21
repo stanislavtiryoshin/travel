@@ -34,6 +34,9 @@ import Periods from "../AddHotel/Periods";
 import { updateSanatorium } from "../../features/sanatorium/sanatoriumSlice";
 import { API_URL_BASE, API_URL_PROXY } from "../../config/config";
 
+import sanatourimmain from "../../assets/hotel/hotelmain.png";
+import secondary from "../../assets/camp/campsecondary.png";
+
 const AddSanatorium = ({
   fetchedSanatoriumData,
   editMode,
@@ -77,6 +80,7 @@ const AddSanatorium = ({
     },
     comforts: [],
     hotelStars: 5,
+    searchable: true,
   });
 
   useEffect(() => {
@@ -243,6 +247,8 @@ const AddSanatorium = ({
     setSources(hotelData?.img ? hotelData?.img : []);
   }, [hotelData]);
 
+  const [searchable, setIsSearchable] = useState(true);
+
   return (
     <>
       <AdminHead
@@ -258,9 +264,36 @@ const AddSanatorium = ({
           section="add_gen-section"
           wrapper="add_gen-wrapper wrapper shadowed_box"
         >
-          <GalleryBox sources={sources} />
+          <GalleryBox
+            sources={
+              sources.length > 0
+                ? sources
+                : [sanatourimmain, secondary, secondary, secondary]
+            }
+          />
           <div className="gen_content-box">
-            <div className="gen_title">Основное о санаторие</div>
+            <div className="gen_title_checkbox">
+              <div className="gen_title">Основное об отеле</div>
+
+              {editMode && (
+                <div className="toggler-box">
+                  <div>Отображать при поиске</div>
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      checked={hotelData.searchable}
+                      onChange={() =>
+                        setHotelData((prev) => ({
+                          ...prev,
+                          searchable: !hotelData.searchable,
+                        }))
+                      }
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              )}
+            </div>
             <div className="input_row">
               <input
                 type="text"

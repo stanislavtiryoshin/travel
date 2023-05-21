@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import HotelSearch from "../../components/SearchPanel/HotelSearch";
 import Section from "../../components/Section";
@@ -20,6 +20,8 @@ const CampRes = () => {
 
   const [searchCamps, { isLoading: sanatoriumsIsLoading }] =
     useLazyGetSanatoriumsByFilterQuery();
+
+  const [filterData, setSanatoriumFilterData] = useState();
   useEffect(() => {
     searchCamps(searchData).then(({ data }) => {
       dispatch(setSanatoriumFilterData(data));

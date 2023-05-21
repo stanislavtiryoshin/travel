@@ -11,6 +11,10 @@ const sanatoriumSchema = Schema(
         ref: "Period",
       },
     ],
+    searchable: {
+      type: Boolean,
+      default: true,
+    },
     img: [String],
     uid: String,
     locationId: {

@@ -12,6 +12,10 @@ const campSchema = Schema({
       maxAge: Number,
     },
   ],
+  searchable: {
+    type: Boolean,
+    default: true,
+  },
   periods: [
     {
       type: Schema.Types.ObjectId,

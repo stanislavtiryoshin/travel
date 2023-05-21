@@ -23,6 +23,9 @@ import {
   useLazyGetTourByIdQuery,
 } from "../../features/services/edit.service";
 
+import tourmain from "../../assets/tour/tour.png";
+import secondary from "../../assets/camp/campsecondary.png";
+
 import { useParams, useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal";
 import { useUploadImageMutation } from "../../features/services/upload.service";
@@ -124,7 +127,9 @@ const EditTour = () => {
         room: roomId,
       },
       program: programList,
+      searchable,
     };
+    console.log(values, "edit");
     await editTour(values);
 
     // if (!addLoad) {
@@ -176,6 +181,8 @@ const EditTour = () => {
     }
   }, [tourData]);
 
+  const [searchable, setIsSearchable] = useState(true);
+
   return (
     <>
       <AdminHead text="Создание 1-3 тура" onClick={() => handleSubmit()} />
@@ -184,9 +191,29 @@ const EditTour = () => {
           section="add_gen-section"
           wrapper="ass_gen-wrapper shadowed_box"
         >
-          <GalleryBox sources={sources} />
+          <GalleryBox
+            sources={
+              sources.length > 0
+                ? sources
+                : [tourmain, secondary, secondary, secondary]
+            }
+          />
           <div className="gen_content-box">
-            <div className="gen_title">Основное о туре</div>
+            <div className="gen_title_checkbox">
+              <div className="gen_title">Основное о туре</div>
+
+              <div className="toggler-box">
+                <div>Отображать при поиске</div>
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    checked={searchable}
+                    onChange={() => setIsSearchable(!searchable)}
+                  />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            </div>
             <div className="input_row">
               <Input
                 placeholder="Название"

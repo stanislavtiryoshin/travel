@@ -40,30 +40,31 @@ const SanatoriumResults = ({ mode }) => {
 
       {sanatoriums && sanatoriums.length > 0 ? (
         sanatoriums.map((hotel, idx) => {
-          return (
-            <HotelCard
-              program={hotel.program}
-              key={idx}
-              hotelId={hotel._id}
-              name={hotel.name}
-              locationId={hotel.locationId}
-              price={hotel.price * peopleAmount}
-              amount={peopleAmount}
-              days={daysAmount}
-              description={hotel.description}
-              rating={hotel.rating}
-              startDate={searchData.start}
-              rooms={hotel.rooms}
-              totalPrice={hotel.totalPrice}
-              oldPrice={hotel.oldPrice}
-              hotelStars={hotel.hotelStars}
-              mode="sanatorium"
-              hotelServices={hotel?.sanatoriumServices?.map(
-                (serv) => serv.serviceType
-              )}
-              hotel={hotel}
-            />
-          );
+          if (hotel.searchable)
+            return (
+              <HotelCard
+                program={hotel.program}
+                key={idx}
+                hotelId={hotel._id}
+                name={hotel.name}
+                locationId={hotel.locationId}
+                price={hotel.price * peopleAmount}
+                amount={peopleAmount}
+                days={daysAmount}
+                description={hotel.description}
+                rating={hotel.rating}
+                startDate={searchData.start}
+                rooms={hotel.rooms}
+                totalPrice={hotel.totalPrice}
+                oldPrice={hotel.oldPrice}
+                hotelStars={hotel.hotelStars}
+                mode="sanatorium"
+                hotelServices={hotel?.sanatoriumServices?.map(
+                  (serv) => serv.serviceType
+                )}
+                hotel={hotel}
+              />
+            );
         })
       ) : (
         <div>😭 Ничего не найдено...</div>

@@ -45,32 +45,33 @@ const HotelsResults = ({ mode }) => {
 
       {hotels && hotels?.length > 0 ? (
         hotels?.map((hotel, idx) => {
-          return (
-            <HotelCard
-              program={hotel.program}
-              key={hotel._id}
-              hotelId={hotel._id}
-              name={hotel.name}
-              locationId={hotel.locationId}
-              price={hotel.price}
-              adultsAmount={
-                localStorage.getItem("agesArray")
-                  ? JSON.parse(localStorage.getItem("agesArray")).length
-                  : 1
-              }
-              days={hotel.daysAmount}
-              description={hotel.description}
-              rating={hotel.rating}
-              startDate={searchData.start}
-              rooms={hotel.rooms}
-              totalPrice={hotel.totalPrice}
-              oldPrice={hotel.oldPrice}
-              hotelStars={hotel.hotelStars}
-              mode={mode}
-              hotelServices={hotel.hotelServices}
-              hotel={hotel}
-            />
-          );
+          if (hotel.searchable)
+            return (
+              <HotelCard
+                program={hotel.program}
+                key={hotel._id}
+                hotelId={hotel._id}
+                name={hotel.name}
+                locationId={hotel.locationId}
+                price={hotel.price}
+                adultsAmount={
+                  localStorage.getItem("agesArray")
+                    ? JSON.parse(localStorage.getItem("agesArray")).length
+                    : 1
+                }
+                days={hotel.daysAmount}
+                description={hotel.description}
+                rating={hotel.rating}
+                startDate={searchData.start}
+                rooms={hotel.rooms}
+                totalPrice={hotel.totalPrice}
+                oldPrice={hotel.oldPrice}
+                hotelStars={hotel.hotelStars}
+                mode={mode}
+                hotelServices={hotel.hotelServices}
+                hotel={hotel}
+              />
+            );
         })
       ) : (
         <div>😭 Ничего не найдено...</div>
