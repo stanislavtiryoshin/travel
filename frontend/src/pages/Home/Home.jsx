@@ -14,17 +14,17 @@ const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (destination)
-      axios
-        .get(`${API_URL_PROXY}/locations/${destination}`)
-        .then((response) => {
-          setCurrentLocation(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-  }, [destination]);
+  // useEffect(() => {
+  //   if (destination)
+  //     axios
+  //       .get(`${API_URL_PROXY}/locations/${destination}`)
+  //       .then((response) => {
+  //         setCurrentLocation(response.data);
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  // }, [destination]);
 
   const location = useLocation();
   const [mode, setMode] = useState("");

@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 const DateSelect = () => {
   const dispatch = useDispatch();
 
-  const { searchData } = useSelector((state) => state.search);
+  const { searchData, refetch } = useSelector((state) => state.search);
 
   // Date picker function
   const [startingDate, setStartingDate] = useState(new Date(+searchData.start));
@@ -18,6 +18,8 @@ const DateSelect = () => {
     const [start, end] = dates;
     setStartingDate(start);
     setEndingDate(end);
+    localStorage.setItem("startDate", Date.parse(start));
+    localStorage.setItem("endDate", Date.parse(end));
     if (start && end) {
       dispatch(
         setSearchData({
@@ -28,6 +30,7 @@ const DateSelect = () => {
         })
       );
     }
+    if (location.pathname !== "/") refetch();
   };
 
   return (

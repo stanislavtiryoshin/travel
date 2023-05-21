@@ -141,7 +141,7 @@ const Sum = ({
                     </div>
                   </>
                 ) : null}
-                {price?.margeSum && price?.margeSum !== 0 ? (
+                {/* {price?.margeSum && price?.margeSum !== 0 ? (
                   <>
                     <div className="hotel_side-checksum">
                       <div>Маржа</div>
@@ -153,7 +153,7 @@ const Sum = ({
                       <span>10 %</span>
                     </div>
                   </>
-                ) : null}
+                ) : null} */}
               </>
             ) : null}
 
