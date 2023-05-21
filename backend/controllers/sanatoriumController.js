@@ -400,6 +400,7 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
     kidsAmount,
     dashMode,
     searchNameId,
+    filterRating,
   } = req.query;
 
   const peopleAmount = agesArray.length;
@@ -449,6 +450,11 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
 
   if (locationId && locationId !== "") {
     query.locationId = locationId;
+  }
+  if (filterRating && filterRating !== undefined) {
+    query.rating = {
+      $in: filterRating.split(","),
+    };
   }
 
   if (searchNameId && searchNameId !== "") {

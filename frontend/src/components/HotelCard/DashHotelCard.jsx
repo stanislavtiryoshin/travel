@@ -95,7 +95,7 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
         <img
           src={img && img.length > 0 ? img[0] : admhotel}
           alt=""
-          style={{ width: "270px", height: "120px", objectFit: "cover" }}
+          className="card-photo"
         />
         <div className="adm_hotel-title">{name}</div>
         <div className="adm_hotel-loc">
@@ -154,6 +154,18 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
               {`${duration} ${declOfNum(duration)}`}
             </div>
           )}
+
+          {Array.isArray(food) && food.length > 0 ? (
+            <div className="card_tag">
+              <img src={tag} alt="" />
+              {food[0].label}
+            </div>
+          ) : food && food.label ? (
+            <div className="card_tag">
+              <img src={tag} alt="" />
+              {food.label}
+            </div>
+          ) : null}
 
           {tourServices &&
             tourServices.length > 0 &&

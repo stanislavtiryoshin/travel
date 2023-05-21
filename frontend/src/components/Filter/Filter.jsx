@@ -31,6 +31,7 @@ const Filter = ({ mode, dashMode }) => {
   const { hotels } = useSelector((state) => state.hotels);
   const { sanatoriums } = useSelector((state) => state.sanatoriums);
   const { tours } = useSelector((state) => state.tour);
+  const { camps } = useSelector((state) => state.camps);
 
   // Setting min and max values for RangeSlider
   const [maxPrice, setMaxPrice] = useState(100);
@@ -40,88 +41,67 @@ const Filter = ({ mode, dashMode }) => {
     setValue([minPrice, maxPrice]);
   }, [minPrice, maxPrice]);
 
-  useEffect(() => {
-    switch (mode) {
-      case "hotel":
-        setMaxPrice(
-          hotels?.reduce(
-            (acc, curr) => {
-              if (curr.totalPrice > acc.totalPrice) {
-                return curr;
-              } else {
-                return acc;
-              }
-            },
-            { totalPrice: 0 }
-          ).totalPrice
-        );
-        setMinPrice(
-          hotels?.reduce(
-            (acc, curr) => {
-              if (curr.totalPrice < acc.totalPrice) {
-                return curr;
-              } else {
-                return acc;
-              }
-            },
-            { totalPrice: 0 }
-          ).totalPrice
-        );
-        break;
-      case "sanatorium":
-        setMaxPrice(
-          sanatoriums?.reduce(
-            (acc, curr) => {
-              if (curr.totalPrice > acc.totalPrice) {
-                return curr;
-              } else {
-                return acc;
-              }
-            },
-            { totalPrice: 0 }
-          ).totalPrice
-        );
-        setMinPrice(
-          sanatoriums?.reduce(
-            (acc, curr) => {
-              if (curr.totalPrice < acc.totalPrice) {
-                return curr;
-              } else {
-                return acc;
-              }
-            },
-            { totalPrice: 0 }
-          ).totalPrice
-        );
-        break;
-      case "tour":
-        setMaxPrice(
-          tours?.reduce(
-            (acc, curr) => {
-              if (curr.totalPrice > acc.totalPrice) {
-                return curr;
-              } else {
-                return acc;
-              }
-            },
-            { totalPrice: 0 }
-          ).totalPrice
-        );
-        setMinPrice(
-          tours?.reduce(
-            (acc, curr) => {
-              if (curr.totalPrice < acc.totalPrice) {
-                return curr;
-              } else {
-                return acc;
-              }
-            },
-            { totalPrice: 0 }
-          ).totalPrice
-        );
-        break;
-    }
-  }, [mode, hotels, sanatoriums, tours]);
+  // console.log(
+  //   hotels?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice,
+  //   "sorted hotels"
+  // );
+
+  // useEffect(() => {
+  //   switch (mode) {
+  //     case "hotel":
+  //       setMaxPrice(
+  //         hotels?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
+  //           ? hotels?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
+  //           : 100
+  //       );
+  //       setMinPrice(
+  //         hotels?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
+  //           ? hotels?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
+  //           : 0
+  //       );
+  //       break;
+  //     case "sanatorium":
+  //       setMaxPrice(
+  //         sanatoriums?.sort((a, b) => a.totalPrice - b.totalPrice)[0]
+  //           ?.totalPrice
+  //           ? hotels?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
+  //           : 100
+  //       );
+  //       setMinPrice(
+  //         sanatoriums?.sort((a, b) => b.totalPrice - a.totalPrice)[0]
+  //           ?.totalPrice
+  //           ? hotels?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
+  //           : 0
+  //       );
+  //       break;
+  //     case "tour":
+  //       setMaxPrice(
+  //         tours?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
+  //           ? hotels?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
+  //           : 100
+  //       );
+  //       setMinPrice(
+  //         tours?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
+  //           ? hotels?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
+  //           : 0
+  //       );
+  //       break;
+  //     case "camps":
+  //       setMaxPrice(
+  //         camps?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
+  //           ? hotels?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
+  //           : 100
+  //       );
+  //       setMinPrice(
+  //         camps?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
+  //           ? hotels?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
+  //           : 0
+  //       );
+  //       break;
+  //   }
+  // }, [mode, hotels, sanatoriums, tours, camps]);
+
+  console.log(maxPrice, minPrice, "max min");
 
   const { searchData } = useSelector((state) => state.search);
 
@@ -264,13 +244,13 @@ const Filter = ({ mode, dashMode }) => {
     switch (mode) {
       case "tour":
         dashMode
-          ? applyHotelFilter({
+          ? applyTourFilter({
               ...newSearchData,
               locationId: searchData.locationId,
               searchNameId: searchData.searchNameId,
               dashMode: true,
             })
-          : applyHotelFilter(searchData);
+          : applyTourFilter(searchData);
         break;
       case "hotel":
         dashMode

@@ -4,10 +4,11 @@ import HotelSearch from "../../components/SearchPanel/HotelSearch";
 import Section from "../../components/Section";
 import Filter from "../../components/Filter/Filter";
 import DashHotelCard from "../../components/HotelCard/DashHotelCard";
-import { useNavigate } from "react-router-dom";
-import { getCamps } from "../../features/camps/campSlice";
-import { useLazyGetSanatoriumsByFilterQuery } from "../../features/services/filter.service";
+import { Link, useNavigate } from "react-router-dom";
+import { setFilterData as setCampFilterData } from "../../features/camps/campSlice";
 import Loader from "../../components/Loader";
+import { useLazyGetCampsByFilterQuery } from "../../features/services/filter.service";
+import SortBtn from "../../components/Filter/SortBtn";
 
 const CampRes = () => {
   const dispatch = useDispatch();
@@ -16,34 +17,53 @@ const CampRes = () => {
   const { searchData } = useSelector((state) => state.search);
   const { camps } = useSelector((state) => state.camps);
 
-  // console.log(startDate, "startdate");
-
-  const [searchCamps, { isLoading: sanatoriumsIsLoading }] =
-    useLazyGetSanatoriumsByFilterQuery();
-
-  const [filterData, setSanatoriumFilterData] = useState();
+  const [searchCamps, { isLoading: hotelsIsLoading }] =
+    useLazyGetCampsByFilterQuery();
   useEffect(() => {
-    searchCamps(searchData).then(({ data }) => {
-      dispatch(setSanatoriumFilterData(data));
+    searchCamps({
+      ...searchData,
+      locationId: searchData.locationId,
+      searchNameId: searchData.searchNameId,
+      dashMode: true,
+    }).then(({ data }) => {
+      dispatch(setCampFilterData(data));
     });
   }, []);
 
-  if (sanatoriumsIsLoading) return <Loader />;
+  if (hotelsIsLoading) {
+    return <Loader />;
+  }
+
   return (
     <div className="tours_tab tab">
       <HotelSearch mode="camp" />
       <Section section="dash_section" wrapper="dash_wrapper">
         <div className="dash_side">
-          <Filter campMode />
+          <Filter mode="camp" dashMode />
         </div>
-        <div className="dash_main">
-          {camps && camps.length > 0
-            ? camps?.map((camp, idx) => {
+        <div className="dash_main-wrapper wrapper ver">
+          <div className="all_hotels-top">
+            <div className="all_hotels-num">
+              Найдено: <span>{camps?.length}</span>
+            </div>
+            <div className="btns-box">
+              <SortBtn mode="camp" />
+              <Link to="/dashboard/add-camp" className="primary-btn blue">
+                + Добавить лагерь
+              </Link>
+            </div>
+          </div>
+          <div className="dash_main">
+            {camps && camps.length > 0 ? (
+              camps?.map((camp, idx) => {
                 return (
                   <DashHotelCard hotel={camp} key={camp._id} mode="camp" />
                 );
               })
-            : "is loading"}
+            ) : (
+              <div>😭 Ничего не найдено...</div>
+            )}
+          </div>
         </div>
       </Section>
     </div>

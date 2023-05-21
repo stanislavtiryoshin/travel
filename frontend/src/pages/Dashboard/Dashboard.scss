@@ -228,3 +228,18 @@
   align-items: center;
   font-size: 40px;
 }
+
+/* BUTTONS */
+
+.btns-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 20px;
+}
+
+.dash_main-wrapper {
+  .all_hotels-top {
+    margin-bottom: 20px;
+  }
+}

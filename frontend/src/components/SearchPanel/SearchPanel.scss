@@ -47,6 +47,7 @@
   text-align: center;
   color: rgba(94, 178, 21, 1);
   background-color: #fff;
+  transition: 0.2s;
 
   .tag_icon {
     path,
@@ -55,7 +56,8 @@
     }
   }
 
-  &.active {
+  &.active,
+  &:hover {
     background-color: rgba(94, 178, 21, 1);
     color: #fff;
     .tag_icon {

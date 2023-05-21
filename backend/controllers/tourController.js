@@ -425,8 +425,10 @@ const getSearchedTours = asyncHandler(async (req, res) => {
   if (filterDuration && filterDuration !== "") {
     query.duration = filterDuration;
   }
-  if (filterRating && filterRating !== "") {
-    query.rating = filterRating;
+  if (filterRating && filterRating !== undefined) {
+    query.rating = {
+      $in: filterRating.split(","),
+    };
   }
 
   if (filterFood && filterFood !== "") {
@@ -447,7 +449,7 @@ const getSearchedTours = asyncHandler(async (req, res) => {
 
   let adminTours;
   if (dashMode && dashMode !== "false") {
-    adminTours = await Tour.find(query);
+    adminTours = await Tour.find(query).populate("food");
     return res.status(200).json(adminTours);
   }
 
@@ -473,8 +475,8 @@ const getSearchedTours = asyncHandler(async (req, res) => {
 
     return {
       ...newHotel,
-      daysAmount: +daysAmount,
-      nightsAmount: daysAmount - 1,
+      daysAmount: +newHotel.duration,
+      nightsAmount: newHotel.duration - 1,
       adultsAmount: +adultsAmount,
       kidsAmount: +kidsAmount,
     };

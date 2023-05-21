@@ -64,11 +64,11 @@ const SortBtn = ({ mode }) => {
           <button
             className="sort-option"
             onClick={() => {
-              mode === "hotels"
+              mode === "hotel"
                 ? dispatch(sortAlphDesc())
                 : mode === "tour"
-                ? dispatch(sortToursAlphAsc())
-                : mode === "camps"
+                ? dispatch(sortToursAlphDesc())
+                : mode === "camp"
                 ? dispatch(sortCampsAlphDesc())
                 : dispatch(sortSansAlphDesc());
               setIsExpanded(!isExpanded);
@@ -79,11 +79,11 @@ const SortBtn = ({ mode }) => {
           <button
             className="sort-option"
             onClick={() => {
-              mode === "hotels"
+              mode === "hotel"
                 ? dispatch(sortAlphAsc())
                 : mode === "tour"
                 ? dispatch(sortToursAlphAsc())
-                : mode === "camps"
+                : mode === "camp"
                 ? dispatch(sortCampsAlphAsc())
                 : dispatch(sortSansAlphAsc());
               setIsExpanded(!isExpanded);

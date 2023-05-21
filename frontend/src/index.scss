@@ -125,6 +125,7 @@ button {
   justify-content: center;
   border-radius: 8px;
   padding: 12px 16px 12px 16px;
+  border: 2px solid $base-green;
   font-size: 16px;
   font-weight: 500;
   line-height: 18px;
@@ -133,6 +134,11 @@ button {
   text-align: center;
   cursor: pointer;
   transition: 0.2s;
+
+  &:hover {
+    background-color: #fff;
+    color: $base-green;
+  }
 
   &.clear {
     background-color: #fff;
@@ -146,6 +152,11 @@ button {
 
   &.blue {
     background-color: $base-blue;
+    border-color: $base-blue;
+    &:hover {
+      background-color: #fff;
+      color: $base-blue;
+    }
     &.select {
       border-radius: 16px;
       height: 30px;
@@ -157,7 +168,12 @@ button {
   }
 
   &.yellow {
-    background-color: rgba(228, 155, 12, 1);
+    background-color: $base-gold;
+    border: solid 2px $base-gold;
+    &:hover {
+      background-color: #fff;
+      color: $base-gold;
+    }
   }
   &.green {
     &.clear {
