@@ -157,14 +157,14 @@ const Camp = () => {
     }));
   }, [localStorage.getItem("daysAmount")]);
 
+  const { searchData } = useSelector((state) => state.search);
+
   useEffect(() => {
     setPriceData((prev) => ({
       ...prev,
-      start: localStorage.getItem("startDate")
-        ? JSON.parse(localStorage.getItem("startDate"))
-        : Date.now(),
+      start: searchData.start ? searchData.start : Date.now(),
     }));
-  }, [localStorage.getItem("startDate")]);
+  }, [searchData]);
 
   const {
     data: price,

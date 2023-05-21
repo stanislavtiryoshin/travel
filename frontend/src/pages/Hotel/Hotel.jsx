@@ -112,7 +112,7 @@ const Hotel = () => {
   useEffect(() => {
     setClientData({
       ...clientData,
-      startDate: window.localStorage.getItem("startDate"),
+      startDate: window.localStorage.getItem("start"),
       endDate: window.localStorage.getItem("endDate"),
       peopleAmount: window.localStorage.getItem("peopleAmount"),
       daysAmount: window.localStorage.getItem("daysAmount"),
@@ -140,8 +140,8 @@ const Hotel = () => {
   const [priceData, setPriceData] = useState({
     addRoomFood: false,
     addExtraFood: false,
-    start: localStorage.getItem("startDate")
-      ? JSON.parse(localStorage.getItem("startDate"))
+    start: localStorage.getItem("start")
+      ? JSON.parse(localStorage.getItem("start"))
       : "",
     daysAmount: localStorage.getItem("daysAmount")
       ? localStorage.getItem("daysAmount")
@@ -194,14 +194,14 @@ const Hotel = () => {
     }));
   }, [localStorage.getItem("daysAmount")]);
 
+  const { searchData } = useSelector((state) => state.search);
+
   useEffect(() => {
     setPriceData((prev) => ({
       ...prev,
-      start: localStorage.getItem("startDate")
-        ? JSON.parse(localStorage.getItem("startDate"))
-        : Date.now(),
+      start: searchData.start ? searchData.start : Date.now(),
     }));
-  }, [localStorage.getItem("startDate")]);
+  }, [searchData]);
 
   const {
     data: price,
@@ -221,6 +221,8 @@ const Hotel = () => {
         JSON.stringify(clientExcursions)
       );
   }, [price, clientRoom, singleHotel, clientExcursions]);
+
+  console.log(priceData, "priceData");
 
   useEffect(() => {
     dispatch(setRefetch(refetch));

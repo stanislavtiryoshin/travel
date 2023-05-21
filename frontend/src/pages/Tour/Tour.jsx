@@ -132,12 +132,14 @@ const Tour = () => {
 
   const dispatch = useDispatch();
 
+  const { searchData } = useSelector((state) => state.search);
+
   useEffect(() => {
     setPriceData((prev) => ({
       ...prev,
-      start: JSON.parse(localStorage.getItem("startDate")),
+      start: searchData.start ? searchData.start : Date.now(),
     }));
-  }, [localStorage.getItem("startDate")]);
+  }, [searchData]);
 
   const {
     data: price,

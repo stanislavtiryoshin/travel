@@ -505,6 +505,7 @@ const getPrice = asyncHandler(async (req, res) => {
           const endDay = el.period.endDay;
 
           if (isDateInRange(date, startMonth, startDay, endMonth, endDay)) {
+            console.log(startDay, startMonth, endDay, endMonth, "period date");
             if (!personMode) {
               sum += el.roomPrice;
               roomSum += el.roomPrice;
