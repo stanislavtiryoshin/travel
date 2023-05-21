@@ -577,14 +577,20 @@ const getPrice = asyncHandler(async (req, res) => {
   await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
 
   res.status(200).json({
-    sum: sum * 1.1,
+    sum:
+      extraPlacesSum * 1.1 +
+      excursionsSum * 1.1 +
+      foodSum * 1.1 +
+      roomSum * 1.1 +
+      kidsFoodAmount * 1.1 +
+      adultsFoodAmount * 1.1,
     margeSum: 0.1 * sum,
-    extraPlacesSum: extraPlacesSum,
-    excursionsSum: excursionsSum,
-    foodSum: foodSum,
-    roomSum: roomSum,
-    kidsFoodAmount: kidsFoodAmount,
-    adultsFoodAmount: adultsFoodAmount,
+    extraPlacesSum: extraPlacesSum * 1.1,
+    excursionsSum: excursionsSum * 1.1,
+    foodSum: foodSum * 1.1,
+    roomSum: roomSum * 1.1,
+    kidsFoodAmount: kidsFoodAmount * 1.1,
+    adultsFoodAmount: adultsFoodAmount * 1.1,
   });
 });
 

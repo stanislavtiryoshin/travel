@@ -61,7 +61,6 @@ const SearchPanel = ({ isUserLook, style }) => {
     const sectionElement = document.querySelector(".hero_section");
     const computedStyle = window.getComputedStyle(sectionElement);
     const sectionHeight = computedStyle.getPropertyValue("height");
-    console.log(sectionHeight, "height");
     window.scrollTo({
       top: parseInt(sectionHeight),
       behavior: "smooth",
