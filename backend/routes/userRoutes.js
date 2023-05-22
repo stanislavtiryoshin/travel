@@ -5,10 +5,12 @@ const {
   loginUser,
   getUsers,
   deleteUsers,
+  findManagers,
 } = require("../controllers/userController");
 const { protect } = require("../middleware/authMiddleware");
 
 router.get("/", getUsers);
+router.get("/search", findManagers);
 router.post("/", registerUser);
 router.post("/login", loginUser);
 

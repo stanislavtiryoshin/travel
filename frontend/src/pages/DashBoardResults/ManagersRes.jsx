@@ -1,6 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-import { useGetManagersQuery } from "../../features/services/user.service";
+import {
+  useGetManagersQuery,
+  useLazyGetManagersQuery,
+} from "../../features/services/user.service";
 import Loader from "../../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +12,20 @@ import Manager from "../Manager/Manager";
 const ManagersRes = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  const { data: managers, isLoading, isFetching } = useGetManagersQuery();
+
+  const [managers, setManagers] = useState([]);
+  const [fetchManagers, { isFetching }] = useLazyGetManagersQuery();
+  // const { data: managers, isLoading, isFetching } = useGetManagersQuery();
+
+  const [data, setData] = useState("");
+
+  const handleSearch = () => {
+    fetchManagers(data).then(({ data }) => setManagers(data));
+  };
+
+  useEffect(() => {
+    fetchManagers(data).then(({ data }) => setManagers(data));
+  }, []);
 
   useEffect(() => {
     if (!user) {
@@ -20,14 +36,14 @@ const ManagersRes = () => {
     }
   }, []);
 
-  if (isLoading) {
-    return <Loader />;
-  }
-  console.log(managers, "managers in managersRes");
-
   return (
     <div className="reqs_tab tab">
-      <Manager isLoading={isFetching} users={managers} />
+      <Manager
+        handleSearch={handleSearch}
+        setData={setData}
+        isLoading={isFetching}
+        users={managers}
+      />
     </div>
   );
 };

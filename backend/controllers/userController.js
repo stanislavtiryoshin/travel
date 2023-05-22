@@ -89,9 +89,35 @@ const deleteUsers = async (req, res) => {
   res.status(200).json(del);
 };
 
+const findManagers = (req, res) => {
+  const { query } = req.query;
+
+  let q = {};
+  // TODO: Поменять после того как появиться uid
+
+  if (query && query !== "") {
+    q = {
+      name: {
+        $options: "i",
+        $regex: query,
+      },
+    };
+  }
+
+  User.find(q)
+    .then((response) => {
+      return res.status(200).json(response);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send(err);
+    });
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getUsers,
   deleteUsers,
+  findManagers,
 };

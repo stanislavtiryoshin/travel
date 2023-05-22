@@ -62,6 +62,10 @@ const orderSchema = mongoose.Schema(
     excursions: {
       type: [mongoose.Schema.Types.ObjectId],
     },
+    mode: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

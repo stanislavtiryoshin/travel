@@ -6,7 +6,7 @@ import HotelSearch from "../../components/SearchPanel/HotelSearch";
 import Loader from "../../components/Loader";
 import { useDeleteManagersMutation } from "../../features/services/user.service";
 
-const Manager = ({ users, isLoading }) => {
+const Manager = ({ users, isLoading, setData, handleSearch }) => {
   const [managerIds, setManagerIds] = useState([]);
 
   const columns = [
@@ -63,7 +63,7 @@ const Manager = ({ users, isLoading }) => {
 
   return (
     <>
-      <HotelSearch reqMode />
+      <HotelSearch find={handleSearch} handleQuery={setData} reqMode />
 
       <section
         className="dash_section"
