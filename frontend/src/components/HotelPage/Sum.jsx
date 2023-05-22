@@ -27,7 +27,6 @@ const Sum = ({
     navigate("/orders/new-order");
     console.log(values);
   };
-  // console.log(clientRoom, "sum client room");
   return (
     <div className="hotel_side-top shadowed_box">
       <div className="hotel_side-title">Бронирование</div>

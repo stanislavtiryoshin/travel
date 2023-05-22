@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import style from "./AddTour.module.scss";
 import "./AddTour.scss";
 
@@ -122,10 +122,10 @@ const EditTour = () => {
       rooms: tourData?.rooms ? tourData?.rooms : [],
       locationId: tourData?.locationId,
       tourServices: comfortsData.map(({ servId }) => servId),
-      hotels: {
-        hotel: tourData.hotelId,
-        room: roomId,
-      },
+      hotels: hotelsArray.map((hotels) => ({
+        hotel: hotels.hotelId,
+        room: hotels.roomId,
+      })),
       program: programList,
       searchable,
     };
@@ -183,6 +183,12 @@ const EditTour = () => {
 
   const [searchable, setIsSearchable] = useState(true);
 
+  const [hotelsArray, setHotelsArray] = useState([
+    {
+      hotelId: "",
+      roomId: "",
+    },
+  ]);
   return (
     <>
       <AdminHead text="Создание 1-3 тура" onClick={() => handleSubmit()} />
@@ -378,72 +384,82 @@ const EditTour = () => {
                 <div className="input_box">
                   <div className="input_title">Отель</div>
 
-                  <select
-                    className="primary-input"
-                    onChange={(e) =>
-                      setTourData((prev) => ({
-                        ...prev,
-                        hotelId: e.target.value,
-                      }))
-                    }
-                  >
-                    <option value="" disabled selected>
-                      Выбрать из списка
-                    </option>
-                    {isHotelLoaded ? (
-                      <p>Hotels aren't loaded</p>
-                    ) : (
-                      <>
-                        {hotels.map((hotel) => (
-                          <option
-                            selected={
-                              tourData.hotelId &&
-                              hotel._id === tourData.hotelId._id
-                            }
-                            value={hotel._id}
-                            key={hotel._id}
-                          >
-                            {hotel.name}
-                          </option>
-                        ))}
-                      </>
-                    )}
-                  </select>
-                  {console.log(tourData.hotels)}
-                  <select
-                    onChange={(e) => setRoomId(e.target.value)}
-                    className="primary-input"
-                  >
-                    <option value="" selected disabled>
-                      Номер
-                    </option>
-                    {console.log(
-                      hotels.find(
-                        (hotel) => hotel?._id === tourData?.hotelId?._id
-                      )?.rooms,
-                      "rooms"
-                    )}
-                    {hotels?.find(
-                      (hotel) => hotel?._id === tourData?.hotelId?._id
-                    )?.rooms.length > 0 ? (
-                      <>
-                        {hotels
-                          ?.find((hotel) => hotel._id === tourData.hotelId._id)
-                          ?.rooms.map((rooms) => (
-                            <>
-                              <option value={rooms._id}>
-                                {rooms.roomName}
+                  {hotelsArray?.map((h, idx) => (
+                    <Fragment key={h._id}>
+                      <select
+                        className="primary-input"
+                        onChange={(e) =>
+                          setHotelsArray((prev) => {
+                            const hotelId = e.target.value;
+                            const updatedArray = [...prev];
+                            updatedArray[idx] = { hotelId };
+                            return updatedArray;
+                          })
+                        }
+                      >
+                        <option value="" disabled selected>
+                          Выбрать из списка
+                        </option>
+                        {isHotelLoaded ? (
+                          <p>Hotels aren't loaded</p>
+                        ) : (
+                          <>
+                            {hotels.map((hotel) => (
+                              <option value={hotel._id} key={hotel._id}>
+                                {hotel.name}
                               </option>
-                            </>
-                          ))}
-                      </>
-                    ) : (
-                      <option>В данном отеле нету номеров</option>
-                    )}
-                  </select>
+                            ))}
+                          </>
+                        )}
+                      </select>
+                      <select
+                        onChange={(e) =>
+                          setHotelsArray((prev) => {
+                            const roomId = e.target.value;
+                            const updatedArray = [...prev];
+                            updatedArray[idx] = {
+                              ...updatedArray[idx],
+                              roomId,
+                            };
+                            return updatedArray;
+                          })
+                        }
+                        className="primary-input"
+                      >
+                        <option value="" selected disabled>
+                          Номер
+                        </option>
+
+                        {hotels?.find((hotel) => hotel._id === h.hotelId)?.rooms
+                          ?.length > 0 ? (
+                          <>
+                            {hotels
+                              .find((hotel) => hotel._id === h.hotelId)
+                              .rooms.map((rooms) => (
+                                <>
+                                  <option value={rooms._id}>
+                                    {rooms.roomName}
+                                  </option>
+                                </>
+                              ))}
+                          </>
+                        ) : (
+                          <option>В данном отеле нету номеров</option>
+                        )}
+                      </select>
+                    </Fragment>
+                  ))}
                   <button
                     className="add_service-btn primary-btn"
-                    onClick={() => {}}
+                    onClick={() => {
+                      setHotelsArray((prev) => [
+                        ...prev,
+                        {
+                          hotelId: "",
+                          roomId: "",
+                        },
+                      ]);
+                    }}
                   >
                     Добавить отель
                   </button>

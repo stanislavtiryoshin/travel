@@ -438,10 +438,14 @@ const Tour = () => {
                       </div>
                     ))} */}
                   </div>
+                  {/* {console.log(activeId, "active Id")} */}
                   <div className="hotel_page-rooms">
                     {singleTour &&
                       singleTour.hotels.map((hotels, idx) => (
-                        <div className={`hotel_page-rooms_hotel `}>
+                        <div
+                          className={`hotel_page-rooms_hotel `}
+                          onClick={() => setIsActiveId(hotels.hotel._id)}
+                        >
                           <div className="hotel_page-rooms_counter">
                             Отель {idx + 1}
                           </div>
@@ -469,6 +473,13 @@ const Tour = () => {
                 </div>
               </div>
               <div className="hotel_side_wrapper wrapper ver">
+                {/* {console.log(
+                  singleTour?.hotels[0].hotel._id,
+                  activeId,
+                  "hotels"
+                )} */}
+                {/* {console.log(activeId)} */}
+
                 <Sum
                   priceIsLoading={isFetching}
                   price={price && price}
@@ -476,10 +487,11 @@ const Tour = () => {
                     singleTour &&
                     singleTour?.hotels &&
                     singleTour?.hotels?.find(
-                      (hotel) => hotel?.room?._id === clientRoom?._id
+                      (hotel) => hotel?.hotel?._id === activeId
                     )?.room
                   }
                   orderTerms={{
+                    mode: "tour",
                     days: singleTour && singleTour.duration,
                     startDate: priceData && priceData.start,
                     name: singleTour && singleTour.name,
@@ -487,14 +499,14 @@ const Tour = () => {
                       singleTour &&
                       singleTour.hotels &&
                       singleTour?.hotels?.find(
-                        (hotels) => hotels?._id === activeId
+                        (hotel) => hotel?.hotel?._id === activeId
                       )?.room?._id,
                     sum: price && price?.sum,
                     foodIncluded: true,
                     hotel:
                       singleTour &&
                       singleTour?.hotels?.find(
-                        (hotels) => hotels?._id === activeId
+                        (hotel) => hotel?.hotel?._id === activeId
                       )?.hotel?._id,
                     tourId,
                     endDate:
