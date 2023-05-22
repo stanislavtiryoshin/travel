@@ -77,7 +77,7 @@ const Navbar = ({ isSearch }) => {
         }
       })
       .map((tab, index) => {
-        const isActive = currentTab === index;
+        const isActive = location.pathname === tab.path;
         return (
           <Link
             to={tab.path}

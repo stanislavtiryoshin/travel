@@ -9,8 +9,8 @@ export const userApi = createApi({
   tagTypes: ["User"],
   endpoints: (builder) => ({
     getManagers: builder.query({
-      query: () => ({
-        url: "/users",
+      query: (data) => ({
+        url: `/users/search?query=${data}`,
       }),
       providesTags: (result) =>
         result
@@ -31,4 +31,8 @@ export const userApi = createApi({
   }),
 });
 
-export const { useGetManagersQuery, useDeleteManagersMutation } = userApi;
+export const {
+  useGetManagersQuery,
+  useDeleteManagersMutation,
+  useLazyGetManagersQuery,
+} = userApi;
