@@ -175,7 +175,9 @@ const HotelCard = ({
           )}
 
           <div className="card_right-people">
-            На {adultsAmount ? adultsAmount : 1} взр.
+            {hotel.adultsAmount && hotel.adultsAmount > 0
+              ? `На ${adultsAmount ? adultsAmount : 1} взр.`
+              : ""}
             {hotel.kidsAmount && hotel.kidsAmount > 0
               ? `, ${hotel.kidsAmount} дет.`
               : null}

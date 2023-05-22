@@ -100,7 +100,8 @@ const SearchPanel = ({ isUserLook, style }) => {
   useEffect(() => {
     const storedLocationId = localStorage.getItem("locationId") || "";
     const storedDaysAmount = localStorage.getItem("daysAmount") || 1;
-    const storedStart = localStorage.getItem("start") || "1685556000000";
+    const storedStart = localStorage.getItem("start");
+    const storedEnd = localStorage.getItem("end");
     const storedAgesArray = JSON.parse(localStorage.getItem("agesArray")) || [
       1000,
     ];
@@ -111,6 +112,7 @@ const SearchPanel = ({ isUserLook, style }) => {
         locationId: storedLocationId,
         daysAmount: storedDaysAmount,
         start: storedStart,
+        end: storedEnd,
         agesArray: storedAgesArray,
       })
     );
@@ -119,6 +121,7 @@ const SearchPanel = ({ isUserLook, style }) => {
   // Saving the searchData to localStorage on change
   useEffect(() => {
     localStorage.setItem("start", searchData.start);
+    localStorage.setItem("end", searchData.end);
     localStorage.setItem("locationId", searchData.locationId);
     localStorage.setItem("daysAmount", searchData.daysAmount);
     localStorage.setItem("agesArray", JSON.stringify(searchData.agesArray));

@@ -55,7 +55,7 @@ const CampsResults = ({ mode }) => {
                 totalPrice={hotel.totalPrice}
                 oldPrice={hotel.oldPrice}
                 hotelStars={hotel.hotelStars}
-                mode="sanatorium"
+                mode="camp"
                 hotelServices={hotel?.sanatoriumServices?.map(
                   (serv) => serv.serviceType
                 )}

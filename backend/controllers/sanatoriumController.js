@@ -401,6 +401,8 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
     dashMode,
     searchNameId,
     filterRating,
+    minPrice,
+    maxPrice,
   } = req.query;
 
   const peopleAmount = agesArray.length;
@@ -544,7 +546,16 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
     };
   });
 
-  res.status(200).send(newHotels);
+  res
+    .status(200)
+    .send(
+      minPrice && maxPrice
+        ? newHotels.filter(
+            (hotel) =>
+              hotel.totalPrice <= maxPrice && hotel.totalPrice >= minPrice
+          )
+        : newHotels
+    );
 });
 
 module.exports = {

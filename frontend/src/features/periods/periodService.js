@@ -38,6 +38,18 @@ const addCampPeriods = async (periods, token) => {
   return response.data;
 };
 
+// Add new tour periods
+
+const addTourPeriods = async (periods, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.post(API_URL + "tour", periods, config);
+  return response.data;
+};
+
 // Delete period
 
 const deletePeriod = async (periodId, token) => {
@@ -49,7 +61,7 @@ const deletePeriod = async (periodId, token) => {
   await axios.delete(API_URL + periodId, config);
 };
 
-// Delete period
+// Delete camp period
 
 const deleteCampPeriod = async (periodId, token) => {
   const config = {
@@ -60,12 +72,25 @@ const deleteCampPeriod = async (periodId, token) => {
   await axios.delete(API_URL + periodId + "/camp", config);
 };
 
+// Delete tour period
+
+const deleteTourPeriod = async (periodId, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  await axios.delete(API_URL + periodId + "/tour", config);
+};
+
 const periodService = {
   addPeriods,
   deletePeriod,
   addSanatoriumPeriods,
   addCampPeriods,
+  addTourPeriods,
   deleteCampPeriod,
+  deleteTourPeriod,
 };
 
 export default periodService;

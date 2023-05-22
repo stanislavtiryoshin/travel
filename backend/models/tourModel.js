@@ -10,11 +10,17 @@ const tourSchema = Schema({
       ref: "HotelService",
     },
   ],
+  periods: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Period",
+    },
+  ],
   periodPrices: [
     {
       period: {
         type: Schema.Types.ObjectId,
-        ref: "Periods",
+        ref: "Period",
       },
       adultPrice: Number,
       kidPrice: Number,

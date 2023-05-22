@@ -242,7 +242,9 @@ const getPrice = asyncHandler(async (req, res) => {
   }
 
   if (!allAgesMatched) {
-    return res.status(200).json({ error: "Not all ages fit this camp" });
+    return res
+      .status(200)
+      .json({ error: "Не все возраста подходят этому лагерю" });
   }
 
   (function calculatePrice(basePrice) {
@@ -297,14 +299,20 @@ const getPrice = asyncHandler(async (req, res) => {
           priceFound = true;
 
           if (!allAgesMatchedcInside) {
-            return res.status(404).json("Not all ages fit this camp inside");
+            return res
+              .status(404)
+              .json({ error: "Не все возрасты подходят этому лагерю" });
           }
         });
         if (!priceFound) {
-          return res.status(404).json("Could not find periods for these dates");
+          return res
+            .status(404)
+            .json({ error: "Не все даты подходят этому лагерю" });
         }
       } else {
-        return res.status(404).json("This camp has no prices set");
+        return res
+          .status(404)
+          .json({ error: "У этого лагеря не установлены цены" });
       }
     };
 
@@ -320,7 +328,7 @@ const getPrice = asyncHandler(async (req, res) => {
         margeSum: sum * 0.1,
         kidsAmount: ages.filter((age) => age !== 1000).length,
       })
-    : res.status(200).json({ sumError: "No sum found" });
+    : res.status(404).json({ error: "Не удалось посчитать" });
 });
 
 //@desc   Get searched camps
@@ -336,6 +344,8 @@ const getSearchedCamps = asyncHandler(async (req, res) => {
     dashMode,
     searchNameId,
     filterRating,
+    minPrice,
+    maxPrice,
   } = req.query;
 
   ages = agesArray.split(",").map(Number);
@@ -461,7 +471,16 @@ const getSearchedCamps = asyncHandler(async (req, res) => {
     };
   });
 
-  res.status(200).send(newCamps);
+  res
+    .status(200)
+    .send(
+      minPrice && maxPrice
+        ? newCamps.filter(
+            (hotel) =>
+              hotel.totalPrice <= maxPrice && hotel.totalPrice >= minPrice
+          )
+        : newCamps
+    );
 });
 
 module.exports = {

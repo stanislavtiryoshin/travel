@@ -176,6 +176,8 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     filterBathroom,
     filterExtraPlaces,
     searchNameId,
+    minPrice,
+    maxPrice,
   } = req.query;
 
   const peopleAmount = agesArray.split(",").map(Number).length;
@@ -372,7 +374,16 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     };
   });
 
-  res.status(200).send(newHotels);
+  res
+    .status(200)
+    .send(
+      minPrice && maxPrice
+        ? newHotels.filter(
+            (hotel) =>
+              hotel.totalPrice <= maxPrice && hotel.totalPrice >= minPrice
+          )
+        : newHotels
+    );
 });
 
 //@desc   Calculate the price of hotel
@@ -419,7 +430,10 @@ const getPrice = asyncHandler(async (req, res) => {
         model: "Category",
       },
     });
+
   const chosenRoom = hotel.rooms.find((room) => room._id == roomId);
+
+  if (!chosenRoom) return res.status(404).json({ error: "Номер не выбран" });
 
   let sum = 0;
   let extraPlacesSum = 0;
@@ -430,15 +444,11 @@ const getPrice = asyncHandler(async (req, res) => {
 
   const extraPlacesAmount = ages.length - chosenRoom.capacity;
 
-  console.log(extraPlacesAmount, "extraPlacesAmount");
-
   let placesArray = chosenRoom.extraPlaces;
 
   ages.sort((a, b) => b - a);
 
   const accomodatedAges = ages.splice(0, chosenRoom.capacity);
-
-  console.log(ages, "ages");
 
   const notChosen = (place) => !chosenPlaces.some((el) => el._id === place._id);
 
@@ -456,8 +466,6 @@ const getPrice = asyncHandler(async (req, res) => {
       chosenPlaces.push(matchingPlace);
     }
   });
-
-  console.log(chosenPlaces);
 
   sum = chosenPlaces.reduce((acc, place) => {
     if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
@@ -528,10 +536,12 @@ const getPrice = asyncHandler(async (req, res) => {
           }
         });
         if (!priceFound) {
-          res.status(404).json("Could not find period for these dates");
+          res
+            .status(404)
+            .json({ error: "Не все даты подходят для этого отеля" });
         }
       } else {
-        res.status(404).json("This room has no prices set");
+        res.status(404).json({ error: "У этого номера не установлены цены" });
       }
       console.log(sum);
     };
@@ -576,22 +586,18 @@ const getPrice = asyncHandler(async (req, res) => {
 
   await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
 
-  res.status(200).json({
-    sum:
-      extraPlacesSum * 1.1 +
-      excursionsSum * 1.1 +
-      foodSum * 1.1 +
-      roomSum * 1.1 +
-      kidsFoodAmount * 1.1 +
-      adultsFoodAmount * 1.1,
-    margeSum: 0.1 * sum,
-    extraPlacesSum: extraPlacesSum * 1.1,
-    excursionsSum: excursionsSum * 1.1,
-    foodSum: foodSum * 1.1,
-    roomSum: roomSum * 1.1,
-    kidsFoodAmount: kidsFoodAmount * 1.1,
-    adultsFoodAmount: adultsFoodAmount * 1.1,
-  });
+  return sum > 0
+    ? res.status(200).json({
+        sum: sum * 1.1,
+        margeSum: 0.1 * sum,
+        extraPlacesSum: extraPlacesSum * 1.1,
+        excursionsSum: excursionsSum * 1.1,
+        foodSum: foodSum * 1.1,
+        roomSum: roomSum * 1.1,
+        kidsFoodAmount: kidsFoodAmount,
+        adultsFoodAmount: adultsFoodAmount,
+      })
+    : res.status(404).json({ error: "Не удалось подсчитать" });
 });
 
 //@desc   Get room by prices

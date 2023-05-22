@@ -105,6 +105,7 @@ const AddHotel = ({
   const [allLocations, setAllLocations] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [allServices, setAllServices] = useState([]);
+  const [allFoods, setAllFoods] = useState([]);
 
   const [servicesObjs, setServicesObjs] = useState([]);
 
@@ -148,6 +149,14 @@ const AddHotel = ({
       .get(`${API_URL_PROXY}/hotelServices`)
       .then((response) => {
         setAllServices(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    axios
+      .get(`${API_URL_PROXY}/foods`)
+      .then((response) => {
+        setAllFoods(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -607,11 +616,11 @@ const AddHotel = ({
                   setHotelData({ ...hotelData, food: e.target.value })
                 }
               >
-                <option value="642150a586cfa75278c280b9">Без питания</option>
-                <option value="642150a586cfa75278c280b9">Без питания</option>
-                <option value="642150a586cfa75278c280b9">Без питания</option>
-                <option value="642150a586cfa75278c280b9">Без питания</option>
-                <option value="642150a586cfa75278c280b9">Без питания</option>
+                {allFoods?.length > 0
+                  ? allFoods?.map((food) => {
+                      return <option value={food._id}>{food.label}</option>;
+                    })
+                  : null}
               </select>
               <div className="input_row">
                 <input
@@ -642,7 +651,7 @@ const AddHotel = ({
                 />
               </div>
             </div>
-            <div className="input_box">
+            {/* <div className="input_box">
               <div className="input_title">Удобства</div>
               <select
                 name="comforts"
@@ -661,7 +670,7 @@ const AddHotel = ({
                 <option value="642150a586cfa75278c280b9">Без питания</option>
                 <option value="642150a586cfa75278c280b9">Без питания</option>
               </select>
-            </div>
+            </div> */}
             <div className="input_box">
               <div className="input_title">Тип оплаты</div>
               <div className="input_row">
@@ -757,13 +766,15 @@ const AddHotel = ({
               hotelId={hotelData._id}
               mode="hotel"
             />
-            {fetchedHotelData && fetchedHotelData?.periods ? (
+            {fetchedHotelData &&
+            fetchedHotelData?.periods?.length > 0 &&
+            fetchedHotelData?.rooms?.length > 0 ? (
               <Section
                 section="tb_section"
                 wrapper="tb_wrapper ver shadowed_box"
               >
                 <div className="periods_top">
-                  <div className="gen_title">Номера </div>
+                  <div className="gen_title">Цены на номера</div>
                   <div className="periods_btns">
                     <button className="primary-btn black">Сохранить</button>
                     <button onClick={handleClick}>AAAA</button>

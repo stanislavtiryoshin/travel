@@ -54,11 +54,8 @@ const HotelsResults = ({ mode }) => {
                 name={hotel.name}
                 locationId={hotel.locationId}
                 price={hotel.price}
-                adultsAmount={
-                  localStorage.getItem("agesArray")
-                    ? JSON.parse(localStorage.getItem("agesArray")).length
-                    : 1
-                }
+                adultsAmount={hotel.adultsAmount}
+                kidsAmount={hotel.kidsAmount}
                 days={hotel.daysAmount}
                 description={hotel.description}
                 rating={hotel.rating}

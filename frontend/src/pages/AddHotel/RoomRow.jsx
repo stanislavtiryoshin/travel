@@ -19,11 +19,6 @@ const RoomRow = ({
     setNewPeriodPrices(periodPrices);
   }, [periodPrices]);
 
-  // console.log(newPeriodPrices, "newPeriodPrices");
-  function handleClick() {
-    console.log("Button clicked in child");
-  }
-
   return (
     <>
       {room && !roomMode ? (

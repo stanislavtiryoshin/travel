@@ -73,6 +73,14 @@ const getSingleTour = (req, res) => {
     .populate("hotelId")
     .populate("food")
     .populate("comforts")
+    .populate("periods")
+    .populate({
+      path: "periodPrices",
+      populate: {
+        path: "period",
+        model: "Period",
+      },
+    })
     .populate({
       path: "tourServices",
       populate: {
@@ -358,6 +366,8 @@ const getSearchedTours = asyncHandler(async (req, res) => {
     filterFood,
     dashMode,
     searchNameId,
+    minPrice,
+    maxPrice,
   } = req.query;
 
   const peopleAmount = agesArray.split(",").map(Number).length;
@@ -482,7 +492,16 @@ const getSearchedTours = asyncHandler(async (req, res) => {
     };
   });
 
-  res.status(200).send(newHotels);
+  res
+    .status(200)
+    .send(
+      minPrice && maxPrice
+        ? newHotels.filter(
+            (hotel) =>
+              hotel.totalPrice <= maxPrice && hotel.totalPrice >= minPrice
+          )
+        : newHotels
+    );
 });
 
 module.exports = {

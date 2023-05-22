@@ -4,8 +4,10 @@ import {
   addCampPeriods,
   addPeriods,
   addSanatoriumPeriods,
+  addTourPeriods,
   deleteCampPeriod,
   deleteHotelPeriod,
+  deleteTourPeriod,
 } from "../../features/periods/periodSlice";
 import {
   addHotel,
@@ -47,6 +49,12 @@ const Periods = ({
           console.log("updated camp periods");
         });
         break;
+      case "tour":
+        dispatch(addTourPeriods({ periods: periods })).then(() => {
+          refetch();
+          console.log("updated tour periods");
+        });
+        break;
       default:
         dispatch(addPeriods({ periods: periods })).then(() => {
           updateHotelData();
@@ -59,17 +67,28 @@ const Periods = ({
   const deletePeriod = (periodId) => {
     switch (mode) {
       case "hotel":
-        dispatch(deleteHotelPeriod(periodId));
+        dispatch(deleteHotelPeriod(periodId)).then(() => {
+          updateHotelData();
+          console.log("updated hotel periods");
+        });
         break;
       case "sanatorium":
-        console.log("updated sanatorium periods");
+        dispatch(deleteSanatoriumPeriod(periodId)).then(() => {
+          updateHotelData();
+          console.log("updated sanatorium periods");
+        });
         break;
       case "camp":
         dispatch(deleteCampPeriod(periodId));
         break;
+      case "tour":
+        dispatch(deleteTourPeriod(periodId)).then(() => refetch());
+        break;
       default:
-        dispatch(deleteHotelPeriod(periodId));
-        console.log("updated hotel periods");
+        dispatch(deleteHotelPeriod(periodId)).then(() => {
+          updateHotelData();
+          console.log("updated camp periods");
+        });
         break;
     }
   };
@@ -120,7 +139,13 @@ const Periods = ({
                 <div className="period_card shadowed_box" key={per._id || idx}>
                   <div className="period_title">
                     {`Период ${idx + 1}`}
-                    <button onClick={() => deletePeriod(per._id)}>X</button>
+                    <button
+                      onClick={() =>
+                        deletePeriod(per._id).then(() => refetch())
+                      }
+                    >
+                      X
+                    </button>
                   </div>
                   <div className="inputs_row">
                     <div className="input_col">

@@ -83,8 +83,6 @@ const EditHotel = () => {
     dispatch(reset());
   }, [hotelId]);
 
-  // console.log(singleHotel);
-
   const handleUploadImage = (e) => {
     const files = e.target.files;
 
@@ -112,12 +110,6 @@ const EditHotel = () => {
 
   return (
     <>
-      {/* <AdminHead
-        text="Редактирование отеля"
-        onClick={() => {
-          dispatch(updateHotel(hotelData));
-        }}
-      /> */}
       <div className="admin_hotel-page page">
         <AddHotel
           fetchedHotelData={singleHotel}
@@ -154,26 +146,6 @@ const EditHotel = () => {
             </div>
           </div>
         </section>
-
-        {/* <section className="room_price_table">
-        <div className="container">
-          <div className="admin_rooms-wrapper wrapper ver shadowed_box">
-            <div className="admin_rooms-top">
-              <div className="gen_title">Цены на номера</div>
-              <input type="file" hidden ref={importRef} onChange={handleFile} />
-              <button
-                onClick={() => importRef.current.click()}
-                className="import-btn"
-              >
-                Импортировать Excel
-              </button>
-            </div>
-            <div className="wrapper ver">
-              <Table isUploading={isUploading} data={!isRoomLoaded && data} />
-            </div>
-          </div>
-        </div>
-      </section> */}
       </div>
     </>
   );

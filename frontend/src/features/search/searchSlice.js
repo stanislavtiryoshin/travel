@@ -7,6 +7,7 @@ const initialState = {
     daysAmount: 1, // 1 day initially
     agesArray: [1000], // initially 1 adult
     start: "1685556000000",
+    end: "1685642400000",
     searchNameId: "",
     filterFood: [],
     filterServices: [],

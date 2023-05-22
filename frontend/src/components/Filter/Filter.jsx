@@ -41,65 +41,58 @@ const Filter = ({ mode, dashMode }) => {
     setValue([minPrice, maxPrice]);
   }, [minPrice, maxPrice]);
 
-  // console.log(
-  //   hotels?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice,
-  //   "sorted hotels"
-  // );
-
-  // useEffect(() => {
-  //   switch (mode) {
-  //     case "hotel":
-  //       setMaxPrice(
-  //         hotels?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
-  //           ? hotels?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
-  //           : 100
-  //       );
-  //       setMinPrice(
-  //         hotels?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
-  //           ? hotels?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
-  //           : 0
-  //       );
-  //       break;
-  //     case "sanatorium":
-  //       setMaxPrice(
-  //         sanatoriums?.sort((a, b) => a.totalPrice - b.totalPrice)[0]
-  //           ?.totalPrice
-  //           ? hotels?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
-  //           : 100
-  //       );
-  //       setMinPrice(
-  //         sanatoriums?.sort((a, b) => b.totalPrice - a.totalPrice)[0]
-  //           ?.totalPrice
-  //           ? hotels?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
-  //           : 0
-  //       );
-  //       break;
-  //     case "tour":
-  //       setMaxPrice(
-  //         tours?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
-  //           ? hotels?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
-  //           : 100
-  //       );
-  //       setMinPrice(
-  //         tours?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
-  //           ? hotels?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
-  //           : 0
-  //       );
-  //       break;
-  //     case "camps":
-  //       setMaxPrice(
-  //         camps?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
-  //           ? hotels?.sort((a, b) => a.totalPrice - b.totalPrice)[0]?.totalPrice
-  //           : 100
-  //       );
-  //       setMinPrice(
-  //         camps?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
-  //           ? hotels?.sort((a, b) => b.totalPrice - a.totalPrice)[0]?.totalPrice
-  //           : 0
-  //       );
-  //       break;
-  //   }
-  // }, [mode, hotels, sanatoriums, tours, camps]);
+  useEffect(() => {
+    switch (mode) {
+      case "hotel":
+        if (hotels) {
+          setMaxPrice(
+            [...hotels]?.sort((a, b) => b.totalPrice - a.totalPrice)[0]
+              ?.totalPrice || 100
+          );
+          setMinPrice(
+            [...hotels]?.sort((a, b) => a.totalPrice - b.totalPrice)[0]
+              ?.totalPrice || 0
+          );
+        }
+        break;
+      case "sanatorium":
+        if (sanatoriums) {
+          setMaxPrice(
+            [...sanatoriums]?.sort((a, b) => b.totalPrice - a.totalPrice)[0]
+              ?.totalPrice || 100
+          );
+          setMinPrice(
+            [...sanatoriums]?.sort((a, b) => a.totalPrice - b.totalPrice)[0]
+              ?.totalPrice || 0
+          );
+        }
+        break;
+      case "tour":
+        if (tours) {
+          setMaxPrice(
+            [...tours]?.sort((a, b) => b.totalPrice - a.totalPrice)[0]
+              ?.totalPrice || 100
+          );
+          setMinPrice(
+            [...tours]?.sort((a, b) => a.totalPrice - b.totalPrice)[0]
+              ?.totalPrice || 0
+          );
+        }
+        break;
+      case "camp":
+        if (camps) {
+          setMaxPrice(
+            [...camps]?.sort((a, b) => b.totalPrice - a.totalPrice)[0]
+              ?.totalPrice || 100
+          );
+          setMinPrice(
+            [...camps]?.sort((a, b) => a.totalPrice - b.totalPrice)[0]
+              ?.totalPrice || 0
+          );
+        }
+        break;
+    }
+  }, [mode, hotels, sanatoriums, tours, camps]);
 
   console.log(maxPrice, minPrice, "max min");
 
@@ -185,7 +178,11 @@ const Filter = ({ mode, dashMode }) => {
               searchNameId: searchData.searchNameId,
               dashMode: true,
             })
-          : applyTourFilter(searchData);
+          : applyTourFilter({
+              ...searchData,
+              minPrice: minPrice !== maxPrice ? minPrice : "",
+              maxPrice: maxPrice !== minPrice ? maxPrice : "",
+            });
         break;
       case "hotel":
         dashMode
@@ -195,7 +192,11 @@ const Filter = ({ mode, dashMode }) => {
               searchNameId: searchData.searchNameId,
               dashMode: true,
             })
-          : applyHotelFilter(searchData);
+          : applyHotelFilter({
+              ...searchData,
+              minPrice: minPrice !== maxPrice ? minPrice : "",
+              maxPrice: maxPrice !== minPrice ? maxPrice : "",
+            });
         break;
       case "sanatorium":
         dashMode
@@ -205,7 +206,11 @@ const Filter = ({ mode, dashMode }) => {
               searchNameId: searchData.searchNameId,
               dashMode: true,
             })
-          : applySanatoriumFilter(searchData);
+          : applySanatoriumFilter({
+              ...searchData,
+              minPrice: minPrice !== maxPrice ? minPrice : "",
+              maxPrice: maxPrice !== minPrice ? maxPrice : "",
+            });
         break;
       case "camp":
         dashMode
@@ -215,7 +220,11 @@ const Filter = ({ mode, dashMode }) => {
               searchNameId: searchData.searchNameId,
               dashMode: true,
             })
-          : applyCampFilter(searchData);
+          : applyCampFilter({
+              ...searchData,
+              minPrice: minPrice !== maxPrice ? minPrice : "",
+              maxPrice: maxPrice !== minPrice ? maxPrice : "",
+            });
         break;
     }
   };

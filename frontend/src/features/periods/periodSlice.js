@@ -71,7 +71,27 @@ export const addCampPeriods = createAsyncThunk(
   }
 );
 
-// Delete a period
+// Add new tour periods
+
+export const addTourPeriods = createAsyncThunk(
+  "periods/addTour",
+  async (periods, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await periodService.addTourPeriods(periods, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Delete a hotel period
 
 export const deleteHotelPeriod = createAsyncThunk(
   "periods/delete",
@@ -91,7 +111,7 @@ export const deleteHotelPeriod = createAsyncThunk(
   }
 );
 
-// Delete a period
+// Delete a camp period
 
 export const deleteCampPeriod = createAsyncThunk(
   "periods/deleteCamp",
@@ -99,6 +119,26 @@ export const deleteCampPeriod = createAsyncThunk(
     try {
       const token = thunkAPI.getState().auth.user.token;
       return await periodService.deleteCampPeriod(periodId, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Delete a tour period
+
+export const deleteTourPeriod = createAsyncThunk(
+  "periods/deleteTour",
+  async (periodId, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await periodService.deleteTourPeriod(periodId, token);
     } catch (error) {
       const message =
         (error.response &&

@@ -13,6 +13,8 @@ export const filterApi = createApi({
       query: (filter) => ({
         url: `/tour/searched?dashMode=${
           filter.dashMode ? filter.dashMode : "false"
+        }&minPrice=${filter.minPrice ? filter.minPrice : ""}&maxPrice=${
+          filter.maxPrice ? filter.maxPrice : ""
         }&searchNameId=${
           filter.searchNameId ? filter.searchNameId : ""
         }&locationId=${filter.locationId && filter.locationId}&filterDuration=${
@@ -33,6 +35,8 @@ export const filterApi = createApi({
       query: (filter) => ({
         url: `/hotels/searched?dashMode=${
           filter.dashMode ? filter.dashMode : "false"
+        }&minPrice=${filter.minPrice ? filter.minPrice : ""}&maxPrice=${
+          filter.maxPrice ? filter.maxPrice : ""
         }&searchNameId=${
           filter.searchNameId ? filter.searchNameId : ""
         }&locationId=${filter.locationId ? filter.locationId : ""}&filterFood=${
@@ -57,6 +61,8 @@ export const filterApi = createApi({
       query: (filter) => ({
         url: `/sanatoriums/searched?dashMode=${
           filter.dashMode ? filter.dashMode : "false"
+        }&minPrice=${filter.minPrice ? filter.minPrice : ""}&maxPrice=${
+          filter.maxPrice ? filter.maxPrice : ""
         }&searchNameId=${
           filter.searchNameId ? filter.searchNameId : ""
         }&locationId=${filter.locationId ? filter.locationId : ""}&start=${
@@ -73,6 +79,8 @@ export const filterApi = createApi({
       query: (filter) => ({
         url: `/camps/searched?dashMode=${
           filter.dashMode ? filter.dashMode : "false"
+        }&minPrice=${filter.minPrice ? filter.minPrice : ""}&maxPrice=${
+          filter.maxPrice ? filter.maxPrice : ""
         }&searchNameId=${
           filter.searchNameId ? filter.searchNameId : ""
         }&locationId=${filter.locationId ? filter.locationId : ""}&start=${

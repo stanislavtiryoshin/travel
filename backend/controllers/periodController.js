@@ -7,6 +7,7 @@ const Sanatorium = require("../models/sanatoriumModel");
 const Tour = require("../models/tourModel");
 const Camp = require("../models/campModel");
 const Room = require("../models/roomModel");
+const { comparePeriods } = require("../periodUtils");
 
 //@desc   Get periods
 //@route  GET /api/periods
@@ -36,40 +37,43 @@ const addPeriods = asyncHandler(async (req, res) => {
   const { periods } = req.body;
 
   if (periods) {
+    periods.sort(comparePeriods);
     try {
-      const newPeriods = await Promise.all(
-        periods.map(async (period) => {
-          let periodObj;
-          if (!period._id) {
-            periodObj = await Period.create(period);
-            const hotel = await Hotel.findOneAndUpdate(
-              { _id: periodObj.hotel },
-              {
-                $push: {
-                  periods: periodObj,
-                },
-              }
-            );
+      const newPeriods = [];
 
-            if (hotel && hotel.rooms) {
-              for (const room of hotel.rooms) {
-                await Room.findByIdAndUpdate(room, {
-                  $push: {
-                    periodPrices: {
-                      period: periodObj._id,
-                      roomPrice: 0,
-                      adultPrice: 0,
-                      kidPrice: 0,
-                    },
-                  },
-                });
-              }
+      for (const [idx, period] of periods.entries()) {
+        console.log(period, "period #" + idx);
+        let periodObj;
+
+        if (!period._id) {
+          periodObj = await Period.create(period);
+          const hotel = await Hotel.findOneAndUpdate(
+            { _id: periodObj.hotel },
+            {
+              $push: {
+                periods: periodObj,
+              },
             }
+          );
 
-            return periodObj;
-          } else return;
-        })
-      );
+          if (hotel && hotel.rooms) {
+            for (const room of hotel.rooms) {
+              await Room.findByIdAndUpdate(room, {
+                $push: {
+                  periodPrices: {
+                    period: periodObj._id,
+                    roomPrice: 0,
+                    adultPrice: 0,
+                    kidPrice: 0,
+                  },
+                },
+              });
+            }
+          }
+
+          newPeriods.push(periodObj);
+        }
+      }
 
       res.status(200).json(newPeriods);
     } catch (error) {
@@ -137,32 +141,34 @@ const addTourPeriods = asyncHandler(async (req, res) => {
 
   if (periods) {
     try {
-      const newPeriods = await Promise.all(
-        periods.map(async (period) => {
-          let periodObj;
+      const newPeriods = [];
 
-          if (!period._id) {
-            periodObj = await Period.create(period);
-            console.log(periodObj);
-            if (periodObj.hotel) {
-              const tour = await Tour.findOneAndUpdate(
-                { _id: periodObj.hotel },
-                {
-                  $push: {
-                    periodPrices: {
-                      period: periodObj._id,
-                      adultPrice: 0,
-                      kidPrice: 0,
-                    },
+      for (const period of periods) {
+        let periodObj;
+
+        if (!period._id) {
+          periodObj = await Period.create(period);
+          console.log(periodObj);
+
+          if (periodObj.tour) {
+            await Tour.findOneAndUpdate(
+              { _id: periodObj.tour },
+              {
+                $push: {
+                  periodPrices: {
+                    period: periodObj._id,
+                    adultPrice: 0,
+                    kidPrice: 0,
                   },
-                }
-              );
-            }
+                  periods: periodObj._id,
+                },
+              }
+            );
+          }
 
-            return periodObj;
-          } else return;
-        })
-      );
+          newPeriods.push(periodObj);
+        }
+      }
 
       res.status(200).json(newPeriods);
     } catch (error) {
@@ -348,11 +354,12 @@ const deleteTourPeriod = asyncHandler(async (req, res) => {
   const period = await Period.findById(periodId);
   await Period.deleteOne({ _id: periodId });
 
-  const tour = await Tour.findByIdAndUpdate(period.hotel, {
+  const tour = await Tour.findByIdAndUpdate(period.tour, {
     $pull: {
       periodPrices: {
         period: periodId,
       },
+      periods: periodId,
     },
   });
 

@@ -131,11 +131,13 @@ const Hotel = () => {
 
   const { clientExcursions, clientRoom } = useSelector((state) => state.client);
 
-  useEffect(() => {
-    if (roomsData) {
-      dispatch(addClientRoom(roomsData[0]));
-    }
-  }, [roomsData]);
+  console.log(clientRoom?.roomName, "client room");
+
+  // useEffect(() => {
+  //   if (roomsData) {
+  //     dispatch(addClientRoom(roomsData[0]));
+  //   }
+  // }, [roomsData]);
 
   const [priceData, setPriceData] = useState({
     addRoomFood: false,
@@ -207,6 +209,8 @@ const Hotel = () => {
     data: price,
     isLoading: priceIsLoading,
     isFetching: priceIsFetching,
+    error: priceError,
+    isError: priceHasError,
     refetch,
   } = useGetHotelPriceQuery(priceData);
 
@@ -221,8 +225,6 @@ const Hotel = () => {
         JSON.stringify(clientExcursions)
       );
   }, [price, clientRoom, singleHotel, clientExcursions]);
-
-  console.log(priceData, "priceData");
 
   useEffect(() => {
     dispatch(setRefetch(refetch));
@@ -428,6 +430,8 @@ const Hotel = () => {
                   clientRoom={clientRoom}
                   priceIsLoading={priceIsFetching}
                   orderTerms={orderTerms}
+                  priceError={priceError}
+                  priceHasError={priceHasError}
                 />
 
                 {singleHotel?.locationId?._id ? (

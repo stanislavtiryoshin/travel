@@ -6,7 +6,7 @@ import Section from "../../components/Section";
 const CampTable = ({ agePrices, periods, campId }) => {
   return (
     <Section section="tb_section" wrapper="tb_wrapper ver shadowed_box">
-      <div className="gen_title">Номера</div>
+      <div className="gen_title">Возраста</div>
       <div className="table_wrapper">
         <table className="periods_table">
           <thead>

@@ -11,20 +11,29 @@ const DateSelect = () => {
   const { searchData, refetch } = useSelector((state) => state.search);
 
   // Date picker function
-  const [startingDate, setStartingDate] = useState(new Date(+searchData.start));
-  const [endingDate, setEndingDate] = useState(new Date(1685642400000));
+  const [startingDate, setStartingDate] = useState(
+    new Date(+localStorage.getItem("start") || +searchData.start)
+  );
+  const [endingDate, setEndingDate] = useState(
+    new Date(+localStorage.getItem("end") || +searchData.end)
+  );
+
+  //CONSOLE LOG REMOVE
+  console.log(searchData, "search data");
+  console.log(startingDate, endingDate, "start end dates");
 
   const onChange = (dates) => {
     const [start, end] = dates;
     setStartingDate(start);
     setEndingDate(end);
-    localStorage.setItem("startDate", Date.parse(start));
-    localStorage.setItem("endDate", Date.parse(end));
+    localStorage.setItem("start", Date.parse(start));
+    localStorage.setItem("end", Date.parse(end));
     if (start && end) {
       dispatch(
         setSearchData({
           ...searchData,
           start: Date.parse(start),
+          end: Date.parse(end),
           daysAmount:
             (Date.parse(end) - Date.parse(start)) / 1000 / 60 / 60 / 24 + 1,
         })

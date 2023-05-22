@@ -15,6 +15,8 @@ const Sum = ({
   priceIsLoading,
   orderTerms,
   campMode,
+  priceError,
+  priceHasError,
 }) => {
   const formatter = Intl.NumberFormat("ru-RU");
   const handleOrder = (e) => {
@@ -44,104 +46,104 @@ const Sum = ({
           }}
         >
           <div>
-            {!campMode &&
-            clientRoom?._id &&
-            !price?.error &&
-            !price?.sumError ? (
+            {!priceError?.data?.error ? (
               <>
-                {price?.roomSum ? (
-                  <div className="hotel_side-checksum">
-                    <span>{clientRoom.roomName}</span>
-                    <span className="price_span">
-                      {formatter.format(price?.roomSum)} тг.
-                    </span>
-                  </div>
-                ) : null}
-                {price?.livingSum ? (
+                {!campMode && clientRoom?._id ? (
                   <>
-                    <div className="hotel_side-checksum">
-                      <span>Проживание</span>
-                      <span className="price_span">
-                        {formatter.format(price?.livingSum)} тг.
-                      </span>
-                    </div>
-                    <div className="hotel_side-extraPlace">
-                      для{" "}
-                      {price?.adultsAmount > 0 ? (
-                        <>{price?.adultsAmount} взр.</>
-                      ) : null}
-                      {price?.kidsAmount > 0 ? (
-                        <>, {price?.kidsAmount} дет.</>
-                      ) : null}{" "}
-                    </div>
-                  </>
-                ) : null}
-                {price?.extraPlacesSum && price?.extraPlacesSum !== 0 ? (
-                  <div className="hotel_side-extraPlace">
-                    <span>
-                      +{" "}
-                      {JSON.parse(localStorage.getItem("agesArray")).length -
-                        clientRoom.capacity}{" "}
-                      доп. места
-                    </span>
-                    <span className="price_span">
-                      {price && formatter.format(price?.extraPlacesSum)}
-                      тг
-                    </span>
-                  </div>
-                ) : null}
-                {priceData?.excursionsArray.length > 0 && (
-                  <>
-                    <div className="hotel_side-checksum">
-                      <div>Экскурсия</div>
-                      <span className="price_span">
-                        {price && formatter.format(price?.excursionsSum)} тг.
-                      </span>
-                    </div>
-                    <div className="hotel_side-extraPlace">
-                      {JSON.parse(localStorage.getItem("agesArray")).reduce(
-                        (acc, current) => {
-                          if (current === 1000) {
-                            return acc + 1;
-                          }
-                          return acc;
-                        },
-                        0
-                      )}{" "}
-                      взр.{" "}
-                      {JSON.parse(localStorage.getItem("agesArray")).reduce(
-                        (acc, current) => {
-                          if (current !== 1000) {
-                            return acc + 1;
-                          }
-                          return acc;
-                        },
-                        0
-                      )}{" "}
-                      дет.
-                    </div>
-                  </>
-                )}
-                {price?.foodSum && price?.foodSum !== 0 ? (
-                  <>
-                    <div className="hotel_side-checksum">
-                      <div>Питание</div>
-                      <span className="price_span">
-                        {price && formatter.format(price?.foodSum)} тг.
-                      </span>
-                    </div>
-                    <div className="hotel_side-extraPlace">
-                      для{" "}
-                      {price?.adultsFoodAmount > 0 ? (
-                        <>{price?.adultsFoodAmount} взр.</>
-                      ) : null}
-                      {price?.kidsFoodAmount > 0 ? (
-                        <>, {price?.kidsFoodAmount} дет.</>
-                      ) : null}{" "}
-                    </div>
-                  </>
-                ) : null}
-                {/* {price?.margeSum && price?.margeSum !== 0 ? (
+                    {price?.roomSum ? (
+                      <div className="hotel_side-checksum">
+                        <span>{clientRoom.roomName}</span>
+                        <span className="price_span">
+                          {formatter.format(price?.roomSum)} тг.
+                        </span>
+                      </div>
+                    ) : null}
+                    {price?.livingSum ? (
+                      <>
+                        <div className="hotel_side-checksum">
+                          <span>Проживание</span>
+                          <span className="price_span">
+                            {formatter.format(price?.livingSum)} тг.
+                          </span>
+                        </div>
+                        <div className="hotel_side-extraPlace">
+                          для{" "}
+                          {price?.adultsAmount > 0 ? (
+                            <>{price?.adultsAmount} взр.</>
+                          ) : null}
+                          {price?.kidsAmount > 0 ? (
+                            <>, {price?.kidsAmount} дет.</>
+                          ) : null}{" "}
+                        </div>
+                      </>
+                    ) : null}
+                    {price?.extraPlacesSum && price?.extraPlacesSum !== 0 ? (
+                      <div className="hotel_side-extraPlace">
+                        <span>
+                          +{" "}
+                          {JSON.parse(localStorage.getItem("agesArray"))
+                            .length - clientRoom.capacity}{" "}
+                          доп. места
+                        </span>
+                        <span className="price_span">
+                          {price && formatter.format(price?.extraPlacesSum)}
+                          тг
+                        </span>
+                      </div>
+                    ) : null}
+                    {priceData?.excursionsArray.length > 0 && (
+                      <>
+                        <div className="hotel_side-checksum">
+                          <div>Экскурсия</div>
+                          <span className="price_span">
+                            {price && formatter.format(price?.excursionsSum)}{" "}
+                            тг.
+                          </span>
+                        </div>
+                        <div className="hotel_side-extraPlace">
+                          {JSON.parse(localStorage.getItem("agesArray")).reduce(
+                            (acc, current) => {
+                              if (current === 1000) {
+                                return acc + 1;
+                              }
+                              return acc;
+                            },
+                            0
+                          )}{" "}
+                          взр.{" "}
+                          {JSON.parse(localStorage.getItem("agesArray")).reduce(
+                            (acc, current) => {
+                              if (current !== 1000) {
+                                return acc + 1;
+                              }
+                              return acc;
+                            },
+                            0
+                          )}{" "}
+                          дет.
+                        </div>
+                      </>
+                    )}
+                    {price?.foodSum && price?.foodSum !== 0 ? (
+                      <>
+                        <div className="hotel_side-checksum">
+                          <div>Питание</div>
+                          <span className="price_span">
+                            {price && formatter.format(price?.foodSum)} тг.
+                          </span>
+                        </div>
+                        <div className="hotel_side-extraPlace">
+                          для{" "}
+                          {price?.adultsFoodAmount > 0 ? (
+                            <>{price?.adultsFoodAmount} взр.</>
+                          ) : null}
+                          {price?.kidsFoodAmount > 0 ? (
+                            <>, {price?.kidsFoodAmount} дет.</>
+                          ) : null}{" "}
+                        </div>
+                      </>
+                    ) : null}
+                    {/* {price?.margeSum && price?.margeSum !== 0 ? (
                   <>
                     <div className="hotel_side-checksum">
                       <div>Маржа</div>
@@ -154,59 +156,54 @@ const Sum = ({
                     </div>
                   </>
                 ) : null} */}
-              </>
-            ) : null}
-
-            {campMode ? (
-              <>
-                {!price?.error && !price?.sumError ? (
-                  <>
-                    <div className="hotel_side-checksum">
-                      <span>Проживание</span>
-                      <span className="price_span">
-                        {formatter.format(price?.livingSum)} тг.
-                      </span>
-                    </div>
-                    <div className="hotel_side-extraPlace">
-                      для{" "}
-                      {price?.kidsAmount > 0 ? (
-                        <>{price?.kidsAmount} дет.</>
-                      ) : null}
-                    </div>
-                    {price?.margeSum && price?.margeSum !== 0 ? (
-                      <>
-                        <div className="hotel_side-checksum">
-                          <div>Маржа</div>
-                          <span className="price_span">
-                            {price && formatter.format(price?.margeSum)} тг.
-                          </span>
-                        </div>
-                        <div className="hotel_side-extraPlace">
-                          <span>10 %</span>
-                        </div>
-                      </>
-                    ) : null}
                   </>
-                ) : (
-                  <>Не все возраста в запросе подходят этому лагерю</>
-                )}
-              </>
-            ) : null}
-          </div>
+                ) : null}
 
-          {!price?.error && !price?.sumError ? (
-            <div className="hotel_side-row total">
-              Итого:
-              <div>
-                <span>
-                  {price?.sum ? formatter.format(price?.sum) : "0"}
-                  тг.
-                </span>
-              </div>
-            </div>
-          ) : price.sumError ? (
-            <>Не удалось посчитать</>
-          ) : null}
+                {campMode ? (
+                  <>
+                    <>
+                      <div className="hotel_side-checksum">
+                        <span>Проживание</span>
+                        <span className="price_span">
+                          {formatter.format(price?.livingSum)} тг.
+                        </span>
+                      </div>
+                      <div className="hotel_side-extraPlace">
+                        для{" "}
+                        {price?.kidsAmount > 0 ? (
+                          <>{price?.kidsAmount} дет.</>
+                        ) : null}
+                      </div>
+                      {price?.margeSum && price?.margeSum !== 0 ? (
+                        <>
+                          <div className="hotel_side-checksum">
+                            <div>Маржа</div>
+                            <span className="price_span">
+                              {price && formatter.format(price?.margeSum)} тг.
+                            </span>
+                          </div>
+                          <div className="hotel_side-extraPlace">
+                            <span>10 %</span>
+                          </div>
+                        </>
+                      ) : null}
+                    </>
+                  </>
+                ) : null}
+                <div className="hotel_side-row total">
+                  Итого:
+                  <div>
+                    <span>
+                      {price?.sum ? formatter.format(price?.sum) : "0"}
+                      тг.
+                    </span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="price_error">{priceError.data.error}</div>
+            )}
+          </div>
         </div>
         {priceIsLoading ? <SumLoader /> : null}
       </div>

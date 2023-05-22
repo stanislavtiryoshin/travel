@@ -224,6 +224,7 @@ const Requests = () => {
     <>
       <HotelSearch
         mode="request"
+        reqMode
         handleQuery={setQuery}
         handleStatus={setStatus}
         find={handleSearch}

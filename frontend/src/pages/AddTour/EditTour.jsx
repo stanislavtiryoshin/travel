@@ -31,6 +31,8 @@ import Modal from "../../components/Modal";
 import { useUploadImageMutation } from "../../features/services/upload.service";
 import GalleryBox from "../../components/Slider/GalleryBox";
 import ProgramTest from "../AddCamp/ProgramTest";
+import TourTable from "./TourTable";
+import Periods from "../AddHotel/Periods";
 
 const EditTour = () => {
   const { data: food = [], isLoading: isLoadFood } = useGetFoodQuery();
@@ -43,6 +45,10 @@ const EditTour = () => {
 
   const [fetchTourById, { isLoading: IdTourLoaded }] =
     useLazyGetTourByIdQuery();
+
+  const refetchTour = () => {
+    fetchTourById(id).then(({ data }) => setTourData(data));
+  };
 
   const [uploadImage, { isLoading: uploadLoading, isError }] =
     useUploadImageMutation();
@@ -94,7 +100,7 @@ const EditTour = () => {
       setAllServices([]);
     } else {
       let services = [];
-      service.map((serv) => {
+      service?.map((serv) => {
         services.push({
           value: serv.hotelServiceName,
           label: serv.hotelServiceName,
@@ -128,6 +134,7 @@ const EditTour = () => {
       },
       program: programList,
       searchable,
+      periods: periods,
     };
     console.log(values, "edit");
     await editTour(values);
@@ -182,6 +189,14 @@ const EditTour = () => {
   }, [tourData]);
 
   const [searchable, setIsSearchable] = useState(true);
+
+  const [periods, setPeriods] = useState([]);
+
+  useEffect(() => {
+    if (tourData?.periods && tourData?.periods?.length > 0) {
+      setPeriods(tourData?.periods);
+    }
+  }, [tourData]);
 
   return (
     <>
@@ -588,6 +603,17 @@ const EditTour = () => {
             </div>
           </div>
         </section>
+        <Periods
+          periods={periods}
+          setPeriods={setPeriods}
+          hotelId={tourData?._id}
+          refetch={refetchTour}
+          mode="tour"
+        />
+        <TourTable
+          periodPrices={tourData?.periodPrices}
+          tourId={tourData?._id}
+        />
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <div className="modal-content">
