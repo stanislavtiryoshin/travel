@@ -148,6 +148,8 @@ const EditCamp = () => {
     setSources(campData?.img ? campData?.img : []);
   }, [campData]);
 
+  const clickUpload = () => imageRef.current.click();
+
   const [programList, setProgramList] = useState([
     {
       day: 1,
@@ -182,10 +184,17 @@ const EditCamp = () => {
         >
           <AdminAddForm img={addhotel}>
             <GalleryBox
+              handleUploadImage={clickUpload}
               sources={
                 sources.length > 0
                   ? sources
-                  : [campmain, secondarycamp, secondarycamp, secondarycamp]
+                  : [
+                      campmain,
+                      secondarycamp,
+                      secondarycamp,
+                      secondarycamp,
+                      secondarycamp,
+                    ]
               }
             />
             <div className="gen_content-box">
@@ -295,12 +304,12 @@ const EditCamp = () => {
                 ref={imageRef}
                 multiple
               />
-              <button
+              {/* <button
                 className={`primary-btn`}
                 onClick={() => imageRef.current.click()}
               >
                 Изменить фото
-              </button>
+              </button> */}
             </div>
           </AdminAddForm>
         </Section>

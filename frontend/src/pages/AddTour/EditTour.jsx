@@ -200,6 +200,8 @@ const EditTour = () => {
     },
   ]);
 
+  const clickUpload = () => fileRef.current.click();
+
   return (
     <>
       <AdminHead text="Создание 1-3 тура" onClick={() => handleSubmit()} />
@@ -209,10 +211,11 @@ const EditTour = () => {
           wrapper="ass_gen-wrapper shadowed_box"
         >
           <GalleryBox
+            handleUploadImage={clickUpload}
             sources={
               sources.length > 0
                 ? sources
-                : [tourmain, secondary, secondary, secondary]
+                : [tourmain, secondary, secondary, secondary, secondary]
             }
           />
           <div className="gen_content-box">
@@ -379,12 +382,12 @@ const EditTour = () => {
               ref={fileRef}
               multiple
             />
-            <button
+            {/* <button
               className={`primary-btn`}
               onClick={() => fileRef.current.click()}
             >
               Изменить фото
-            </button>
+            </button> */}
           </div>
         </Section>
         <section className="add_more-section">

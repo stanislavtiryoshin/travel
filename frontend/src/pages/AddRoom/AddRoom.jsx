@@ -15,6 +15,8 @@ import Section from "../../components/Section";
 import RoomRow from "../AddHotel/RoomRow";
 import GalleryBox from "../../components/Slider/GalleryBox";
 
+import secondary from "../../assets/camp/campsecondary.png";
+
 const AddRoom = ({ fetchedRoomData, editMode }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -206,6 +208,8 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
 
   // console.log(fetchedRoomData._id, "roomData");
 
+  const clickUpload = () => fileRef.current.click();
+
   return (
     <>
       <AdminHead
@@ -217,7 +221,14 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
           section="add_gen-section"
           wrapper="add_gen-wrapper shadowed_box"
         >
-          <GalleryBox sources={sources} />
+          <GalleryBox
+            handleUploadImage={clickUpload}
+            sources={
+              sources.length > 0
+                ? sources
+                : [secondary, secondary, secondary, secondary, secondary]
+            }
+          />
           <div className="gen_content-box">
             <div className="gen_title">Основное о номере</div>
             <div className="input_row">
@@ -505,25 +516,23 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 }
               ></textarea>
             </div>
-            {editMode && (
+            <input
+              type="file"
+              multiple
+              hidden
+              ref={fileRef}
+              onChange={handleUploadImage}
+            />
+            {/* {editMode && (
               <div className="input_row">
-                <input
-                  type="file"
-                  multiple
-                  hidden
-                  ref={fileRef}
-                  onChange={handleUploadImage}
-                />
                 <button
                   className="primary-btn"
-                  onClick={() => {
-                    fileRef.current.click();
-                  }}
+                  onClick={() => fileRef.current.click()}
                 >
                   Добавить фото
                 </button>
               </div>
-            )}
+            )} */}
           </div>
         </Section>
         {editMode ? (

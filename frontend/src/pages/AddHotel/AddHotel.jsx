@@ -279,6 +279,8 @@ const AddHotel = ({
 
   const [searchable, setIsSearchable] = useState(true);
 
+  const clickUpload = () => imageRef.current.click();
+
   return (
     <>
       <AdminHead
@@ -301,10 +303,11 @@ const AddHotel = ({
           wrapper="add_gen-wrapper wrapper shadowed_box"
         >
           <GalleryBox
+            handleUploadImage={clickUpload}
             sources={
               sources.length > 0
                 ? sources
-                : [hotelmain, secondary, secondary, secondary]
+                : [hotelmain, secondary, secondary, secondary, secondary]
             }
           />
           <div className="gen_content-box">
@@ -431,15 +434,16 @@ const AddHotel = ({
                   })
                 }
               ></textarea>
-              {editMode && (
+              <input
+                type="file"
+                hidden
+                ref={imageRef}
+                onChange={handleUploadImage}
+                multiple
+              />
+              {/* {editMode && (
                 <>
-                  <input
-                    type="file"
-                    hidden
-                    ref={imageRef}
-                    onChange={handleUploadImage}
-                    multiple
-                  />
+                  
                   <button
                     onClick={() => imageRef.current.click()}
                     className={`primary-btn`}
@@ -447,7 +451,7 @@ const AddHotel = ({
                     Изменить фото
                   </button>
                 </>
-              )}
+              )} */}
             </div>
           </div>
         </Section>

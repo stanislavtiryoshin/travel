@@ -12,11 +12,12 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 
-const GallerySlider = ({ sources, isSmall }) => {
+const GallerySlider = ({ sources, isSmall, handleUploadImage }) => {
   const [lightboxController, setLightboxController] = useState({
     toggler: false,
     slide: 1,
   });
+  const isDashboard = location.pathname.includes("/dashboard");
 
   const openLightboxOnSlide = (number) => {
     setLightboxController({
@@ -45,7 +46,7 @@ const GallerySlider = ({ sources, isSmall }) => {
                 slidesPerView: 3,
               },
               1024: {
-                slidesPerView: isSmall ? 3 : 4,
+                slidesPerView: isDashboard ? 5 : isSmall ? 3 : 4,
               },
             }}
           >
@@ -72,6 +73,15 @@ const GallerySlider = ({ sources, isSmall }) => {
                 })
               : null}
           </Swiper>
+          {isDashboard && (
+            <button
+              style={{ width: "100%", marginTop: "10px" }}
+              onClick={handleUploadImage}
+              className="primary-btn"
+            >
+              Изменить фото
+            </button>
+          )}
         </div>
       ) : null}
     </>
