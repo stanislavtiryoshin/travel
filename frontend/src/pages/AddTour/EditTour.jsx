@@ -136,12 +136,7 @@ const EditTour = () => {
       searchable,
       periods: periods,
     };
-    console.log(values, "edit");
     await editTour(values);
-
-    // if (!addLoad) {
-    //   alert("Added");
-    // }
   };
 
   const fileRef = React.useRef(null);
@@ -630,6 +625,7 @@ const EditTour = () => {
         <TourTable
           periodPrices={tourData?.periodPrices}
           tourId={tourData?._id}
+          tourData={tourData}
         />
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>

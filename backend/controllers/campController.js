@@ -415,6 +415,10 @@ const getSearchedCamps = asyncHandler(async (req, res) => {
       findPriceByDate(daysArray[i]);
     }
 
+    if (sum === 0) {
+      return null; // Return null if price is not found
+    }
+
     return sum;
   };
 
@@ -455,21 +459,35 @@ const getSearchedCamps = asyncHandler(async (req, res) => {
     })
     .populate("locationId");
 
-  const newCamps = camps.map((camp) => {
+  const newCamps = camps.reduce((result, camp) => {
     const newCamp = camp.toObject();
     const pricesArray = camp.periodPrices;
 
     const costOfStay = calculatePrice(start, daysAmount, pricesArray);
 
-    return {
-      ...newCamp,
-      totalPrice: costOfStay,
-      daysAmount: +daysAmount,
-      nightsAmount: daysAmount - 1,
-      adultsAmount: +adultsAmount,
-      kidsAmount: +kidsAmount,
-    };
-  });
+    if (pricesArray && costOfStay !== null) {
+      newCamp.totalPrice = costOfStay;
+      result.push({
+        ...newCamp,
+        totalPrice: costOfStay,
+        daysAmount: +daysAmount,
+        nightsAmount: daysAmount - 1,
+        adultsAmount: +adultsAmount,
+        kidsAmount: +kidsAmount,
+      });
+    }
+
+    return result;
+
+    // return {
+    //   ...newCamp,
+    //   totalPrice: costOfStay,
+    //   daysAmount: +daysAmount,
+    //   nightsAmount: daysAmount - 1,
+    //   adultsAmount: +adultsAmount,
+    //   kidsAmount: +kidsAmount,
+    // };
+  }, []);
 
   res
     .status(200)

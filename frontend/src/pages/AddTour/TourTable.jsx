@@ -2,7 +2,7 @@ import React from "react";
 import Section from "../../components/Section";
 import TourRow from "./TourRow";
 
-const TourTable = ({ periodPrices, tourId }) => {
+const TourTable = ({ periodPrices, tourId, tourData }) => {
   return (
     <Section section="tb_section" wrapper="tb_wrapper ver shadowed_box">
       <div className="gen_title">Цены</div>
@@ -22,7 +22,11 @@ const TourTable = ({ periodPrices, tourId }) => {
             </tr>
           </thead>
           <tbody>
-            <TourRow tourId={tourId} periodPrices={periodPrices} />
+            <TourRow
+              tourId={tourId}
+              periodPrices={periodPrices}
+              tourData={tourData}
+            />
           </tbody>
         </table>
       </div>

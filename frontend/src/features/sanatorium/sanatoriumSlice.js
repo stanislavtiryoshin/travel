@@ -40,14 +40,34 @@ export const getSanatoriums = createAsyncThunk(
   }
 );
 
+// Get all sanatoriums
+
+export const addSanatorium = createAsyncThunk(
+  "sanatoriums/add",
+  async (sanatoriumData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await sanatoriumService.addSanatorium(sanatoriumData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 // Update sanatorium
 
 export const updateSanatorium = createAsyncThunk(
   "sanatoriums/update",
-  async (hotelData, thunkAPI) => {
+  async (sanatoriumData, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await sanatoriumService.updateSanatorium(hotelData, token);
+      return await sanatoriumService.updateSanatorium(sanatoriumData, token);
     } catch (error) {
       const message =
         (error.response &&

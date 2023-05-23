@@ -46,7 +46,7 @@ const TourResults = ({ mode }) => {
       </div>
       {tours && tours.length > 0 ? (
         tours.map((hotel, idx) => {
-          if (hotel.searchable)
+          if (hotel?.searchable)
             return (
               <HotelCard
                 program={hotel.program}

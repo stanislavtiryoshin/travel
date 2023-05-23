@@ -9,17 +9,29 @@ const getSanatoriums = async () => {
   return response.data;
 };
 
+//  Add new sanatorium
+
+const addSanatorium = async (sanatoriumData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.post(API_URL, sanatoriumData, config);
+  return response.data;
+};
+
 // Update sanatorium
 
-const updateSanatorium = async (hotelData, token) => {
+const updateSanatorium = async (sanatoriumData, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
   const response = await axios.patch(
-    API_URL + hotelData._id,
-    hotelData,
+    API_URL + sanatoriumData._id,
+    sanatoriumData,
     config
   );
   return response.data;
@@ -57,6 +69,7 @@ const sanatoriumService = {
   getSingleSanatorium,
   getSearchedSanatoriums,
   updateSanatorium,
+  addSanatorium,
 };
 
 export default sanatoriumService;

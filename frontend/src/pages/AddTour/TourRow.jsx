@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateRoom } from "../../features/room/roomSlice";
 import { Link } from "react-router-dom";
 import { updateAgePriceById } from "../../features/camps/campSlice";
+import { useEditTourByIdMutation } from "../../features/services/edit.service";
 
-const TourRow = ({ periodPrices, tourId, refetch }) => {
+const TourRow = ({ periodPrices, tourId, refetch, tourData }) => {
   const dispatch = useDispatch();
 
   const [newPeriodPrices, setNewPeriodPrices] = useState(periodPrices);
@@ -12,6 +13,8 @@ const TourRow = ({ periodPrices, tourId, refetch }) => {
   useEffect(() => {
     setNewPeriodPrices(periodPrices);
   }, [periodPrices]);
+  const [editTour, { isLoading: addLoad }] = useEditTourByIdMutation();
+  const { user } = useSelector((state) => state.auth);
 
   return (
     <>
@@ -19,7 +22,17 @@ const TourRow = ({ periodPrices, tourId, refetch }) => {
         <td className="first_col">
           Детский
           {tourId && (
-            <button className="price-btn" onClick={() => {}}>
+            <button
+              className="price-btn"
+              onClick={async () =>
+                await editTour({
+                  ...tourData,
+                  id: tourData._id,
+                  token: user.token,
+                  periodPrices: newPeriodPrices,
+                }).then(() => refetch())
+              }
+            >
               <svg
                 width="24"
                 height="24"
@@ -71,7 +84,17 @@ const TourRow = ({ periodPrices, tourId, refetch }) => {
         <td className="first_col">
           Взрослый
           {tourId && (
-            <button className="price-btn" onClick={() => {}}>
+            <button
+              className="price-btn"
+              onClick={async () =>
+                await editTour({
+                  ...tourData,
+                  id: tourData._id,
+                  token: user.token,
+                  periodPrices: newPeriodPrices,
+                }).then(() => refetch())
+              }
+            >
               <svg
                 width="24"
                 height="24"

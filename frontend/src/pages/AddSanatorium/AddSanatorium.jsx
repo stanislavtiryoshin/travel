@@ -31,7 +31,10 @@ import { useUploadImageMutation } from "../../features/services/upload.service";
 import GalleryBox from "../../components/Slider/GalleryBox";
 import e from "cors";
 import Periods from "../AddHotel/Periods";
-import { updateSanatorium } from "../../features/sanatorium/sanatoriumSlice";
+import {
+  addSanatorium,
+  updateSanatorium,
+} from "../../features/sanatorium/sanatoriumSlice";
 import { API_URL_BASE, API_URL_PROXY } from "../../config/config";
 
 import sanatourimmain from "../../assets/hotel/hotelmain.png";
@@ -119,26 +122,20 @@ const AddSanatorium = ({
     setServicesObjs(services);
   }, [allServices]);
 
-  useEffect(() => {
-    let services = [];
-    selectedOptions.map((serv, idx) => {
-      services.push({ serviceId: serv.servId });
-    });
-    setNewServices(services);
-  }, [selectedOptions]);
+  // useEffect(() => {
+  //   let services = [];
+  //   selectedOptions.map((serv, idx) => {
+  //     services.push({ serviceId: serv.servId });
+  //   });
+  //   setNewServices(services);
+  // }, [selectedOptions]);
 
   // For react-select
   function handleSelect(data) {
     setSelectedOptions(data);
   }
 
-  const [newServices, setNewServices] = useState([
-    { serviceId: "64258af02ba7928f871a09cd" },
-  ]);
-
-  const [addedServices, setAddedServices] = useState([
-    { serviceId: "64258af02ba7928f871a09cd" },
-  ]);
+  const [allFoods, setAllFoods] = useState([]);
 
   // Fetching all categories, services, locations
   useEffect(() => {
@@ -155,6 +152,14 @@ const AddSanatorium = ({
       .then(({ data }) => {
         setAllCategories(data);
         // console.log(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    axios
+      .get(`${API_URL_PROXY}/foods`)
+      .then((response) => {
+        setAllFoods(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -191,7 +196,9 @@ const AddSanatorium = ({
   const [fetchedSanatoriumServices, setFetchedSanatoriumServices] = useState();
 
   useEffect(() => {
-    setAddedSanServices(fetchedSanatoriumData?.sanatoriumServices);
+    if (fetchedSanatoriumData?.sanatoriumServices?.length > 0 && editMode) {
+      setAddedSanServices(fetchedSanatoriumData?.sanatoriumServices);
+    }
   }, [fetchedSanatoriumData, editMode]);
 
   useEffect(() => {
@@ -208,8 +215,8 @@ const AddSanatorium = ({
 
     // console.log(values);
 
-    dispatch(addHotel(hotelData)).then((res) => {
-      navigate(`/dashboard/hotel/${res.payload._id}`);
+    dispatch(addSanatorium(hotelData)).then((res) => {
+      navigate(`/dashboard/sanatorium/${res.payload._id}`);
     });
   };
 
@@ -228,7 +235,7 @@ const AddSanatorium = ({
   const [periods, setPeriods] = useState([]);
 
   useEffect(() => {
-    setPeriods(hotelData.periods);
+    setPeriods(hotelData?.periods);
   }, [hotelData]);
 
   const [servs, setServs] = useState();
@@ -281,11 +288,11 @@ const AddSanatorium = ({
                   <label class="switch">
                     <input
                       type="checkbox"
-                      checked={hotelData.searchable}
+                      checked={hotelData?.searchable}
                       onChange={() =>
                         setHotelData((prev) => ({
                           ...prev,
-                          searchable: !hotelData.searchable,
+                          searchable: !hotelData?.searchable,
                         }))
                       }
                     />
@@ -298,7 +305,7 @@ const AddSanatorium = ({
               <input
                 type="text"
                 className="primary-input"
-                value={hotelData && hotelData.name}
+                value={hotelData && hotelData?.name}
                 placeholder="Название"
                 onChange={(e) =>
                   setHotelData({ ...hotelData, name: e.target.value })
@@ -308,7 +315,7 @@ const AddSanatorium = ({
                 type="text"
                 className="primary-input"
                 placeholder="Особенность местоположения"
-                value={hotelData.locationFeature}
+                value={hotelData?.locationFeature}
                 onChange={(e) =>
                   setHotelData({
                     ...hotelData,
@@ -323,7 +330,7 @@ const AddSanatorium = ({
                 type="text"
                 placeholder="Местоположение"
                 name="destination"
-                value={hotelData.locationId}
+                value={hotelData?.locationId}
                 onChange={(e) => {
                   setHotelData({
                     ...hotelData,
@@ -346,7 +353,7 @@ const AddSanatorium = ({
               <input
                 type="text"
                 className="primary-input"
-                value={hotelData.mapLink}
+                value={hotelData?.mapLink}
                 placeholder="Ссылка на карту"
                 onChange={(e) =>
                   setHotelData({ ...hotelData, mapLink: e.target.value })
@@ -357,7 +364,7 @@ const AddSanatorium = ({
               <input
                 type="number"
                 className="primary-input"
-                value={hotelData.rating}
+                value={hotelData?.rating}
                 placeholder="Рейтинг отеля"
                 onChange={(e) =>
                   setHotelData({ ...hotelData, rating: e.target.value })
@@ -368,7 +375,7 @@ const AddSanatorium = ({
                 type="number"
                 placeholder="Местоположение"
                 name="hotelStars"
-                value={hotelData.hotelStars}
+                value={hotelData?.hotelStars}
                 onChange={(e) => {
                   setHotelData({
                     ...hotelData,
@@ -390,7 +397,7 @@ const AddSanatorium = ({
                 id=""
                 cols="30"
                 rows="5"
-                value={hotelData.description}
+                value={hotelData?.description}
                 placeholder="Описание"
                 onChange={(e) =>
                   setHotelData({
@@ -482,7 +489,7 @@ const AddSanatorium = ({
                   name="babyMaxAge"
                   id=""
                   className="primary-input"
-                  value={hotelData.kids.babyMaxAge}
+                  value={hotelData?.kids?.babyMaxAge}
                   onChange={(e) =>
                     setHotelData({
                       ...hotelData,
@@ -504,7 +511,7 @@ const AddSanatorium = ({
                   name="kidMaxAge"
                   id=""
                   className="primary-input"
-                  value={hotelData.kids.kidMaxAge}
+                  value={hotelData?.kids?.kidMaxAge}
                   onChange={(e) =>
                     setHotelData({
                       ...hotelData,
@@ -584,11 +591,11 @@ const AddSanatorium = ({
                   setHotelData({ ...hotelData, food: e.target.value })
                 }
               >
-                <option value="642150a586cfa75278c280b9">Без питания</option>
-                <option value="642150a586cfa75278c280b9">Без питания</option>
-                <option value="642150a586cfa75278c280b9">Без питания</option>
-                <option value="642150a586cfa75278c280b9">Без питания</option>
-                <option value="642150a586cfa75278c280b9">Без питания</option>
+                {allFoods?.length > 0
+                  ? allFoods?.map((food) => {
+                      return <option value={food._id}>{food.label}</option>;
+                    })
+                  : null}
               </select>
               <div className="input_row">
                 <input
@@ -619,7 +626,7 @@ const AddSanatorium = ({
                 />
               </div>
             </div>
-            <div className="input_box">
+            {/* <div className="input_box">
               <div className="input_title">Удобства</div>
               <select
                 name="comforts"
@@ -638,7 +645,7 @@ const AddSanatorium = ({
                 <option value="642150a586cfa75278c280b9">Без питания</option>
                 <option value="642150a586cfa75278c280b9">Без питания</option>
               </select>
-            </div>
+            </div> */}
             <div className="input_box">
               <div className="input_title">Тип оплаты</div>
               <div className="input_row">
@@ -714,9 +721,12 @@ const AddSanatorium = ({
             <button
               className="add_service-btn primary-btn"
               onClick={() => {
-                setAddedSanServices((prev) => [
-                  ...prev,
-                  { serviceType: "644517f32927d86d2f5a7ee7", description: "" },
+                setAddedSanServices([
+                  ...addedSanServices,
+                  {
+                    serviceType: "644517f32927d86d2f5a7ee7",
+                    description: "",
+                  },
                 ]);
               }}
             >
@@ -731,7 +741,7 @@ const AddSanatorium = ({
               periods={periods}
               setPeriods={setPeriods}
               updateHotelData={updateSanatoriumData}
-              hotelId={hotelData._id}
+              hotelId={hotelData?._id}
               mode="sanatorium"
             />
             {fetchedSanatoriumData && fetchedSanatoriumData?.periods ? (
@@ -746,7 +756,7 @@ const AddSanatorium = ({
                       <tr>
                         <th>Номера и периоды</th>
                         {hotelData &&
-                          hotelData.periods &&
+                          hotelData?.periods &&
                           hotelData?.periods?.map((period) => (
                             <th key={period._id}>
                               {period.startDay}.{period.startMonth} -{" "}
@@ -757,8 +767,8 @@ const AddSanatorium = ({
                     </thead>
                     <tbody>
                       {hotelData &&
-                        hotelData.rooms &&
-                        hotelData.periods &&
+                        hotelData?.rooms &&
+                        hotelData?.periods &&
                         prices &&
                         hotelData?.rooms?.map((room) => (
                           <RoomRow

@@ -151,64 +151,54 @@ const insertTourPrices = expressAsyncHandler(async (req, res) => {
 //@access Public
 
 const getSearchedTour = async (req, res) => {
-  const {
-    locationId,
-    duration,
-    rating,
-    paymentType,
-    food,
-    agesArray,
-    peopleAmount,
-    daysAmount,
-    start,
-    adultsAmount,
-    kidsAmount,
-  } = req.query;
-
-  let query = {};
-
-  if (food && food.length > 0) {
-    query.food = {
-      $in: food,
-    };
-  }
-
-  if (locationId && locationId !== "") {
-    query.locationId = locationId;
-  }
-
-  if (duration && duration !== "") {
-    query.duration = duration;
-  }
-
-  if (rating && rating !== "") {
-    query.rating = rating;
-  }
-  if (paymentType && paymentType !== "") {
-    query.payment = {
-      paymentType: paymentType,
-    };
-  }
-
-  ages = agesArray.split(",").map(Number);
-
-  try {
-    let tours = await Tour.find(query).populate({
-      path: "periodPrices",
-      populate: { path: "period", model: "Period" },
-    });
-
-    // tours.map((tour) => {
-    //       const pricesArray = tour.periodPrices;
-    //       let sum = 0;
-
-    //   return { ...tour, totalCost: sum, adultsAmount, kidsAmount };
-    // });
-
-    res.status(200).json(tours);
-  } catch (err) {
-    res.sendStatus(404);
-  }
+  // const {
+  //   locationId,
+  //   duration,
+  //   rating,
+  //   paymentType,
+  //   food,
+  //   agesArray,
+  //   peopleAmount,
+  //   daysAmount,
+  //   start,
+  //   adultsAmount,
+  //   kidsAmount,
+  // } = req.query;
+  // let query = {};
+  // if (food && food.length > 0) {
+  //   query.food = {
+  //     $in: food,
+  //   };
+  // }
+  // if (locationId && locationId !== "") {
+  //   query.locationId = locationId;
+  // }
+  // if (duration && duration !== "") {
+  //   query.duration = duration;
+  // }
+  // if (rating && rating !== "") {
+  //   query.rating = rating;
+  // }
+  // if (paymentType && paymentType !== "") {
+  //   query.payment = {
+  //     paymentType: paymentType,
+  //   };
+  // }
+  // ages = agesArray.split(",").map(Number);
+  // try {
+  //   let tours = await Tour.find(query).populate({
+  //     path: "periodPrices",
+  //     populate: { path: "period", model: "Period" },
+  //   });
+  //   // tours.map((tour) => {
+  //   //       const pricesArray = tour.periodPrices;
+  //   //       let sum = 0;
+  //   //   return { ...tour, totalCost: sum, adultsAmount, kidsAmount };
+  //   // });
+  //   res.status(200).json(tours);
+  // } catch (err) {
+  //   res.sendStatus(404);
+  // }
 };
 
 const tourByTagRecommendation = async (req, res) => {
@@ -380,7 +370,9 @@ const getSearchedTours = asyncHandler(async (req, res) => {
     .map(Number)
     .filter((age) => age === 1000).length;
 
-  const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
+  console.log(adultsAmount, kidsAmount, "perople");
+
+  const calculatePrice = (start, daysNum, pricesArray) => {
     let daysArray = [];
     const startingDate = new Date(+start);
 
@@ -401,26 +393,33 @@ const getSearchedTours = asyncHandler(async (req, res) => {
           const endMonth = el.period.endMonth;
           const endDay = el.period.endDay;
 
-          console.log(startDay, startMonth, endDay, endMonth, "period");
-          console.log(date.getMonth() + 1, date.getDate(), "date");
-
           if (isDateInRange(date, startMonth, startDay, endMonth, endDay)) {
+            console.log(startDay, startMonth, endDay, endMonth, "period");
+            console.log(date.getDate(), date.getMonth() + 1, "date");
+
+            console.log(el, "el");
             sum += el.adultPrice * adultsAmount;
             sum += el.kidPrice * kidsAmount;
             priceFound = true;
-            console.log("price was found");
+            console.log(sum, "sum");
           }
         });
         if (!priceFound) {
-          sum += basePrice;
+          sum += 0;
+          console.log("price was not found");
         }
       } else {
-        sum += basePrice;
+        sum += 0;
+        console.log("no period prices");
       }
     };
 
     for (let i = 0; i < daysNum; i++) {
       findPriceByDate(daysArray[i]);
+    }
+
+    if (sum === 0) {
+      return null; // Return null if price is not found
     }
 
     return sum;
@@ -468,29 +467,33 @@ const getSearchedTours = asyncHandler(async (req, res) => {
       path: "periodPrices",
       populate: { path: "period", model: "Period" },
     })
+    .populate("periods")
     .populate("locationId");
 
-  const newHotels = hotels.map((hotel) => {
+  const newHotels = hotels.reduce((result, hotel) => {
     const newHotel = hotel.toObject();
 
     const pricesArray = hotel?.periodPrices;
 
-    const costOfStay = calculatePrice(start, hotel.duration, 1, pricesArray);
+    console.log(hotel.name, "tour name");
 
-    if (pricesArray) {
+    const costOfStay = calculatePrice(start, hotel.duration, pricesArray);
+
+    console.log(costOfStay, " for ", hotel.name);
+
+    if (pricesArray && costOfStay !== null) {
       newHotel.totalPrice = costOfStay;
-    } else {
-      newHotel.totalPrice = 22800;
+      result.push({
+        ...newHotel,
+        daysAmount: +newHotel.duration,
+        nightsAmount: newHotel.duration - 1,
+        adultsAmount: +adultsAmount,
+        kidsAmount: +kidsAmount,
+      });
     }
 
-    return {
-      ...newHotel,
-      daysAmount: +newHotel.duration,
-      nightsAmount: newHotel.duration - 1,
-      adultsAmount: +adultsAmount,
-      kidsAmount: +kidsAmount,
-    };
-  });
+    return result;
+  }, []);
 
   res
     .status(200)

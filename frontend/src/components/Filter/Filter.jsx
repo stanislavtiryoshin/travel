@@ -46,11 +46,11 @@ const Filter = ({ mode, dashMode }) => {
       case "hotel":
         if (hotels) {
           setMaxPrice(
-            [...hotels]?.sort((a, b) => b.totalPrice - a.totalPrice)[0]
+            [...hotels]?.sort((a, b) => b?.totalPrice - a?.totalPrice)[0]
               ?.totalPrice || 100
           );
           setMinPrice(
-            [...hotels]?.sort((a, b) => a.totalPrice - b.totalPrice)[0]
+            [...hotels]?.sort((a, b) => a?.totalPrice - b?.totalPrice)[0]
               ?.totalPrice || 0
           );
         }
@@ -58,11 +58,11 @@ const Filter = ({ mode, dashMode }) => {
       case "sanatorium":
         if (sanatoriums) {
           setMaxPrice(
-            [...sanatoriums]?.sort((a, b) => b.totalPrice - a.totalPrice)[0]
+            [...sanatoriums]?.sort((a, b) => b?.totalPrice - a?.totalPrice)[0]
               ?.totalPrice || 100
           );
           setMinPrice(
-            [...sanatoriums]?.sort((a, b) => a.totalPrice - b.totalPrice)[0]
+            [...sanatoriums]?.sort((a, b) => a?.totalPrice - b?.totalPrice)[0]
               ?.totalPrice || 0
           );
         }
@@ -70,11 +70,11 @@ const Filter = ({ mode, dashMode }) => {
       case "tour":
         if (tours) {
           setMaxPrice(
-            [...tours]?.sort((a, b) => b.totalPrice - a.totalPrice)[0]
+            [...tours]?.sort((a, b) => b?.totalPrice - a?.totalPrice)[0]
               ?.totalPrice || 100
           );
           setMinPrice(
-            [...tours]?.sort((a, b) => a.totalPrice - b.totalPrice)[0]
+            [...tours]?.sort((a, b) => a?.totalPrice - b?.totalPrice)[0]
               ?.totalPrice || 0
           );
         }
@@ -82,11 +82,11 @@ const Filter = ({ mode, dashMode }) => {
       case "camp":
         if (camps) {
           setMaxPrice(
-            [...camps]?.sort((a, b) => b.totalPrice - a.totalPrice)[0]
+            [...camps]?.sort((a, b) => b?.totalPrice - a?.totalPrice)[0]
               ?.totalPrice || 100
           );
           setMinPrice(
-            [...camps]?.sort((a, b) => a.totalPrice - b.totalPrice)[0]
+            [...camps]?.sort((a, b) => a?.totalPrice - b?.totalPrice)[0]
               ?.totalPrice || 0
           );
         }
