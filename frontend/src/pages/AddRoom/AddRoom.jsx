@@ -16,6 +16,7 @@ import RoomRow from "../AddHotel/RoomRow";
 import GalleryBox from "../../components/Slider/GalleryBox";
 
 import secondary from "../../assets/camp/campsecondary.png";
+import room from "../../assets/hotel/hotelmain.png";
 
 const AddRoom = ({ fetchedRoomData, editMode }) => {
   const dispatch = useDispatch();
@@ -273,7 +274,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
             sources={
               sources.length > 0
                 ? sources
-                : [secondary, secondary, secondary, secondary, secondary]
+                : [room, secondary, secondary, secondary, secondary]
             }
           />
           <div className="gen_content-box">
