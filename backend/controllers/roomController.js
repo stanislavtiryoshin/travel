@@ -53,11 +53,18 @@ const getSingleRoom = asyncHandler(async (req, res) => {
 
 const addRoom = asyncHandler(async (req, res) => {
   const room = await Room.create(req.body);
-  await Hotel.findByIdAndUpdate(
+  const hotel = await Hotel.findByIdAndUpdate(
     room.hotel,
     { $push: { rooms: room._id } },
     { new: true }
   );
+  const periodPrices = hotel.periods.map((per) => {
+    return { period: per, roomPrice: 0, kidPrice: 0, adultPrice: 0 };
+  });
+
+  room.periodPrices = periodPrices; // Assign periodPrices to room's periodPrices field
+  await room.save();
+
   res.status(200).send(room);
 });
 

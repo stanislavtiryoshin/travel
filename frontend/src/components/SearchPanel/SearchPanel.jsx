@@ -47,6 +47,10 @@ const SearchPanel = ({ isUserLook, style }) => {
     dispatch(setSearchData({ ...searchData, agesArray: agesArray }));
   }, [agesArray]);
 
+  // remove
+
+  console.log(searchData, "searchdata");
+
   // Search functionality
   const [searchHotels, { isLoading: hotelsIsLoading }] =
     useLazyGetHotelsByFilterQuery();

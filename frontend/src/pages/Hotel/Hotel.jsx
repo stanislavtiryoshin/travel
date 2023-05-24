@@ -167,6 +167,7 @@ const Hotel = () => {
       roomId: clientRoom?._id,
     }));
   }, [clientRoom]);
+  const { searchData } = useSelector((state) => state.search);
 
   useEffect(() => {
     const storedAgesArray = JSON.parse(localStorage.getItem("agesArray"));
@@ -176,7 +177,7 @@ const Hotel = () => {
         agesArray: storedAgesArray,
       }));
     }
-  }, [localStorage.getItem("agesArray")]);
+  }, [searchData]);
 
   useEffect(() => {
     setPriceData((prev) => ({
@@ -195,8 +196,6 @@ const Hotel = () => {
         : 1,
     }));
   }, [localStorage.getItem("daysAmount")]);
-
-  const { searchData } = useSelector((state) => state.search);
 
   useEffect(() => {
     setPriceData((prev) => ({
@@ -367,14 +366,18 @@ const Hotel = () => {
                     <Services hotelServices={singleHotel?.hotelServices} />
                   ) : null}
                   <img src={divider} alt="" />
-                  <Food
-                    singleHotel={singleHotel}
-                    orderTerms={orderTerms}
-                    setOrderTerms={setOrderTerms}
-                    priceData={priceData}
-                    setPriceData={setPriceData}
-                  />
-                  <img src={divider} alt="" />
+                  {singleHotel?.food?.label !== "Без питания" ? (
+                    <>
+                      <Food
+                        singleHotel={singleHotel}
+                        orderTerms={orderTerms}
+                        setOrderTerms={setOrderTerms}
+                        priceData={priceData}
+                        setPriceData={setPriceData}
+                      />
+                      <img src={divider} alt="" />
+                    </>
+                  ) : null}
                   <div className="hotel_page-rooms" id="room_anchor">
                     <BodyTitle
                       title="Варианты номеров"
@@ -405,7 +408,7 @@ const Hotel = () => {
                   </div>
 
                   {roomsData.rooms.length === 0 ? (
-                    <div>В данном отеле нет комнат</div>
+                    <div>В данном отеле нет подходящих комнат</div>
                   ) : (
                     <>
                       {roomCount < roomsData.totalRooms && (

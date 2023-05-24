@@ -48,6 +48,7 @@ const hotelSchema = mongoose.Schema(
     babyFoodInfo: {
       type: String,
     },
+    marge: Number,
     kids: {
       babyMaxAge: {
         type: Number,

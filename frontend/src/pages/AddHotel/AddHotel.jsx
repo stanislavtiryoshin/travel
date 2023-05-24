@@ -40,7 +40,7 @@ const AddHotel = ({
 
   const { currServices } = useSelector((state) => state.admin);
 
-  console.log(currServices, "currServices");
+  // console.log(currServices, "currServices");
 
   const [hotelData, setHotelData] = useState({
     uid: uid(),
@@ -71,6 +71,8 @@ const AddHotel = ({
     comforts: [],
     hotelStars: 5,
   });
+
+  console.log(hotelData, "hoteldata");
 
   const buttonRef = useRef(null);
 
@@ -257,7 +259,7 @@ const AddHotel = ({
     }
   }, [hotelData]);
 
-  console.log(hotelData.periods, "hotelData.periods");
+  // console.log(hotelData.periods, "hotelData.periods");
 
   const [servs, setServs] = useState();
 
@@ -479,6 +481,8 @@ const AddHotel = ({
                     <option value="08:00">08:00</option>
                     <option value="09:00">09:00</option>
                     <option value="10:00">10:00</option>
+                    <option value="11:00">11:00</option>
+                    <option value="12:00">12:00</option>
                   </select>
                 </div>
                 <div className="service-input">
@@ -503,6 +507,8 @@ const AddHotel = ({
                     <option value="08:00">08:00</option>
                     <option value="09:00">09:00</option>
                     <option value="10:00">10:00</option>
+                    <option value="11:00">11:00</option>
+                    <option value="12:00">12:00</option>
                   </select>
                 </div>
               </div>
@@ -531,6 +537,7 @@ const AddHotel = ({
                   <option value={2}>2</option>
                   <option value={3}>3</option>
                   <option value={4}>4</option>
+                  <option value={5}>5</option>
                 </select>
                 <select
                   name="kidMaxAge"
@@ -553,6 +560,9 @@ const AddHotel = ({
                   <option value={12}>12</option>
                   <option value={13}>13</option>
                   <option value={14}>14</option>
+                  <option value={15}>15</option>
+                  <option value={16}>16</option>
+                  <option value={17}>17</option>
                 </select>
               </div>
               <div className="input_row">
@@ -607,21 +617,23 @@ const AddHotel = ({
             </div>
             <div className="input_box">
               <div className="input_title">Тип питания</div>
-              <select
-                name="foodType"
-                id=""
-                className="primary-input"
-                value={hotelData.food}
-                onChange={(e) =>
-                  setHotelData({ ...hotelData, food: e.target.value })
-                }
-              >
-                {allFoods?.length > 0
-                  ? allFoods?.map((food) => {
-                      return <option value={food._id}>{food.label}</option>;
-                    })
-                  : null}
-              </select>
+              {allFoods ? (
+                <select
+                  name="foodType"
+                  id=""
+                  className="primary-input"
+                  value={hotelData?.food._id}
+                  onChange={(e) =>
+                    setHotelData({ ...hotelData, food: e.target.value })
+                  }
+                >
+                  {allFoods?.length > 0
+                    ? allFoods?.map((food) => {
+                        return <option value={food._id}>{food.label}</option>;
+                      })
+                    : null}
+                </select>
+              ) : null}
               <div className="input_row">
                 <input
                   type="number"

@@ -42,6 +42,10 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
     area: null,
     smokingPolicy: "",
     roomsNumber: null,
+    totalExtraPlacesAmount: null,
+    freeBabyPlaces: null,
+    capacity: null,
+    roomType: "",
     beds: {
       bedsType: "",
       largeBeds: null,
@@ -152,6 +156,13 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
 
   const [periods, setPeriods] = useState([]);
   const [newPeriods, setNewPeriods] = useState([]);
+  const [extraPlaces, setExtraPlaces] = useState([]);
+
+  useEffect(() => {
+    if (fetchedRoomData?.extraPlaces) {
+      setExtraPlaces(fetchedRoomData?.extraPlaces);
+    }
+  }, [fetchedRoomData]);
 
   useEffect(() => {
     if (
@@ -236,23 +247,64 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
               </div>
             </div>
             <div className="input_row">
+              <div className="service-input">
+                <label htmlFor="">Класс номера</label>
+                <input
+                  name=""
+                  id=""
+                  type="text"
+                  className="primary-input"
+                  value={roomData?.roomType}
+                  onChange={(e) => {
+                    setRoomData({ ...roomData, roomType: e.target.value });
+                  }}
+                />
+              </div>
+              <div className="service-input">
+                <label htmlFor="">Вместимость</label>
+                <input
+                  name=""
+                  id=""
+                  type="number"
+                  className="primary-input"
+                  value={roomData?.capacity}
+                  onChange={(e) => {
+                    setRoomData({ ...roomData, capacity: e.target.value });
+                  }}
+                />
+              </div>
+              <div className="service-input">
+                <label htmlFor="">Бесплатные места для младенцев</label>
+                <input
+                  name=""
+                  id=""
+                  type="number"
+                  className="primary-input"
+                  value={roomData?.freeBabyPlaces}
+                  onChange={(e) => {
+                    setRoomData({
+                      ...roomData,
+                      freeBabyPlaces: e.target.value,
+                    });
+                  }}
+                />
+              </div>
+            </div>
+            <div className="input_row">
               <div className="service-input w-30">
                 <label htmlFor="roomsNumber">Количество комнат</label>
-                <select
+                <input
                   name="roomsNumber"
                   className="primary-input"
                   value={roomData.roomsNumber}
+                  type="number"
                   onChange={(e) =>
                     setRoomData({
                       ...roomData,
                       roomsNumber: e.target.value,
                     })
                   }
-                >
-                  <option value={3}>3</option>
-                  <option value={2}>2</option>
-                  <option value={1}>1</option>
-                </select>
+                />
               </div>
               <div className="service-input w-30">
                 <label htmlFor="roomsNumber">Тип кровати</label>
@@ -297,6 +349,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   <option value={3}>3</option>
                   <option value={2}>2</option>
                   <option value={1}>1</option>
+                  <option value={0}>Нет</option>
                 </select>
               </div>
               <div className="service-input w-20">
@@ -315,11 +368,13 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   <option value={3}>3</option>
                   <option value={2}>2</option>
                   <option value={1}>1</option>
+                  <option value={0}>Нет</option>
                 </select>
               </div>
             </div>
             <div className="input_row">
               <div className="service-input w-40">
+                <label htmlFor="">Площадь номера</label>
                 <input
                   type="number"
                   className="primary-input"
@@ -331,7 +386,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 />
               </div>
             </div>
-            <div className="input_row">
+            {/* <div className="input_row">
               <div className="service-input">
                 <select
                   name="roomsNumber"
@@ -404,20 +459,22 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   <option value={1}>1</option>
                 </select>
               </div>
-            </div>
+            </div> */}
             <div className="input_row">
-              <div className="service-input w-30">
+              <div className="service-input">
                 <div className="service-title">Дополнительные места</div>
                 <select
-                  name="roomsNumber"
+                  name=""
+                  id=""
+                  type="number"
                   className="primary-input"
-                  value={roomData.extraPlace}
-                  onChange={(e) =>
+                  value={roomData?.totalExtraPlacesAmount}
+                  onChange={(e) => {
                     setRoomData({
                       ...roomData,
-                      extraPlace: e.target.value,
-                    })
-                  }
+                      totalExtraPlacesAmount: e.target.value,
+                    });
+                  }}
                 >
                   <option value="" selected disabled>
                     Макс. кол-во в номере
@@ -465,7 +522,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   <option value="Нет">Нет</option>
                 </select>
               </div>
-              <div className="service-input w-20">
+              {/* <div className="service-input w-20">
                 <div className="service-title">Ванная</div>
                 <select
                   name="roomsNumber"
@@ -486,7 +543,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   </option>
                   <option value="Нет">Нет</option>
                 </select>
-              </div>
+              </div> */}
             </div>
             <div className="input_row">
               <textarea
@@ -527,31 +584,124 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
           </div>
         </Section>
         {editMode ? (
-          <Section section="test_section" wrapper="test_wrapper shadowed_box">
-            <div className="table_wrapper">
-              <table className="periods_table">
-                <thead>
-                  <tr>
-                    <th>Room</th>
-                    {console.log(fetchedRoomData, "fetchedRoomData")}
-                    {hotelPeriods?.map((period) => (
-                      <th key={period._id}>
-                        {period.startDay}/{period.startMonth} - {period.endDay}/
-                        {period.endMonth}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  <RoomRow
-                    room={fetchedRoomData}
-                    periodPrices={fetchedRoomData?.periodPrices}
-                    roomMode
-                  />
-                </tbody>
-              </table>
-            </div>
-          </Section>
+          <>
+            <Section section="test_section" wrapper="test_wrapper shadowed_box">
+              <div className="table_wrapper">
+                <table className="periods_table">
+                  <thead>
+                    <tr>
+                      <th>Room</th>
+                      {console.log(fetchedRoomData, "fetchedRoomData")}
+                      {hotelPeriods?.map((period) => (
+                        <th key={period._id}>
+                          {period.startDay}/{period.startMonth} -{" "}
+                          {period.endDay}/{period.endMonth}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <RoomRow
+                      room={fetchedRoomData}
+                      periodPrices={fetchedRoomData?.periodPrices}
+                      roomMode
+                    />
+                  </tbody>
+                </table>
+              </div>
+            </Section>
+            <Section
+              section={"extraplaces_section"}
+              wrapper={"extraplaces_wrapper wrapper ver"}
+            >
+              <div className="periods_top">
+                <div className="gen_title">Дополнительные места</div>
+                <div className="periods_btns">
+                  <button
+                    className="primary-btn black"
+                    onClick={() => {
+                      setExtraPlaces([
+                        ...extraPlaces,
+                        {
+                          minAge: 0,
+                          maxAge: 17,
+                          priceWithFood: 0,
+                          priceNoFood: 0,
+                          foodPrice: 0,
+                        },
+                      ]);
+                    }}
+                  >
+                    Добавить
+                  </button>
+                </div>
+              </div>
+
+              <div className="extraplaces_box ">
+                {extraPlaces?.length > 0
+                  ? extraPlaces?.map((xp, idx) => {
+                      return (
+                        <div className="extraplace_card shadowed_box">
+                          <div className="extraplace_card-title">
+                            Доп. место #{idx + 1}
+                          </div>
+                          <div className="service-input">
+                            <label htmlFor="">Мин. возраст</label>
+                            <input
+                              className="primary-input"
+                              type="number"
+                              name=""
+                              id=""
+                              value={xp.minAge}
+                            />
+                          </div>
+                          <div className="service-input">
+                            <label htmlFor="">Макс. возраст</label>
+                            <input
+                              className="primary-input"
+                              type="number"
+                              name=""
+                              id=""
+                              value={xp.maxAge}
+                            />
+                          </div>
+                          <div className="service-input">
+                            <label htmlFor="">С учетом питания</label>
+                            <input
+                              className="primary-input"
+                              type="number"
+                              name=""
+                              id=""
+                              value={xp.priceWithFood}
+                            />
+                          </div>
+                          <div className="service-input">
+                            <label htmlFor="">Без учета питания</label>
+                            <input
+                              className="primary-input"
+                              type="number"
+                              name=""
+                              id=""
+                              value={xp.priceNoFood}
+                            />
+                          </div>
+                          <div className="service-input">
+                            <label htmlFor="">Стоимость питания</label>
+                            <input
+                              className="primary-input"
+                              type="number"
+                              name=""
+                              id=""
+                              value={xp.foodPrice}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })
+                  : null}
+              </div>
+            </Section>
+          </>
         ) : null}
         <Section section="add_more-section" wrapper="add_more-wrapper">
           <div className="add_more-col more-col shadowed_box">
@@ -608,6 +758,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 </div>
               </div>
             </div>
+
             <div className="input_box">
               <div className="input_row">
                 <div className="service-input">

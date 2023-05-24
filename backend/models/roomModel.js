@@ -60,6 +60,8 @@ const roomSchema = mongoose.Schema(
         foodPrice: Number,
       },
     ],
+    freeBabyPlaces: Number,
+    totalExtraPlacesAmount: Number,
     roomPrice: {
       type: Number,
     },

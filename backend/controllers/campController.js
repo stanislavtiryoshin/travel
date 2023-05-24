@@ -478,15 +478,6 @@ const getSearchedCamps = asyncHandler(async (req, res) => {
     }
 
     return result;
-
-    // return {
-    //   ...newCamp,
-    //   totalPrice: costOfStay,
-    //   daysAmount: +daysAmount,
-    //   nightsAmount: daysAmount - 1,
-    //   adultsAmount: +adultsAmount,
-    //   kidsAmount: +kidsAmount,
-    // };
   }, []);
 
   res

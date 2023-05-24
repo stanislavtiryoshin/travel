@@ -121,11 +121,13 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
                   <div className="feats_title">Номера</div>
 
                   {Object.entries(capCount).map(([cap, num]) => {
-                    return (
-                      <div key={cap} className="feats_row">
-                        {cap} мест.: {num}
-                      </div>
-                    );
+                    if (cap && cap !== 0 && cap !== null) {
+                      return (
+                        <div key={cap} className="feats_row">
+                          {cap} мест.: {num}
+                        </div>
+                      );
+                    }
                   })}
                 </div>
               </>
@@ -136,11 +138,13 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
                   <div className="feats_title">Классы</div>
 
                   {Object.entries(roomsCount).map(([roomType, num]) => {
-                    return (
-                      <div key={roomType} className="feats_row">
-                        {roomType}: {num}
-                      </div>
-                    );
+                    if (roomType && roomType !== 0 && roomType !== null) {
+                      return (
+                        <div key={roomType} className="feats_row">
+                          {roomType}: {num}
+                        </div>
+                      );
+                    }
                   })}
                 </div>
               </>
@@ -184,18 +188,20 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
 
           {hotelServices && hotelServices.length > 0
             ? hotelServices?.slice(0, 4).map((serv) => {
-                return (
-                  <div className="card_tag">
-                    {serv.icon ? (
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: serv.icon,
-                        }}
-                      />
-                    ) : null}
-                    {serv.hotelServiceName}
-                  </div>
-                );
+                if (serv.priority > 0) {
+                  return (
+                    <div className="card_tag">
+                      {serv.icon ? (
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: serv.icon,
+                          }}
+                        />
+                      ) : null}
+                      {serv.hotelServiceName}
+                    </div>
+                  );
+                }
               })
             : null}
         </div>

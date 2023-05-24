@@ -234,6 +234,10 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
       findPriceByDate(daysArray[i]);
     }
 
+    if (sum === 0) {
+      return null;
+    }
+
     return sum;
   };
 
@@ -374,15 +378,42 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     };
   });
 
+  // const newHotels = hotels.reduce((result, hotel) => {
+  //   const newHotel = hotel.toObject();
+  //   const pricesArray = hotel.periodPrices;
+
+  //   const costOfStay = calculatePrice(start, daysAmount, pricesArray);
+
+  //   if (pricesArray && costOfStay !== null) {
+  //     newHotel.totalPrice = costOfStay;
+  //     result.push({
+  //       ...newHotel,
+  //       totalPrice: costOfStay,
+  //       daysAmount: +daysAmount,
+  //       nightsAmount: daysAmount - 1,
+  //       adultsAmount: +adultsAmount,
+  //       kidsAmount: +kidsAmount,
+  //     });
+  //   }
+
+  //   return result;
+  // }, []);
+
   res
     .status(200)
     .send(
       minPrice && maxPrice
-        ? newHotels.filter(
-            (hotel) =>
-              hotel.totalPrice <= maxPrice && hotel.totalPrice >= minPrice
+        ? newHotels
+            .filter(
+              (hotel) =>
+                hotel.totalPrice <= maxPrice && hotel.totalPrice >= minPrice
+            )
+            .filter(
+              (hotel) => hotel.totalPrice !== null && hotel.totalPrice !== 0
+            )
+        : newHotels.filter(
+            (hotel) => hotel.totalPrice !== null && hotel.totalPrice !== 0
           )
-        : newHotels
     );
 });
 
@@ -411,7 +442,7 @@ const getPrice = asyncHandler(async (req, res) => {
   if (excursionsArray && excursionsArray.length > 0)
     excursions = excursionsArray?.split(",");
 
-  console.log(excursions);
+  // console.log(excursions);
 
   const hotel = await Hotel.findById(hotelId)
     .populate("locationId")
@@ -442,53 +473,107 @@ const getPrice = asyncHandler(async (req, res) => {
   let foodSum = 0;
   let chosenPlaces = [];
 
+  // [1000,1000,15,4,2]
+
+  // let babysAmount = ages.filter(
+  //   (age) => age <= hotel.kids.babyMaxAge
+  // ).length;
+
+  const removeAges = (agesArray, babyExtraPlacesAmount) => {
+    if (babyExtraPlacesAmount <= 0) {
+      return agesArray; // No removal needed
+    }
+
+    // Create a copy of the ages array to avoid modifying the original array
+    const sortedAges = [...agesArray].sort((a, b) => a - b);
+
+    // Remove the youngest ages based on the babyExtraPlacesAmount
+    let updatedAgesArray = sortedAges;
+    if (sortedAges[0] <= hotel.kids.babyMaxAge) {
+      updatedAgesArray = sortedAges.slice(babyExtraPlacesAmount);
+    }
+
+    return updatedAgesArray;
+  };
+
+  console.log(ages, "ages");
+
+  ages = removeAges(ages, chosenRoom.freeBabyPlaces);
+
+  console.log(ages, "ages 2");
+
   const extraPlacesAmount = ages.length - chosenRoom.capacity;
 
   let placesArray = chosenRoom.extraPlaces;
 
   ages.sort((a, b) => b - a);
 
+  if (ages.length > chosenRoom.capacity + chosenRoom.totalExtraPlacesAmount) {
+    return res
+      .status(404)
+      .json({ error: "Номер не может поместить всех жильцов" });
+  }
+
+  console.log(
+    ages.length,
+    chosenRoom.capacity,
+    chosenRoom.totalExtraPlacesAmount,
+    "test "
+  );
+
+  // [1000, 1000, 15, 4,...]
   const accomodatedAges = ages.splice(0, chosenRoom.capacity);
 
   const notChosen = (place) => !chosenPlaces.some((el) => el._id === place._id);
 
+  // [..., ..., ..., 4,...]
+
   ages.forEach((age) => {
     const matchingPlace = placesArray.find((place) => {
-      if (age !== 1000 && notChosen(place)) {
+      if (age <= place.maxAge && age >= place.minAge && notChosen(place)) {
         return true;
-      } else if (age === 1000 && !place.isKid && notChosen(place)) {
-        return true;
-      } else {
-        return false;
       }
+      // if (age !== 1000 && notChosen(place)) {
+      //   return true;
+      // } else if (age === 1000 && !place.isKid && notChosen(place)) {
+      //   return true;
+      // } else {
+      //   return false;
+      // }
     });
     if (matchingPlace) {
       chosenPlaces.push(matchingPlace);
     }
   });
 
+  console.log(
+    chosenPlaces.length,
+    chosenRoom.totalExtraPlacesAmount,
+    "chosen places"
+  );
+
   sum = chosenPlaces.reduce((acc, place) => {
     if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
-      console.log("addExtraFood");
+      // console.log("addExtraFood");
       return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
     } else if (addExtraFood !== "true" && !chosenRoom.extraFoodIncluded) {
-      console.log("!addExtraFood");
+      // console.log("!addExtraFood");
       return acc + place.priceNoFood * daysAmount;
     } else if (chosenRoom.extraFoodIncluded) {
-      console.log("extra food already included");
+      // console.log("extra food already included");
       return acc + place.priceWithFood * daysAmount;
     }
   }, 0);
 
   extraPlacesSum = chosenPlaces.reduce((acc, place) => {
     if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
-      console.log("addExtraFood");
+      // console.log("addExtraFood");
       return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
     } else if (addExtraFood !== "true" && !chosenRoom.extraFoodIncluded) {
-      console.log("!addExtraFood");
+      // console.log("!addExtraFood");
       return acc + place.priceNoFood * daysAmount;
     } else if (chosenRoom.extraFoodIncluded) {
-      console.log("extra food already included");
+      // console.log("extra food already included");
       return acc + place.priceWithFood * daysAmount;
     }
   }, 0);
@@ -513,22 +598,22 @@ const getPrice = asyncHandler(async (req, res) => {
           const endDay = el.period.endDay;
 
           if (isDateInRange(date, startMonth, startDay, endMonth, endDay)) {
-            console.log(startDay, startMonth, endDay, endMonth, "period date");
+            // console.log(startDay, startMonth, endDay, endMonth, "period date");
             if (!personMode) {
               sum += el.roomPrice;
               roomSum += el.roomPrice;
-              console.log("sum += el.roomPrice");
+              // console.log("sum += el.roomPrice");
               priceFound = true;
             } else {
               accomodatedAges.forEach((age) => {
                 if (age === 1000) {
                   sum += el.adultPrice;
                   roomSum += el.roomPrice;
-                  console.log("sum += el.adultPrice");
+                  // console.log("sum += el.adultPrice");
                 } else {
                   sum += el.kidPrice;
                   roomSum += el.roomPrice;
-                  console.log("sum += el.kidPrice;");
+                  // console.log("sum += el.kidPrice;");
                 }
               });
               priceFound = true;
@@ -543,7 +628,7 @@ const getPrice = asyncHandler(async (req, res) => {
       } else {
         res.status(404).json({ error: "У этого номера не установлены цены" });
       }
-      console.log(sum);
+      // console.log(sum);
     };
 
     for (let i = 0; i < daysNum; i++) {
@@ -556,12 +641,12 @@ const getPrice = asyncHandler(async (req, res) => {
           for (let i = 0; i < kidsFoodAmount; i++) {
             sum += hotel.kidFoodPrice;
             foodSum += hotel.kidFoodPrice;
-            console.log("kid food");
+            // console.log("kid food");
           }
           for (let i = 0; i < adultsFoodAmount; i++) {
             sum += hotel.adultFoodPrice;
             foodSum += hotel.adultFoodPrice;
-            console.log("adult food");
+            // console.log("adult food");
           }
         }
       }
@@ -586,14 +671,27 @@ const getPrice = asyncHandler(async (req, res) => {
 
   await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
 
+  // res.status(200).json({
+  //   sum: sum * 1.1,
+  //   margeSum: 0.1 * sum,
+  //   extraPlacesSum: extraPlacesSum * 1.1,
+  //   excursionsSum: excursionsSum * 1.1,
+  //   foodSum: foodSum * 1.1,
+  //   roomSum: roomSum * 1.1,
+  //   kidsFoodAmount: kidsFoodAmount,
+  //   adultsFoodAmount: adultsFoodAmount,
+  // });
+
+  const margePercent = (hotel.marge + 100) / 100;
+
   return sum > 0
     ? res.status(200).json({
-        sum: sum * 1.1,
-        margeSum: 0.1 * sum,
-        extraPlacesSum: extraPlacesSum * 1.1,
-        excursionsSum: excursionsSum * 1.1,
-        foodSum: foodSum * 1.1,
-        roomSum: roomSum * 1.1,
+        sum: sum * margePercent,
+        margeSum: (sum * hotel.marge) / 100,
+        extraPlacesSum: extraPlacesSum * margePercent,
+        excursionsSum: excursionsSum * margePercent,
+        foodSum: foodSum * margePercent,
+        roomSum: roomSum * margePercent,
         kidsFoodAmount: kidsFoodAmount,
         adultsFoodAmount: adultsFoodAmount,
       })
