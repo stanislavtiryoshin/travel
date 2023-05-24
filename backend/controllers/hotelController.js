@@ -483,11 +483,11 @@ const getPrice = asyncHandler(async (req, res) => {
     return updatedAgesArray;
   };
 
-  console.log(ages, "ages");
+  // console.log(ages, "ages");
 
   ages = removeAges(ages, chosenRoom.freeBabyPlaces);
 
-  console.log(ages, "ages 2");
+  // console.log(ages, "ages 2");
 
   const extraPlacesAmount = ages.length - chosenRoom.capacity;
 
@@ -501,46 +501,48 @@ const getPrice = asyncHandler(async (req, res) => {
       .json({ error: "Номер не может поместить всех жильцов" });
   }
 
-  console.log(
-    ages.length,
-    chosenRoom.capacity,
-    chosenRoom.totalExtraPlacesAmount,
-    "test "
-  );
+  // console.log(
+  //   ages.length,
+  //   chosenRoom.capacity,
+  //   chosenRoom.totalExtraPlacesAmount,
+  //   "test "
+  // );
 
   // [1000, 1000, 15, 4,...]
   const accomodatedAges = ages.splice(0, chosenRoom.capacity);
 
-  const notChosen = (place) =>
-    !(
+  console.log(accomodatedAges, "accomodated ages");
+  console.log(ages, "after accomdo");
+
+  const notChosen = (place) => {
+    console.log(place, "place");
+    return (
       chosenPlaces.filter((el) => el._id === place._id).length < place.maxAmount
     );
+  };
 
   // [..., ..., ..., 4,...]
+
+  console.log(ages, "ages before matching");
 
   ages.forEach((age) => {
     const matchingPlace = placesArray.find((place) => {
       if (age <= place.maxAge && age >= place.minAge && notChosen(place)) {
         return true;
       }
-      // if (age !== 1000 && notChosen(place)) {
-      //   return true;
-      // } else if (age === 1000 && !place.isKid && notChosen(place)) {
-      //   return true;
-      // } else {
-      //   return false;
-      // }
     });
     if (matchingPlace) {
       chosenPlaces.push(matchingPlace);
     }
   });
 
-  console.log(
-    chosenPlaces.length,
-    chosenRoom.totalExtraPlacesAmount,
-    "chosen places"
-  );
+  console.log(chosenPlaces, "chosenplaces");
+
+  // console.log(
+  //   chosenPlaces.length,
+  //   chosenRoom.totalExtraPlacesAmount,
+  //   "chosen places"
+  // );
 
   sum = chosenPlaces.reduce((acc, place) => {
     if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
@@ -673,6 +675,8 @@ const getPrice = asyncHandler(async (req, res) => {
   // });
 
   const margePercent = (hotel.marge + 100) / 100;
+
+  console.log(margePercent);
 
   return sum > 0
     ? res.status(200).json({
