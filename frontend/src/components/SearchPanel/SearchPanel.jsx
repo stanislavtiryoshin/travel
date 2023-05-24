@@ -127,6 +127,7 @@ const SearchPanel = ({ isUserLook, style }) => {
     localStorage.setItem("start", searchData.start);
     localStorage.setItem("end", searchData.end);
     localStorage.setItem("locationId", searchData.locationId);
+    localStorage.setItem("locationName", searchData.locationName);
     localStorage.setItem("daysAmount", searchData.daysAmount);
     localStorage.setItem("agesArray", JSON.stringify(searchData.agesArray));
   }, [searchData]);
@@ -187,6 +188,13 @@ const SearchPanel = ({ isUserLook, style }) => {
                         setSearchData({
                           ...searchData,
                           locationId: e.target.value,
+                          locationName: allLocations.find(
+                            (loc) => loc._id === e.target.value
+                          )?.locationName
+                            ? allLocations.find(
+                                (loc) => loc._id === e.target.value
+                              )?.locationName
+                            : "Весь Казахстан",
                         })
                       );
                     }}

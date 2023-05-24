@@ -191,15 +191,30 @@ button {
     text-align: left;
     color: rgba(37, 105, 215, 1);
     background-color: #fff;
+    border-color: #fff;
+    &:hover {
+      background-color: $base-blue;
+      color: #fff;
+    }
   }
   &.black {
     background-color: rgba(41, 45, 50, 1);
+    border-color: $black;
     color: #fff;
     &.clear {
       white-space: nowrap;
       color: rgba(41, 45, 50, 1);
       background-color: transparent;
       border: solid 2px rgba(41, 45, 50, 1);
+    }
+    &:hover {
+      background-color: #fff;
+      color: $black;
+      &.clear {
+        background-color: rgba(41, 45, 50, 1);
+        border-color: $black;
+        color: #fff;
+      }
     }
   }
 }

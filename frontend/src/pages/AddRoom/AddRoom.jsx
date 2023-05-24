@@ -194,8 +194,20 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
   }, [periods]);
 
   useEffect(() => {
-    setRoomData({ ...roomData, periodPrices: newPeriods });
+    setRoomData({
+      ...roomData,
+      periodPrices: newPeriods,
+    });
   }, [newPeriods]);
+
+  useEffect(() => {
+    setRoomData({
+      ...roomData,
+      extraPlaces: extraPlaces,
+    });
+  }, [extraPlaces]);
+
+  console.log(roomData, "room data");
 
   const handleUploadImage = (e) => {
     const files = e.target.files;
@@ -650,7 +662,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 {extraPlaces?.length > 0
                   ? extraPlaces?.map((xp, idx) => {
                       return (
-                        <div className="extraplace_card shadowed_box">
+                        <div className="extraplace_card shadowed_box" key={idx}>
                           <div className="extraplace_card-title">
                             Доп. место #{idx + 1}
                           </div>
@@ -662,6 +674,14 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                               name=""
                               id=""
                               value={xp.minAge}
+                              onChange={(e) => {
+                                const updatedExtraPlaces = [...extraPlaces];
+                                updatedExtraPlaces[idx] = {
+                                  ...updatedExtraPlaces[idx],
+                                  minAge: +e.target.value,
+                                };
+                                setExtraPlaces(updatedExtraPlaces);
+                              }}
                             />
                           </div>
                           <div className="service-input">
@@ -672,6 +692,14 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                               name=""
                               id=""
                               value={xp.maxAge}
+                              onChange={(e) => {
+                                const updatedExtraPlaces = [...extraPlaces];
+                                updatedExtraPlaces[idx] = {
+                                  ...updatedExtraPlaces[idx],
+                                  maxAge: +e.target.value,
+                                };
+                                setExtraPlaces(updatedExtraPlaces);
+                              }}
                             />
                           </div>
                           <div className="service-input">
@@ -682,6 +710,14 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                               name=""
                               id=""
                               value={xp.priceWithFood}
+                              onChange={(e) => {
+                                const updatedExtraPlaces = [...extraPlaces];
+                                updatedExtraPlaces[idx] = {
+                                  ...updatedExtraPlaces[idx],
+                                  priceWithFood: +e.target.value,
+                                };
+                                setExtraPlaces(updatedExtraPlaces);
+                              }}
                             />
                           </div>
                           <div className="service-input">
@@ -692,6 +728,14 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                               name=""
                               id=""
                               value={xp.priceNoFood}
+                              onChange={(e) => {
+                                const updatedExtraPlaces = [...extraPlaces];
+                                updatedExtraPlaces[idx] = {
+                                  ...updatedExtraPlaces[idx],
+                                  priceNoFood: +e.target.value,
+                                };
+                                setExtraPlaces(updatedExtraPlaces);
+                              }}
                             />
                           </div>
                           <div className="service-input">
@@ -702,12 +746,21 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                               name=""
                               id=""
                               value={xp.foodPrice}
+                              onChange={(e) => {
+                                const updatedExtraPlaces = [...extraPlaces];
+                                updatedExtraPlaces[idx] = {
+                                  ...updatedExtraPlaces[idx],
+                                  foodPrice: +e.target.value,
+                                };
+                                setExtraPlaces(updatedExtraPlaces);
+                              }}
                             />
                           </div>
                         </div>
                       );
                     })
                   : null}
+                {console.log(extraPlaces, "extra places")}
               </div>
             </Section>
           </>

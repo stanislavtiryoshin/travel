@@ -328,38 +328,32 @@ const Filter = ({ mode, dashMode }) => {
     }
   };
 
-  console.log(searchData, "search data");
+  console.log(startTime, endTime, "search time");
 
   return (
     <div className="filter_box">
       {!location.pathname.includes("/dashboard") ? (
         <div>
           <div className="filter_title">Ваш запрос</div>
-          {/* <div className="filter_content">
+          <div className="filter_content">
             <div className="filter_destination">
               <img src={plane} alt="Откуда" />
               Астана <div className="filter_divider"></div>{" "}
-              {localStorage.getItem("to")}
+              {localStorage.getItem("locationName")}
             </div>
-          </div> */}
+          </div>
           <div className="filter_content users">
             <div className="filter_dateRange">
               <img src={calendar} alt="Календарь" />
-              {startTime?.getDay() < 9
-                ? "0" + (startTime?.getDay() + 1)
-                : startTime?.getDay() + 1}
-              .
-              {startTime?.getMonth() < 9
-                ? "0" + (startTime?.getMonth() + 1)
-                : startTime?.getMonth() + 1}{" "}
+              {startTime?.toLocaleDateString("ru-RU", {
+                day: "numeric",
+                month: "numeric",
+              })}{" "}
               -{" "}
-              {endTime?.getDay() < 9
-                ? "0" + (endTime?.getDay() + 1)
-                : endTime?.getDay() + 1}
-              .
-              {endTime?.getMonth() < 9
-                ? "0" + (endTime?.getMonth() + 1)
-                : endTime?.getMonth() + 1}
+              {endTime?.toLocaleDateString("ru-RU", {
+                day: "numeric",
+                month: "numeric",
+              })}
             </div>
           </div>
           {/* <div className="filter_content users">

@@ -4,6 +4,7 @@ const initialState = {
   refetch: () => {},
   searchData: {
     locationId: "", // all KZ initially
+    locationName: "Весь Казахстан",
     daysAmount: 1, // 1 day initially
     agesArray: [1000], // initially 1 adult
     start: "1685556000000",
