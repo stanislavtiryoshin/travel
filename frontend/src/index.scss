@@ -126,7 +126,7 @@ button {
   border-radius: 8px;
   padding: 12px 16px 12px 16px;
   border: 2px solid $base-green;
-  font-size: 16px;
+  font-size: $base-font;
   font-weight: 500;
   line-height: 18px;
   background-color: $base-green;
@@ -184,7 +184,7 @@ button {
   }
   &.white {
     font-family: GT Walsheim Pro;
-    font-size: 16px;
+    font-size: $base-font;
     font-weight: 700;
     line-height: 18px;
     letter-spacing: 0em;
@@ -214,7 +214,7 @@ button {
 .cancel-btn {
   appearance: none;
   font-family: GT Walsheim Pro;
-  font-size: 16px;
+  font-size: $base-font;
   font-weight: 400;
   line-height: 18px;
   letter-spacing: 0em;
@@ -233,7 +233,7 @@ a {
   border: solid 2px rgba(37, 105, 215, 1);
   color: rgba(37, 105, 215, 1);
   font-family: GT Walsheim Pro;
-  font-size: 16px;
+  font-size: $base-font;
   font-weight: 500;
   line-height: 18px;
   letter-spacing: 0em;
@@ -258,7 +258,7 @@ a {
   border: solid 2px #5eb215;
   color: #5eb215;
   font-family: GT Walsheim Pro;
-  font-size: 16px;
+  font-size: $base-font;
   font-weight: 500;
   line-height: 18px;
   letter-spacing: 0em;
@@ -334,12 +334,12 @@ body {
   text-align: center;
   font-family: GT Walsheim Pro;
   font-weight: 700;
-  font-size: 20px;
+  font-size: $large-font;
 }
 
 .modal-body {
   line-height: 18px;
-  font-size: 16px;
+  font-size: $base-font;
   font-weight: 500;
   margin-top: 22px;
   text-align: center;
@@ -376,7 +376,7 @@ body {
 }
 .hotel_similar_text {
   font-family: GT Walsheim Pro;
-  font-size: 16px;
+  font-size: $base-font;
   color: #51555b;
 }
 

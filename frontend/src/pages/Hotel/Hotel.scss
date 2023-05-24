@@ -227,7 +227,7 @@
 
 .desc_box {
   font-family: GT Walsheim Pro;
-  font-size: 16px;
+  font-size: $base-font;
   font-weight: 400;
   line-height: 18px;
   letter-spacing: 0em;
@@ -253,7 +253,7 @@
   justify-content: flex-start;
   column-gap: 8px;
   font-family: GT Walsheim Pro;
-  font-size: 16px;
+  font-size: $base-font;
   font-weight: 700;
   line-height: 28px;
   letter-spacing: 1px;
@@ -271,7 +271,7 @@
   margin-left: 36px;
   li {
     font-family: GT Walsheim Pro;
-    font-size: 16px;
+    font-size: $base-font;
     font-weight: 400;
     line-height: 18px;
     letter-spacing: 1px;
@@ -285,7 +285,7 @@
 .hotel_anchor {
   font-family: GT Walsheim Pro;
   text-decoration: underline;
-  font-size: 16px;
+  font-size: $base-font;
   font-weight: 400;
   line-height: 18px;
   letter-spacing: 0em;
@@ -374,7 +374,7 @@
 
 .body_title-text {
   font-family: GT Walsheim Pro;
-  font-size: 16px;
+  font-size: $base-font;
   font-weight: 400;
   line-height: 18px;
   letter-spacing: 1px;
