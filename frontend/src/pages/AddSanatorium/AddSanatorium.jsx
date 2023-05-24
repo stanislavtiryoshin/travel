@@ -256,6 +256,8 @@ const AddSanatorium = ({
 
   const [searchable, setIsSearchable] = useState(true);
 
+  const clickUpload = () => imageRef.current.click();
+
   return (
     <>
       <AdminHead
@@ -272,10 +274,11 @@ const AddSanatorium = ({
           wrapper="add_gen-wrapper wrapper shadowed_box"
         >
           <GalleryBox
+            handleUploadImage={clickUpload}
             sources={
               sources.length > 0
                 ? sources
-                : [sanatourimmain, secondary, secondary, secondary]
+                : [sanatourimmain, secondary, secondary, secondary, secondary]
             }
           />
           <div className="gen_content-box">
@@ -406,23 +409,13 @@ const AddSanatorium = ({
                   })
                 }
               ></textarea>
-              {editMode && (
-                <>
-                  <input
-                    type="file"
-                    hidden
-                    ref={imageRef}
-                    onChange={handleUploadImage}
-                    multiple
-                  />
-                  <button
-                    onClick={() => imageRef.current.click()}
-                    className={`primary-btn`}
-                  >
-                    Изменить фото
-                  </button>
-                </>
-              )}
+              <input
+                type="file"
+                hidden
+                ref={imageRef}
+                onChange={handleUploadImage}
+                multiple
+              />
             </div>
           </div>
         </Section>

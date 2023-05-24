@@ -14,7 +14,7 @@ import "swiper/css/scrollbar";
 
 import GallerySlider from "./GallerySlider";
 
-const GalleryBox = ({ sources, isSmall }) => {
+const GalleryBox = ({ sources, isSmall, handleUploadImage }) => {
   const [lightboxController, setLightboxController] = useState({
     toggler: false,
     slide: 1,
@@ -28,7 +28,7 @@ const GalleryBox = ({ sources, isSmall }) => {
   };
 
   const [imgSources, setImgSources] = useState([]);
-
+  // console.log(isDashboard, "isDash");
   useEffect(() => {
     setImgSources(sources);
   }, [sources]);
@@ -56,7 +56,11 @@ const GalleryBox = ({ sources, isSmall }) => {
             )}
           </>
         )}
-        <GallerySlider isSmall sources={imgSources} />
+        <GallerySlider
+          handleUploadImage={handleUploadImage}
+          isSmall
+          sources={imgSources}
+        />
       </div>
     </>
   );

@@ -36,7 +36,7 @@ const Requests = () => {
 
   React.useEffect(() => {
     fetchOrders({
-      token: user.token,
+      token: user?.token,
       query: query,
       status: status,
     })
@@ -207,7 +207,7 @@ const Requests = () => {
 
   const handleSearch = () => {
     fetchOrders({
-      token: user.token,
+      token: user && user?.token,
       query: query,
       status: status,
     })
