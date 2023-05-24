@@ -39,7 +39,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
     roomName: "",
     roomType: "",
     capacity: null,
-    extraPlace: null,
+    extraPlaces: [],
     roomPrice: null,
     area: null,
     smokingPolicy: "",

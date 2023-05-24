@@ -180,6 +180,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     maxPrice,
   } = req.query;
 
+  const ages = agesArray.split(",").map(Number);
   const peopleAmount = agesArray.split(",").map(Number).length;
   const kidsAmount = agesArray
     .split(",")
@@ -306,14 +307,6 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
         path: "periodPrices.period",
         model: "Period",
       },
-      match: {
-        $expr: {
-          $gte: [
-            { $sum: ["$capacity", { $size: "$extraPlaces" }] },
-            peopleAmount,
-          ],
-        },
-      },
     })
     .populate({
       path: "hotelServices",
@@ -341,7 +334,26 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
 
   const newHotels = hotels.map((hotel) => {
     const newHotel = hotel.toObject();
-    const rooms = newHotel.rooms;
+    let rooms = newHotel.rooms;
+
+    rooms = rooms.filter((room) => {
+      if (room.freeBabyPlaces && room.freeBabyPlaces !== 0) {
+        let newAges = ages.sort((a, b) => a - b);
+        const babyAges = newAges.filter((age) => age <= hotel.kids.babyMaxAge);
+        // console.log(babyAges, "baby ages");
+        let babyAgesToRemove = babyAges.length - room.freeBabyPlaces;
+        if (babyAgesToRemove < 0) babyAgesToRemove = 0;
+        newAges = newAges.slice(babyAgesToRemove);
+        // console.log(newAges, "new ages in filter");
+        return room.capacity + room.totalExtraPlacesAmount >= newAges.length;
+      } else return room.capacity + room.totalExtraPlacesAmount >= ages.length;
+    });
+
+    // console.log(
+    //   rooms.map((room) => room.capacity + room.totalExtraPlacesAmount),
+    //   "rooms after filtering out babies"
+    // );
+
     const cheapestRoom = rooms.reduce(
       (prev, curr) =>
         prev.periodPrices[0]?.roomPrice < curr.periodPrices[0]?.roomPrice
@@ -349,55 +361,23 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
           : curr,
       rooms[0]
     );
+
     console.log(cheapestRoom?.roomName);
-    const basePrice = cheapestRoom?.roomPrice;
     const pricesArray = cheapestRoom?.periodPrices;
 
-    const costOfStay = calculatePrice(
-      start,
-      daysAmount,
-      basePrice,
-      pricesArray
-    );
-
-    if (cheapestRoom && cheapestRoom.discount && cheapestRoom.discount !== 0) {
-      newHotel.totalPrice = (costOfStay * (100 - cheapestRoom.discount)) / 100;
-      newHotel.oldPrice = costOfStay;
-    } else if (cheapestRoom) {
-      newHotel.totalPrice = costOfStay;
-    } else {
-      newHotel.totalPrice = 22800;
-    }
+    const costOfStay = calculatePrice(start, daysAmount, 0, pricesArray);
 
     return {
       ...newHotel,
+      totalPrice: newHotel.marge
+        ? (costOfStay * (newHotel.marge + 100)) / 100
+        : costOfStay,
       daysAmount: +daysAmount,
       nightsAmount: daysAmount - 1,
       adultsAmount: +adultsAmount,
       kidsAmount: +kidsAmount,
     };
   });
-
-  // const newHotels = hotels.reduce((result, hotel) => {
-  //   const newHotel = hotel.toObject();
-  //   const pricesArray = hotel.periodPrices;
-
-  //   const costOfStay = calculatePrice(start, daysAmount, pricesArray);
-
-  //   if (pricesArray && costOfStay !== null) {
-  //     newHotel.totalPrice = costOfStay;
-  //     result.push({
-  //       ...newHotel,
-  //       totalPrice: costOfStay,
-  //       daysAmount: +daysAmount,
-  //       nightsAmount: daysAmount - 1,
-  //       adultsAmount: +adultsAmount,
-  //       kidsAmount: +kidsAmount,
-  //     });
-  //   }
-
-  //   return result;
-  // }, []);
 
   res
     .status(200)
@@ -409,10 +389,16 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
                 hotel.totalPrice <= maxPrice && hotel.totalPrice >= minPrice
             )
             .filter(
-              (hotel) => hotel.totalPrice !== null && hotel.totalPrice !== 0
+              (hotel) =>
+                hotel.totalPrice !== null &&
+                hotel.totalPrice !== 0 &&
+                hotel.totalPrice
             )
         : newHotels.filter(
-            (hotel) => hotel.totalPrice !== null && hotel.totalPrice !== 0
+            (hotel) =>
+              hotel.totalPrice !== null &&
+              hotel.totalPrice !== 0 &&
+              hotel.totalPrice
           )
     );
 });

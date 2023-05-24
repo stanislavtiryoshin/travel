@@ -118,16 +118,13 @@ const Filter = ({ mode, dashMode }) => {
     filterStars: null,
   });
 
-  const [startTime] = useState(
-    localStorage.getItem("startDate")
-      ? new Date(JSON.parse(localStorage.getItem("startDate")))
-      : new Date()
-  );
-  const [endTime] = useState(
-    localStorage.getItem("endDate")
-      ? new Date(JSON.parse(localStorage.getItem("endDate")))
-      : new Date()
-  );
+  const [startTime, setStartTime] = useState();
+  const [endTime, setEndTime] = useState();
+
+  useEffect(() => {
+    setStartTime(new Date(+searchData.start));
+    setEndTime(new Date(+searchData.end));
+  }, [searchData]);
 
   useEffect(() => {
     setFilterObj({
@@ -230,17 +227,6 @@ const Filter = ({ mode, dashMode }) => {
   };
 
   const clearFilter = () => {
-    dispatch(
-      setSearchData({
-        ...searchData,
-        filterFood: [],
-        filterServices: [],
-        filterStars: "",
-        filterRating: [],
-        filterExtraPlaces: true,
-        filterBathroom: "",
-      })
-    );
     const newSearchData = {
       ...searchData,
       filterFood: [],
@@ -250,49 +236,39 @@ const Filter = ({ mode, dashMode }) => {
       filterExtraPlaces: true,
       filterBathroom: "",
     };
+
+    dispatch(setSearchData(newSearchData));
+  };
+
+  useEffect(() => {
     switch (mode) {
       case "tour":
-        dashMode
-          ? applyTourFilter({
-              ...newSearchData,
-              locationId: searchData.locationId,
-              searchNameId: searchData.searchNameId,
-              dashMode: true,
-            })
-          : applyTourFilter(searchData);
+        applyFilter(applyTourFilter);
         break;
       case "hotel":
-        dashMode
-          ? applyHotelFilter({
-              ...newSearchData,
-              locationId: searchData.locationId,
-              searchNameId: searchData.searchNameId,
-              dashMode: true,
-            })
-          : applyHotelFilter(searchData);
+        applyFilter(applyHotelFilter);
         break;
       case "sanatorium":
-        dashMode
-          ? applySanatoriumFilter({
-              ...newSearchData,
-              locationId: searchData.locationId,
-              searchNameId: searchData.searchNameId,
-              dashMode: true,
-            })
-          : applySanatoriumFilter(searchData);
+        applyFilter(applySanatoriumFilter);
         break;
       case "camp":
-        dashMode
-          ? applyCampFilter({
-              ...newSearchData,
-              locationId: searchData.locationId,
-              searchNameId: searchData.searchNameId,
-              dashMode: true,
-            })
-          : applyCampFilter(searchData);
+        applyFilter(applyCampFilter);
+        break;
+      default:
         break;
     }
-  };
+  }, [searchData]); // Add searchData as a dependency to trigger the effect whenever it changes
+
+  function applyFilter(filterFunction) {
+    const updatedSearchData = {
+      ...searchData,
+      locationId: searchData.locationId,
+      searchNameId: searchData.searchNameId,
+      dashMode: dashMode,
+    };
+
+    dashMode ? filterFunction(updatedSearchData) : filterFunction(searchData);
+  }
 
   console.log(dashMode ? "dash mode" : "no dash mode");
 
@@ -359,31 +335,31 @@ const Filter = ({ mode, dashMode }) => {
       {!location.pathname.includes("/dashboard") ? (
         <div>
           <div className="filter_title">Ваш запрос</div>
-          <div className="filter_content">
+          {/* <div className="filter_content">
             <div className="filter_destination">
               <img src={plane} alt="Откуда" />
               Астана <div className="filter_divider"></div>{" "}
               {localStorage.getItem("to")}
             </div>
-          </div>
+          </div> */}
           <div className="filter_content users">
             <div className="filter_dateRange">
               <img src={calendar} alt="Календарь" />
-              {startTime.getDay() < 9
-                ? "0" + (startTime.getDay() + 1)
-                : startTime.getDay() + 1}
+              {startTime?.getDay() < 9
+                ? "0" + (startTime?.getDay() + 1)
+                : startTime?.getDay() + 1}
               .
-              {startTime.getMonth() < 9
-                ? "0" + (startTime.getMonth() + 1)
-                : startTime.getMonth() + 1}{" "}
+              {startTime?.getMonth() < 9
+                ? "0" + (startTime?.getMonth() + 1)
+                : startTime?.getMonth() + 1}{" "}
               -{" "}
-              {endTime.getDay() < 9
-                ? "0" + (endTime.getDay() + 1)
-                : endTime.getDay() + 1}
+              {endTime?.getDay() < 9
+                ? "0" + (endTime?.getDay() + 1)
+                : endTime?.getDay() + 1}
               .
-              {endTime.getMonth() < 9
-                ? "0" + (endTime.getMonth() + 1)
-                : endTime.getMonth() + 1}
+              {endTime?.getMonth() < 9
+                ? "0" + (endTime?.getMonth() + 1)
+                : endTime?.getMonth() + 1}
             </div>
           </div>
           {/* <div className="filter_content users">
@@ -411,7 +387,10 @@ const Filter = ({ mode, dashMode }) => {
         </div>
       ) : null}
 
-      {!location.pathname.includes("/dashboard") && maxPrice !== minPrice ? (
+      {!location.pathname.includes("/dashboard") &&
+      maxPrice !== minPrice &&
+      minPrice !== 0 &&
+      maxPrice !== 100 ? (
         <div className="filter_row">
           <div className="filter_title">Цена</div>
           <div className="filter_content price_range">

@@ -626,14 +626,14 @@ const AddHotel = ({
                   name="foodType"
                   id=""
                   className="primary-input"
-                  value={hotelData?.food._id}
+                  value={hotelData?.food?._id}
                   onChange={(e) =>
                     setHotelData({ ...hotelData, food: e.target.value })
                   }
                 >
                   {allFoods?.length > 0
                     ? allFoods?.map((food) => {
-                        return <option value={food._id}>{food.label}</option>;
+                        return <option value={food?._id}>{food?.label}</option>;
                       })
                     : null}
                 </select>
@@ -644,7 +644,7 @@ const AddHotel = ({
                   className="primary-input"
                   name="adultFoodPrice"
                   placeholder="Цена за питание взрослого"
-                  value={hotelData.adultFoodPrice}
+                  value={hotelData?.adultFoodPrice}
                   onChange={(e) => {
                     setHotelData({
                       ...hotelData,
@@ -657,7 +657,7 @@ const AddHotel = ({
                   name="kidFoodPrice"
                   className="primary-input"
                   placeholder="Цена за детское питание"
-                  value={hotelData.kidFoodPrice}
+                  value={hotelData?.kidFoodPrice}
                   onChange={(e) => {
                     setHotelData({
                       ...hotelData,
@@ -701,7 +701,7 @@ const AddHotel = ({
                       setHotelData({
                         ...hotelData,
                         payment: {
-                          ...hotelData.payment,
+                          ...hotelData?.payment,
                           paymentType: e.target.value,
                         },
                       });
