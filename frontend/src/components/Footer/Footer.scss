@@ -1,3 +1,4 @@
+@import "../../variables.scss";
 footer {
   background-color: rgba(40, 44, 49, 0.91);
   color: #fff;
@@ -5,7 +6,7 @@ footer {
   a {
     color: #fff;
     font-family: GT Walsheim Pro;
-    font-size: 16px;
+    font-size: $base-font;
     font-weight: 400;
     line-height: 18px;
     letter-spacing: 0em;

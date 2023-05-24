@@ -1,3 +1,5 @@
+@import "../../variables.scss";
+
 header {
   background: #fff;
 }
@@ -24,7 +26,7 @@ header {
 }
 
 .tel_box-link {
-  font-size: 16px;
+  font-size: $base-font;
   font-weight: 700;
   line-height: 18px;
   letter-spacing: 1px;
@@ -120,7 +122,7 @@ header {
   border-radius: 8px;
   color: rgba(41, 45, 50, 1);
   font-family: GT Walsheim Pro;
-  font-size: 16px;
+  font-size: $base-font;
   font-weight: 500;
   line-height: 18px;
   letter-spacing: 0em;
@@ -129,7 +131,7 @@ header {
   ::placeholder {
     color: rgba(41, 45, 50, 1);
     font-family: GT Walsheim Pro;
-    font-size: 16px;
+    font-size: $base-font;
     font-weight: 500;
     line-height: 18px;
     letter-spacing: 0em;

@@ -1,3 +1,5 @@
+@import "../../../variables.scss";
+
 .nav_container {
   z-index: 100;
   width: 100%;
@@ -61,7 +63,7 @@
   }
   .dropdown_links {
     padding: 0 20px;
-    font-size: 16px;
+    font-size: $base-font;
     line-height: 28px;
     font-weight: 500;
 
@@ -69,7 +71,7 @@
       margin-bottom: 16px;
       display: flex;
       align-items: center;
-      font-size: 16px;
+      font-size: $base-font;
 
       .person img {
         height: 30px !important;
