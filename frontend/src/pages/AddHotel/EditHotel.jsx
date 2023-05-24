@@ -129,7 +129,6 @@ const EditHotel = () => {
                 </div>
                 <Link
                   to={`/dashboard/hotel/${hotelId}/add-room`}
-                  target={"_blank"}
                   className="primary-btn"
                 >
                   Добавить номер

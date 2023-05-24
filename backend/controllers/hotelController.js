@@ -475,6 +475,7 @@ const getPrice = asyncHandler(async (req, res) => {
 
     // Remove the youngest ages based on the babyExtraPlacesAmount
     let updatedAgesArray = sortedAges;
+
     if (sortedAges[0] <= hotel.kids.babyMaxAge) {
       updatedAgesArray = sortedAges.slice(babyExtraPlacesAmount);
     }
@@ -510,7 +511,10 @@ const getPrice = asyncHandler(async (req, res) => {
   // [1000, 1000, 15, 4,...]
   const accomodatedAges = ages.splice(0, chosenRoom.capacity);
 
-  const notChosen = (place) => !chosenPlaces.some((el) => el._id === place._id);
+  const notChosen = (place) =>
+    !(
+      chosenPlaces.filter((el) => el._id === place._id).length < place.maxAmount
+    );
 
   // [..., ..., ..., 4,...]
 

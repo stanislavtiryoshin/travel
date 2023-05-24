@@ -16,6 +16,7 @@ import {
 } from "../../features/hotel/hotelSlice";
 import { getSingleSanatorium } from "../../features/sanatorium/sanatoriumSlice";
 import Section from "../../components/Section";
+import dateConfig from "../../components/DataConfig";
 
 const Periods = ({
   periods,

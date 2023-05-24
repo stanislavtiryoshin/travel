@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 // import axios from "axios";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
@@ -233,13 +233,37 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
 
   const clickUpload = () => fileRef.current.click();
 
+  const [hotelIdLink, setHotelIdLink] = useState();
+
+  useEffect(() => {
+    if (hotelId) setHotelIdLink(hotelId);
+    else if (roomData?.hotel?._id) setHotelIdLink(roomData?.hotel?._id);
+  }, [hotelId, roomData]);
+
   return (
     <>
       <AdminHead
         text={editMode ? "Редактирование номера" : "Создание нового номера"}
         onClick={() => handleSubmit()}
+        headBack={() => {
+          navigate(-1);
+        }}
       />
       <div className="add_hotel-page page">
+        <section>
+          <div className="container">
+            <div section="top_btns">
+              {hotelIdLink ? (
+                <Link
+                  to={`/dashboard/hotel/${hotelIdLink}`}
+                  className={"back_link primary-btn blue clear"}
+                >
+                  {"<"} Вернуться к отелю
+                </Link>
+              ) : null}
+            </div>
+          </div>
+        </section>
         <Section
           section="add_gen-section"
           wrapper="add_gen-wrapper shadowed_box"
@@ -649,6 +673,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                           priceWithFood: 0,
                           priceNoFood: 0,
                           foodPrice: 0,
+                          maxAmount: 1,
                         },
                       ]);
                     }}
@@ -751,6 +776,24 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                                 updatedExtraPlaces[idx] = {
                                   ...updatedExtraPlaces[idx],
                                   foodPrice: +e.target.value,
+                                };
+                                setExtraPlaces(updatedExtraPlaces);
+                              }}
+                            />
+                          </div>
+                          <div className="service-input">
+                            <label htmlFor="">Макс. кол-во</label>
+                            <input
+                              className="primary-input"
+                              type="number"
+                              name=""
+                              id=""
+                              value={xp.maxAmount}
+                              onChange={(e) => {
+                                const updatedExtraPlaces = [...extraPlaces];
+                                updatedExtraPlaces[idx] = {
+                                  ...updatedExtraPlaces[idx],
+                                  maxAmount: +e.target.value,
                                 };
                                 setExtraPlaces(updatedExtraPlaces);
                               }}

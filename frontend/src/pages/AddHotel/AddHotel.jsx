@@ -25,6 +25,7 @@ import { API_URL_PROXY } from "../../config/config";
 
 import hotelmain from "../../assets/hotel/hotelmain.png";
 import secondary from "../../assets/camp/campsecondary.png";
+import dateConfig from "../../components/DataConfig";
 const AddHotel = ({
   fetchedHotelData,
   editMode,
@@ -297,6 +298,9 @@ const AddHotel = ({
                   searchable,
                 })
               );
+        }}
+        headBack={() => {
+          navigate(-1);
         }}
       />
       <div className="add_hotel-page">
@@ -667,26 +671,6 @@ const AddHotel = ({
                 />
               </div>
             </div>
-            {/* <div className="input_box">
-              <div className="input_title">Удобства</div>
-              <select
-                name="comforts"
-                id=""
-                className="primary-input"
-                value={hotelData.comforts}
-                onChange={(e) =>
-                  setHotelData({ ...hotelData, comforts: e.target.value })
-                }
-              >
-                <option value="" disabled selected>
-                  Введите значение
-                </option>
-                <option value="642150a586cfa75278c280b9">Без питания</option>
-                <option value="642150a586cfa75278c280b9">Без питания</option>
-                <option value="642150a586cfa75278c280b9">Без питания</option>
-                <option value="642150a586cfa75278c280b9">Без питания</option>
-              </select>
-            </div> */}
             <div className="input_box">
               <div className="input_title">Тип оплаты</div>
               <div className="input_row">
@@ -793,7 +777,6 @@ const AddHotel = ({
                   <div className="gen_title">Цены на номера</div>
                   <div className="periods_btns">
                     <button className="primary-btn black">Сохранить</button>
-                    <button onClick={handleClick}>AAAA</button>
                   </div>
                 </div>
                 <div className="table_wrapper">
@@ -805,8 +788,10 @@ const AddHotel = ({
                           hotelData.periods &&
                           hotelData?.periods?.map((period) => (
                             <th key={period._id}>
-                              {period.startDay}.{period.startMonth} -{" "}
-                              {period.endDay}.{period.endMonth}
+                              {dateConfig(period.startDay)}.
+                              {dateConfig(period.startMonth)} -{" "}
+                              {dateConfig(period.endDay)}.
+                              {dateConfig(period.endMonth)}
                             </th>
                           ))}
                       </tr>

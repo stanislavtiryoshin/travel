@@ -156,7 +156,7 @@ const PeopleSelect = ({ agesArray, setAgesArray, refetch }) => {
               Добавить ребенка +
             </button>
             <button
-              className="primary-btn blue select"
+              className="primary-btn blue clear"
               onClick={() => {
                 setIsExpanded(false);
               }}

@@ -460,10 +460,10 @@ const Hotel = () => {
           ) : null}
         </div>
       </section>
-      <Recommendation
+      {/* <Recommendation
         recommendation={recommendation}
         singleHotel={singleHotel}
-      />
+      /> */}
     </div>
   );
 };

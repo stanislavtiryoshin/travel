@@ -9,7 +9,9 @@ export const AdminHead = (props) => {
             <div className="header_bot-left-text">{props.text}</div>
           </div>
           <div className="header_bot-right wrapper">
-            <button className="cancel-btn">Отмена</button>
+            <button className="cancel-btn" onClick={props.headBack}>
+              Отмена
+            </button>
             <button className="primary-btn white" onClick={props.onClick}>
               Сохранить изменения
             </button>

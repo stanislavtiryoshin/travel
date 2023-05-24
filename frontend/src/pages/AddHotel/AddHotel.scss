@@ -1,3 +1,5 @@
+@import "../../variables.scss";
+
 .add_hotel-page,
 .admin_hotel-page {
   background-color: #f9f9f9;
@@ -409,6 +411,17 @@ input:checked + .slider:before {
   column-gap: 8px;
   border-radius: 16px;
   border: solid 2px rgba(41, 45, 50, 0.2);
+  transition: 0.3s;
+
+  &:hover {
+    background-color: rgba(141, 147, 155, 1);
+    color: #fff;
+
+    &.grey {
+      background-color: #fff;
+      color: $black;
+    }
+  }
 
   &.grey {
     background-color: rgba(141, 147, 155, 1);
@@ -423,5 +436,5 @@ input:checked + .slider:before {
 .table_wrapper {
   width: 100%;
   max-width: 100%;
-  overflow-x: scroll;
+  overflow-x: auto;
 }

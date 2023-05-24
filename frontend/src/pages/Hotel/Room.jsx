@@ -72,7 +72,7 @@ const Room = ({
         </div>
       </div>
 
-      {hasExtraPlaces ? (
+      {hasExtraPlaces && !room?.extraFoodIncluded ? (
         <div className="rooms_mid">
           <div className="rooms_mid-col left">
             <div className="rooms_mid-col-top">

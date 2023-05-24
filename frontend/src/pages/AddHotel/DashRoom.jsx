@@ -6,6 +6,7 @@ import roomphoto from "../../assets/room/room.png";
 import bed from "../../assets/room/bed.svg";
 
 import greencheck from "../../assets/room/greencheck.svg";
+import declOfNum from "../../components/DayConfig";
 
 const DashRoom = ({ room }) => {
   return (
@@ -20,12 +21,19 @@ const DashRoom = ({ room }) => {
               <div className="admin_room-title">{room.roomName}</div>
               <div className="admin_room-bed row">
                 <img src={bed} alt="" />
-                {room?.beds?.largeBeds} большие кровати
+                {room?.beds?.largeBeds}{" "}
+                {declOfNum(room?.beds?.largeBeds, [
+                  "большая кровать",
+                  "большие кровати",
+                ])}
               </div>
-              {room.roomServices ? <RoomTags tags={room.roomServices} /> : null}
-              {room.extraPlace ? (
-                <ExtraTag extraPlace={room.extraPlace} />
+              {room?.roomServices ? (
+                <RoomTags tags={room?.roomServices} />
               ) : null}
+              {room?.totalExtraPlacesAmount ? (
+                <ExtraTag extraPlace={room?.totalExtraPlacesAmount} />
+              ) : null}
+              {console.log(room?.totalExtraPlacesAmount, "total xp")}
             </div>
           </div>
           <div className="admin_room-bot">
@@ -74,7 +82,7 @@ export const RoomTags = ({ tags }) => {
 export const ExtraTag = ({ extraPlace }) => {
   return (
     <div className="extra_place-card filter_title">
-      Есть {extraPlace} доп. места
+      Есть {extraPlace} доп. {declOfNum(extraPlace, ["место", "места"])}
     </div>
   );
 };

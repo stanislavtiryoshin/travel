@@ -1,3 +1,5 @@
+@import "../../variables.scss";
+
 .extraplaces_box {
   width: 100%;
   justify-content: flex-start;
@@ -17,4 +19,9 @@
   &.shadowed_box {
     width: 300px;
   }
+}
+
+.back_link.primary-btn.blue {
+  font-size: $small-font;
+  padding: 5px 7px;
 }
