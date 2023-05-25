@@ -7,6 +7,7 @@ const asyncHandler = require("express-async-handler");
 const fs = require("fs");
 const csv = require("fast-csv");
 const { isDateInRange } = require("../dateUtils");
+const { daysIntoArray } = require("../daysUtils");
 
 //@desc Get all tours
 //@route GET /api/tour/
@@ -275,14 +276,7 @@ const getPrice = asyncHandler(async (req, res) => {
   let sum = 0;
 
   (function calculatePrice(basePrice) {
-    let daysArray = [];
-    const startingDate = new Date(+start);
-
-    for (let i = 0; i < daysAmount; i++) {
-      let date = new Date(startingDate.getTime());
-      date.setDate(startingDate.getDate() + i);
-      daysArray.push(date);
-    }
+    let daysArray = daysIntoArray(start, daysAmount);
 
     console.log(pricesArray);
 
@@ -373,14 +367,7 @@ const getSearchedTours = asyncHandler(async (req, res) => {
   console.log(adultsAmount, kidsAmount, "perople");
 
   const calculatePrice = (start, daysNum, pricesArray) => {
-    let daysArray = [];
-    const startingDate = new Date(+start);
-
-    for (let i = 0; i < daysNum; i++) {
-      let date = new Date(startingDate.getTime());
-      date.setDate(startingDate.getDate() + i);
-      daysArray.push(date);
-    }
+    let daysArray = daysIntoArray(start, daysNum);
 
     let sum = 0;
 
@@ -501,9 +488,14 @@ const getSearchedTours = asyncHandler(async (req, res) => {
       minPrice && maxPrice
         ? newHotels.filter(
             (hotel) =>
-              hotel.totalPrice <= maxPrice && hotel.totalPrice >= minPrice
+              hotel.totalPrice <= maxPrice &&
+              hotel.totalPrice >= minPrice &&
+              hotel.totalPrice &&
+              hotel.totalPrice !== null
           )
-        : newHotels
+        : newHotels.filter(
+            (hotel) => hotel.totalPrice && hotel.totalPrice !== null
+          )
     );
 });
 

@@ -14,6 +14,9 @@ const Tour = require("../models/tourModel");
 const queryString = require("querystring");
 const mongoose = require("mongoose");
 const { isDateInRange } = require("../dateUtils");
+const { daysIntoArray } = require("../daysUtils");
+const { calculateExtraPlaces } = require("../utils/extraPlacesUtills");
+const { removeAges } = require("../utils/removeFreeBabyPlaces");
 
 //@desc   Add new hotel
 //@route  POST /api/hotels
@@ -180,7 +183,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     maxPrice,
   } = req.query;
 
-  const ages = agesArray.split(",").map(Number);
+  let ages = agesArray.split(",").map(Number);
   const peopleAmount = agesArray.split(",").map(Number).length;
   const kidsAmount = agesArray
     .split(",")
@@ -192,14 +195,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     .filter((age) => age === 1000).length;
 
   const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
-    let daysArray = [];
-    const startingDate = new Date(+start);
-
-    for (let i = 0; i < daysNum; i++) {
-      let date = new Date(startingDate.getTime());
-      date.setDate(startingDate.getDate() + i);
-      daysArray.push(date);
-    }
+    let daysArray = daysIntoArray(start, daysNum);
 
     let sum = 0;
 
@@ -342,7 +338,12 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
         const babyAges = newAges.filter((age) => age <= hotel.kids.babyMaxAge);
         // console.log(babyAges, "baby ages");
         let babyAgesToRemove = babyAges.length - room.freeBabyPlaces;
-        if (babyAgesToRemove < 0) babyAgesToRemove = 0;
+        // console.log(babyAgesToRemove, "babyAgesToRemove");
+        if (babyAgesToRemove < 0) {
+          babyAgesToRemove = 0;
+        } else if (babyAgesToRemove === 0) {
+          babyAgesToRemove = 1;
+        }
         newAges = newAges.slice(babyAgesToRemove);
         // console.log(newAges, "new ages in filter");
         return room.capacity + room.totalExtraPlacesAmount >= newAges.length;
@@ -361,22 +362,47 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
           : curr,
       rooms[0]
     );
-
     console.log(cheapestRoom?.roomName);
-    const pricesArray = cheapestRoom?.periodPrices;
 
-    const costOfStay = calculatePrice(start, daysAmount, 0, pricesArray);
+    let sum = 0;
 
-    return {
-      ...newHotel,
-      totalPrice: newHotel.marge
-        ? (costOfStay * (newHotel.marge + 100)) / 100
-        : costOfStay,
-      daysAmount: +daysAmount,
-      nightsAmount: daysAmount - 1,
-      adultsAmount: +adultsAmount,
-      kidsAmount: +kidsAmount,
-    };
+    if (cheapestRoom) {
+      const pricesArray = cheapestRoom?.periodPrices;
+
+      ages = removeAges(
+        ages,
+        cheapestRoom?.freeBabyPlaces,
+        hotel.kids.babyMaxAge
+      );
+      let placesArray = cheapestRoom?.extraPlaces;
+      ages.sort((a, b) => b - a);
+
+      sum = calculateExtraPlaces(
+        ages,
+        placesArray,
+        cheapestRoom,
+        "false",
+        daysAmount
+      );
+
+      const costOfStay =
+        sum + calculatePrice(start, daysAmount, 0, pricesArray);
+
+      const margePercent = (newHotel.marge + 100) / 100;
+
+      if (costOfStay && newHotel) {
+        return {
+          ...newHotel,
+          totalPrice: margePercent
+            ? Math.round(costOfStay * margePercent)
+            : costOfStay,
+          daysAmount: +daysAmount,
+          nightsAmount: daysAmount - 1,
+          adultsAmount: +adultsAmount,
+          kidsAmount: +kidsAmount,
+        };
+      }
+    }
   });
 
   res
@@ -394,12 +420,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
                 hotel.totalPrice !== 0 &&
                 hotel.totalPrice
             )
-        : newHotels.filter(
-            (hotel) =>
-              hotel.totalPrice !== null &&
-              hotel.totalPrice !== 0 &&
-              hotel.totalPrice
-          )
+        : newHotels.filter((hotel) => hotel?.totalPrice)
     );
 });
 
@@ -457,39 +478,11 @@ const getPrice = asyncHandler(async (req, res) => {
   let roomSum = 0;
   let excursionsSum = 0;
   let foodSum = 0;
-  let chosenPlaces = [];
 
-  // [1000,1000,15,4,2]
-
-  // let babysAmount = ages.filter(
-  //   (age) => age <= hotel.kids.babyMaxAge
-  // ).length;
-
-  const removeAges = (agesArray, babyExtraPlacesAmount) => {
-    if (babyExtraPlacesAmount <= 0) {
-      return agesArray; // No removal needed
-    }
-
-    // Create a copy of the ages array to avoid modifying the original array
-    const sortedAges = [...agesArray].sort((a, b) => a - b);
-
-    // Remove the youngest ages based on the babyExtraPlacesAmount
-    let updatedAgesArray = sortedAges;
-
-    if (sortedAges[0] <= hotel.kids.babyMaxAge) {
-      updatedAgesArray = sortedAges.slice(babyExtraPlacesAmount);
-    }
-
-    return updatedAgesArray;
-  };
-
-  // console.log(ages, "ages");
-
-  ages = removeAges(ages, chosenRoom.freeBabyPlaces);
+  // Remove babies which will be appointed to a free extra place
+  ages = removeAges(ages, chosenRoom.freeBabyPlaces, hotel.kids.babyMaxAge);
 
   // console.log(ages, "ages 2");
-
-  const extraPlacesAmount = ages.length - chosenRoom.capacity;
 
   let placesArray = chosenRoom.extraPlaces;
 
@@ -501,84 +494,29 @@ const getPrice = asyncHandler(async (req, res) => {
       .json({ error: "Номер не может поместить всех жильцов" });
   }
 
-  // console.log(
-  //   ages.length,
-  //   chosenRoom.capacity,
-  //   chosenRoom.totalExtraPlacesAmount,
-  //   "test "
-  // );
-
   // [1000, 1000, 15, 4,...]
   const accomodatedAges = ages.splice(0, chosenRoom.capacity);
 
-  console.log(accomodatedAges, "accomodated ages");
-  console.log(ages, "after accomdo");
+  // console.log(accomodatedAges, "accomodated ages");
+  // console.log(ages, "after accomdo");
 
-  const notChosen = (place) => {
-    console.log(place, "place");
-    return (
-      chosenPlaces.filter((el) => el._id === place._id).length < place.maxAmount
-    );
-  };
+  sum = calculateExtraPlaces(
+    ages,
+    placesArray,
+    chosenRoom,
+    addExtraFood,
+    daysAmount
+  );
+  extraPlacesSum = calculateExtraPlaces(
+    ages,
+    placesArray,
+    chosenRoom,
+    addExtraFood,
+    daysAmount
+  );
 
-  // [..., ..., ..., 4,...]
-
-  console.log(ages, "ages before matching");
-
-  ages.forEach((age) => {
-    const matchingPlace = placesArray.find((place) => {
-      if (age <= place.maxAge && age >= place.minAge && notChosen(place)) {
-        return true;
-      }
-    });
-    if (matchingPlace) {
-      chosenPlaces.push(matchingPlace);
-    }
-  });
-
-  console.log(chosenPlaces, "chosenplaces");
-
-  // console.log(
-  //   chosenPlaces.length,
-  //   chosenRoom.totalExtraPlacesAmount,
-  //   "chosen places"
-  // );
-
-  sum = chosenPlaces.reduce((acc, place) => {
-    if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
-      // console.log("addExtraFood");
-      return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
-    } else if (addExtraFood !== "true" && !chosenRoom.extraFoodIncluded) {
-      // console.log("!addExtraFood");
-      return acc + place.priceNoFood * daysAmount;
-    } else if (chosenRoom.extraFoodIncluded) {
-      // console.log("extra food already included");
-      return acc + place.priceWithFood * daysAmount;
-    }
-  }, 0);
-
-  extraPlacesSum = chosenPlaces.reduce((acc, place) => {
-    if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
-      // console.log("addExtraFood");
-      return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
-    } else if (addExtraFood !== "true" && !chosenRoom.extraFoodIncluded) {
-      // console.log("!addExtraFood");
-      return acc + place.priceNoFood * daysAmount;
-    } else if (chosenRoom.extraFoodIncluded) {
-      // console.log("extra food already included");
-      return acc + place.priceWithFood * daysAmount;
-    }
-  }, 0);
-
-  async function calculatePrice(start, daysNum, basePrice, pricesArray) {
-    let daysArray = [];
-    const startingDate = new Date(+start);
-
-    for (let i = 0; i < daysNum; i++) {
-      let date = new Date(startingDate.getTime());
-      date.setDate(startingDate.getDate() + i);
-      daysArray.push(date);
-    }
+  async function calculatePrice(start, daysNum, pricesArray) {
+    let daysArray = daysIntoArray(start, daysNum);
 
     const findPriceByDate = (date) => {
       if (pricesArray && pricesArray.length > 0) {
@@ -661,26 +599,13 @@ const getPrice = asyncHandler(async (req, res) => {
     }
   }
 
-  await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
-
-  // res.status(200).json({
-  //   sum: sum * 1.1,
-  //   margeSum: 0.1 * sum,
-  //   extraPlacesSum: extraPlacesSum * 1.1,
-  //   excursionsSum: excursionsSum * 1.1,
-  //   foodSum: foodSum * 1.1,
-  //   roomSum: roomSum * 1.1,
-  //   kidsFoodAmount: kidsFoodAmount,
-  //   adultsFoodAmount: adultsFoodAmount,
-  // });
+  await calculatePrice(start, daysAmount, chosenRoom.periodPrices);
 
   const margePercent = (hotel.marge + 100) / 100;
 
-  console.log(margePercent);
-
   return sum > 0
     ? res.status(200).json({
-        sum: sum * margePercent,
+        sum: margePercent ? Math.round(sum * margePercent) : sum,
         margeSum: (sum * hotel.marge) / 100,
         extraPlacesSum: extraPlacesSum * margePercent,
         excursionsSum: excursionsSum * margePercent,
@@ -706,8 +631,10 @@ const getRoomPrices = (req, res) => {
 // Get rooms with limit
 
 const getRoomsByLimit = async (req, res) => {
-  const { limit, capacity } = req.query;
+  const { limit, capacity, agesArray } = req.query;
   const { hotelId } = req.params;
+
+  const ages = agesArray.split(",").map(Number);
   let roomData = [];
 
   try {
@@ -720,32 +647,60 @@ const getRoomsByLimit = async (req, res) => {
             _id: {
               $in: hotel.rooms,
             },
-            $expr: {
-              $gte: [
-                {
-                  $sum: [
-                    "$capacity",
-                    {
-                      $size: {
-                        $filter: {
-                          input: "$extraPlaces",
-                          as: "extraPlace",
-                          cond: { $ne: ["$$extraPlace.isBabyPlace", true] },
-                        },
-                      },
-                    },
-                  ],
-                },
-                parseInt(capacity),
-              ],
-            },
+            // $expr: {
+            //   $gte: [
+            //     {
+            //       $sum: [
+            //         "$capacity",
+            //         {
+            //           $size: {
+            //             $filter: {
+            //               input: "$extraPlaces",
+            //               as: "extraPlace",
+            //               cond: { $ne: ["$$extraPlace.isBabyPlace", true] },
+            //             },
+            //           },
+            //         },
+            //       ],
+            //     },
+            //     parseInt(capacity),
+            //   ],
+            // },
           },
         },
       ]);
 
-      const realLimit = Math.min(rooms.length, parseInt(limit));
+      let filteredRooms = [];
 
-      const limitedRooms = rooms.slice(0, realLimit);
+      if (ages && rooms && rooms.length > 0 && hotel) {
+        filteredRooms = rooms.filter(
+          (room) =>
+            room.capacity + room.totalExtraPlacesAmount >=
+            removeAges(ages, room.freeBabyPlaces, hotel.kids.babyMaxAge).length
+        );
+      }
+
+      console.log(filteredRooms, "filtered rooms");
+
+      const modifiedRooms = filteredRooms?.map((room) => {
+        console.log(
+          ages.length,
+          removeAges(ages, room.freeBabyPlaces, hotel.kids.babyMaxAge).length,
+          "test"
+        );
+        const usedFreeBabyPlaces =
+          ages.length -
+          removeAges(ages, room.freeBabyPlaces, hotel.kids.babyMaxAge).length;
+        return {
+          ...room,
+          usedFreeBabyPlaces: usedFreeBabyPlaces,
+        };
+      });
+
+      const realLimit = Math.min(modifiedRooms.length, parseInt(limit));
+      console.log(modifiedRooms[0]);
+
+      const limitedRooms = modifiedRooms.slice(0, realLimit);
 
       const response = {
         totalRooms: rooms.length, // Include the total number of rooms in the response
@@ -760,56 +715,6 @@ const getRoomsByLimit = async (req, res) => {
     res.sendStatus(404);
   }
 };
-
-// const getRoomsByLimit = async (req, res) => {
-//   const { limit, capacity } = req.query;
-//   const { hotelId } = req.params;
-//   let roomData = [];
-
-//   try {
-//     const hotel = await Hotel.findOne({ _id: hotelId });
-
-//     try {
-//       const rooms = await Room.aggregate([
-//         {
-//           $match: {
-//             _id: {
-//               $in: hotel.rooms,
-//             },
-//             $expr: {
-//               $gte: [
-//                 {
-//                   $sum: [
-//                     "$capacity",
-//                     {
-//                       $size: {
-//                         $filter: {
-//                           input: "$extraPlaces",
-//                           as: "extraPlace",
-//                           cond: { $ne: ["$$extraPlace.isBabyPlace", true] },
-//                         },
-//                       },
-//                     },
-//                   ],
-//                 },
-//                 parseInt(capacity),
-//               ],
-//             },
-//           },
-//         },
-//         { $limit: parseInt(limit) }, // Add a $limit stage to restrict the number of returned documents
-//       ]);
-
-//       res.status(200).json(rooms);
-//     } catch (error) {
-//       res.status(500).json(error);
-//     }
-//   } catch (err) {
-//     res.sendStatus(404);
-//   }
-// };
-
-// Get recommended hotels
 
 const getByTagRecommendation = async (req, res) => {
   const { food, comforts, hotelServices } = req.body;

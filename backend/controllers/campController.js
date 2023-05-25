@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const { isDateInRange } = require("../dateUtils");
 const Period = require("../models/periodModel");
 const mongoose = require("mongoose");
+const { daysIntoArray } = require("../daysUtils");
 
 //@desc   Get all camps
 //@route  GET /api/camp
@@ -248,14 +249,7 @@ const getPrice = asyncHandler(async (req, res) => {
   }
 
   (function calculatePrice(basePrice) {
-    let daysArray = [];
-    const startingDate = new Date(+start);
-
-    for (let i = 0; i < daysAmount; i++) {
-      let date = new Date(startingDate.getTime());
-      date.setDate(startingDate.getDate() + i);
-      daysArray.push(date);
-    }
+    let daysArray = daysIntoArray(start, daysAmount);
 
     const findPriceByDate = (date) => {
       if (agePrices && agePrices.length > 0) {
@@ -360,14 +354,7 @@ const getSearchedCamps = asyncHandler(async (req, res) => {
     .filter((age) => age === 1000).length;
 
   const calculatePrice = (start, daysNum, pricesArray) => {
-    let daysArray = [];
-    const startingDate = new Date(+start);
-
-    for (let i = 0; i < daysNum; i++) {
-      let date = new Date(startingDate.getTime());
-      date.setDate(startingDate.getDate() + i);
-      daysArray.push(date);
-    }
+    let daysArray = daysIntoArray(start, daysNum);
 
     let sum = 0;
 
@@ -486,9 +473,14 @@ const getSearchedCamps = asyncHandler(async (req, res) => {
       minPrice && maxPrice
         ? newCamps.filter(
             (hotel) =>
-              hotel.totalPrice <= maxPrice && hotel.totalPrice >= minPrice
+              hotel.totalPrice <= maxPrice &&
+              hotel.totalPrice >= minPrice &&
+              hotel.totalPrice &&
+              hotel.totalPrice !== null
           )
-        : newCamps
+        : newCamps.filter(
+            (hotel) => hotel.totalPrice && hotel.totalPrice !== null
+          )
     );
 });
 

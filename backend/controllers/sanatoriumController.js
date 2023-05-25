@@ -7,6 +7,7 @@ const Period = require("../models/periodModel");
 const Food = require("../models/foodModel");
 const Excursion = require("../models/excursionModel");
 const { isDateInRange } = require("../dateUtils");
+const { daysIntoArray } = require("../daysUtils");
 
 const addSanatorium = async (req, res) => {
   const post = await Sanatorium.create(req.body);
@@ -162,6 +163,7 @@ const getPrice = asyncHandler(async (req, res) => {
       model: "Period",
     },
   });
+
   const chosenRoom = hotel.rooms.find((room) => room._id == roomId);
 
   let sum = 0;
@@ -171,72 +173,10 @@ const getPrice = asyncHandler(async (req, res) => {
   let foodSum = 0;
   let chosenPlaces = [];
 
-  // const extraPlacesAmount = ages.length - chosenRoom.capacity;
-
-  // console.log(extraPlacesAmount, "extraPlacesAmount");
-
-  // let placesArray = chosenRoom.extraPlaces;
-
   ages.sort((a, b) => b - a);
 
-  // const accomodatedAges = ages.splice(0, chosenRoom.capacity);
-
-  // console.log(ages, "ages");
-
-  // const notChosen = (place) => !chosenPlaces.some((el) => el._id === place._id);
-
-  // ages.forEach((age) => {
-  //   const matchingPlace = placesArray.find((place) => {
-  //     if (age !== 1000 && notChosen(place)) {
-  //       return true;
-  //     } else if (age === 1000 && !place.isKid && notChosen(place)) {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   });
-  //   if (matchingPlace) {
-  //     chosenPlaces.push(matchingPlace);
-  //   }
-  // });
-
-  // console.log(chosenPlaces);
-
-  // sum = chosenPlaces.reduce((acc, place) => {
-  //   if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
-  //     console.log("addExtraFood");
-  //     return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
-  //   } else if (addExtraFood !== "true" && !chosenRoom.extraFoodIncluded) {
-  //     console.log("!addExtraFood");
-  //     return acc + place.priceNoFood * daysAmount;
-  //   } else if (chosenRoom.extraFoodIncluded) {
-  //     console.log("extra food already included");
-  //     return acc + place.priceWithFood * daysAmount;
-  //   }
-  // }, 0);
-
-  // extraPlacesSum = chosenPlaces.reduce((acc, place) => {
-  //   if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
-  //     console.log("addExtraFood");
-  //     return acc + (place.priceNoFood + place.foodPrice) * daysAmount;
-  //   } else if (addExtraFood !== "true" && !chosenRoom.extraFoodIncluded) {
-  //     console.log("!addExtraFood");
-  //     return acc + place.priceNoFood * daysAmount;
-  //   } else if (chosenRoom.extraFoodIncluded) {
-  //     console.log("extra food already included");
-  //     return acc + place.priceWithFood * daysAmount;
-  //   }
-  // }, 0);
-
   async function calculatePrice(start, daysNum, basePrice, pricesArray) {
-    let daysArray = [];
-    const startingDate = new Date(+start);
-
-    for (let i = 0; i < daysNum; i++) {
-      let date = new Date(startingDate.getTime());
-      date.setDate(startingDate.getDate() + i);
-      daysArray.push(date);
-    }
+    let daysArray = daysIntoArray(start, daysNum);
 
     const findPriceByDate = (date) => {
       if (pricesArray && pricesArray.length > 0) {
@@ -408,14 +348,7 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
   const peopleAmount = agesArray.length;
 
   const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
-    let daysArray = [];
-    const startingDate = new Date(+start);
-
-    for (let i = 0; i < daysNum; i++) {
-      let date = new Date(startingDate.getTime());
-      date.setDate(startingDate.getDate() + i);
-      daysArray.push(date);
-    }
+    let daysArray = daysIntoArray(start, daysNum);
 
     let sum = 0;
 
