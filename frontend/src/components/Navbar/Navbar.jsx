@@ -19,6 +19,7 @@ import menu from "../../assets/menu.svg";
 
 import "./Navbar.scss";
 import SearchPanel from "../SearchPanel/SearchPanel";
+import { API_URL_PROXY } from "../../config/config";
 
 const Navbar = ({ isSearch }) => {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const Navbar = ({ isSearch }) => {
 
   const handleSendPhone = () => {
     axios
-      .post("/api/send-phone-email", { phone: phone })
+      .post(`${API_URL_PROXY}/send-phone-email`, { phone: phone })
       .then((response) => {
         console.log(response);
       })
