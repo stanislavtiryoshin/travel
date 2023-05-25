@@ -684,21 +684,31 @@ const getRoomsByLimit = async (req, res) => {
 
       const modifiedRooms = filteredRooms?.map((room) => {
         console.log(
-          ages.length,
           removeAges(ages, room.freeBabyPlaces, hotel.kids.babyMaxAge).length,
+          room.capacity,
           "test"
         );
         const usedFreeBabyPlaces =
           ages.length -
           removeAges(ages, room.freeBabyPlaces, hotel.kids.babyMaxAge).length;
+        const usedExtraPlaces =
+          removeAges(ages, room.freeBabyPlaces, hotel.kids.babyMaxAge).length -
+            room.capacity >
+          0
+            ? null
+            : (removeAges(ages, room.freeBabyPlaces, hotel.kids.babyMaxAge)
+                .length -
+                room.capacity) *
+              -1;
         return {
           ...room,
           usedFreeBabyPlaces: usedFreeBabyPlaces,
+          usedExtraPlaces,
         };
       });
 
       const realLimit = Math.min(modifiedRooms.length, parseInt(limit));
-      console.log(modifiedRooms[0]);
+      console.log(modifiedRooms.map((el) => el.usedExtraPlaces));
 
       const limitedRooms = modifiedRooms.slice(0, realLimit);
 
