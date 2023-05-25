@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_URL_PROXY } from "../../config/config";
 
-const API_URL = "/api/locations/";
+const API_URL = `${API_URL_PROXY}/locations/`;
 
 // Get location
 const getLocations = async (locationId) => {

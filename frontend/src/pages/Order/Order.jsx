@@ -18,6 +18,7 @@ import "./Order.scss";
 import { useNavigate } from "react-router-dom";
 import { getSingleRoom } from "../../features/room/roomSlice";
 import ShortUniqueId from "short-unique-id";
+import { API_URL_PROXY } from "../../config/config";
 
 const Order = () => {
   const dispatch = useDispatch();
@@ -107,7 +108,7 @@ const Order = () => {
   const handleSendOrderEmail = () => {
     if (orderTerms) {
       axios
-        .post("/api/send-order-email", {
+        .post(`${API_URL_PROXY}/send-order-email`, {
           phone: orderTerms.clientPhone,
           email: orderTerms.clientEmail,
           name: orderTerms.clientName,
@@ -130,7 +131,7 @@ const Order = () => {
   const handleSendClientEmail = () => {
     if (orderTerms.clientName && orderTerms.clientEmail) {
       axios
-        .post("/api/send-client-email", {
+        .post(`${API_URL_PROXY}/send-client-email`, {
           email: orderTerms.clientEmail,
           name: orderTerms.clientName,
         })

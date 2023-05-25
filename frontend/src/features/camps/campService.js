@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_URL_PROXY } from "../../config/config";
 
-const API_URL = "/api/camps/";
+const API_URL = `${API_URL_PROXY}/camps/`;
 
 // Get all camps
 
