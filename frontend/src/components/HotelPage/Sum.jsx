@@ -18,20 +18,21 @@ const Sum = ({
   campMode,
   priceError,
   priceHasError,
+  mode,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const formatter = Intl.NumberFormat("ru-RU");
-  const handleOrder = (e) => {
-    e.preventDefault();
-    const values = {
-      ...orderTerms,
-      room: clientRoom?._id,
-    };
-    dispatch(addOrder(values));
-    navigate("/orders/new-order");
-    console.log(values);
-  };
+  // const handleOrder = (e) => {
+  //   e.preventDefault();
+  //   const values = {
+  //     ...orderTerms,
+  //     room: clientRoom?._id,
+  //   };
+  //   dispatch(addOrder(values));
+  //   navigate("/orders/new-order");
+  //   console.log(values);
+  // };
   return (
     <div className="hotel_side-top shadowed_box">
       <div className="hotel_side-title">Бронирование</div>
@@ -50,7 +51,7 @@ const Sum = ({
           <div>
             {!priceError?.data?.error ? (
               <>
-                {!campMode && clientRoom?._id ? (
+                {mode !== "camp" && clientRoom?._id ? (
                   <>
                     {price?.roomSum ? (
                       <div className="hotel_side-checksum">
@@ -161,7 +162,7 @@ const Sum = ({
                   </>
                 ) : null}
 
-                {campMode ? (
+                {mode === "camp" ? (
                   <>
                     <>
                       <div className="hotel_side-checksum">
@@ -211,9 +212,9 @@ const Sum = ({
       </div>
 
       <Link
-        to="/orders/new-order"
+        to={`/orders/new-order/${mode}`}
         className="primary-btn yellow"
-        onClick={handleOrder}
+        // onClick={handleOrder}
       >
         Оставить заявку
       </Link>

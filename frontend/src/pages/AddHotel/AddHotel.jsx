@@ -26,6 +26,7 @@ import { API_URL_PROXY } from "../../config/config";
 import hotelmain from "../../assets/hotel/hotelmain.png";
 import secondary from "../../assets/camp/campsecondary.png";
 import dateConfig from "../../components/DataConfig";
+import { useGetServicesQuery } from "../../features/services/base.service";
 const AddHotel = ({
   fetchedHotelData,
   editMode,
@@ -107,7 +108,7 @@ const AddHotel = ({
 
   const [allLocations, setAllLocations] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
-  const [allServices, setAllServices] = useState([]);
+  // const [allServices, setAllServices] = useState([]);
   const [allFoods, setAllFoods] = useState([]);
 
   const [servicesObjs, setServicesObjs] = useState([]);
@@ -116,9 +117,12 @@ const AddHotel = ({
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const { data: allServices, isLoading: servicesIsLoading } =
+    useGetServicesQuery();
+
   useEffect(() => {
     let services = [];
-    allServices.map((serv, idx) => {
+    allServices?.map((serv, idx) => {
       services.push({
         value: serv.hotelServiceName,
         label: serv.hotelServiceName,
@@ -148,14 +152,14 @@ const AddHotel = ({
       .catch((error) => {
         console.log(error);
       });
-    axios
-      .get(`${API_URL_PROXY}/hotelServices`)
-      .then((response) => {
-        setAllServices(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // axios
+    //   .get(`${API_URL_PROXY}/hotelServices`)
+    //   .then((response) => {
+    //     setAllServices(response.data);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
     axios
       .get(`${API_URL_PROXY}/foods`)
       .then((response) => {

@@ -94,7 +94,7 @@ const Filter = ({ mode, dashMode }) => {
     }
   }, [mode, hotels, sanatoriums, tours, camps]);
 
-  console.log(maxPrice, minPrice, "max min");
+  // console.log(maxPrice, minPrice, "max min");
 
   const { searchData } = useSelector((state) => state.search);
 
@@ -268,7 +268,7 @@ const Filter = ({ mode, dashMode }) => {
     dashMode ? filterFunction(updatedSearchData) : filterFunction(searchData);
   }
 
-  console.log(dashMode ? "dash mode" : "no dash mode");
+  // console.log(dashMode ? "dash mode" : "no dash mode");
 
   const handleFoodFilter = (foodId) => {
     if (searchData.filterFood.some((el) => el === foodId)) {
@@ -326,7 +326,7 @@ const Filter = ({ mode, dashMode }) => {
     }
   };
 
-  console.log(startTime, endTime, "search time");
+  // console.log(startTime, endTime, "search time");
 
   return (
     <div className="filter_box">

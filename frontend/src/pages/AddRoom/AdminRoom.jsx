@@ -7,15 +7,20 @@ import { getSingleRoom } from "../../features/room/roomSlice";
 import AddRoom from "./AddRoom";
 
 import { useUploadImageMutation } from "../../features/services/upload.service";
+import HotelLoader from "../../components/Loader/HotelLoader";
 
 const AdminRoom = () => {
   const [uploadImage] = useUploadImageMutation();
   const { roomId } = useParams();
   const dispatch = useDispatch();
 
-  const { singleRoom, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.rooms
-  );
+  const {
+    singleRoom,
+    isLoading: roomIsLoading,
+    isSuccess,
+    isError,
+    message,
+  } = useSelector((state) => state.rooms);
 
   useEffect(() => {
     dispatch(getSingleRoom(roomId));

@@ -9,9 +9,28 @@ const removeAges = (agesArray, babyExtraPlacesAmount, babyMaxAge) => {
   // Remove the youngest ages based on the babyExtraPlacesAmount
   let updatedAgesArray = sortedAges;
 
-  if (sortedAges[0] <= babyMaxAge) {
-    updatedAgesArray = sortedAges.slice(babyExtraPlacesAmount);
+  function updateAgesArray(ages, babyMaxAge, babyExtraPlacesAmount) {
+    const updatedAges = [];
+    let removedCount = 0;
+
+    for (let i = 0; i < ages.length; i++) {
+      const age = ages[i];
+
+      if (age < babyMaxAge && removedCount < babyExtraPlacesAmount) {
+        removedCount++;
+      } else {
+        updatedAges.push(age);
+      }
+    }
+
+    return updatedAges;
   }
+
+  updatedAgesArray = updateAgesArray(
+    updatedAgesArray,
+    babyMaxAge,
+    babyExtraPlacesAmount
+  );
 
   return updatedAgesArray;
 };

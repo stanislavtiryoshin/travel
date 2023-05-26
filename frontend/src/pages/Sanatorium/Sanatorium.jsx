@@ -458,6 +458,7 @@ const Sanatorium = () => {
                   clientRoom={clientRoom}
                   priceIsLoading={priceIsLoading}
                   orderTerms={orderTerms}
+                  mode="sanatorium"
                 />
 
                 {singleSanatorium?.locationId?._id ? (

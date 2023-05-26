@@ -435,80 +435,6 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 />
               </div>
             </div>
-            {/* <div className="input_row">
-              <div className="service-input">
-                <select
-                  name="roomsNumber"
-                  className="primary-input"
-                  placeholder="Макс. кол-во взрослых"
-                  value={roomData?.people?.adultMax}
-                  onChange={(e) =>
-                    setRoomData({
-                      ...roomData,
-                      people: {
-                        ...roomData.people,
-                        adultMax: e.target.value,
-                      },
-                    })
-                  }
-                >
-                  <option selected disabled value="">
-                    Макс. кол-во взрослых
-                  </option>
-                  <option value={3}>3</option>
-                  <option value={2}>2</option>
-                  <option value={1}>1</option>
-                </select>
-              </div>
-              <div className="service-input">
-                <select
-                  name="roomsNumber"
-                  className="primary-input"
-                  placeholder="Макс. кол-во взрослых"
-                  value={roomData?.people?.babyMax}
-                  onChange={(e) =>
-                    setRoomData({
-                      ...roomData,
-                      people: {
-                        ...roomData.people,
-                        babyMax: e.target.value,
-                      },
-                    })
-                  }
-                >
-                  <option selected disabled value="">
-                    Макс. кол-во младенцев
-                  </option>
-                  <option value={3}>3</option>
-                  <option value={2}>2</option>
-                  <option value={1}>1</option>
-                </select>
-              </div>
-              <div className="service-input">
-                <select
-                  name="roomsNumber"
-                  className="primary-input"
-                  placeholder="Макс. кол-во взрослых"
-                  value={roomData?.people?.kidsMax}
-                  onChange={(e) =>
-                    setRoomData({
-                      ...roomData,
-                      people: {
-                        ...roomData.people,
-                        kidsMax: e.target.value,
-                      },
-                    })
-                  }
-                >
-                  <option selected disabled value="">
-                    Макс. кол-во детей
-                  </option>
-                  <option value={3}>3</option>
-                  <option value={2}>2</option>
-                  <option value={1}>1</option>
-                </select>
-              </div>
-            </div> */}
             <div className="input_row">
               <div className="service-input">
                 <div className="service-title">Дополнительные места</div>
@@ -948,3 +874,80 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
 };
 
 export default AddRoom;
+
+{
+  /* <div className="input_row">
+              <div className="service-input">
+                <select
+                  name="roomsNumber"
+                  className="primary-input"
+                  placeholder="Макс. кол-во взрослых"
+                  value={roomData?.people?.adultMax}
+                  onChange={(e) =>
+                    setRoomData({
+                      ...roomData,
+                      people: {
+                        ...roomData.people,
+                        adultMax: e.target.value,
+                      },
+                    })
+                  }
+                >
+                  <option selected disabled value="">
+                    Макс. кол-во взрослых
+                  </option>
+                  <option value={3}>3</option>
+                  <option value={2}>2</option>
+                  <option value={1}>1</option>
+                </select>
+              </div>
+              <div className="service-input">
+                <select
+                  name="roomsNumber"
+                  className="primary-input"
+                  placeholder="Макс. кол-во взрослых"
+                  value={roomData?.people?.babyMax}
+                  onChange={(e) =>
+                    setRoomData({
+                      ...roomData,
+                      people: {
+                        ...roomData.people,
+                        babyMax: e.target.value,
+                      },
+                    })
+                  }
+                >
+                  <option selected disabled value="">
+                    Макс. кол-во младенцев
+                  </option>
+                  <option value={3}>3</option>
+                  <option value={2}>2</option>
+                  <option value={1}>1</option>
+                </select>
+              </div>
+              <div className="service-input">
+                <select
+                  name="roomsNumber"
+                  className="primary-input"
+                  placeholder="Макс. кол-во взрослых"
+                  value={roomData?.people?.kidsMax}
+                  onChange={(e) =>
+                    setRoomData({
+                      ...roomData,
+                      people: {
+                        ...roomData.people,
+                        kidsMax: e.target.value,
+                      },
+                    })
+                  }
+                >
+                  <option selected disabled value="">
+                    Макс. кол-во детей
+                  </option>
+                  <option value={3}>3</option>
+                  <option value={2}>2</option>
+                  <option value={1}>1</option>
+                </select>
+              </div>
+            </div> */
+}

@@ -85,15 +85,20 @@ export const roomSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getSingleRoom.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.singleRoom = action.payload;
+      })
       .addCase(addRoom.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.rooms.push(action.payload);
       })
-      .addCase(getSingleRoom.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.singleRoom = action.payload;
+
+      .addCase(getSingleRoom.pending, (state, action) => {
+        state.isLoading = true;
+        state.isSuccess = false;
       });
   },
 });

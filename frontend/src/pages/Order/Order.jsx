@@ -15,12 +15,13 @@ import check from "../../assets/check.svg";
 import { PatternFormat } from "react-number-format";
 
 import "./Order.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getSingleRoom } from "../../features/room/roomSlice";
 import ShortUniqueId from "short-unique-id";
 import { API_URL_PROXY } from "../../config/config";
 
 const Order = () => {
+  const { resort } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const uid = new ShortUniqueId({
@@ -29,6 +30,7 @@ const Order = () => {
   });
   const [orderTerms, setOrderTerms] = useState({
     uid: uid(),
+    mode: resort,
     peopleAmount: 1,
     daysAmount: 1,
     startDate: null,
@@ -57,6 +59,7 @@ const Order = () => {
   useEffect(() => {
     setClientData({
       ...clientData,
+      mode: resort,
       startDate: window.localStorage.getItem("start"),
       endDate: window.localStorage.getItem("end"),
       peopleAmount: window.localStorage.getItem("peopleAmount"),
@@ -73,6 +76,7 @@ const Order = () => {
   useEffect(() => {
     setOrderTerms({
       ...orderTerms,
+      mode: resort,
       peopleAmount: +clientData.peopleAmount,
       daysAmount: +clientData.daysAmount,
       excursions: clientData.excursions,
@@ -266,7 +270,6 @@ const Order = () => {
                         format="+7 (###) ### ## ##"
                         allowEmptyFormatting={false}
                         mask="."
-                        required
                         onChange={(e) =>
                           setOrderTerms({
                             ...orderTerms,

@@ -147,7 +147,7 @@ const DesktopRoute = () => {
 
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/orders/new-order" element={<Order />} />
+          <Route path="/orders/new-order/:resort" element={<Order />} />
 
           <Route path="/dashboard/managers" element={<Manager />} />
           <Route path="/test" element={<Test />} />

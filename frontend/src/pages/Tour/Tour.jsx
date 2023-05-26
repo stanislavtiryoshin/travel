@@ -485,6 +485,7 @@ const Tour = () => {
                 <Sum
                   priceIsLoading={isFetching}
                   price={price && price}
+                  mode="tour"
                   clientRoom={
                     singleTour &&
                     singleTour?.hotels &&

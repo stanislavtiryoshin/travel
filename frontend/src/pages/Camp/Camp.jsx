@@ -458,7 +458,7 @@ const Camp = () => {
                   priceData={priceData}
                   priceIsLoading={priceIsFetching}
                   orderTerms={orderTerms}
-                  campMode
+                  mode="camp"
                 />
 
                 {singleCamp?.locationId?.locationDescription ? (

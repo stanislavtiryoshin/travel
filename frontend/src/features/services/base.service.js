@@ -44,6 +44,18 @@ export const baseApi = createApi({
             ]
           : [{ type: "location", id: "LIST" }],
     }),
+    getServices: builder.query({
+      query: () => ({
+        url: "/hotelServices",
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: "hotelServices", _id })),
+              { type: "location", id: "LIST" },
+            ]
+          : [{ type: "location", id: "LIST" }],
+    }),
     getProgram: builder.query({
       query: () => ({
         url: "/programs",
@@ -253,6 +265,7 @@ export const {
   useGetHotelServiceQuery,
   useAddTourMutation,
   useAddCampMutation,
+  useGetServicesQuery,
   //Get
   useGetCampQuery,
   useGetTourQuery,

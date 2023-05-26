@@ -17,6 +17,7 @@ import Excursions from "../../components/Excursions/Excursions";
 import {
   useGetHotelsByTagMutation,
   useGetRoomByHotelIdLimitQuery,
+  useGetServicesQuery,
 } from "../../features/services/base.service";
 import GalleryBox from "../../components/Slider/GalleryBox";
 import Recommendation from "../../components/Recommendation/Recommendation";
@@ -55,6 +56,8 @@ const Hotel = () => {
 
   const { searchData } = useSelector((state) => state.search);
 
+  const { data: allServices, isLoading: servicesIsLoading } =
+    useGetServicesQuery();
   const { data: roomsData, isLoading: roomIsLoading } =
     useGetRoomByHotelIdLimitQuery({
       hotelId,
@@ -437,6 +440,7 @@ const Hotel = () => {
                   orderTerms={orderTerms}
                   priceError={priceError}
                   priceHasError={priceHasError}
+                  mode="hotel"
                 />
 
                 {singleHotel?.locationId?._id ? (

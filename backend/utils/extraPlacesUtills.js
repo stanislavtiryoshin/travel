@@ -26,6 +26,8 @@ function calculateExtraPlaces(
     }
   });
 
+  // console.log(chosenPlaces, "chosenPlaces");
+
   extraPlacesSum = chosenPlaces.reduce((acc, place) => {
     if (addExtraFood !== "false" && !chosenRoom.extraFoodIncluded) {
       return acc + (place.priceNoFood + place.foodPrice) * daysAmount;

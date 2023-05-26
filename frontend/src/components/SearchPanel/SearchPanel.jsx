@@ -29,6 +29,7 @@ import { API_URL_PROXY } from "../../config/config";
 
 import { useGetLocationQuery } from "../../features/services/base.service";
 import DateSelect from "./DateSelect";
+import CitySelect from "./CitySelect";
 
 const SearchPanel = ({ isUserLook, style }) => {
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ const SearchPanel = ({ isUserLook, style }) => {
 
   // Importing all locations for location select
   const { data: allLocations = [], isLoading } = useGetLocationQuery();
+  console.log(allLocations, "locs");
 
   // Importing searchData from searchSlice
   const { searchData } = useSelector((state) => state.search);
@@ -46,10 +48,6 @@ const SearchPanel = ({ isUserLook, style }) => {
   useEffect(() => {
     dispatch(setSearchData({ ...searchData, agesArray: agesArray }));
   }, [agesArray]);
-
-  // remove
-
-  console.log(searchData, "searchdata");
 
   // Search functionality
   const [searchHotels, { isLoading: hotelsIsLoading }] =
@@ -152,33 +150,12 @@ const SearchPanel = ({ isUserLook, style }) => {
       <div className={`search_bot ${isUserLook ? "min" : ""}`}>
         {!isUserLook ? (
           <>
-            {/* <div className="search_col">
-              <img src={search1} alt="" className="search_bot-icon" />
-              <div className="search_col-content">
-                <div className="search_col-top">Откуда?</div>
-                <div className="search_col-bot">
-                  <input
-                    type="text"
-                    placeholder="Астана"
-                    name="origin"
-                    value={searchTerms.origin}
-                    onChange={(e) => {
-                      setSearchTerms({
-                        ...searchTerms,
-                        origin: e.target.value,
-                      });
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-            <img src={line} className="line" alt="" /> */}
             <div className="search_col">
               <img src={search2} alt="" className="search_bot-icon" />
               <div className="search_col-content">
                 <div className="search_col-top">Куда?</div>
                 <div className="search_col-bot">
-                  <select
+                  {/* <select
                     type="text"
                     placeholder="Астана"
                     name="destination"
@@ -213,7 +190,8 @@ const SearchPanel = ({ isUserLook, style }) => {
                     ) : (
                       <p>Locations are loading</p>
                     )}
-                  </select>
+                  </select> */}
+                  <CitySelect />
                 </div>
               </div>
             </div>
@@ -239,3 +217,27 @@ const SearchPanel = ({ isUserLook, style }) => {
 };
 
 export default SearchPanel;
+
+{
+  /* <div className="search_col">
+              <img src={search1} alt="" className="search_bot-icon" />
+              <div className="search_col-content">
+                <div className="search_col-top">Откуда?</div>
+                <div className="search_col-bot">
+                  <input
+                    type="text"
+                    placeholder="Астана"
+                    name="origin"
+                    value={searchTerms.origin}
+                    onChange={(e) => {
+                      setSearchTerms({
+                        ...searchTerms,
+                        origin: e.target.value,
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+            <img src={line} className="line" alt="" /> */
+}

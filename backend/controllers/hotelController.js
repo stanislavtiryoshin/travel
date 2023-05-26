@@ -479,10 +479,22 @@ const getPrice = asyncHandler(async (req, res) => {
   let excursionsSum = 0;
   let foodSum = 0;
 
+  console.log(ages, "ages begore baby termination");
+
   // Remove babies which will be appointed to a free extra place
   ages = removeAges(ages, chosenRoom.freeBabyPlaces, hotel.kids.babyMaxAge);
 
-  // console.log(ages, "ages 2");
+  // console.log(
+  //   ages,
+  //   chosenRoom.freeBabyPlaces,
+  //   hotel.kids.babyMaxAge,
+  //   "remove ages args"
+  // );
+
+  console.log(ages, "ages 2");
+  console.log(
+    "................................................................"
+  );
 
   let placesArray = chosenRoom.extraPlaces;
 
@@ -497,7 +509,7 @@ const getPrice = asyncHandler(async (req, res) => {
   // [1000, 1000, 15, 4,...]
   const accomodatedAges = ages.splice(0, chosenRoom.capacity);
 
-  // console.log(accomodatedAges, "accomodated ages");
+  console.log(accomodatedAges, "accomodated ages");
   // console.log(ages, "after accomdo");
 
   sum = calculateExtraPlaces(
@@ -688,18 +700,19 @@ const getRoomsByLimit = async (req, res) => {
           room.capacity,
           "test"
         );
+
         const usedFreeBabyPlaces =
           ages.length -
           removeAges(ages, room.freeBabyPlaces, hotel.kids.babyMaxAge).length;
+
         const usedExtraPlaces =
           removeAges(ages, room.freeBabyPlaces, hotel.kids.babyMaxAge).length -
-            room.capacity >
+            room.capacity <
           0
             ? null
-            : (removeAges(ages, room.freeBabyPlaces, hotel.kids.babyMaxAge)
-                .length -
-                room.capacity) *
-              -1;
+            : removeAges(ages, room.freeBabyPlaces, hotel.kids.babyMaxAge)
+                .length - room.capacity;
+
         return {
           ...room,
           usedFreeBabyPlaces: usedFreeBabyPlaces,

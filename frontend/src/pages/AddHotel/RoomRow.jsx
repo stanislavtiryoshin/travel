@@ -55,6 +55,7 @@ const RoomRow = ({
                       periodPrices: newPeriodPrices,
                     })
                   );
+                  setIsChanged(false);
                 }}
               >
                 <svg
