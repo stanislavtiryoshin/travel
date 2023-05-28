@@ -261,7 +261,17 @@ const Hotel = () => {
               <div className="hotel_main_wrapper wrapper ver">
                 <div className="hotel_page_top shadowed_box">
                   <div className="hotel_img-box">
-                    {sources ? <GalleryBox sources={sources} /> : null}
+                    {sources ? (
+                      <GalleryBox
+                        sources={
+                          sources.length > 0
+                            ? sources
+                            : [
+                                "https://eiti.org/sites/default/files/styles/full_height_hero_desktop/public/2022-03/Kazakhstan_shutterstock_1082921567.jpg?itok=sH5wVCih",
+                              ]
+                        }
+                      />
+                    ) : null}
                   </div>
                   <div className="top_content">
                     <div className="top_heading-row row">
