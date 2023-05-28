@@ -46,7 +46,6 @@ const DashRoom = ({ room }) => {
             </Link> */}
             <Link
               to={`/dashboard/room/${room._id}`}
-              target={"_blank"}
               className="bottom-btn grey"
             >
               Редактировать

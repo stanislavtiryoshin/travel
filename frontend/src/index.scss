@@ -135,6 +135,21 @@ button {
   cursor: pointer;
   transition: 0.2s;
 
+  &.disabled {
+    opacity: 1;
+    background-color: $light-gray;
+    border-color: transparent;
+    color: #fff;
+    cursor: default;
+    &:hover {
+      opacity: 1;
+      background-color: $light-gray;
+      border-color: transparent;
+      color: #fff;
+      cursor: default;
+    }
+  }
+
   &:hover {
     background-color: #fff;
     color: $base-green;

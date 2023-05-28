@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { updateRoom } from "../../features/room/roomSlice";
 import { Link } from "react-router-dom";
 import { updateAgePriceById } from "../../features/camps/campSlice";
+import RowInput from "../../components/HotelPage/RowInput";
 
 const CampRow = ({ age, campId }) => {
   const dispatch = useDispatch();
@@ -58,8 +59,7 @@ const CampRow = ({ age, campId }) => {
           newPeriodPrices?.map((period, idx) => {
             return (
               <td key={period._id} style={{}}>
-                <input
-                  type="number"
+                <RowInput
                   value={period.campPrice}
                   onChange={(e) => {
                     const newPrice = e.target.value;

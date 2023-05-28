@@ -33,6 +33,7 @@ import { ExpandableText } from "../../components/HotelPage/ExpandableText";
 import Sum from "../../components/HotelPage/Sum";
 import TopTags from "../../components/HotelPage/TopTags";
 import Food from "../../components/HotelPage/Food";
+import EmptyHolder from "../../components/HotelPage/EmptyHolder";
 
 const Hotel = () => {
   const dispatch = useDispatch();
@@ -58,14 +59,12 @@ const Hotel = () => {
 
   const { data: allServices, isLoading: servicesIsLoading } =
     useGetServicesQuery();
+
   const { data: roomsData, isLoading: roomIsLoading } =
     useGetRoomByHotelIdLimitQuery({
       hotelId,
       limit: roomCount,
       agesArray: searchData.agesArray,
-      // capacity: localStorage.getItem("agesArray")
-      //   ? JSON.parse(localStorage.getItem("agesArray")).length
-      //   : null,
     });
 
   const [
@@ -138,12 +137,15 @@ const Hotel = () => {
   const { clientExcursions, clientRoom } = useSelector((state) => state.client);
 
   console.log(clientRoom?.roomName, "client room");
+  console.log(roomsData);
 
-  // useEffect(() => {
-  //   if (roomsData) {
-  //     dispatch(addClientRoom(roomsData[0]));
-  //   }
-  // }, [roomsData]);
+  useEffect(() => {
+    if (
+      roomsData?.rooms?.length > 0 &&
+      roomsData?.rooms?.some((room) => room._id !== clientRoom?._id)
+    )
+      dispatch(addClientRoom({}));
+  }, [roomsData]);
 
   const [priceData, setPriceData] = useState({
     addRoomFood: false,
@@ -324,7 +326,7 @@ const Hotel = () => {
                               здесь.
                             </a>
                           </div>
-                          <div
+                          {/* <div
                             className="body_title-text"
                             style={{ marginTop: "8px" }}
                           >
@@ -334,7 +336,7 @@ const Hotel = () => {
                             </font>{" "}
                             <br />В каждом номере есть ограничение по размещению
                             младенцев.
-                          </div>
+                          </div> */}
                         </div>
                         <Room
                           key={clientRoom?._id}
@@ -377,10 +379,12 @@ const Hotel = () => {
                     <div className="desc-row">{singleHotel?.description}</div>
                   </div>
                   <img src={divider} alt="" />
-                  {singleHotel?.hotelServices ? (
-                    <Services hotelServices={singleHotel?.hotelServices} />
+                  {singleHotel?.hotelServices.length > 0 ? (
+                    <>
+                      <Services hotelServices={singleHotel?.hotelServices} />
+                      <img src={divider} alt="" />
+                    </>
                   ) : null}
-                  <img src={divider} alt="" />
                   {singleHotel?.food?.label !== "Без питания" ? (
                     <>
                       <Food
@@ -423,7 +427,7 @@ const Hotel = () => {
                   </div>
 
                   {roomsData.rooms.length === 0 ? (
-                    <div>В данном отеле нет подходящих комнат</div>
+                    <EmptyHolder text="В данном отеле нет подходящих комнат" />
                   ) : (
                     <>
                       {roomCount < roomsData.totalRooms && (

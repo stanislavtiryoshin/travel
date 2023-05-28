@@ -176,7 +176,11 @@ const EditCamp = () => {
 
   return (
     <>
-      <AdminHead text="Создание лагеря" onClick={() => handleSubmit()} />
+      <AdminHead
+        text="Редактирование лагеря"
+        onClick={() => handleSubmit()}
+        headBack={() => navigate("/dashboard/camps")}
+      />
       <div className="add_hotel-page page">
         <Section
           section={"add_gen-section"}
@@ -527,20 +531,25 @@ const EditCamp = () => {
             style={style}
           />
         </Section>{" "}
-        <Periods
-          periods={periods}
-          setPeriods={setPeriods}
-          hotelId={campData?._id}
-          mode="camp"
-          refetch={refetchCamp}
-        />
+        {periods && periods?.length > 0 ? (
+          <Periods
+            periods={periods}
+            setPeriods={setPeriods}
+            hotelId={campData?._id}
+            mode="camp"
+            refetch={refetchCamp}
+          />
+        ) : null}
         <Ages
           ages={ages}
           setAges={setAges}
           campId={campData?._id}
           refetch={refetchCamp}
         />
-        {campData && campData?.agePrices ? (
+        {campData &&
+        campData?.agePrices &&
+        periods?.length > 0 &&
+        ages?.length > 0 ? (
           <CampTable
             periods={periods}
             campId={campData?._id}

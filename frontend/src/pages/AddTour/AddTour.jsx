@@ -262,6 +262,7 @@ const AddTour = () => {
                     <select
                       className="primary-input"
                       type="number"
+                      onWheel={(e) => e.target.blur()}
                       placeholder="Продолжительность тура"
                       onChange={(e) =>
                         setTourData({ ...tourData, duration: e.target.value })

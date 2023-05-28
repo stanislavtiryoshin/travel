@@ -41,4 +41,34 @@ function calculateExtraPlaces(
   return extraPlacesSum > 0 ? extraPlacesSum : 0;
 }
 
-module.exports = { calculateExtraPlaces };
+const checkExtraPlaces = (agesAfterAccomodation, extraPlacesArray) => {
+  let chosenPlaces = [];
+  let extraPlacesSum = 0;
+
+  const notChosen = (place) => {
+    return (
+      chosenPlaces.filter((el) => el._id === place._id).length < place.maxAmount
+    );
+  };
+
+  agesAfterAccomodation.forEach((age) => {
+    const matchingPlace = extraPlacesArray.find((place) => {
+      if (age <= place.maxAge && age >= place.minAge && notChosen(place)) {
+        return true;
+      }
+    });
+    if (matchingPlace) {
+      chosenPlaces.push(matchingPlace);
+    }
+  });
+
+  console.log(
+    chosenPlaces.length,
+    agesAfterAccomodation.length,
+    "chosen places"
+  );
+
+  return chosenPlaces.length < agesAfterAccomodation.length;
+};
+
+module.exports = { calculateExtraPlaces, checkExtraPlaces };

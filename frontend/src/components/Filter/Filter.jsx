@@ -40,6 +40,7 @@ const Filter = ({ mode, dashMode }) => {
   useEffect(() => {
     setValue([minPrice, maxPrice]);
   }, [minPrice, maxPrice]);
+  console.log(minPrice, maxPrice, "value");
 
   useEffect(() => {
     switch (mode) {
@@ -177,8 +178,8 @@ const Filter = ({ mode, dashMode }) => {
             })
           : applyTourFilter({
               ...searchData,
-              minPrice: minPrice !== maxPrice ? minPrice : "",
-              maxPrice: maxPrice !== minPrice ? maxPrice : "",
+              minPrice: value[0] !== value[1] ? value[0] : "",
+              maxPrice: value[1] !== value[0] ? value[1] : "",
             });
         break;
       case "hotel":
@@ -191,8 +192,8 @@ const Filter = ({ mode, dashMode }) => {
             })
           : applyHotelFilter({
               ...searchData,
-              minPrice: minPrice !== maxPrice ? minPrice : "",
-              maxPrice: maxPrice !== minPrice ? maxPrice : "",
+              minPrice: value[0] !== value[1] ? value[0] : "",
+              maxPrice: value[1] !== value[0] ? value[1] : "",
             });
         break;
       case "sanatorium":
@@ -205,8 +206,8 @@ const Filter = ({ mode, dashMode }) => {
             })
           : applySanatoriumFilter({
               ...searchData,
-              minPrice: minPrice !== maxPrice ? minPrice : "",
-              maxPrice: maxPrice !== minPrice ? maxPrice : "",
+              minPrice: value[0] !== value[1] ? value[0] : "",
+              maxPrice: value[1] !== value[0] ? value[1] : "",
             });
         break;
       case "camp":
@@ -219,8 +220,8 @@ const Filter = ({ mode, dashMode }) => {
             })
           : applyCampFilter({
               ...searchData,
-              minPrice: minPrice !== maxPrice ? minPrice : "",
-              maxPrice: maxPrice !== minPrice ? maxPrice : "",
+              minPrice: value[0] !== value[1] ? value[0] : "",
+              maxPrice: value[1] !== value[0] ? value[1] : "",
             });
         break;
     }

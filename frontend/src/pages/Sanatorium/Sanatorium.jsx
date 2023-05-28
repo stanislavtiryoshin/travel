@@ -44,11 +44,9 @@ const Sanatorium = () => {
   const navigate = useNavigate();
 
   const { sanatoriumId } = useParams();
-  console.log(sanatoriumId, "san id");
   const { singleSanatorium, isLoading, isSuccess, isError, message } =
     useSelector((state) => state.sanatoriums);
-
-  console.log(singleSanatorium, "singleSanatorium");
+  const { searchData } = useSelector((state) => state.search);
   const [sources, setSources] = useState([]);
 
   useEffect(() => {
@@ -65,10 +63,11 @@ const Sanatorium = () => {
     useGetRoomBySanatoriumIdLimitQuery({
       sanatoriumId,
       limit: roomCount,
-      capacity: localStorage.getItem("agesArray")
-        ? JSON.parse(localStorage.getItem("agesArray")).length
-        : null,
+      agesArray: searchData.agesArray,
     });
+
+  console.log(roomsData, "rooms data");
+  console.log(sanatoriumId, "san id ");
 
   useEffect(() => {
     if (isError) {
@@ -147,11 +146,11 @@ const Sanatorium = () => {
     (state) => state.client
   );
 
-  useEffect(() => {
-    if (roomsData) {
-      dispatch(addClientRoom(roomsData[0]));
-    }
-  }, [roomsData]);
+  // useEffect(() => {
+  //   if (roomsData) {
+  //     dispatch(addClientRoom(roomsData[0]));
+  //   }
+  // }, [roomsData]);
 
   const [priceData, setPriceData] = useState({
     addRoomFood: false,
@@ -210,8 +209,6 @@ const Sanatorium = () => {
     }));
   }, [localStorage.getItem("daysAmount")]);
 
-  const { searchData } = useSelector((state) => state.search);
-
   useEffect(() => {
     setPriceData((prev) => ({
       ...prev,
@@ -222,6 +219,9 @@ const Sanatorium = () => {
   const {
     data: price,
     isLoading: priceIsLoading,
+    isFetching: priceIsFetching,
+    error: priceError,
+    isError: priceHasError,
     refetch,
   } = useGetSanatoriumPriceQuery(priceData);
 
@@ -416,7 +416,7 @@ const Sanatorium = () => {
                         рассчитаем цену в блоке “Бронирование”"
                     />
                     {roomsData &&
-                      roomsData.map((room) => {
+                      roomsData?.rooms?.map((room) => {
                         return (
                           <Room
                             // setRoomId={setPriceData}
@@ -456,8 +456,9 @@ const Sanatorium = () => {
                   price={price}
                   priceData={priceData}
                   clientRoom={clientRoom}
-                  priceIsLoading={priceIsLoading}
+                  priceIsLoading={priceIsFetching}
                   orderTerms={orderTerms}
+                  priceError={priceError}
                   mode="sanatorium"
                 />
 

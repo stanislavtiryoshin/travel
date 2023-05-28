@@ -1,4 +1,4 @@
-const Tour = require("../models/tourModel");
+const { Tour } = require("../models/tourModel");
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 const expressAsyncHandler = require("express-async-handler");
@@ -312,10 +312,12 @@ const getPrice = asyncHandler(async (req, res) => {
           }
         });
         if (!priceFound) {
-          res.status(404).json("Could not find period for these dates");
+          res
+            .status(404)
+            .json({ error: "Не все даты подходят для этого тура" });
         }
       } else {
-        res.status(404).json("This tour has no prices set");
+        res.status(404).json({ error: "У этого тура не установлены цены" });
       }
     };
 
@@ -326,13 +328,17 @@ const getPrice = asyncHandler(async (req, res) => {
     console.log(daysArray);
   })(1);
 
-  res.status(200).json({
-    sum: sum * 1.1,
-    margeSum: sum * 0.1,
-    livingSum: sum,
-    kidsAmount: ages.filter((age) => age < 1000).length,
-    adultsAmount: ages.filter((age) => age === 1000).length,
-  });
+  const margePercent = (hotel.marge + 100) / 100;
+
+  return sum > 0
+    ? res.status(200).json({
+        sum: margePercent ? Math.round(sum * margePercent) : sum,
+        margeSum: (sum * hotel.marge) / 100,
+        livingSum: margePercent ? Math.round(sum * margePercent) : sum,
+        kidsAmount: ages.filter((age) => age < 1000).length,
+        adultsAmount: ages.filter((age) => age === 1000).length,
+      })
+    : res.status(404).json({ error: "Не удалось посчитать" });
 });
 
 //@desc   Get searched tours
@@ -364,7 +370,7 @@ const getSearchedTours = asyncHandler(async (req, res) => {
     .map(Number)
     .filter((age) => age === 1000).length;
 
-  console.log(adultsAmount, kidsAmount, "perople");
+  console.log(adultsAmount, kidsAmount, "people");
 
   const calculatePrice = (start, daysNum, pricesArray) => {
     let daysArray = daysIntoArray(start, daysNum);
@@ -434,18 +440,29 @@ const getSearchedTours = asyncHandler(async (req, res) => {
   }
 
   if (searchNameId && searchNameId !== "") {
-    query = {
-      ...query,
-      $or: [
-        { uid: searchNameId }, // Match by ID
-        { name: { $regex: searchNameId, $options: "i" } }, // Match by name
-      ],
-    };
+    query.$or = [
+      { uid: searchNameId }, // Match by ID
+      { name: { $regex: searchNameId, $options: "i" } }, // Match by name
+    ];
   }
 
   let adminTours;
   if (dashMode && dashMode !== "false") {
-    adminTours = await Tour.find(query).populate("food");
+    adminTours = await Tour.find(query)
+      .populate({
+        path: "periodPrices",
+        populate: { path: "period", model: "Period" },
+      })
+      .populate("locationId")
+      .populate("periods")
+      .populate("food")
+      .populate({
+        path: "tourServices",
+        populate: {
+          path: "category",
+          model: "Category",
+        },
+      });
     return res.status(200).json(adminTours);
   }
 
@@ -454,13 +471,21 @@ const getSearchedTours = asyncHandler(async (req, res) => {
       path: "periodPrices",
       populate: { path: "period", model: "Period" },
     })
+    .populate("locationId")
     .populate("periods")
-    .populate("locationId");
+    .populate("food")
+    .populate({
+      path: "tourServices",
+      populate: {
+        path: "category",
+        model: "Category",
+      },
+    });
 
   const newHotels = hotels.reduce((result, hotel) => {
     const newHotel = hotel.toObject();
 
-    const pricesArray = hotel?.periodPrices;
+    const pricesArray = hotel.periodPrices;
 
     console.log(hotel.name, "tour name");
 

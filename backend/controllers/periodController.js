@@ -90,6 +90,7 @@ const addSanatoriumPeriods = asyncHandler(async (req, res) => {
   const { periods } = req.body;
 
   if (periods) {
+    periods.sort(comparePeriods);
     try {
       const newPeriods = await Promise.all(
         periods.map(async (period) => {
@@ -140,6 +141,7 @@ const addTourPeriods = asyncHandler(async (req, res) => {
   const { periods } = req.body;
 
   if (periods) {
+    periods.sort(comparePeriods);
     try {
       const newPeriods = [];
 
@@ -181,58 +183,11 @@ const addTourPeriods = asyncHandler(async (req, res) => {
 //@route  POST /api/periods/camp
 //@access Private
 
-// const addCampPeriods = asyncHandler(async (req, res) => {
-//   const { periods } = req.body;
-
-//   if (periods) {
-//     try {
-//       const newPeriods = await Promise.all(
-//         periods.map(async (period) => {
-//           let periodObj;
-
-//           if (!period._id) {
-//             periodObj = await Period.create(period);
-//             if (periodObj.camp) {
-//               const camp = await Camp.findOne({
-//                 _id: periodObj.camp,
-//               });
-
-//               let campPrices = camp.ages.map((el) => ({
-//                 minAge: el.minAge,
-//                 maxAge: el.maxAge,
-//                 campPrice: 0,
-//               }));
-
-//               await Camp.findOneAndUpdate(
-//                 { _id: periodObj.camp },
-//                 {
-//                   $push: {
-//                     periodPrices: {
-//                       period: periodObj._id,
-//                       prices: campPrices,
-//                     },
-//                     periods: periodObj._id,
-//                   },
-//                 }
-//               );
-//             }
-
-//             return periodObj;
-//           } else return;
-//         })
-//       );
-
-//       res.status(200).json(newPeriods);
-//     } catch (error) {
-//       res.status(400).json({ error: error.message });
-//     }
-//   }
-// });
-
 const addCampPeriods = asyncHandler(async (req, res) => {
   const { periods } = req.body;
 
   if (periods) {
+    periods.sort(comparePeriods);
     try {
       const newPeriods = await Promise.all(
         periods.map(async (period) => {

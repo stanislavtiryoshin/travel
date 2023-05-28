@@ -4,6 +4,7 @@ import { updateRoom } from "../../features/room/roomSlice";
 import { Link } from "react-router-dom";
 import { updateAgePriceById } from "../../features/camps/campSlice";
 import { useEditTourByIdMutation } from "../../features/services/edit.service";
+import RowInput from "../../components/HotelPage/RowInput";
 
 const TourRow = ({ periodPrices, tourId, refetch, tourData }) => {
   const dispatch = useDispatch();
@@ -63,7 +64,9 @@ const TourRow = ({ periodPrices, tourId, refetch, tourData }) => {
             return (
               <td key={period._id} style={{}}>
                 <input
+                  onFocus={(e) => e.target.select()}
                   type="number"
+                  onWheel={(e) => e.target.blur()}
                   value={period.kidPrice}
                   onChange={(e) => {
                     const newPrice = e.target.value;
@@ -124,8 +127,7 @@ const TourRow = ({ periodPrices, tourId, refetch, tourData }) => {
           newPeriodPrices?.map((period, idx) => {
             return (
               <td key={period._id} style={{}}>
-                <input
-                  type="number"
+                <RowInput
                   value={period.adultPrice}
                   onChange={(e) => {
                     const newPrice = e.target.value;

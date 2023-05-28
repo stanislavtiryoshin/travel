@@ -2,6 +2,10 @@ const { Schema, model } = require("mongoose");
 
 const campSchema = Schema({
   name: String,
+  marge: {
+    type: Number,
+    default: 10,
+  },
   locationId: {
     type: Schema.Types.ObjectId,
     ref: "Location",

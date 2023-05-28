@@ -17,6 +17,7 @@ import {
 import { getSingleSanatorium } from "../../features/sanatorium/sanatoriumSlice";
 import Section from "../../components/Section";
 import dateConfig from "../../components/DataConfig";
+import EmptyHolder from "../../components/HotelPage/EmptyHolder";
 
 const Periods = ({
   periods,
@@ -95,46 +96,148 @@ const Periods = ({
   };
 
   return (
-    <Section section="periods_section" wrapper="periods_wrapper ver">
-      <div className="periods_top">
-        <div className="gen_title">Периоды</div>
-        <div className="periods_btns">
-          <button
-            className="primary-btn black clear"
-            onClick={() => {
-              setPeriods([
-                ...periods,
-                {
-                  startDay: null,
-                  startMonth: null,
-                  endDay: null,
-                  endMonth: null,
-                  [mode === "hotel"
-                    ? "hotel"
-                    : mode === "sanatorium"
-                    ? "sanatorium"
-                    : mode === "tour"
-                    ? "tour"
-                    : "camp"]: hotelId,
-                },
-              ]);
-            }}
-          >
-            + Новый период
-          </button>
-          <button
-            className="primary-btn black"
-            onClick={() => {
-              addNewPeriods();
-            }}
-          >
-            Сохранить
-          </button>
+    <>
+      <Section section="periods_section" wrapper="periods_wrapper ver">
+        <div className="periods_top">
+          <div className="gen_title">Периоды</div>
+          <div className="periods_btns">
+            <button
+              className="primary-btn black clear"
+              onClick={() => {
+                setPeriods([
+                  ...periods,
+                  {
+                    startDay: null,
+                    startMonth: null,
+                    endDay: null,
+                    endMonth: null,
+                    tempId: Math.floor(Math.random() * 1000),
+                    [mode === "hotel"
+                      ? "hotel"
+                      : mode === "sanatorium"
+                      ? "sanatorium"
+                      : mode === "tour"
+                      ? "tour"
+                      : "camp"]: hotelId,
+                  },
+                ]);
+              }}
+            >
+              + Новый период
+            </button>
+            <button
+              className="primary-btn black"
+              onClick={() => {
+                addNewPeriods();
+              }}
+            >
+              Сохранить
+            </button>
+          </div>
         </div>
-      </div>
-      <div className="periods_box">
-        {periods && periods.length > 0
-          ? periods?.map((per, idx) => {
+        {periods && periods.length > 0 ? (
+          <div className="periods_box">
+            {periods?.map((per, idx) => {
+              const newPeriods = periods;
+              return (
+                <div className="period_card shadowed_box" key={per._id || idx}>
+                  <div
+                    className="period_card shadowed_box"
+                    key={per._id || idx}
+                  >
+                    <div className="period_title">
+                      {`Период ${idx + 1}`}
+                      {console.log(periods, "periods")}
+                      <button
+                        onClick={() => {
+                          if (per._id) {
+                            deletePeriod(per._id).then(() => refetch());
+                          } else {
+                            setPeriods(
+                              periods.filter((el) => el.tempId !== per.tempId)
+                            );
+                            console.log(per.tempId);
+                          }
+                        }}
+                      >
+                        X
+                      </button>
+                    </div>
+                  </div>
+                  <div className="inputs_row">
+                    <div className="input_col">
+                      <span>Начало</span>
+                      <div className="inputs_content">
+                        <input
+                          type="number"
+                          onWheel={(e) => e.target.blur()}
+                          min={1}
+                          max={31}
+                          placeholder="d"
+                          value={per.startDay}
+                          inputMode="numeric"
+                          onChange={(e) => {
+                            newPeriods[idx].startDay = e.target.value;
+                            setPeriods(newPeriods);
+                          }}
+                        />
+                        /
+                        <input
+                          type="number"
+                          onWheel={(e) => e.target.blur()}
+                          min={1}
+                          max={31}
+                          inputMode="numeric"
+                          placeholder="m"
+                          value={per.startMonth}
+                          onChange={(e) => {
+                            newPeriods[idx].startMonth = e.target.value;
+                            setPeriods(newPeriods);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="input_col">
+                      <span>Конец</span>
+                      <div className="inputs_content">
+                        <input
+                          type="number"
+                          onWheel={(e) => e.target.blur()}
+                          min={1}
+                          max={12}
+                          placeholder="d"
+                          value={per.endDay}
+                          onChange={(e) => {
+                            newPeriods[idx].endDay = e.target.value;
+                            setPeriods(newPeriods);
+                          }}
+                        />
+                        /
+                        <input
+                          type="number"
+                          onWheel={(e) => e.target.blur()}
+                          min={1}
+                          max={12}
+                          value={per.endMonth}
+                          placeholder="m"
+                          onChange={(e) => {
+                            newPeriods[idx].endMonth = e.target.value;
+                            setPeriods(newPeriods);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <EmptyHolder text="Вы пока не создали периоды для этого отеля" />
+        )}
+        {/* <div className="periods_box">
+          {periods && periods.length > 0 ? (
+            periods?.map((per, idx) => {
               const newPeriods = periods;
               return (
                 <div className="period_card shadowed_box" key={per._id || idx}>
@@ -211,9 +314,12 @@ const Periods = ({
                 </div>
               );
             })
-          : null}
-      </div>
-    </Section>
+          ) : (
+            <EmptyHolder text="Вы пока не создали периоды для этого отеля" />
+          )}
+        </div> */}
+      </Section>
+    </>
   );
 };
 

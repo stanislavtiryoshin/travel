@@ -1,9 +1,14 @@
 const { Schema, model } = require("mongoose");
+const mongoose = require("mongoose");
 
 const sanatoriumSchema = Schema(
   {
     name: {
       type: String,
+    },
+    marge: {
+      type: Number,
+      default: 10,
     },
     periods: [
       {
@@ -18,7 +23,7 @@ const sanatoriumSchema = Schema(
     img: [String],
     uid: String,
     locationId: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Location",
     },
     food: {
@@ -116,4 +121,6 @@ const sanatoriumSchema = Schema(
   }
 );
 
-module.exports = new model("Sanatorium", sanatoriumSchema);
+const Sanatorium = new mongoose.model("Sanatorium", sanatoriumSchema);
+
+module.exports = { Sanatorium };
