@@ -228,6 +228,7 @@ const HotelSearch = ({
                     <div className="search_col-bot">
                       <input
                         type="number"
+                        onWheel={(e) => e.target.blur()}
                         placeholder="Любой"
                         min={0}
                         max={18}

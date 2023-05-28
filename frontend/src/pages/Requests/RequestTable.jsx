@@ -91,7 +91,7 @@ const fakeColumns = [
   {
     id: "column6",
     header: "Категория",
-    accessor: "category",
+    accessor: "mode",
   },
   {
     id: "column7",

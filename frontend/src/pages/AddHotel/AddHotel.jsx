@@ -27,6 +27,7 @@ import hotelmain from "../../assets/hotel/hotelmain.png";
 import secondary from "../../assets/camp/campsecondary.png";
 import dateConfig from "../../components/DataConfig";
 import { useGetServicesQuery } from "../../features/services/base.service";
+import EmptyHolder from "../../components/HotelPage/EmptyHolder";
 const AddHotel = ({
   fetchedHotelData,
   editMode,
@@ -301,7 +302,7 @@ const AddHotel = ({
                   hotelServices: currServices,
                   searchable,
                 })
-              );
+              ).then(() => navigate("/dashboard/hotels"));
         }}
         headBack={() => {
           navigate(-1);
@@ -418,6 +419,7 @@ const AddHotel = ({
             <div className="input_row">
               <input
                 type="number"
+                onWheel={(e) => e.target.blur()}
                 className="primary-input"
                 value={hotelData.rating}
                 placeholder="Рейтинг отеля"
@@ -428,6 +430,7 @@ const AddHotel = ({
               <select
                 className="primary-input"
                 type="number"
+                onWheel={(e) => e.target.blur()}
                 placeholder="Местоположение"
                 name="hotelStars"
                 value={hotelData.hotelStars}
@@ -625,6 +628,7 @@ const AddHotel = ({
                   <label htmlFor="discount">Скидка</label>
                   <input
                     type="number"
+                    onWheel={(e) => e.target.blur()}
                     name="discount"
                     className="primary-input"
                     placeholder="2000"
@@ -667,6 +671,7 @@ const AddHotel = ({
               <div className="input_row">
                 <input
                   type="number"
+                  onWheel={(e) => e.target.blur()}
                   className="primary-input"
                   name="adultFoodPrice"
                   placeholder="Цена за питание взрослого"
@@ -680,6 +685,7 @@ const AddHotel = ({
                 />
                 <input
                   type="number"
+                  onWheel={(e) => e.target.blur()}
                   name="kidFoodPrice"
                   className="primary-input"
                   placeholder="Цена за детское питание"

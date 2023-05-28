@@ -244,7 +244,7 @@ const getPrice = asyncHandler(async (req, res) => {
 
   if (!allAgesMatched) {
     return res
-      .status(200)
+      .status(404)
       .json({ error: "Не все возраста подходят этому лагерю" });
   }
 
@@ -315,11 +315,13 @@ const getPrice = asyncHandler(async (req, res) => {
     }
   })(1);
 
+  const margePercent = (hotel.marge + 100) / 100;
+
   return sum > 0
     ? res.status(200).json({
-        sum: sum * 1.1,
-        livingSum: sum,
-        margeSum: sum * 0.1,
+        sum: margePercent ? Math.round(sum * margePercent) : sum,
+        livingSum: margePercent ? Math.round(sum * margePercent) : sum,
+        margeSum: (sum * hotel.marge) / 100,
         kidsAmount: ages.filter((age) => age !== 1000).length,
       })
     : res.status(404).json({ error: "Не удалось посчитать" });
@@ -432,7 +434,15 @@ const getSearchedCamps = asyncHandler(async (req, res) => {
 
   let adminCamps;
   if (dashMode && dashMode !== "false") {
-    adminCamps = await Camp.find(query);
+    adminCamps = await Camp.find(query)
+      .populate({
+        path: "agePrices",
+        populate: {
+          path: "periodPrices.period",
+          model: "Period",
+        },
+      })
+      .populate("locationId");
     return res.status(200).json(adminCamps);
   }
 

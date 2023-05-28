@@ -18,6 +18,8 @@ import GalleryBox from "../../components/Slider/GalleryBox";
 import secondary from "../../assets/camp/campsecondary.png";
 import room from "../../assets/hotel/hotelmain.png";
 import dateConfig from "../../components/DataConfig";
+import { set } from "mongoose";
+import EmptyHolder from "../../components/HotelPage/EmptyHolder";
 
 const AddRoom = ({ fetchedRoomData, editMode }) => {
   const dispatch = useDispatch();
@@ -44,7 +46,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
     extraPlaces: [],
     roomPrice: null,
     area: null,
-    smokingPolicy: "",
+    smokingPolicy: "Для НЕкурящих",
     roomsNumber: null,
     totalExtraPlacesAmount: null,
     freeBabyPlaces: null,
@@ -60,7 +62,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
       babyMax: null,
       kidsMax: null,
     },
-    restroom: "",
+    restroom: "Есть",
     bathroom: {
       availablity: "",
       type: "",
@@ -141,7 +143,9 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
 
   const handleSubmit = () => {
     editMode
-      ? dispatch(updateRoom(roomData))
+      ? dispatch(updateRoom(roomData)).then((res) =>
+          navigate(`/dashboard/hotel/${hotelIdLink}`)
+        )
       : dispatch(addRoom(roomData)).then((res) =>
           navigate(`/dashboard/room/${res.payload._id}`)
         );
@@ -242,6 +246,8 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
     else if (roomData?.hotel?._id) setHotelIdLink(roomData?.hotel?._id);
   }, [hotelId, roomData]);
 
+  console.log(extraPlaces, "extra places");
+
   return (
     <>
       <AdminHead
@@ -315,6 +321,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   name=""
                   id=""
                   type="number"
+                  onWheel={(e) => e.target.blur()}
                   className="primary-input"
                   value={roomData?.capacity}
                   onChange={(e) => {
@@ -328,6 +335,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   name=""
                   id=""
                   type="number"
+                  onWheel={(e) => e.target.blur()}
                   className="primary-input"
                   value={roomData?.freeBabyPlaces}
                   onChange={(e) => {
@@ -347,6 +355,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   className="primary-input"
                   value={roomData.roomsNumber}
                   type="number"
+                  onWheel={(e) => e.target.blur()}
                   onChange={(e) =>
                     setRoomData({
                       ...roomData,
@@ -426,6 +435,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 <label htmlFor="">Площадь номера</label>
                 <input
                   type="number"
+                  onWheel={(e) => e.target.blur()}
                   className="primary-input"
                   placeholder="Размер номера в кв. метрах"
                   value={roomData.area}
@@ -442,6 +452,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   name=""
                   id=""
                   type="number"
+                  onWheel={(e) => e.target.blur()}
                   className="primary-input"
                   value={roomData?.totalExtraPlacesAmount}
                   onChange={(e) => {
@@ -457,6 +468,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                   <option value={3}>3</option>
                   <option value={2}>2</option>
                   <option value={1}>1</option>
+                  <option value={0}>Нет</option>
                 </select>
               </div>
               <div className="service-input w-30">
@@ -604,6 +616,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                           priceNoFood: 0,
                           foodPrice: 0,
                           maxAmount: 1,
+                          tempId: Math.floor(Math.random() * 1000),
                         },
                       ]);
                     }}
@@ -613,128 +626,148 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 </div>
               </div>
 
-              <div className="extraplaces_box ">
-                {extraPlaces?.length > 0
-                  ? extraPlaces?.map((xp, idx) => {
-                      return (
-                        <div className="extraplace_card shadowed_box" key={idx}>
-                          <div className="extraplace_card-title">
-                            Доп. место #{idx + 1}
-                          </div>
-                          <div className="service-input">
-                            <label htmlFor="">Мин. возраст</label>
-                            <input
-                              className="primary-input"
-                              type="number"
-                              name=""
-                              id=""
-                              value={xp.minAge}
-                              onChange={(e) => {
-                                const updatedExtraPlaces = [...extraPlaces];
-                                updatedExtraPlaces[idx] = {
-                                  ...updatedExtraPlaces[idx],
-                                  minAge: +e.target.value,
-                                };
-                                setExtraPlaces(updatedExtraPlaces);
-                              }}
-                            />
-                          </div>
-                          <div className="service-input">
-                            <label htmlFor="">Макс. возраст</label>
-                            <input
-                              className="primary-input"
-                              type="number"
-                              name=""
-                              id=""
-                              value={xp.maxAge}
-                              onChange={(e) => {
-                                const updatedExtraPlaces = [...extraPlaces];
-                                updatedExtraPlaces[idx] = {
-                                  ...updatedExtraPlaces[idx],
-                                  maxAge: +e.target.value,
-                                };
-                                setExtraPlaces(updatedExtraPlaces);
-                              }}
-                            />
-                          </div>
-                          <div className="service-input">
-                            <label htmlFor="">С учетом питания</label>
-                            <input
-                              className="primary-input"
-                              type="number"
-                              name=""
-                              id=""
-                              value={xp.priceWithFood}
-                              onChange={(e) => {
-                                const updatedExtraPlaces = [...extraPlaces];
-                                updatedExtraPlaces[idx] = {
-                                  ...updatedExtraPlaces[idx],
-                                  priceWithFood: +e.target.value,
-                                };
-                                setExtraPlaces(updatedExtraPlaces);
-                              }}
-                            />
-                          </div>
-                          <div className="service-input">
-                            <label htmlFor="">Без учета питания</label>
-                            <input
-                              className="primary-input"
-                              type="number"
-                              name=""
-                              id=""
-                              value={xp.priceNoFood}
-                              onChange={(e) => {
-                                const updatedExtraPlaces = [...extraPlaces];
-                                updatedExtraPlaces[idx] = {
-                                  ...updatedExtraPlaces[idx],
-                                  priceNoFood: +e.target.value,
-                                };
-                                setExtraPlaces(updatedExtraPlaces);
-                              }}
-                            />
-                          </div>
-                          <div className="service-input">
-                            <label htmlFor="">Стоимость питания</label>
-                            <input
-                              className="primary-input"
-                              type="number"
-                              name=""
-                              id=""
-                              value={xp.foodPrice}
-                              onChange={(e) => {
-                                const updatedExtraPlaces = [...extraPlaces];
-                                updatedExtraPlaces[idx] = {
-                                  ...updatedExtraPlaces[idx],
-                                  foodPrice: +e.target.value,
-                                };
-                                setExtraPlaces(updatedExtraPlaces);
-                              }}
-                            />
-                          </div>
-                          <div className="service-input">
-                            <label htmlFor="">Макс. кол-во</label>
-                            <input
-                              className="primary-input"
-                              type="number"
-                              name=""
-                              id=""
-                              value={xp.maxAmount}
-                              onChange={(e) => {
-                                const updatedExtraPlaces = [...extraPlaces];
-                                updatedExtraPlaces[idx] = {
-                                  ...updatedExtraPlaces[idx],
-                                  maxAmount: +e.target.value,
-                                };
-                                setExtraPlaces(updatedExtraPlaces);
-                              }}
-                            />
-                          </div>
+              {extraPlaces?.length > 0 ? (
+                <div className="extraplaces_box">
+                  {extraPlaces?.map((xp, idx) => {
+                    return (
+                      <div className="extraplace_card shadowed_box" key={idx}>
+                        <div className="extraplace_card-title">
+                          <span>Доп. место #{idx + 1}</span>
+                          <button
+                            onClick={() =>
+                              setExtraPlaces(
+                                extraPlaces.filter(
+                                  (el) =>
+                                    el._id !== xp._id || el.tempId !== xp.tempId
+                                )
+                              )
+                            }
+                          >
+                            X
+                          </button>
                         </div>
-                      );
-                    })
-                  : null}
-                {console.log(extraPlaces, "extra places")}
-              </div>
+                        <div className="service-input">
+                          <label htmlFor="">Мин. возраст</label>
+                          <input
+                            className="primary-input"
+                            type="number"
+                            onWheel={(e) => e.target.blur()}
+                            name=""
+                            id=""
+                            value={xp.minAge}
+                            onChange={(e) => {
+                              const updatedExtraPlaces = [...extraPlaces];
+                              updatedExtraPlaces[idx] = {
+                                ...updatedExtraPlaces[idx],
+                                minAge: +e.target.value,
+                              };
+                              setExtraPlaces(updatedExtraPlaces);
+                            }}
+                          />
+                        </div>
+                        <div className="service-input">
+                          <label htmlFor="">Макс. возраст</label>
+                          <input
+                            className="primary-input"
+                            type="number"
+                            onWheel={(e) => e.target.blur()}
+                            name=""
+                            id=""
+                            value={xp.maxAge}
+                            onChange={(e) => {
+                              const updatedExtraPlaces = [...extraPlaces];
+                              updatedExtraPlaces[idx] = {
+                                ...updatedExtraPlaces[idx],
+                                maxAge: +e.target.value,
+                              };
+                              setExtraPlaces(updatedExtraPlaces);
+                            }}
+                          />
+                        </div>
+                        <div className="service-input">
+                          <label htmlFor="">С учетом питания</label>
+                          <input
+                            className="primary-input"
+                            type="number"
+                            onWheel={(e) => e.target.blur()}
+                            name=""
+                            id=""
+                            value={xp.priceWithFood}
+                            onChange={(e) => {
+                              const updatedExtraPlaces = [...extraPlaces];
+                              updatedExtraPlaces[idx] = {
+                                ...updatedExtraPlaces[idx],
+                                priceWithFood: +e.target.value,
+                              };
+                              setExtraPlaces(updatedExtraPlaces);
+                            }}
+                          />
+                        </div>
+                        <div className="service-input">
+                          <label htmlFor="">Без учета питания</label>
+                          <input
+                            className="primary-input"
+                            type="number"
+                            onWheel={(e) => e.target.blur()}
+                            name=""
+                            id=""
+                            value={xp.priceNoFood}
+                            onChange={(e) => {
+                              const updatedExtraPlaces = [...extraPlaces];
+                              updatedExtraPlaces[idx] = {
+                                ...updatedExtraPlaces[idx],
+                                priceNoFood: +e.target.value,
+                              };
+                              setExtraPlaces(updatedExtraPlaces);
+                            }}
+                          />
+                        </div>
+                        <div className="service-input">
+                          <label htmlFor="">Стоимость питания</label>
+                          <input
+                            className="primary-input"
+                            type="number"
+                            onWheel={(e) => e.target.blur()}
+                            name=""
+                            id=""
+                            value={xp.foodPrice}
+                            onChange={(e) => {
+                              const updatedExtraPlaces = [...extraPlaces];
+                              updatedExtraPlaces[idx] = {
+                                ...updatedExtraPlaces[idx],
+                                foodPrice: +e.target.value,
+                              };
+                              setExtraPlaces(updatedExtraPlaces);
+                            }}
+                          />
+                        </div>
+                        <div className="service-input">
+                          <label htmlFor="">Макс. кол-во</label>
+                          <input
+                            className="primary-input"
+                            type="number"
+                            onWheel={(e) => e.target.blur()}
+                            name=""
+                            id=""
+                            value={xp.maxAmount}
+                            onChange={(e) => {
+                              const updatedExtraPlaces = [...extraPlaces];
+                              updatedExtraPlaces[idx] = {
+                                ...updatedExtraPlaces[idx],
+                                maxAmount: +e.target.value,
+                              };
+                              setExtraPlaces(updatedExtraPlaces);
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <EmptyHolder text="Вы пока не заполнили доп. места в этом номере" />
+              )}
+              {console.log(extraPlaces, "extra places")}
             </Section>
           </>
         ) : null}
@@ -743,7 +776,10 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
             <div className="gen_title">Подробнее</div>
             <div className="input_box">
               <div className="input_row">
-                <div className="service-input full">
+                <div
+                  className="service-input full"
+                  style={{ width: "100%", zIndex: "100" }}
+                >
                   <label htmlFor="service">Удобства</label>
                   {!editMode ? (
                     <Select
@@ -760,10 +796,14 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                       styles={{
                         control: (baseStyles) => ({
                           ...baseStyles,
-                          width: `${550}px`,
+                          width: `100%`,
                           border: "none",
                           "background-color": "rgb(249, 249, 249)",
                           outline: "none",
+                        }),
+                        container: (baseStyles) => ({
+                          ...baseStyles,
+                          width: `100%`,
                         }),
                       }}
                     />
@@ -782,10 +822,14 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                       styles={{
                         control: (baseStyles) => ({
                           ...baseStyles,
-                          width: `${550}px`,
+                          width: `100%`,
                           border: "none",
                           "background-color": "rgb(249, 249, 249)",
                           outline: "none",
+                        }),
+                        container: (baseStyles) => ({
+                          ...baseStyles,
+                          width: `100%`,
                         }),
                       }}
                     />
@@ -820,7 +864,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 </div>
               </div>
               <div className="input_row">
-                <div className="service-input">
+                <div className="service-input" style={{ width: "100%" }}>
                   <label htmlFor="">Дополнительное содержимое</label>
                   <Select
                     options={extraOpts}
@@ -833,14 +877,25 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                     isMulti
                     useDragHandle
                     axis="xy"
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
                     styles={{
                       control: (baseStyles) => ({
                         ...baseStyles,
-                        width: `${550}px`,
+                        width: `100%`,
                         border: "none",
                         "background-color": "rgb(249, 249, 249)",
                         outline: "none",
                       }),
+                      container: (baseStyles) => ({
+                        ...baseStyles,
+                        width: `100%`,
+                      }),
+                      // menuPortal: (baseStyles) => ({
+                      //   ...baseStyles,
+                      //   zIndex: 9999,
+                      // }),
+                      // menu: (baseStyles) => ({ ...baseStyles, zIndex: 9999 }),
                     }}
                   />
                 </div>

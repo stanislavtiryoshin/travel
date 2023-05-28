@@ -173,6 +173,7 @@ export const baseApi = createApi({
       }),
       invalidatesTags: [{ id: "LIST", type: "Camp" }],
     }),
+    // Get hotel's rooms
     getRoomByHotelIdLimit: builder.query({
       query: ({ limit, hotelId, capacity, agesArray }) => ({
         url: `/hotels/${hotelId}/room?limit=${limit}&capacity=${
@@ -187,11 +188,12 @@ export const baseApi = createApi({
             ]
           : [{ type: "Rooms", id: "LIST" }],
     }),
+    // Get sanatorium's rooms
     getRoomBySanatoriumIdLimit: builder.query({
-      query: ({ limit, sanatoriumId, capacity }) => ({
+      query: ({ limit, sanatoriumId, capacity, agesArray }) => ({
         url: `/sanatoriums/${sanatoriumId}/room?limit=${limit}&capacity=${
           capacity ? capacity : ""
-        }`,
+        }&agesArray=${agesArray ? agesArray : ""}`,
       }),
       providesTags: (result) =>
         result
@@ -201,6 +203,7 @@ export const baseApi = createApi({
             ]
           : [{ type: "Rooms", id: "LIST" }],
     }),
+
     getHotelsByTag: builder.mutation({
       query: (body) => {
         return {
@@ -274,8 +277,10 @@ export const {
   useGetOrdersQuery,
   useGetOrdersByQueryQuery,
   useLazyGetOrdersByQueryQuery,
+
   useGetRoomByHotelIdLimitQuery,
   useGetRoomBySanatoriumIdLimitQuery,
+
   useGetHotelsByTagMutation,
 
   useGetLocationByLetterQuery,

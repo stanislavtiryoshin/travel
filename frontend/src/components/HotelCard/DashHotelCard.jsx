@@ -23,6 +23,7 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
     rooms,
     duration,
     hotelServices,
+    sanatoriumServices,
     food,
     tourServices,
   } = hotel;
@@ -100,7 +101,7 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
         <div className="adm_hotel-title">{name}</div>
         <div className="adm_hotel-loc">
           {locationId ? locationId?.locationName + ", " : "Место загружается"}
-          {locationId ? locationId.locationCountry : null}
+          {locationId ? locationId?.locationCountry : null}
         </div>
         <div className="adm_hotel-rating row">
           {hotelStars ? <HotelStars number={hotelStars} /> : null}
@@ -199,6 +200,25 @@ const DashHotelCard = ({ hotel, tour, mode }) => {
                         />
                       ) : null}
                       {serv.hotelServiceName}
+                    </div>
+                  );
+                }
+              })
+            : null}
+          {console.log(sanatoriumServices, "sanatoriumServices")}
+          {sanatoriumServices && sanatoriumServices.length > 0
+            ? sanatoriumServices?.slice(0, 4).map((serv) => {
+                if (serv.serviceType.priority > 0) {
+                  return (
+                    <div className="card_tag">
+                      {serv.icon ? (
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: serv.icon,
+                          }}
+                        />
+                      ) : null}
+                      {serv.serviceType.hotelServiceName}
                     </div>
                   );
                 }

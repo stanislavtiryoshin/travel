@@ -265,7 +265,11 @@ const AddSanatorium = ({
           !editMode ? "Создание нового санатория" : "Редактирование санатория"
         }
         onClick={() => {
-          !editMode ? handleSubmit() : dispatch(updateSanatorium(hotelData));
+          !editMode
+            ? handleSubmit()
+            : dispatch(updateSanatorium(hotelData)).then(() =>
+                navigate("/dashboard/sanatoriums")
+              );
         }}
       />
       <div className="add_hotel-page">
@@ -283,7 +287,7 @@ const AddSanatorium = ({
           />
           <div className="gen_content-box">
             <div className="gen_title_checkbox">
-              <div className="gen_title">Основное об отеле</div>
+              <div className="gen_title">Основное о санатории</div>
 
               {editMode && (
                 <div className="toggler-box">
@@ -333,7 +337,7 @@ const AddSanatorium = ({
                 type="text"
                 placeholder="Местоположение"
                 name="destination"
-                value={hotelData?.locationId}
+                value={hotelData?.locationId?._id}
                 onChange={(e) => {
                   setHotelData({
                     ...hotelData,
@@ -366,6 +370,7 @@ const AddSanatorium = ({
             <div className="input_row">
               <input
                 type="number"
+                onWheel={(e) => e.target.blur()}
                 className="primary-input"
                 value={hotelData?.rating}
                 placeholder="Рейтинг отеля"
@@ -376,6 +381,7 @@ const AddSanatorium = ({
               <select
                 className="primary-input"
                 type="number"
+                onWheel={(e) => e.target.blur()}
                 placeholder="Местоположение"
                 name="hotelStars"
                 value={hotelData?.hotelStars}
@@ -553,6 +559,7 @@ const AddSanatorium = ({
                   <label htmlFor="discount">Скидка</label>
                   <input
                     type="number"
+                    onWheel={(e) => e.target.blur()}
                     name="discount"
                     className="primary-input"
                     placeholder="2000"
@@ -593,6 +600,7 @@ const AddSanatorium = ({
               <div className="input_row">
                 <input
                   type="number"
+                  onWheel={(e) => e.target.blur()}
                   className="primary-input"
                   name="adultFoodPrice"
                   placeholder="Цена за питание взрослого"
@@ -606,6 +614,7 @@ const AddSanatorium = ({
                 />
                 <input
                   type="number"
+                  onWheel={(e) => e.target.blur()}
                   name="kidFoodPrice"
                   className="primary-input"
                   placeholder="Цена за детское питание"
@@ -785,22 +794,13 @@ const AddSanatorium = ({
 
 export const ServiceCard = ({
   number,
-  allCategories,
   allSanServices,
   allServices,
   deleteService,
-  optionList,
   selectedOptions,
   addedSanServices,
   setAddedSanServices,
-  fetchedSanatoriumServices,
-  setFetchedSanatoriumServices,
-  handleSelect,
-  setIsOpen,
-  setServs,
-  servs,
   fetchedService,
-  fetchedMode,
 }) => {
   const [currCateg, setCurrCateg] = useState("Питание");
   const [currServ, setCurrServ] = useState("64258af02ba7928f871a09cd");

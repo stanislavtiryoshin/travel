@@ -23,6 +23,7 @@ import {
   useGetRoomsQuery,
   useUploadCsvMutation,
 } from "../../features/services/csv.service";
+import EmptyHolder from "../../components/HotelPage/EmptyHolder";
 
 const EditHotel = () => {
   const navigate = useNavigate();
@@ -134,14 +135,15 @@ const EditHotel = () => {
                   Добавить номер
                 </Link>
               </div>
-              <div className="admin_rooms-grid">
-                {singleHotel?.rooms && singleHotel?.rooms?.length > 0
-                  ? singleHotel?.rooms.map((room, idx) => {
-                      return <DashRoom room={room} />;
-                    })
-                  : null}
-                {/* {console.log("rooms", singleHotel.rooms)} */}
-              </div>
+              {singleHotel?.rooms && singleHotel?.rooms?.length > 0 ? (
+                <div className="admin_rooms-grid">
+                  {singleHotel?.rooms.map((room, idx) => {
+                    return <DashRoom room={room} />;
+                  })}
+                </div>
+              ) : (
+                <EmptyHolder text="Вы пока не создали номера для этого отеля" />
+              )}
             </div>
           </div>
         </section>

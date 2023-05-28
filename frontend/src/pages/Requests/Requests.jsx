@@ -129,6 +129,7 @@ const Requests = () => {
       {
         id: "category",
         header: "Категория",
+        accessor: "mode",
       },
       {
         id: "details",

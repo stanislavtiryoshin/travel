@@ -33,6 +33,7 @@ const Sum = ({
   //   navigate("/orders/new-order");
   //   console.log(values);
   // };
+  console.log(priceError, "PRICE ERRORRRRRRRRRRRRRRRRRRRRRRRRRR");
   return (
     <div className="hotel_side-top shadowed_box">
       <div className="hotel_side-title">Бронирование</div>
@@ -211,13 +212,18 @@ const Sum = ({
         {priceIsLoading ? <SumLoader /> : null}
       </div>
 
-      <Link
-        to={`/orders/new-order/${mode}`}
-        className="primary-btn yellow"
-        // onClick={handleOrder}
-      >
-        Оставить заявку
-      </Link>
+      {!priceError?.data?.error ? (
+        <Link
+          to={`/orders/new-order/${mode}`}
+          className="primary-btn yellow"
+          // onClick={handleOrder}
+        >
+          Оставить заявку
+        </Link>
+      ) : (
+        <button className="primary-btn disabled">Оставить заявку</button>
+      )}
+
       <div className="side-top-bot">
         <div>
           <img src={check} alt="" /> У нас самые выгодные цены!

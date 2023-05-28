@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateRoom } from "../../features/room/roomSlice";
 import { Link } from "react-router-dom";
+import RowInput from "../../components/HotelPage/RowInput";
 
 const RoomRow = ({
   room,
@@ -82,8 +83,7 @@ const RoomRow = ({
             newPeriodPrices?.map((period, idx) => {
               return (
                 <td key={period._id} style={{}}>
-                  <input
-                    type="number"
+                  <RowInput
                     value={period.roomPrice}
                     onChange={(e) => {
                       const newPrice = +e.target.value;
@@ -143,8 +143,7 @@ const RoomRow = ({
               newPeriodPrices?.map((period, idx) => {
                 return (
                   <td key={period._id} style={{}}>
-                    <input
-                      type="number"
+                    <RowInput
                       value={period.kidPrice}
                       onChange={(e) => {
                         const newPrice = e.target.value;
@@ -202,8 +201,7 @@ const RoomRow = ({
               newPeriodPrices?.map((period, idx) => {
                 return (
                   <td key={period._id} style={{}}>
-                    <input
-                      type="number"
+                    <RowInput
                       value={period.adultPrice}
                       onChange={(e) => {
                         const newPrice = e.target.value;

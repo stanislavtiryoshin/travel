@@ -15,8 +15,12 @@ const queryString = require("querystring");
 const mongoose = require("mongoose");
 const { isDateInRange } = require("../dateUtils");
 const { daysIntoArray } = require("../daysUtils");
-const { calculateExtraPlaces } = require("../utils/extraPlacesUtills");
+const {
+  calculateExtraPlaces,
+  checkExtraPlaces,
+} = require("../utils/extraPlacesUtills");
 const { removeAges } = require("../utils/removeFreeBabyPlaces");
+const { checkCapacity } = require("../utils/capacityUtils");
 
 //@desc   Add new hotel
 //@route  POST /api/hotels
@@ -333,21 +337,14 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     let rooms = newHotel.rooms;
 
     rooms = rooms.filter((room) => {
-      if (room.freeBabyPlaces && room.freeBabyPlaces !== 0) {
-        let newAges = ages.sort((a, b) => a - b);
-        const babyAges = newAges.filter((age) => age <= hotel.kids.babyMaxAge);
-        // console.log(babyAges, "baby ages");
-        let babyAgesToRemove = babyAges.length - room.freeBabyPlaces;
-        // console.log(babyAgesToRemove, "babyAgesToRemove");
-        if (babyAgesToRemove < 0) {
-          babyAgesToRemove = 0;
-        } else if (babyAgesToRemove === 0) {
-          babyAgesToRemove = 1;
-        }
-        newAges = newAges.slice(babyAgesToRemove);
-        // console.log(newAges, "new ages in filter");
-        return room.capacity + room.totalExtraPlacesAmount >= newAges.length;
-      } else return room.capacity + room.totalExtraPlacesAmount >= ages.length;
+      return !checkCapacity(
+        ages,
+        room.extraPlaces,
+        hotel.kids.babyMaxAge,
+        room.freeBabyPlaces,
+        room.totalExtraPlacesAmount,
+        room.capacity
+      );
     });
 
     // console.log(
@@ -412,7 +409,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
         ? newHotels
             .filter(
               (hotel) =>
-                hotel.totalPrice <= maxPrice && hotel.totalPrice >= minPrice
+                hotel?.totalPrice <= maxPrice && hotel?.totalPrice >= minPrice
             )
             .filter(
               (hotel) =>
@@ -479,22 +476,8 @@ const getPrice = asyncHandler(async (req, res) => {
   let excursionsSum = 0;
   let foodSum = 0;
 
-  console.log(ages, "ages begore baby termination");
-
   // Remove babies which will be appointed to a free extra place
   ages = removeAges(ages, chosenRoom.freeBabyPlaces, hotel.kids.babyMaxAge);
-
-  // console.log(
-  //   ages,
-  //   chosenRoom.freeBabyPlaces,
-  //   hotel.kids.babyMaxAge,
-  //   "remove ages args"
-  // );
-
-  console.log(ages, "ages 2");
-  console.log(
-    "................................................................"
-  );
 
   let placesArray = chosenRoom.extraPlaces;
 
@@ -508,9 +491,16 @@ const getPrice = asyncHandler(async (req, res) => {
 
   // [1000, 1000, 15, 4,...]
   const accomodatedAges = ages.splice(0, chosenRoom.capacity);
+  let agesToCheckExtraPlaces = ages;
 
   console.log(accomodatedAges, "accomodated ages");
-  // console.log(ages, "after accomdo");
+  console.log(agesToCheckExtraPlaces, "ages after accomodation");
+
+  if (checkExtraPlaces(agesToCheckExtraPlaces, placesArray)) {
+    return res
+      .status(404)
+      .json({ error: "Номер не может поместить всех жильцов" });
+  }
 
   sum = calculateExtraPlaces(
     ages,
@@ -685,12 +675,19 @@ const getRoomsByLimit = async (req, res) => {
       let filteredRooms = [];
 
       if (ages && rooms && rooms.length > 0 && hotel) {
-        filteredRooms = rooms.filter(
-          (room) =>
-            room.capacity + room.totalExtraPlacesAmount >=
-            removeAges(ages, room.freeBabyPlaces, hotel.kids.babyMaxAge).length
-        );
+        filteredRooms = rooms.filter((room) => {
+          return !checkCapacity(
+            ages,
+            room.extraPlaces,
+            hotel.kids.babyMaxAge,
+            room.freeBabyPlaces,
+            room.totalExtraPlacesAmount,
+            room.capacity
+          );
+        });
       }
+
+      console.log("-----------------------------------");
 
       console.log(filteredRooms, "filtered rooms");
 
@@ -721,7 +718,6 @@ const getRoomsByLimit = async (req, res) => {
       });
 
       const realLimit = Math.min(modifiedRooms.length, parseInt(limit));
-      console.log(modifiedRooms.map((el) => el.usedExtraPlaces));
 
       const limitedRooms = modifiedRooms.slice(0, realLimit);
 

@@ -1,4 +1,4 @@
-const Sanatorium = require("../models/sanatoriumModel");
+const { Sanatorium } = require("../models/sanatoriumModel");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -53,16 +53,8 @@ const updateSanatorium = asyncHandler(async (req, res) => {
 //@access Private
 
 const getSanatoriums = (req, res) => {
-  const { locationId } = req.query;
-  const query = {};
-
-  if (locationId && locationId != "") {
-    query.locationId = locationId;
-  }
-
   Sanatorium.find()
     .populate("locationId")
-    .populate("sanatoriumProgram.programId")
     .then((response) => res.status(200).json(response))
     .catch((err) => res.sendStatus(403));
 };
@@ -135,8 +127,6 @@ const getSingleSanatorium = asyncHandler(async (req, res) => {
 
 const getPrice = asyncHandler(async (req, res) => {
   const {
-    addRoomFood,
-    addExtraFood,
     start,
     daysAmount,
     agesArray,
@@ -144,8 +134,6 @@ const getPrice = asyncHandler(async (req, res) => {
     roomId,
     personMode,
     excursionsArray,
-    kidsFoodAmount,
-    adultsFoodAmount,
   } = req.query;
 
   let ages = agesArray.split(",").map(Number);
@@ -165,6 +153,13 @@ const getPrice = asyncHandler(async (req, res) => {
   });
 
   const chosenRoom = hotel.rooms.find((room) => room._id == roomId);
+  if (!chosenRoom) return res.status(404).json({ error: "Номер не выбран" });
+
+  if (ages.length > chosenRoom.capacity) {
+    return res
+      .status(404)
+      .json({ error: "Номер не может поместить всех жильцов" });
+  }
 
   let sum = 0;
   let roomSum = 0;
@@ -187,13 +182,7 @@ const getPrice = asyncHandler(async (req, res) => {
           const endMonth = el.period.endMonth;
           const endDay = el.period.endDay;
 
-          if (
-            (date.getMonth() + 1 > startMonth ||
-              (date.getMonth() + 1 === startMonth &&
-                date.getDate() >= startDay)) &&
-            (date.getMonth() + 1 < endMonth ||
-              (date.getMonth() + 1 === endMonth && date.getDate() <= endDay))
-          ) {
+          if (isDateInRange(date, startMonth, startDay, endMonth, endDay)) {
             if (!personMode) {
               sum += el.roomPrice;
               roomSum += el.roomPrice;
@@ -216,12 +205,14 @@ const getPrice = asyncHandler(async (req, res) => {
           }
         });
         if (!priceFound) {
-          res.status(404).json("Could not find period for these dates");
+          res
+            .status(404)
+            .json({ error: "Не все даты подходят для этого санатория" });
         }
       } else {
-        res.status(404).json("This room has no prices set");
+        res.status(404).json({ error: "У этого номера не установлены цены" });
       }
-      console.log(sum);
+      // console.log(sum);
     };
 
     for (let i = 0; i < daysNum; i++) {
@@ -264,23 +255,24 @@ const getPrice = asyncHandler(async (req, res) => {
 
   await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
 
-  res.status(200).json({
-    sum: sum * 1.1,
-    margeSum: 0.1 * sum,
-    // extraPlacesSum: extraPlacesSum,
-    // excursionsSum: excursionsSum,
-    roomSum: roomSum,
-    // foodSum: foodSum,
-    // kidsFoodAmount: kidsFoodAmount,
-    // adultsFoodAmount: adultsFoodAmount,
-  });
+  const margePercent = (hotel.marge + 100) / 100;
+
+  sum > 0
+    ? res.status(200).json({
+        sum: margePercent ? Math.round(sum * margePercent) : sum,
+        margeSum: (sum * hotel.marge) / 100,
+        roomSum: roomSum,
+      })
+    : res.status(404).json({ error: "Не удалось подсчитать" });
 });
 
 // Get rooms with limit
 
 const getRoomsByLimit = async (req, res) => {
-  const { limit, capacity } = req.query;
+  const { limit, capacity, agesArray } = req.query;
   const { sanatoriumId } = req.params;
+
+  const ages = agesArray.split(",").map(Number);
   let roomData = [];
 
   try {
@@ -293,29 +285,21 @@ const getRoomsByLimit = async (req, res) => {
             _id: {
               $in: sanatorium.rooms,
             },
-            $expr: {
-              $gte: [
-                {
-                  $sum: [
-                    "$capacity",
-                    {
-                      $size: {
-                        $filter: {
-                          input: "$extraPlaces",
-                          as: "extraPlace",
-                          cond: { $ne: ["$$extraPlace.isBabyPlace", true] },
-                        },
-                      },
-                    },
-                  ],
-                },
-                parseInt(capacity),
-              ],
-            },
           },
         },
       ]);
-      res.status(200).json(rooms);
+
+      let filteredRooms = rooms.filter((room) => room.capacity >= ages.length);
+
+      const realLimit = Math.min(filteredRooms.length, parseInt(limit));
+      const limitedRooms = filteredRooms.slice(0, realLimit);
+
+      const response = {
+        totalRooms: rooms.length, // Include the total number of rooms in the response
+        rooms: limitedRooms,
+      };
+
+      res.status(200).json(response);
     } catch (error) {
       res.status(500).json(error);
     }
@@ -378,6 +362,10 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
       findPriceByDate(daysArray[i]);
     }
 
+    if (sum === 0) {
+      return null;
+    }
+
     return sum;
   };
 
@@ -404,7 +392,35 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
 
   let adminSanatoriums;
   if (dashMode && dashMode !== "false") {
-    adminSanatoriums = await Sanatorium.find(query);
+    adminSanatoriums = await Sanatorium.find(query)
+      .populate("locationId")
+      .populate({
+        path: "food",
+        populate: {
+          path: "food.foodType",
+          model: "Food",
+        },
+      })
+      .populate("rooms")
+      .populate({
+        path: "rooms",
+        populate: {
+          path: "periodPrices.period",
+          model: "Period",
+        },
+        match: {
+          $expr: {
+            $gte: ["$capacity", peopleAmount],
+          },
+        },
+      })
+      .populate({
+        path: "sanatoriumServices.serviceType",
+        populate: {
+          path: "category",
+          model: "Category",
+        },
+      });
     return res.status(200).json(adminSanatoriums);
   }
 
@@ -451,27 +467,15 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
       rooms[0]
     );
     console.log(cheapestRoom?.roomName);
-    const basePrice = cheapestRoom?.roomPrice;
     const pricesArray = cheapestRoom?.periodPrices;
 
-    const costOfStay = calculatePrice(
-      startDate,
-      daysAmount,
-      basePrice,
-      pricesArray
-    );
-
-    if (cheapestRoom && cheapestRoom.discount && cheapestRoom.discount !== 0) {
-      newHotel.totalPrice = (costOfStay * (100 - cheapestRoom.discount)) / 100;
-      newHotel.oldPrice = costOfStay;
-    } else if (cheapestRoom) {
-      newHotel.totalPrice = costOfStay;
-    } else {
-      newHotel.totalPrice = 22800;
-    }
+    const costOfStay = calculatePrice(startDate, daysAmount, 0, pricesArray);
 
     return {
       ...newHotel,
+      totalPrice: margePercent
+        ? Math.round(costOfStay * margePercent)
+        : costOfStay,
       daysAmount: +daysAmount,
       nightsAmount: daysAmount - 1,
       adultsAmount: +adultsAmount,
@@ -483,11 +487,18 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
     .status(200)
     .send(
       minPrice && maxPrice
-        ? newHotels.filter(
-            (hotel) =>
-              hotel.totalPrice <= maxPrice && hotel.totalPrice >= minPrice
-          )
-        : newHotels
+        ? newHotels
+            .filter(
+              (hotel) =>
+                hotel?.totalPrice <= maxPrice && hotel?.totalPrice >= minPrice
+            )
+            .filter(
+              (hotel) =>
+                hotel.totalPrice !== null &&
+                hotel.totalPrice !== 0 &&
+                hotel.totalPrice
+            )
+        : newHotels.filter((hotel) => hotel?.totalPrice)
     );
 });
 

@@ -201,10 +201,15 @@ const EditTour = () => {
   ]);
 
   const clickUpload = () => fileRef.current.click();
+  const navigate = useNavigate();
 
   return (
     <>
-      <AdminHead text="Создание 1-3 тура" onClick={() => handleSubmit()} />
+      <AdminHead
+        text="Создание 1-3 тура"
+        onClick={() => handleSubmit()}
+        headBack={() => navigate("/dashboard/tours")}
+      />
       <div className="add_hotel-page page">
         <Section
           section="add_gen-section"
@@ -263,7 +268,11 @@ const EditTour = () => {
                 type="text"
                 placeholder="Местоположение"
                 name="destination"
-                value={tourData && tourData.locationId && tourData.locationId}
+                value={
+                  tourData &&
+                  tourData?.locationId?._id &&
+                  tourData?.locationId?._id
+                }
                 onChange={(e) => {
                   console.log(e.target.value);
                   setTourData({
@@ -316,6 +325,7 @@ const EditTour = () => {
                 placeholder="Рейтинг тура"
                 value={tourData && tourData.rating && tourData.rating}
                 type="number"
+                onWheel={(e) => e.target.blur()}
                 onChange={(e) =>
                   setTourData({
                     ...tourData,
@@ -326,6 +336,7 @@ const EditTour = () => {
               <select
                 className="primary-input"
                 type="number"
+                onWheel={(e) => e.target.blur()}
                 placeholder="Продолжительность тура"
                 onChange={(e) =>
                   setTourData({
@@ -625,11 +636,13 @@ const EditTour = () => {
           refetch={refetchTour}
           mode="tour"
         />
-        <TourTable
-          periodPrices={tourData?.periodPrices}
-          tourId={tourData?._id}
-          tourData={tourData}
-        />
+        {periods && periods.length > 0 ? (
+          <TourTable
+            periodPrices={tourData?.periodPrices}
+            tourId={tourData?._id}
+            tourData={tourData}
+          />
+        ) : null}
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <div className="modal-content">

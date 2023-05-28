@@ -1,8 +1,13 @@
 const { Schema, model } = require("mongoose");
+const mongoose = require("mongoose");
 
 const tourSchema = Schema({
   name: {
     type: String,
+  },
+  marge: {
+    type: Number,
+    default: 10,
   },
   tourServices: [
     {
@@ -143,4 +148,6 @@ const tourSchema = Schema({
   img: [String],
 });
 
-module.exports = new model("Tour", tourSchema);
+const Tour = new mongoose.model("Tour", tourSchema);
+
+module.exports = { Tour };
