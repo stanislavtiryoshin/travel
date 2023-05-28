@@ -66,9 +66,6 @@ const Sanatorium = () => {
       agesArray: searchData.agesArray,
     });
 
-  console.log(roomsData, "rooms data");
-  console.log(sanatoriumId, "san id ");
-
   useEffect(() => {
     if (isError) {
       console.log(message);
@@ -254,13 +251,11 @@ const Sanatorium = () => {
 
   const formatter = Intl.NumberFormat("ru-RU");
 
-  if (isLoading) {
+  if (isLoading && roomIsLoading) {
     return <HotelLoader />;
   }
 
-  if (roomIsLoading) {
-    return <RoomLoader />;
-  }
+  console.log(roomsData, "roomData");
 
   return (
     <div className="hotel_page page">
