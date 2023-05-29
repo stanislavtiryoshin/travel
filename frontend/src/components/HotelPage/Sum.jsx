@@ -8,6 +8,7 @@ import check from "../../assets/check.svg";
 import person from "../../assets/person.svg";
 import SumLoader from "../SumLoader";
 import { addOrder } from "../../features/order/orderSlice";
+import declOfNum from "../DayConfig";
 
 const Sum = ({
   price,
@@ -81,20 +82,37 @@ const Sum = ({
                         </div>
                       </>
                     ) : null}
-                    {price?.extraPlacesSum && price?.extraPlacesSum !== 0 ? (
-                      <div className="hotel_side-extraPlace">
-                        <span>
-                          +{" "}
-                          {JSON.parse(localStorage.getItem("agesArray"))
-                            .length - clientRoom.capacity}{" "}
-                          доп. места
-                        </span>
-                        <span className="price_span">
-                          {price && formatter.format(price?.extraPlacesSum)}
-                          тг
-                        </span>
-                      </div>
-                    ) : null}
+                    <div className="extra_box">
+                      {price?.extraPlacesSum && price?.extraPlacesSum !== 0 ? (
+                        <div className="hotel_side-extraPlace">
+                          <span className="extra_span">
+                            + {price?.usedExtraPlaces} доп.{" "}
+                            {declOfNum(price?.usedExtraPlaces, [
+                              "место",
+                              "места",
+                            ])}{" "}
+                            <span className="price_span">
+                              {price && formatter.format(price?.extraPlacesSum)}
+                              тг
+                            </span>
+                          </span>
+                        </div>
+                      ) : null}
+                      {price?.usedBabyPlaces && price?.usedBabyPlaces !== 0 ? (
+                        <div className="hotel_side-extraPlace">
+                          <span className="extra_span">
+                            + {price?.usedBabyPlaces} беспл.{" "}
+                            {declOfNum(price?.usedBabyPlaces, [
+                              "место",
+                              "места",
+                            ])}{" "}
+                            для млад.
+                            <span className="price_span">0 тг</span>
+                          </span>
+                        </div>
+                      ) : null}
+                    </div>
+
                     {priceData?.excursionsArray.length > 0 && (
                       <>
                         <div className="hotel_side-checksum">

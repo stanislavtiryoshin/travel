@@ -137,12 +137,15 @@ const getPrice = asyncHandler(async (req, res) => {
   } = req.query;
 
   let ages = agesArray.split(",").map(Number);
-  let excursions = [];
-
-  if (excursionsArray && excursionsArray.length > 0)
-    excursions = excursionsArray?.split(",");
-
-  console.log(excursions);
+  const peopleAmount = agesArray.split(",").map(Number).length;
+  const kidsAmount = agesArray
+    .split(",")
+    .map(Number)
+    .filter((age) => age !== 1000).length;
+  const adultsAmount = agesArray
+    .split(",")
+    .map(Number)
+    .filter((age) => age === 1000).length;
 
   const hotel = await Sanatorium.findById(sanatoriumId).populate({
     path: "rooms",
@@ -218,39 +221,6 @@ const getPrice = asyncHandler(async (req, res) => {
     for (let i = 0; i < daysNum; i++) {
       findPriceByDate(daysArray[i]);
     }
-
-    // (function calculateFood() {
-    //   if (addRoomFood && kidsFoodAmount !== 0 && adultsFoodAmount !== 0) {
-    //     for (let i = 0; i < daysAmount; i++) {
-    //       for (let i = 0; i < kidsFoodAmount; i++) {
-    //         sum += hotel.kidFoodPrice;
-    //         foodSum += hotel.kidFoodPrice;
-    //         console.log("kid food");
-    //       }
-    //       for (let i = 0; i < adultsFoodAmount; i++) {
-    //         sum += hotel.adultFoodPrice;
-    //         foodSum += hotel.adultFoodPrice;
-    //         console.log("adult food");
-    //       }
-    //     }
-    //   }
-    // })();
-
-    // async function calculateExcursionPrices() {
-    //   if (excursions && excursions.length > 0) {
-    //     for (const id of excursions) {
-    //       const excursion = await Excursion.findById(id);
-    //       if (excursion && excursion.price) {
-    //         sum += excursion.price * agesArray.split(",").length;
-    //         excursionsSum += excursion.price * agesArray.split(",").length;
-    //       }
-    //     }
-    //   }
-    // }
-
-    // if (excursions && excursions.length > 0) {
-    //   await calculateExcursionPrices();
-    // }
   }
 
   await calculatePrice(start, daysAmount, 2, chosenRoom.periodPrices);
@@ -318,10 +288,8 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
   const {
     agesArray,
     daysAmount,
-    startDate,
+    start,
     locationId,
-    adultsAmount,
-    kidsAmount,
     dashMode,
     searchNameId,
     filterRating,
@@ -329,7 +297,16 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
     maxPrice,
   } = req.query;
 
-  const peopleAmount = agesArray.length;
+  let ages = agesArray.split(",").map(Number);
+  const peopleAmount = agesArray.split(",").map(Number).length;
+  const kidsAmount = agesArray
+    .split(",")
+    .map(Number)
+    .filter((age) => age !== 1000).length;
+  const adultsAmount = agesArray
+    .split(",")
+    .map(Number)
+    .filter((age) => age === 1000).length;
 
   const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
     let daysArray = daysIntoArray(start, daysNum);
@@ -345,7 +322,19 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
           const endMonth = el.period.endMonth;
           const endDay = el.period.endDay;
 
+          console.log(
+            startDay,
+            "/",
+            startMonth,
+            " - ",
+            endDay,
+            "/",
+            endMonth,
+            "period dates"
+          );
+
           if (isDateInRange(date, startMonth, startDay, endMonth, endDay)) {
+            console.log(el.roomPrice, "el roomrpice");
             sum += el.roomPrice;
             priceFound = true;
           }
@@ -440,11 +429,6 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
         path: "periodPrices.period",
         model: "Period",
       },
-      match: {
-        $expr: {
-          $gte: ["$capacity", peopleAmount],
-        },
-      },
     })
     .populate({
       path: "sanatoriumServices.serviceType",
@@ -466,10 +450,12 @@ const getSearchedSanatoriums = asyncHandler(async (req, res) => {
           : curr,
       rooms[0]
     );
-    console.log(cheapestRoom?.roomName);
+    console.log(cheapestRoom?.roomName, "sanatorium rooms");
     const pricesArray = cheapestRoom?.periodPrices;
 
-    const costOfStay = calculatePrice(startDate, daysAmount, 0, pricesArray);
+    const costOfStay = calculatePrice(start, daysAmount, 0, pricesArray);
+
+    const margePercent = (newHotel.marge + 100) / 100;
 
     return {
       ...newHotel,

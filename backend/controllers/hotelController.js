@@ -476,6 +476,20 @@ const getPrice = asyncHandler(async (req, res) => {
   let excursionsSum = 0;
   let foodSum = 0;
 
+  console.log(
+    ages.length -
+      removeAges(ages, chosenRoom.freeBabyPlaces, hotel.kids.babyMaxAge).length,
+    "amount of free baby places"
+  );
+
+  const usedBabyPlaces =
+    ages.length -
+    removeAges(ages, chosenRoom.freeBabyPlaces, hotel.kids.babyMaxAge).length;
+
+  const usedExtraPlaces =
+    removeAges(ages, chosenRoom.freeBabyPlaces, hotel.kids.babyMaxAge).length -
+    chosenRoom.capacity;
+
   // Remove babies which will be appointed to a free extra place
   ages = removeAges(ages, chosenRoom.freeBabyPlaces, hotel.kids.babyMaxAge);
 
@@ -615,6 +629,10 @@ const getPrice = asyncHandler(async (req, res) => {
         roomSum: roomSum * margePercent,
         kidsFoodAmount: kidsFoodAmount,
         adultsFoodAmount: adultsFoodAmount,
+        usedBabyPlaces:
+          usedBabyPlaces && usedBabyPlaces !== 0 ? usedBabyPlaces : null,
+        usedExtraPlaces:
+          usedExtraPlaces && usedExtraPlaces !== 0 ? usedExtraPlaces : null,
       })
     : res.status(404).json({ error: "Не удалось подсчитать" });
 });

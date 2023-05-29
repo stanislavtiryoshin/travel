@@ -145,6 +145,8 @@ const Tour = () => {
     data: price,
     isFetching,
     isLoading: priceIsLoading,
+    error: priceError,
+    isError: priceHasError,
     refetch,
   } = useGetTourPriceQuery(priceData);
 
@@ -493,6 +495,7 @@ const Tour = () => {
                       (hotel) => hotel?.hotel?._id === activeId
                     )?.room
                   }
+                  priceError={priceError}
                   orderTerms={{
                     mode: "tour",
                     days: singleTour && singleTour.duration,

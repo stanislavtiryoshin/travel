@@ -16,11 +16,12 @@
 
 .hotel_side-extraPlace {
   padding-left: 5px;
-  margin-bottom: 20px;
   color: rgba(81, 85, 91, 1);
   font-size: 12px;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  row-gap: 5px;
   color: rgba(41, 45, 50, 1);
   span {
     font-family: GT Walsheim Pro;
@@ -31,13 +32,31 @@
   }
 }
 
+.extra_box {
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  margin: 5px 0;
+}
+
 .price_span {
   font-family: GT Walsheim Pro;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 14px;
   font-weight: 500;
   line-height: 16px;
   letter-spacing: 0em;
   text-align: right;
+}
+
+.extra_span {
+  font-size: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .hotel_page_top {

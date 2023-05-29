@@ -48,9 +48,8 @@ const SanatoriumResults = ({ mode }) => {
                 hotelId={hotel._id}
                 name={hotel.name}
                 locationId={hotel.locationId}
-                price={hotel.price * peopleAmount}
-                amount={peopleAmount}
-                days={daysAmount}
+                price={hotel.totalPrice}
+                days={hotel.daysAmount}
                 description={hotel.description}
                 rating={hotel.rating}
                 startDate={searchData.start}

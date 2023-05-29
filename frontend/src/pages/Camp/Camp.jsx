@@ -170,6 +170,8 @@ const Camp = () => {
     data: price,
     isLoading: priceIsLoading,
     isFetching: priceIsFetching,
+    error: priceError,
+    isError: priceHasError,
     refetch,
   } = useGetCampPriceQuery(priceData);
 
@@ -458,6 +460,7 @@ const Camp = () => {
                   priceData={priceData}
                   priceIsLoading={priceIsFetching}
                   orderTerms={orderTerms}
+                  priceError={priceError}
                   mode="camp"
                 />
 
