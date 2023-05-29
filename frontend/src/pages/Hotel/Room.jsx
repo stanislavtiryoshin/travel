@@ -52,7 +52,7 @@ const Room = ({
     >
       <div className="rooms_top">
         <img
-          src={room?.img.length > 0 ? room?.img[0] : roompic}
+          src={room?.img?.length > 0 ? room?.img[0] : roompic}
           pic
           alt=""
           className="room_img"

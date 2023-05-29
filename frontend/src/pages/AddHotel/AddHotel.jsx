@@ -73,6 +73,7 @@ const AddHotel = ({
     },
     comforts: [],
     hotelStars: 5,
+    marge: 0,
   });
 
   console.log(hotelData, "hoteldata");
@@ -516,6 +517,14 @@ const AddHotel = ({
                     <option value="10:00">10:00</option>
                     <option value="11:00">11:00</option>
                     <option value="12:00">12:00</option>
+                    <option value="13:00">13:00</option>
+                    <option value="14:00">14:00</option>
+                    <option value="15:00">15:00</option>
+                    <option value="16:00">16:00</option>
+                    <option value="17:00">17:00</option>
+                    <option value="18:00">18:00</option>
+                    <option value="19:00">19:00</option>
+                    <option value="20:00">20:00</option>
                   </select>
                 </div>
                 <div className="service-input">
@@ -542,6 +551,14 @@ const AddHotel = ({
                     <option value="10:00">10:00</option>
                     <option value="11:00">11:00</option>
                     <option value="12:00">12:00</option>
+                    <option value="13:00">13:00</option>
+                    <option value="14:00">14:00</option>
+                    <option value="15:00">15:00</option>
+                    <option value="16:00">16:00</option>
+                    <option value="17:00">17:00</option>
+                    <option value="18:00">18:00</option>
+                    <option value="19:00">19:00</option>
+                    <option value="20:00">20:00</option>
                   </select>
                 </div>
               </div>
@@ -700,6 +717,21 @@ const AddHotel = ({
               </div>
             </div>
             <div className="input_box">
+              <div className="input_title">Маржа</div>
+              <input
+                type="number"
+                className="primary-input"
+                placeholder="10%"
+                value={hotelData.marge}
+                onChange={(e) => {
+                  setHotelData((prev) => ({
+                    ...prev,
+                    marge: e.target.value,
+                  }));
+                }}
+              />
+            </div>
+            <div className="input_box">
               <div className="input_title">Тип оплаты</div>
               <div className="input_row">
                 <div className="service-input">
@@ -742,9 +774,16 @@ const AddHotel = ({
                       });
                     }}
                   >
+                    <option value="0">0%</option>
+                    <option value="10">10%</option>
+                    <option value="20">20%</option>
                     <option value="30">30%</option>
+                    <option value="40">40%</option>
                     <option value="50">50%</option>
+                    <option value="60">60%</option>
                     <option value="70">70%</option>
+                    <option value="80">80%</option>
+                    <option value="90">90%</option>
                     <option value="100">100%</option>
                   </select>
                 </div>

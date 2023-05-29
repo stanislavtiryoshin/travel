@@ -508,3 +508,8 @@ body {
     outline: none;
   }
 }
+
+.categ_link:hover {
+  text-decoration: underline;
+  color: $base-blue;
+}

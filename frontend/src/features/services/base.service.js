@@ -259,6 +259,11 @@ export const baseApi = createApi({
       }),
       invalidatesTags: [{ id: "LIST", type: "Orders" }],
     }),
+    getHotelById: builder.query({
+      query: (id) => ({
+        url: `/hotels/${id}`,
+      }),
+    }),
   }),
 });
 
@@ -291,4 +296,6 @@ export const {
 
   useUpdateStatusMutation,
   useLazyGetOrderByIdQuery,
+
+  useLazyGetHotelByIdQuery,
 } = baseApi;

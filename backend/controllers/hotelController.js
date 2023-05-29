@@ -788,6 +788,79 @@ const getByTagRecommendation = async (req, res) => {
   }
 };
 
+const getPriceRanges = async (req, res) => {
+  const { start, duration, hotelId } = req.query;
+  const daysArray = daysIntoArray(start, duration);
+
+  try {
+    const dateObj = {
+      start: {
+        day: daysArray[0].getDate(),
+        month: daysArray[0].getUTCMonth() + 1,
+      },
+      end: {
+        day: daysArray[daysArray.length - 1].getDate(),
+        month: daysArray[daysArray.length - 1].getMonth() + 1,
+      },
+    };
+    const hotel = await Hotel.findOne({ _id: hotelId });
+    if (!hotel) {
+      return res.status(404).json({ message: "Hotel not found" });
+    }
+
+    const roomIds = hotel.rooms;
+
+    const hotelRooms = await Room.find({
+      _id: { $in: roomIds },
+    });
+
+    if (!hotelRooms || hotelRooms.length === 0) {
+      return res.status(404).json({ message: "No rooms found" });
+    }
+
+    const periodPrices = hotelRooms.map((room) => room.periodPrices);
+
+    const periodPriceArray = periodPrices.flat();
+    const perIds = periodPriceArray.map((per) => per.period);
+
+    const periods = await Period.find({
+      _id: {
+        $in: perIds,
+      },
+    });
+
+    if (!periods || periods.length === 0) {
+      return res.status(404).json({ message: "Cannot find periods" });
+    }
+
+    const prices = periodPriceArray.map((price) => ({
+      roomPrice: price.roomPrice,
+      periodId: price.period,
+    }));
+
+    const range = prices
+      .map((price, idx) => {
+        if (price.periodId.equals(periods[idx]?._id)) {
+          // console.log(periods[idx].startMonth, periods[idx].endMonth);
+          return {
+            price: price.roomPrice * duration,
+            date: `${periods[idx].startDay}.${periods[idx].startMonth} - ${periods[idx].endDay}.${periods[idx].endMonth}`,
+            isCurrent:
+              (periods[idx].startMonth >= dateObj.start.month &&
+                periods[idx].startMonth <= dateObj.end.month) ||
+              (periods[idx].endMonth >= dateObj.start.month &&
+                periods[idx].endMonth <= dateObj.end.month),
+          };
+        }
+      })
+      .filter(Boolean);
+    res.send({ range });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error });
+  }
+};
+
 module.exports = {
   addHotel,
   getHotels,
@@ -802,4 +875,5 @@ module.exports = {
   getRoomPrices,
   getRoomsByLimit,
   getByTagRecommendation,
+  getPriceRanges,
 };
