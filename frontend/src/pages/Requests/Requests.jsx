@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 
+import { Link } from "react-router-dom";
 import HotelSearch from "../../components/SearchPanel/HotelSearch";
 import RequestTable from "./RequestTable";
 import { useSelector } from "react-redux";
@@ -7,9 +8,12 @@ import {
   useLazyGetOrdersByQueryQuery,
   useUpdateStatusMutation,
   useLazyGetOrderByIdQuery,
+  useLazyGetHotelByIdQuery,
 } from "../../features/services/base.service";
 import Modal from "../../components/Modal";
 import Loader from "../../components/Loader";
+import { API_URL_PROXY } from "../../config/config";
+import axios from "axios";
 
 const Requests = () => {
   const { user } = useSelector((state) => state.auth);
@@ -18,18 +22,13 @@ const Requests = () => {
   const [query, setQuery] = React.useState("");
   const [status, setStatus] = React.useState("");
   const [getOrder] = useLazyGetOrderByIdQuery();
+  const [getHotelName] = useLazyGetHotelByIdQuery();
   const [order, setOrder] = React.useState(null);
-  // const {
-  //   data: orders = [],
-  //   isLoading,
-  // } = useGetOrdersByQueryQuery({
-  //   token: user.token,
-  //   query: query,
-  //   status: status,
-  // });
+  const [hotelName, setHotelName] = React.useState("");
+
   const [orders, setOrders] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
-
+  const [orderIsLoading, setOrderIsLoading] = React.useState(true);
   const [fetchOrders, { isFetching }] = useLazyGetOrdersByQueryQuery();
 
   const [updateStatus] = useUpdateStatusMutation();
@@ -65,7 +64,22 @@ const Requests = () => {
     },
   ];
 
-  const handleUpdate = (id, status) => {
+  const handleSendStatus = (status, email, uid) => {
+    axios
+      .post(`${API_URL_PROXY}/send-status-email`, {
+        status: status,
+        uid: uid,
+        email: email,
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleUpdate = (id, status, orderObj) => {
     const values = {
       id,
       status,
@@ -78,7 +92,14 @@ const Requests = () => {
         ...orders.slice(orderIndex + 1),
       ];
       setOrders(newOrders);
+
+      if (orderObj) {
+        handleSendStatus(status, orderObj.clientEmail, orderObj.uid);
+        console.log(status, orderObj.clientEmail, orderObj.uid, "order email");
+      }
     });
+
+    // console.log("test ");
   };
 
   const columns = useMemo(
@@ -130,6 +151,13 @@ const Requests = () => {
         id: "category",
         header: "Категория",
         accessor: "mode",
+        Cell: ({ row }) => {
+          return (
+            <Link className="categ_link" to={`/hotels/${row.original.hotel}`}>
+              {row.original.mode}
+            </Link>
+          );
+        },
       },
       {
         id: "details",
@@ -137,10 +165,18 @@ const Requests = () => {
         Cell: ({ row }) => (
           <button
             onClick={() => {
-              getOrder(row.original._id).then(({ data }) => {
-                setOrder(data);
-              });
-              setIsOpen(true);
+              setOrderIsLoading(true);
+              getOrder(row.original._id)
+                .then(({ data }) => {
+                  setOrder(data);
+                  getHotelName(data?.hotel).then((hotelName) => {
+                    setHotelName(hotelName?.data?.name);
+                    setOrderIsLoading(false);
+                  });
+                })
+                .finally(() => {
+                  setIsOpen(true);
+                });
             }}
             className="order-btn"
           >
@@ -163,7 +199,10 @@ const Requests = () => {
             {/* {row.original.status} */}
             <select
               className="status-select"
-              onChange={(e) => handleUpdate(row.original._id, e.target.value)}
+              onChange={(e) => {
+                handleUpdate(row.original._id, e.target.value, row.original);
+                console.log(row.original, "id");
+              }}
             >
               {statuses.map((stat) => (
                 <option
@@ -179,29 +218,6 @@ const Requests = () => {
           </button>
         ),
       },
-      // {
-      //   id: "changeStatus",
-      //   header: "Изменить статус",
-      //   Cell: ({ row }) => (
-      //     <>
-      //       <select
-      //         className="status-select"
-      //         onChange={(e) => handleUpdate(row.original._id, e.target.value)}
-      //       >
-      //         {statuses.map((stat) => (
-      //           <option
-      //             key={stat.label}
-      //             value={stat.label}
-      //             className={stat.style}
-      //             selected={stat.label === row.original.status}
-      //           >
-      //             {stat.label}
-      //           </option>
-      //         ))}
-      //       </select>
-      //     </>
-      //   ),
-      // },
     ],
     []
   );
@@ -240,41 +256,49 @@ const Requests = () => {
         )}
       </section>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div style={{ lineHeight: "1.5" }}>
-          <h2>Заказ №{order?.uid}</h2>
-          <div className="order-details">
-            <div className="order-details__item">
-              <h3>Имя</h3>
-              <p>{order?.clientName}</p>
-            </div>
-            <div className="order-details__item">
-              <h3>Номер телефона</h3>
-              <p>{order?.clientPhone}</p>
-            </div>
-            <div className="order-details__item">
-              <h3>Электронная почта</h3>
-              <p>{order?.clientEmail}</p>
-            </div>
-            <div className="order-details__item">
-              <h3>Дата заявки</h3>
-              <p>
-                {new Date(+order?.startDate).toLocaleString(undefined, {
-                  month: "numeric",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </p>
-            </div>
-            <div className="order-details__item">
-              <h3>Количество людей</h3>
-              <p>{order?.peopleAmount}</p>
-            </div>
-            <div className="order-details__item">
-              <h3>Дополнительная информация</h3>
-              <p>{order?.extraInfo}</p>
+        {orderIsLoading ? (
+          <Loader />
+        ) : (
+          <div style={{ lineHeight: "1.5" }}>
+            <h2>Заказ №{order?.uid}</h2>
+            <div className="order-details">
+              <div className="order-details__item">
+                <h3>Имя</h3>
+                <p>{order?.clientName}</p>
+              </div>
+              <div className="order-details__item">
+                <h3>Номер телефона</h3>
+                <p>{order?.clientPhone}</p>
+              </div>
+              <div className="order-details__item">
+                <h3>Электронная почта</h3>
+                <p>{order?.clientEmail}</p>
+                <div className="order-details__item">
+                  <h3>Название отеля</h3>
+                  <p>{hotelName}</p>
+                </div>
+              </div>
+              <div className="order-details__item">
+                <h3>Дата заявки</h3>
+                <p>
+                  {new Date(+order?.startDate).toLocaleString(undefined, {
+                    month: "numeric",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
+              <div className="order-details__item">
+                <h3>Количество людей</h3>
+                <p>{order?.peopleAmount}</p>
+              </div>
+              <div className="order-details__item">
+                <h3>Дополнительная информация</h3>
+                <p>{order?.extraInfo}</p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </Modal>
     </>
   );

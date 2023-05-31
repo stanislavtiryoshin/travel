@@ -40,7 +40,6 @@ const Filter = ({ mode, dashMode }) => {
   useEffect(() => {
     setValue([minPrice, maxPrice]);
   }, [minPrice, maxPrice]);
-  console.log(minPrice, maxPrice, "value");
 
   useEffect(() => {
     switch (mode) {

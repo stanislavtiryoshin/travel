@@ -15,6 +15,17 @@ const addRoom = async (roomData, token) => {
   return response.data;
 };
 
+// Delete room
+
+const deleteRoom = async (roomId, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  await axios.delete(API_URL + roomId, config);
+};
+
 //  Get single room
 
 const getSingleRoom = async (roomId, token) => {
@@ -43,6 +54,7 @@ const roomService = {
   addRoom,
   getSingleRoom,
   updateRoom,
+  deleteRoom,
 };
 
 export default roomService;

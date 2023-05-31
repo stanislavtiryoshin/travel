@@ -188,15 +188,9 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
   } = req.query;
 
   let ages = agesArray.split(",").map(Number);
-  const peopleAmount = agesArray.split(",").map(Number).length;
-  const kidsAmount = agesArray
-    .split(",")
-    .map(Number)
-    .filter((age) => age !== 1000).length;
-  const adultsAmount = agesArray
-    .split(",")
-    .map(Number)
-    .filter((age) => age === 1000).length;
+  const peopleAmount = ages.length;
+  const kidsAmount = ages.filter((age) => age !== 1000).length;
+  const adultsAmount = ages.filter((age) => age === 1000).length;
 
   const calculatePrice = (start, daysNum, basePrice, pricesArray) => {
     let daysArray = daysIntoArray(start, daysNum);
@@ -212,22 +206,29 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
           const endMonth = el.period.endMonth;
           const endDay = el.period.endDay;
 
-          if (
-            (date.getMonth() + 1 > startMonth ||
-              (date.getMonth() + 1 === startMonth &&
-                date.getDate() >= startDay)) &&
-            (date.getMonth() + 1 < endMonth ||
-              (date.getMonth() + 1 === endMonth && date.getDate() <= endDay))
-          ) {
+          if (isDateInRange(date, startMonth, startDay, endMonth, endDay)) {
+            console.log(
+              "date: ",
+              date,
+              startDay,
+              "/",
+              startMonth,
+              " - ",
+              endDay,
+              "/",
+              endMonth
+            );
             sum += el.roomPrice;
             priceFound = true;
           }
         });
         if (!priceFound) {
-          sum += basePrice;
+          sum += 0;
+          console.log("!priceFound");
         }
       } else {
-        sum += basePrice;
+        sum += 0;
+        console.log("else");
       }
     };
 
@@ -236,6 +237,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     }
 
     if (sum === 0) {
+      console.log(sum);
       return null;
     }
 
@@ -337,7 +339,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     let rooms = newHotel.rooms;
 
     rooms = rooms.filter((room) => {
-      return !checkCapacity(
+      return checkCapacity(
         ages,
         room.extraPlaces,
         hotel.kids.babyMaxAge,
@@ -347,11 +349,6 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
       );
     });
 
-    // console.log(
-    //   rooms.map((room) => room.capacity + room.totalExtraPlacesAmount),
-    //   "rooms after filtering out babies"
-    // );
-
     const cheapestRoom = rooms.reduce(
       (prev, curr) =>
         prev.periodPrices[0]?.roomPrice < curr.periodPrices[0]?.roomPrice
@@ -359,7 +356,6 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
           : curr,
       rooms[0]
     );
-    console.log(cheapestRoom?.roomName);
 
     let sum = 0;
 
@@ -387,7 +383,11 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
 
       const margePercent = (newHotel.marge + 100) / 100;
 
-      if (costOfStay && newHotel) {
+      if (
+        costOfStay &&
+        newHotel &&
+        calculatePrice(start, daysAmount, 0, pricesArray) !== 0
+      ) {
         return {
           ...newHotel,
           totalPrice: margePercent
@@ -398,27 +398,39 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
           adultsAmount: +adultsAmount,
           kidsAmount: +kidsAmount,
         };
+      } else {
+        return { ...newHotel, totalPrice: 0 };
       }
     }
   });
 
+  console.log(newHotels, "before res json");
+
   res
     .status(200)
-    .send(
-      minPrice && maxPrice
-        ? newHotels
-            .filter(
-              (hotel) =>
-                hotel?.totalPrice <= maxPrice && hotel?.totalPrice >= minPrice
-            )
-            .filter(
-              (hotel) =>
-                hotel.totalPrice !== null &&
-                hotel.totalPrice !== 0 &&
-                hotel.totalPrice
-            )
-        : newHotels.filter((hotel) => hotel?.totalPrice)
+    .json(
+      newHotels
+        .filter((hotel) => hotel !== undefined)
+        .filter((hotel) => hotel.totalPrice !== 0)
     );
+
+  // res
+  //   .status(200)
+  //   .send(
+  //     minPrice && maxPrice
+  //       ? newHotels
+  //           .filter(
+  //             (hotel) =>
+  //               hotel?.totalPrice <= maxPrice && hotel?.totalPrice >= minPrice
+  //           )
+  //           .filter(
+  //             (hotel) =>
+  //               hotel.totalPrice !== null &&
+  //               hotel.totalPrice !== 0 &&
+  //               hotel.totalPrice
+  //           )
+  //       : newHotels.filter((hotel) => hotel.totalPrice)
+  //   );
 });
 
 //@desc   Calculate the price of hotel
@@ -667,25 +679,6 @@ const getRoomsByLimit = async (req, res) => {
             _id: {
               $in: hotel.rooms,
             },
-            // $expr: {
-            //   $gte: [
-            //     {
-            //       $sum: [
-            //         "$capacity",
-            //         {
-            //           $size: {
-            //             $filter: {
-            //               input: "$extraPlaces",
-            //               as: "extraPlace",
-            //               cond: { $ne: ["$$extraPlace.isBabyPlace", true] },
-            //             },
-            //           },
-            //         },
-            //       ],
-            //     },
-            //     parseInt(capacity),
-            //   ],
-            // },
           },
         },
       ]);
@@ -694,7 +687,18 @@ const getRoomsByLimit = async (req, res) => {
 
       if (ages && rooms && rooms.length > 0 && hotel) {
         filteredRooms = rooms.filter((room) => {
-          return !checkCapacity(
+          console.log(
+            checkCapacity(
+              ages,
+              room.extraPlaces,
+              hotel.kids.babyMaxAge,
+              room.freeBabyPlaces,
+              room.totalExtraPlacesAmount,
+              room.capacity
+            ),
+            "check capacity"
+          );
+          return checkCapacity(
             ages,
             room.extraPlaces,
             hotel.kids.babyMaxAge,
@@ -707,12 +711,13 @@ const getRoomsByLimit = async (req, res) => {
 
       console.log("-----------------------------------");
 
-      console.log(filteredRooms, "filtered rooms");
+      // console.log(filteredRooms, "filtered rooms");
 
       const modifiedRooms = filteredRooms?.map((room) => {
         console.log(
           removeAges(ages, room.freeBabyPlaces, hotel.kids.babyMaxAge).length,
           room.capacity,
+          room.roomName,
           "test"
         );
 
@@ -806,6 +811,79 @@ const getByTagRecommendation = async (req, res) => {
   }
 };
 
+const getPriceRanges = async (req, res) => {
+  const { start, duration, hotelId } = req.query;
+  const daysArray = daysIntoArray(start, duration);
+
+  try {
+    const dateObj = {
+      start: {
+        day: daysArray[0].getDate(),
+        month: daysArray[0].getUTCMonth() + 1,
+      },
+      end: {
+        day: daysArray[daysArray.length - 1].getDate(),
+        month: daysArray[daysArray.length - 1].getMonth() + 1,
+      },
+    };
+    const hotel = await Hotel.findOne({ _id: hotelId });
+    if (!hotel) {
+      return res.status(404).json({ message: "Hotel not found" });
+    }
+
+    const roomIds = hotel.rooms;
+
+    const hotelRooms = await Room.find({
+      _id: { $in: roomIds },
+    });
+
+    if (!hotelRooms || hotelRooms.length === 0) {
+      return res.status(404).json({ message: "No rooms found" });
+    }
+
+    const periodPrices = hotelRooms.map((room) => room.periodPrices);
+
+    const periodPriceArray = periodPrices.flat();
+    const perIds = periodPriceArray.map((per) => per.period);
+
+    const periods = await Period.find({
+      _id: {
+        $in: perIds,
+      },
+    });
+
+    if (!periods || periods.length === 0) {
+      return res.status(404).json({ message: "Cannot find periods" });
+    }
+
+    const prices = periodPriceArray.map((price) => ({
+      roomPrice: price.roomPrice,
+      periodId: price.period,
+    }));
+
+    const range = prices
+      .map((price, idx) => {
+        if (price.periodId.equals(periods[idx]?._id)) {
+          // console.log(periods[idx].startMonth, periods[idx].endMonth);
+          return {
+            price: price.roomPrice * duration,
+            date: `${periods[idx].startDay}.${periods[idx].startMonth} - ${periods[idx].endDay}.${periods[idx].endMonth}`,
+            isCurrent:
+              (periods[idx].startMonth >= dateObj.start.month &&
+                periods[idx].startMonth <= dateObj.end.month) ||
+              (periods[idx].endMonth >= dateObj.start.month &&
+                periods[idx].endMonth <= dateObj.end.month),
+          };
+        }
+      })
+      .filter(Boolean);
+    res.send({ range });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error });
+  }
+};
+
 module.exports = {
   addHotel,
   getHotels,
@@ -820,4 +898,5 @@ module.exports = {
   getRoomPrices,
   getRoomsByLimit,
   getByTagRecommendation,
+  getPriceRanges,
 };

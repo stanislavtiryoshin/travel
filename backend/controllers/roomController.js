@@ -79,6 +79,15 @@ const updateRoom = asyncHandler(async (req, res) => {
   res.status(200).json(room);
 });
 
+//@desc   Delete room
+//@route  DELETE /api/rooms/:roomId
+//@access Private
+
+const deleteRoom = asyncHandler(async (req, res) => {
+  const room = await Room.deleteOne({ _id: req.params.roomId });
+  res.status(200).json(room);
+});
+
 //@desc   Update room period prices
 //@route  PATCH /api/rooms/:roomId/prices
 //@access Private
@@ -162,4 +171,5 @@ module.exports = {
   updateRoom,
   insertPrices,
   updatePrices,
+  deleteRoom,
 };

@@ -195,13 +195,15 @@ export const baseApi = createApi({
           capacity ? capacity : ""
         }&agesArray=${agesArray ? agesArray : ""}`,
       }),
-      providesTags: (result) =>
-        result
+      providesTags: (result) => {
+        console.log(result, "result in sanatorium");
+        return result
           ? [
               ...result.rooms.map(({ _id }) => ({ type: "Rooms", _id })),
               { type: "Rooms", id: "LIST" },
             ]
-          : [{ type: "Rooms", id: "LIST" }],
+          : [{ type: "Rooms", id: "LIST" }];
+      },
     }),
 
     getHotelsByTag: builder.mutation({
@@ -257,6 +259,11 @@ export const baseApi = createApi({
       }),
       invalidatesTags: [{ id: "LIST", type: "Orders" }],
     }),
+    getHotelById: builder.query({
+      query: (id) => ({
+        url: `/hotels/${id}`,
+      }),
+    }),
   }),
 });
 
@@ -289,4 +296,6 @@ export const {
 
   useUpdateStatusMutation,
   useLazyGetOrderByIdQuery,
+
+  useLazyGetHotelByIdQuery,
 } = baseApi;

@@ -9,7 +9,7 @@ function calculateExtraPlaces(
   let extraPlacesSum = 0;
 
   const notChosen = (place) => {
-    console.log(place, "place");
+    // console.log(place, "place");
     return (
       chosenPlaces.filter((el) => el._id === place._id).length < place.maxAmount
     );
@@ -41,7 +41,11 @@ function calculateExtraPlaces(
   return extraPlacesSum > 0 ? extraPlacesSum : 0;
 }
 
-const checkExtraPlaces = (agesAfterAccomodation, extraPlacesArray) => {
+const checkExtraPlaces = (
+  agesAfterAccomodation,
+  extraPlacesArray,
+  totalExtraPlacesAmount
+) => {
   let chosenPlaces = [];
   let extraPlacesSum = 0;
 
@@ -62,13 +66,22 @@ const checkExtraPlaces = (agesAfterAccomodation, extraPlacesArray) => {
     }
   });
 
-  console.log(
-    chosenPlaces.length,
-    agesAfterAccomodation.length,
-    "chosen places"
-  );
+  // console.log(
+  //   chosenPlaces.length,
+  //   agesAfterAccomodation.length,
+  //   totalExtraPlacesAmount,
+  //   "chosen places"
+  // );
 
-  return chosenPlaces.length < agesAfterAccomodation.length;
+  // return (
+  //   chosenPlaces.length >= agesAfterAccomodation.length &&
+  //   chosenPlaces.length <= totalExtraPlacesAmount
+  // );
+
+  return chosenPlaces.length >= agesAfterAccomodation.length &&
+    chosenPlaces.length <= totalExtraPlacesAmount
+    ? true
+    : false;
 };
 
 module.exports = { calculateExtraPlaces, checkExtraPlaces };

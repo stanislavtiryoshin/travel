@@ -38,7 +38,6 @@ const SearchPanel = ({ isUserLook, style }) => {
 
   // Importing all locations for location select
   const { data: allLocations = [], isLoading } = useGetLocationQuery();
-  console.log(allLocations, "locs");
 
   // Importing searchData from searchSlice
   const { searchData } = useSelector((state) => state.search);

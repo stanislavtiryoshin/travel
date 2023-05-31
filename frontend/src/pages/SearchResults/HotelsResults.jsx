@@ -20,10 +20,11 @@ const HotelsResults = ({ mode }) => {
   const { searchData } = useSelector((state) => state.search);
   const { hotels } = useSelector((state) => state.hotels);
 
-  // console.log(startDate, "startdate");
+  console.log(searchData, "searchData");
 
   const [searchHotels, { isLoading: hotelsIsLoading }] =
     useLazyGetHotelsByFilterQuery();
+
   useEffect(() => {
     searchHotels(searchData).then(({ data }) => {
       dispatch(setHotelFilterData(data));

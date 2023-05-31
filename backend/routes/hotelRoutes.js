@@ -15,6 +15,7 @@ const {
   deletePeriod,
   getByTagRecommendation,
   getPrice,
+  getPriceRanges,
   // setSearchable,
 } = require("../controllers/hotelController");
 const { protect } = require("../middleware/authMiddleware");
@@ -28,6 +29,8 @@ router.get("/", getHotels);
 router.get("/price", getPrice);
 router.get("/searched", getSearchedHotels);
 router.get("/admin", getAdminHotels);
+router.get("/price_range", getPriceRanges);
+
 router.patch("/:hotelId", protect, updateHotel);
 // router.patch("/:hotelId/periods", protect, updateHotelPeriods);
 // router.patch("/:hotelId/delete-period", protect, deletePeriod);

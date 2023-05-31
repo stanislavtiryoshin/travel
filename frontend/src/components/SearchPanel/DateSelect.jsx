@@ -18,10 +18,6 @@ const DateSelect = () => {
     new Date(+localStorage.getItem("end") || +searchData.end)
   );
 
-  //CONSOLE LOG REMOVE
-  console.log(searchData, "search data");
-  console.log(startingDate, endingDate, "start end dates");
-
   const onChange = (dates) => {
     const [start, end] = dates;
     setStartingDate(start);

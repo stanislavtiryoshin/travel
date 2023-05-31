@@ -131,6 +131,35 @@ app.post("/api/send-client-email", (req, res) => {
   });
 });
 
+app.post("/api/send-status-email", (req, res) => {
+  const { status, uid, email } = req.body;
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "stanislav.tiryoshin@gmail.com",
+      pass: "nauqkkwdtqnmuxeo",
+    },
+  });
+
+  const mailOptions = {
+    from: "stanislav.tiryoshin@gmail.com",
+    to: email,
+    subject: "Статус вашего заказа изменен",
+    html: `Статус вашего заказа #${uid} изменен. Статус: ${status}`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+      res.status(500).send("Error sending email");
+    } else {
+      console.log("Email sent: " + info.response);
+      res.send("Email sent successfully");
+    }
+  });
+});
+
 /* ROUTES */
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/hotels", require("./routes/hotelRoutes"));

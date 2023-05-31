@@ -12,7 +12,7 @@ const checkCapacity = (
   ages = removeAges(ages, freeBabyPlaces, babyMaxAge);
   ages.sort((a, b) => b - a);
   ages.splice(0, capacity);
-  return checkExtraPlaces(ages, extraPlaces);
+  return checkExtraPlaces(ages, extraPlaces, totalExtraPlacesAmount);
 };
 
 module.exports = { checkCapacity };

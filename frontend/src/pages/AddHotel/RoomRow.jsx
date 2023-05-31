@@ -14,7 +14,7 @@ const RoomRow = ({
 }) => {
   const dispatch = useDispatch();
 
-  const oldPeriodPrices = periodPrices;
+  const [oldPeriodPrices, setOldPeriodPrices] = useState(periodPrices);
 
   const [newPeriodPrices, setNewPeriodPrices] = useState(periodPrices);
 
@@ -57,6 +57,7 @@ const RoomRow = ({
                     })
                   );
                   setIsChanged(false);
+                  setOldPeriodPrices(newPeriodPrices);
                 }}
               >
                 <svg

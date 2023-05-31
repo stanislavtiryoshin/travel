@@ -7,8 +7,13 @@ import bed from "../../assets/room/bed.svg";
 
 import greencheck from "../../assets/room/greencheck.svg";
 import declOfNum from "../../components/DayConfig";
+import { useDispatch } from "react-redux";
+import { deleteRoom } from "../../features/room/roomSlice";
+import { getSingleHotel } from "../../features/hotel/hotelSlice";
 
 const DashRoom = ({ room }) => {
+  const dispatch = useDispatch();
+
   return (
     <div className="admin_room-card">
       {room ? (
@@ -18,7 +23,18 @@ const DashRoom = ({ room }) => {
               <img src={roomphoto} alt="" />
             </div>
             <div className="admin_room-content">
-              <div className="admin_room-title">{room.roomName}</div>
+              <div className="admin_room-title">
+                {room.roomName}{" "}
+                <button
+                  onClick={() =>
+                    dispatch(deleteRoom(room?._id)).then(() =>
+                      dispatch(getSingleHotel(room?.hotel))
+                    )
+                  }
+                >
+                  X
+                </button>
+              </div>
               <div className="admin_room-bed row">
                 <img src={bed} alt="" />
                 {room?.beds?.largeBeds}{" "}

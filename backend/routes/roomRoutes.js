@@ -6,6 +6,7 @@ const {
   getSingleRoom,
   updateRoom,
   insertPrices,
+  deleteRoom,
 } = require("../controllers/roomController");
 const { protect } = require("../middleware/authMiddleware");
 const Room = require("../models/roomModel");
@@ -15,6 +16,7 @@ router.get("/", getRooms);
 router.post("/", protect, addRoom);
 router.get("/:roomId", protect, getSingleRoom);
 router.patch("/:roomId", protect, updateRoom);
+router.delete("/:roomId", protect, deleteRoom);
 router.patch("/:roomId/prices", protect, insertPrices);
 
 router.patch("/:roomId/upload", upload.array("images", 5), (req, res) => {
