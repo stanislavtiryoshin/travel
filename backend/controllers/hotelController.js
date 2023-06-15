@@ -815,6 +815,20 @@ const getPriceRanges = async (req, res) => {
   const { start, duration, hotelId } = req.query;
   const daysArray = daysIntoArray(start, duration);
 
+  const monthArray = [];
+  let currentMonth = -1;
+
+  for (const day of daysArray) {
+    const date = new Date(day);
+    const month = date.getMonth() + 1;
+
+    if (month !== currentMonth) {
+      monthArray.push({ month, count: 1 });
+      currentMonth = month;
+    } else {
+      monthArray[monthArray.length - 1].count++;
+    }
+  }
   try {
     const dateObj = {
       start: {
@@ -861,13 +875,18 @@ const getPriceRanges = async (req, res) => {
       periodId: price.period,
     }));
 
-    const range = prices
+    let range = prices
       .map((price, idx) => {
         if (price.periodId.equals(periods[idx]?._id)) {
-          // console.log(periods[idx].startMonth, periods[idx].endMonth);
+          const month = periods[idx].startMonth;
+          const count =
+            monthArray.find((item) => item.month === month)?.count || duration;
+          const multipliedPrice = price.roomPrice * count;
+
           return {
-            price: price.roomPrice * duration,
+            price: multipliedPrice,
             date: `${periods[idx].startDay}.${periods[idx].startMonth} - ${periods[idx].endDay}.${periods[idx].endMonth}`,
+            month: periods[idx].startMonth,
             isCurrent:
               (periods[idx].startMonth >= dateObj.start.month &&
                 periods[idx].startMonth <= dateObj.end.month) ||
@@ -877,7 +896,7 @@ const getPriceRanges = async (req, res) => {
         }
       })
       .filter(Boolean);
-    res.send({ range });
+    res.status(200).json(range);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error });
