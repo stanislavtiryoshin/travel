@@ -15,8 +15,8 @@ const {
   deleteAge,
 } = require("../controllers/campController");
 const Camp = require("../models/campModel");
-const { protect } = require("../middleware/authMiddleware");
-const { upload } = require("./uploadRoutes");
+const { protect } = require("../../middleware/authMiddleware");
+const { upload } = require("../uploadRoutes");
 
 router.post("/", protect, addCamp);
 router.get("/", getCamps);

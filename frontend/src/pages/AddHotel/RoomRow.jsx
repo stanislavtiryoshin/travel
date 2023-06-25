@@ -10,19 +10,25 @@ const RoomRow = ({
   periodPrices,
   prices,
   roomMode,
-  buttonRef,
 }) => {
   const dispatch = useDispatch();
+
+  console.log(periodPrices, "periodPrices");
 
   const [oldPeriodPrices, setOldPeriodPrices] = useState(periodPrices);
 
   const [newPeriodPrices, setNewPeriodPrices] = useState(periodPrices);
 
   useEffect(() => {
+    setOldPeriodPrices(periodPrices);
+  }, []);
+
+  useEffect(() => {
     setNewPeriodPrices(periodPrices);
   }, [periodPrices]);
 
-  const [isChanged, setIsChanged] = useState();
+  const [isChanged, setIsChanged] = useState(false);
+
   useEffect(() => {
     if (
       JSON.stringify(newPeriodPrices?.map((el) => el.roomPrice)) !==
@@ -48,7 +54,6 @@ const RoomRow = ({
             {room._id && isChanged ? (
               <button
                 className="price-btn"
-                ref={buttonRef}
                 onClick={() => {
                   dispatch(
                     updateRoom({
@@ -110,7 +115,6 @@ const RoomRow = ({
               {room._id && isChanged ? (
                 <button
                   className="price-btn"
-                  ref={buttonRef}
                   onClick={() => {
                     dispatch(
                       updateRoom({
@@ -168,7 +172,6 @@ const RoomRow = ({
               {room._id && isChanged ? (
                 <button
                   className="price-btn"
-                  ref={buttonRef}
                   onClick={() => {
                     dispatch(
                       updateRoom({

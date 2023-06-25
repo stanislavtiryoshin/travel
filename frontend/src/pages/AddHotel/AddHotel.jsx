@@ -26,63 +26,31 @@ import { API_URL_PROXY } from "../../config/config";
 import hotelmain from "../../assets/hotel/hotelmain.png";
 import secondary from "../../assets/camp/campsecondary.png";
 import dateConfig from "../../components/DataConfig";
-import { useGetServicesQuery } from "../../features/services/base.service";
+import {
+  useGetCategoryQuery,
+  useGetFoodQuery,
+  useGetLocationQuery,
+  useGetServicesQuery,
+} from "../../features/services/base.service";
 import EmptyHolder from "../../components/HotelPage/EmptyHolder";
+import NewServiceModal from "./NewServiceModal";
+import PriceTable from "./PriceTable";
+
+import { enterTimes } from "./values/enterTimes";
+import { paymentPercents } from "./values/paymentPercents";
+import useHotelData from "../../hooks/addData/useHotelData";
+
 const AddHotel = ({
   fetchedHotelData,
   editMode,
   updateHotelData,
   handleUploadImage,
 }) => {
-  const uid = new ShortUniqueId({
-    dictionary: "number", // the default
-    length: 6,
-  });
+  const [hotelData, setHotelData] = useHotelData();
 
   const imageRef = useRef(null);
 
   const { currServices } = useSelector((state) => state.admin);
-
-  // console.log(currServices, "currServices");
-
-  const [hotelData, setHotelData] = useState({
-    uid: uid(),
-    hotelServices: [],
-    locationId: null,
-    name: "",
-    locationFeature: "",
-    mapLink: "",
-    rating: null,
-    description: "",
-    enterTime: "07:00",
-    leaveTime: "07:00",
-    food: null,
-    kidFoodPrice: null,
-    adultFoodPrice: null,
-    kids: {
-      babyMaxAge: null,
-      kidMaxAge: null,
-      kidDiscount: {
-        discountType: "В тенге",
-        discountValue: 2000,
-      },
-    },
-    payment: {
-      paymentType: "",
-      prepayment: null,
-    },
-    comforts: [],
-    hotelStars: 5,
-    marge: 0,
-  });
-
-  console.log(hotelData, "hoteldata");
-
-  const buttonRef = useRef(null);
-
-  function handleClick() {
-    buttonRef.current.click();
-  }
 
   const [fetchedOptions, setFetchedOptions] = useState([]);
 
@@ -100,77 +68,20 @@ const AddHotel = ({
     setHotelData(newData);
   }, [fetchedHotelData, editMode]);
 
-  const { singleHotel } = useSelector((state) => state.hotels);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [upload, { data: uploadedImage, isLoading: uploadIsLoading }] =
     useUploadImageMutation();
 
-  const [allLocations, setAllLocations] = useState([]);
-  const [allCategories, setAllCategories] = useState([]);
-  // const [allServices, setAllServices] = useState([]);
-  const [allFoods, setAllFoods] = useState([]);
-
-  const [servicesObjs, setServicesObjs] = useState([]);
-
-  // console.log(selectedOptions);
-
   const [isOpen, setIsOpen] = useState(false);
 
+  // Fetching all categories, services, locations, foods
   const { data: allServices, isLoading: servicesIsLoading } =
     useGetServicesQuery();
-
-  useEffect(() => {
-    let services = [];
-    allServices?.map((serv, idx) => {
-      services.push({
-        value: serv.hotelServiceName,
-        label: serv.hotelServiceName,
-        category: serv.category.categoryName,
-        servId: serv._id,
-      });
-    });
-    setServicesObjs(services);
-  }, [allServices]);
-
-  // Fetching all categories, services, locations
-  useEffect(() => {
-    axios
-      .get(`${API_URL_PROXY}/locations`)
-      .then((response) => {
-        setAllLocations(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    axios
-      .get(`${API_URL_PROXY}/categories`)
-      .then(({ data }) => {
-        setAllCategories(data);
-        // console.log(data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    // axios
-    //   .get(`${API_URL_PROXY}/hotelServices`)
-    //   .then((response) => {
-    //     setAllServices(response.data);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-    axios
-      .get(`${API_URL_PROXY}/foods`)
-      .then((response) => {
-        setAllFoods(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  const { data: allFoods } = useGetFoodQuery();
+  const { data: allCategories } = useGetCategoryQuery();
+  const { data: allLocations } = useGetLocationQuery();
 
   const [servicesToRender, setServicesToRender] = useState();
   const [fetchedOptionsToRender, setFetchedOptionsToRender] = useState([]);
@@ -246,33 +157,13 @@ const AddHotel = ({
     );
   };
 
-  const [prices, setPrices] = useState([]);
-
-  const handlePriceChange = (roomId, periodId, price) => {
-    setPrices((prevPrices) => ({
-      ...prevPrices,
-      [roomId]: {
-        ...prevPrices[roomId],
-        [periodId]: price,
-      },
-    }));
-  };
-
   const [periods, setPeriods] = useState([]);
 
   useEffect(() => {
     if (hotelData?.periods && hotelData?.periods?.length > 0) {
-      setPeriods(hotelData.periods);
+      setPeriods(hotelData?.periods);
     }
   }, [hotelData]);
-
-  // console.log(hotelData.periods, "hotelData.periods");
-
-  const [servs, setServs] = useState();
-
-  useEffect(() => {
-    setHotelData({ ...hotelData, hotelServices: servs });
-  }, [servs]);
 
   const [newService, setNewService] = useState({
     hotelServiceName: null,
@@ -283,8 +174,6 @@ const AddHotel = ({
   useEffect(() => {
     setSources(hotelData?.img ? hotelData?.img : []);
   }, [hotelData]);
-
-  const [totChosenServices, setTotChosenServices] = useState([]);
 
   const [searchable, setIsSearchable] = useState(true);
 
@@ -362,7 +251,7 @@ const AddHotel = ({
               <input
                 type="text"
                 className="primary-input"
-                value={hotelData && hotelData.name}
+                value={hotelData && hotelData?.name}
                 placeholder="Название"
                 onChange={(e) =>
                   setHotelData({ ...hotelData, name: e.target.value })
@@ -372,7 +261,7 @@ const AddHotel = ({
                 type="text"
                 className="primary-input"
                 placeholder="Особенность местоположения"
-                value={hotelData.locationFeature}
+                value={hotelData?.locationFeature}
                 onChange={(e) =>
                   setHotelData({
                     ...hotelData,
@@ -387,7 +276,7 @@ const AddHotel = ({
                 type="text"
                 placeholder="Местоположение"
                 name="destination"
-                value={hotelData.locationId}
+                value={hotelData?.locationId}
                 onChange={(e) => {
                   setHotelData({
                     ...hotelData,
@@ -410,7 +299,7 @@ const AddHotel = ({
               <input
                 type="text"
                 className="primary-input"
-                value={hotelData.mapLink}
+                value={hotelData?.mapLink}
                 placeholder="Ссылка на карту"
                 onChange={(e) =>
                   setHotelData({ ...hotelData, mapLink: e.target.value })
@@ -422,7 +311,7 @@ const AddHotel = ({
                 type="number"
                 onWheel={(e) => e.target.blur()}
                 className="primary-input"
-                value={hotelData.rating}
+                value={hotelData?.rating}
                 placeholder="Рейтинг отеля"
                 onChange={(e) =>
                   setHotelData({ ...hotelData, rating: e.target.value })
@@ -434,7 +323,7 @@ const AddHotel = ({
                 onWheel={(e) => e.target.blur()}
                 placeholder="Местоположение"
                 name="hotelStars"
-                value={hotelData.hotelStars}
+                value={hotelData?.hotelStars}
                 onChange={(e) => {
                   setHotelData({
                     ...hotelData,
@@ -457,7 +346,7 @@ const AddHotel = ({
                 cols="30"
                 rows="15"
                 style={{ height: "100%" }}
-                value={hotelData.description}
+                value={hotelData?.description}
                 placeholder="Описание"
                 onChange={(e) =>
                   setHotelData({
@@ -500,7 +389,7 @@ const AddHotel = ({
                     name=""
                     id=""
                     className="primary-input"
-                    value={hotelData.enterTime}
+                    value={hotelData?.enterTime}
                     onChange={(e) =>
                       setHotelData({
                         ...hotelData,
@@ -511,20 +400,9 @@ const AddHotel = ({
                     <option value="" disabled selected>
                       Заезд с
                     </option>
-                    <option value="07:00">07:00</option>
-                    <option value="08:00">08:00</option>
-                    <option value="09:00">09:00</option>
-                    <option value="10:00">10:00</option>
-                    <option value="11:00">11:00</option>
-                    <option value="12:00">12:00</option>
-                    <option value="13:00">13:00</option>
-                    <option value="14:00">14:00</option>
-                    <option value="15:00">15:00</option>
-                    <option value="16:00">16:00</option>
-                    <option value="17:00">17:00</option>
-                    <option value="18:00">18:00</option>
-                    <option value="19:00">19:00</option>
-                    <option value="20:00">20:00</option>
+                    {enterTimes.map((el) => (
+                      <option value={el}>{el}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="service-input">
@@ -534,7 +412,7 @@ const AddHotel = ({
                     name=""
                     id=""
                     className="primary-input"
-                    value={hotelData.leaveTime}
+                    value={hotelData?.leaveTime}
                     onChange={(e) =>
                       setHotelData({
                         ...hotelData,
@@ -545,20 +423,9 @@ const AddHotel = ({
                     <option value="" disabled selected>
                       Выезд с
                     </option>
-                    <option value="07:00">07:00</option>
-                    <option value="08:00">08:00</option>
-                    <option value="09:00">09:00</option>
-                    <option value="10:00">10:00</option>
-                    <option value="11:00">11:00</option>
-                    <option value="12:00">12:00</option>
-                    <option value="13:00">13:00</option>
-                    <option value="14:00">14:00</option>
-                    <option value="15:00">15:00</option>
-                    <option value="16:00">16:00</option>
-                    <option value="17:00">17:00</option>
-                    <option value="18:00">18:00</option>
-                    <option value="19:00">19:00</option>
-                    <option value="20:00">20:00</option>
+                    {enterTimes.map((el) => (
+                      <option value={el}>{el}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -575,7 +442,7 @@ const AddHotel = ({
                     setHotelData({
                       ...hotelData,
                       kids: {
-                        ...hotelData.kids,
+                        ...hotelData?.kids,
                         babyMaxAge: e.target.value,
                       },
                     })
@@ -598,7 +465,7 @@ const AddHotel = ({
                     setHotelData({
                       ...hotelData,
                       kids: {
-                        ...hotelData.kids,
+                        ...hotelData?.kids,
                         kidMaxAge: e.target.value,
                       },
                     })
@@ -628,9 +495,9 @@ const AddHotel = ({
                       setHotelData({
                         ...hotelData,
                         kids: {
-                          ...hotelData.kids,
+                          ...hotelData?.kids,
                           kidDiscount: {
-                            ...hotelData.kids.kidDiscount,
+                            ...hotelData?.kids.kidDiscount,
                             discountType: e.target.value,
                           },
                         },
@@ -654,9 +521,9 @@ const AddHotel = ({
                       setHotelData({
                         ...hotelData,
                         kids: {
-                          ...hotelData.kids,
+                          ...hotelData?.kids,
                           kidDiscount: {
-                            ...hotelData.kids.kidDiscount,
+                            ...hotelData?.kids.kidDiscount,
                             discountValue: e.target.value,
                           },
                         },
@@ -722,7 +589,7 @@ const AddHotel = ({
                 type="number"
                 className="primary-input"
                 placeholder="10%"
-                value={hotelData.marge}
+                value={hotelData?.marge}
                 onChange={(e) => {
                   setHotelData((prev) => ({
                     ...prev,
@@ -768,23 +635,15 @@ const AddHotel = ({
                       setHotelData({
                         ...hotelData,
                         payment: {
-                          ...hotelData.payment,
+                          ...hotelData?.payment,
                           prepayment: e.target.value,
                         },
                       });
                     }}
                   >
-                    <option value="0">0%</option>
-                    <option value="10">10%</option>
-                    <option value="20">20%</option>
-                    <option value="30">30%</option>
-                    <option value="40">40%</option>
-                    <option value="50">50%</option>
-                    <option value="60">60%</option>
-                    <option value="70">70%</option>
-                    <option value="80">80%</option>
-                    <option value="90">90%</option>
-                    <option value="100">100%</option>
+                    {paymentPercents.map((el) => (
+                      <option value={el.value}>{el.label}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -792,13 +651,10 @@ const AddHotel = ({
           </div>
           <div className="add_more-col categ-col shadowed_box">
             <div className="gen_title">Услуги отеля</div>
-            {/* {console.log(fetchedOptions)}
-            {console.log(servicesToRender)} */}
             {servicesToRender?.length > 0
               ? servicesToRender?.map((serv, idx) => {
                   return (
                     <ServiceCard
-                      onChange={setTotChosenServices}
                       setIsOpen={setIsOpen}
                       number={idx + 1}
                       editMode
@@ -830,102 +686,24 @@ const AddHotel = ({
               periods={periods}
               setPeriods={setPeriods}
               updateHotelData={updateHotelData}
-              hotelId={hotelData._id}
+              hotelId={hotelData?._id}
               mode="hotel"
             />
-            {fetchedHotelData &&
-            fetchedHotelData?.periods?.length > 0 &&
-            fetchedHotelData?.rooms?.length > 0 ? (
-              <Section
-                section="tb_section"
-                wrapper="tb_wrapper ver shadowed_box"
-              >
-                <div className="periods_top">
-                  <div className="gen_title">Цены на номера</div>
-                  <div className="periods_btns">
-                    <button className="primary-btn black">Сохранить</button>
-                  </div>
-                </div>
-                <div className="table_wrapper">
-                  <table className="periods_table">
-                    <thead>
-                      <tr>
-                        <th>Номера и периоды</th>
-                        {hotelData &&
-                          hotelData.periods &&
-                          hotelData?.periods?.map((period) => (
-                            <th key={period._id}>
-                              {dateConfig(period.startDay)}.
-                              {dateConfig(period.startMonth)} -{" "}
-                              {dateConfig(period.endDay)}.
-                              {dateConfig(period.endMonth)}
-                            </th>
-                          ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {fetchedHotelData &&
-                        fetchedHotelData.rooms &&
-                        fetchedHotelData.periods &&
-                        prices &&
-                        fetchedHotelData?.rooms?.map((room) => (
-                          <RoomRow
-                            buttonRef={buttonRef}
-                            room={room}
-                            periodPrices={room.periodPrices}
-                          />
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </Section>
-            ) : null}
+            <PriceTable
+              fetchedHotelData={fetchedHotelData}
+              hotelData={hotelData}
+            />
           </>
         ) : null}
       </div>
 
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div className="modal-content">
-          <div className="modal-title">
-            Хотите добавить новую <br /> услугу?
-          </div>
-          <div className="modal-body">
-            <span className="modal-select-text">Название новой услуги</span>
-            <select
-              name=""
-              id=""
-              className="primary-input"
-              style={{ width: "100%", marginTop: "22px" }}
-              onChange={(e) =>
-                setNewService({ ...newService, category: e.target.value })
-              }
-            >
-              {allCategories?.map((categ) => {
-                return <option value={categ._id}>{categ.categoryName}</option>;
-              })}
-            </select>
-            <Input
-              style={{ width: "100%", marginTop: "22px" }}
-              placeholder="Услуга"
-              onChange={(e) =>
-                setNewService({
-                  ...newService,
-                  hotelServiceName: e.target.value,
-                })
-              }
-            />
-            <div className="modal-button">
-              <button
-                style={{ width: "100%", marginTop: "10px" }}
-                className="primary-btn"
-                onClick={() => dispatch(addService(newService))}
-              >
-                <span>Добавить услугу</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </Modal>
+      <NewServiceModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        newService={newService}
+        setNewService={setNewService}
+        allCategories={allCategories}
+      />
     </>
   );
 };

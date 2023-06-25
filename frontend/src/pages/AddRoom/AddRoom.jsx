@@ -183,7 +183,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
     //   setPeriods(fetchedRoomData.periodPrices);
     // }
   }, [fetchedRoomData]);
-  console.log(fetchedRoomData?.periodPrices);
+  // console.log(fetchedRoomData?.periodPrices);
 
   const fileRef = React.useRef(null);
 
@@ -213,7 +213,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
     });
   }, [extraPlaces]);
 
-  console.log(roomData, "room data");
+  // console.log(roomData, "room data");
 
   const handleUploadImage = (e) => {
     const files = e.target.files;
@@ -246,7 +246,7 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
     else if (roomData?.hotel?._id) setHotelIdLink(roomData?.hotel?._id);
   }, [hotelId, roomData]);
 
-  console.log(extraPlaces, "extra places");
+  // console.log(extraPlaces, "extra places");
 
   return (
     <>
@@ -597,178 +597,182 @@ const AddRoom = ({ fetchedRoomData, editMode }) => {
                 </table>
               </div>
             </Section>
-            <Section
-              section={"extraplaces_section"}
-              wrapper={"extraplaces_wrapper wrapper ver"}
-            >
-              <div className="periods_top">
-                <div className="gen_title">Дополнительные места</div>
-                <div className="periods_btns">
-                  <button
-                    className="primary-btn black"
-                    onClick={() => {
-                      setExtraPlaces([
-                        ...extraPlaces,
-                        {
-                          minAge: 0,
-                          maxAge: 17,
-                          priceWithFood: 0,
-                          priceNoFood: 0,
-                          foodPrice: 0,
-                          maxAmount: 1,
-                          tempId: Math.floor(Math.random() * 1000),
-                        },
-                      ]);
-                    }}
-                  >
-                    Добавить
-                  </button>
-                </div>
-              </div>
 
-              {extraPlaces?.length > 0 ? (
-                <div className="extraplaces_box">
-                  {extraPlaces?.map((xp, idx) => {
-                    return (
-                      <div className="extraplace_card shadowed_box" key={idx}>
-                        <div className="extraplace_card-title">
-                          <span>Доп. место #{idx + 1}</span>
-                          <button
-                            onClick={() =>
-                              setExtraPlaces(
-                                extraPlaces.filter(
-                                  (el) =>
-                                    el._id !== xp._id || el.tempId !== xp.tempId
-                                )
-                              )
-                            }
-                          >
-                            X
-                          </button>
-                        </div>
-                        <div className="service-input">
-                          <label htmlFor="">Мин. возраст</label>
-                          <input
-                            className="primary-input"
-                            type="number"
-                            onWheel={(e) => e.target.blur()}
-                            name=""
-                            id=""
-                            value={xp.minAge}
-                            onChange={(e) => {
-                              const updatedExtraPlaces = [...extraPlaces];
-                              updatedExtraPlaces[idx] = {
-                                ...updatedExtraPlaces[idx],
-                                minAge: +e.target.value,
-                              };
-                              setExtraPlaces(updatedExtraPlaces);
-                            }}
-                          />
-                        </div>
-                        <div className="service-input">
-                          <label htmlFor="">Макс. возраст</label>
-                          <input
-                            className="primary-input"
-                            type="number"
-                            onWheel={(e) => e.target.blur()}
-                            name=""
-                            id=""
-                            value={xp.maxAge}
-                            onChange={(e) => {
-                              const updatedExtraPlaces = [...extraPlaces];
-                              updatedExtraPlaces[idx] = {
-                                ...updatedExtraPlaces[idx],
-                                maxAge: +e.target.value,
-                              };
-                              setExtraPlaces(updatedExtraPlaces);
-                            }}
-                          />
-                        </div>
-                        <div className="service-input">
-                          <label htmlFor="">С учетом питания</label>
-                          <input
-                            className="primary-input"
-                            type="number"
-                            onWheel={(e) => e.target.blur()}
-                            name=""
-                            id=""
-                            value={xp.priceWithFood}
-                            onChange={(e) => {
-                              const updatedExtraPlaces = [...extraPlaces];
-                              updatedExtraPlaces[idx] = {
-                                ...updatedExtraPlaces[idx],
-                                priceWithFood: +e.target.value,
-                              };
-                              setExtraPlaces(updatedExtraPlaces);
-                            }}
-                          />
-                        </div>
-                        <div className="service-input">
-                          <label htmlFor="">Без учета питания</label>
-                          <input
-                            className="primary-input"
-                            type="number"
-                            onWheel={(e) => e.target.blur()}
-                            name=""
-                            id=""
-                            value={xp.priceNoFood}
-                            onChange={(e) => {
-                              const updatedExtraPlaces = [...extraPlaces];
-                              updatedExtraPlaces[idx] = {
-                                ...updatedExtraPlaces[idx],
-                                priceNoFood: +e.target.value,
-                              };
-                              setExtraPlaces(updatedExtraPlaces);
-                            }}
-                          />
-                        </div>
-                        <div className="service-input">
-                          <label htmlFor="">Стоимость питания</label>
-                          <input
-                            className="primary-input"
-                            type="number"
-                            onWheel={(e) => e.target.blur()}
-                            name=""
-                            id=""
-                            value={xp.foodPrice}
-                            onChange={(e) => {
-                              const updatedExtraPlaces = [...extraPlaces];
-                              updatedExtraPlaces[idx] = {
-                                ...updatedExtraPlaces[idx],
-                                foodPrice: +e.target.value,
-                              };
-                              setExtraPlaces(updatedExtraPlaces);
-                            }}
-                          />
-                        </div>
-                        <div className="service-input">
-                          <label htmlFor="">Макс. кол-во</label>
-                          <input
-                            className="primary-input"
-                            type="number"
-                            onWheel={(e) => e.target.blur()}
-                            name=""
-                            id=""
-                            value={xp.maxAmount}
-                            onChange={(e) => {
-                              const updatedExtraPlaces = [...extraPlaces];
-                              updatedExtraPlaces[idx] = {
-                                ...updatedExtraPlaces[idx],
-                                maxAmount: +e.target.value,
-                              };
-                              setExtraPlaces(updatedExtraPlaces);
-                            }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
+            {roomData.totalExtraPlacesAmount > 0 ? (
+              <Section
+                section={"extraplaces_section"}
+                wrapper={"extraplaces_wrapper wrapper ver"}
+              >
+                <div className="periods_top">
+                  <div className="gen_title">Дополнительные места</div>
+                  <div className="periods_btns">
+                    <button
+                      className="primary-btn black"
+                      onClick={() => {
+                        setExtraPlaces([
+                          ...extraPlaces,
+                          {
+                            minAge: 0,
+                            maxAge: 17,
+                            priceWithFood: 0,
+                            priceNoFood: 0,
+                            foodPrice: 0,
+                            maxAmount: 1,
+                            tempId: Math.floor(Math.random() * 1000),
+                          },
+                        ]);
+                      }}
+                    >
+                      Добавить
+                    </button>
+                  </div>
                 </div>
-              ) : (
-                <EmptyHolder text="Вы пока не заполнили доп. места в этом номере" />
-              )}
-              {console.log(extraPlaces, "extra places")}
-            </Section>
+
+                {extraPlaces?.length > 0 ? (
+                  <div className="extraplaces_box">
+                    {extraPlaces?.map((xp, idx) => {
+                      return (
+                        <div className="extraplace_card shadowed_box" key={idx}>
+                          <div className="extraplace_card-title">
+                            <span>Доп. место #{idx + 1}</span>
+                            <button
+                              onClick={() =>
+                                setExtraPlaces(
+                                  extraPlaces.filter(
+                                    (el) =>
+                                      el._id !== xp._id ||
+                                      el.tempId !== xp.tempId
+                                  )
+                                )
+                              }
+                            >
+                              X
+                            </button>
+                          </div>
+                          <div className="service-input">
+                            <label htmlFor="">Мин. возраст</label>
+                            <input
+                              className="primary-input"
+                              type="number"
+                              onWheel={(e) => e.target.blur()}
+                              name=""
+                              id=""
+                              value={xp.minAge}
+                              onChange={(e) => {
+                                const updatedExtraPlaces = [...extraPlaces];
+                                updatedExtraPlaces[idx] = {
+                                  ...updatedExtraPlaces[idx],
+                                  minAge: +e.target.value,
+                                };
+                                setExtraPlaces(updatedExtraPlaces);
+                              }}
+                            />
+                          </div>
+                          <div className="service-input">
+                            <label htmlFor="">Макс. возраст</label>
+                            <input
+                              className="primary-input"
+                              type="number"
+                              onWheel={(e) => e.target.blur()}
+                              name=""
+                              id=""
+                              value={xp.maxAge}
+                              onChange={(e) => {
+                                const updatedExtraPlaces = [...extraPlaces];
+                                updatedExtraPlaces[idx] = {
+                                  ...updatedExtraPlaces[idx],
+                                  maxAge: +e.target.value,
+                                };
+                                setExtraPlaces(updatedExtraPlaces);
+                              }}
+                            />
+                          </div>
+                          <div className="service-input">
+                            <label htmlFor="">С учетом питания</label>
+                            <input
+                              className="primary-input"
+                              type="number"
+                              onWheel={(e) => e.target.blur()}
+                              name=""
+                              id=""
+                              value={xp.priceWithFood}
+                              onChange={(e) => {
+                                const updatedExtraPlaces = [...extraPlaces];
+                                updatedExtraPlaces[idx] = {
+                                  ...updatedExtraPlaces[idx],
+                                  priceWithFood: +e.target.value,
+                                };
+                                setExtraPlaces(updatedExtraPlaces);
+                              }}
+                            />
+                          </div>
+                          <div className="service-input">
+                            <label htmlFor="">Без учета питания</label>
+                            <input
+                              className="primary-input"
+                              type="number"
+                              onWheel={(e) => e.target.blur()}
+                              name=""
+                              id=""
+                              value={xp.priceNoFood}
+                              onChange={(e) => {
+                                const updatedExtraPlaces = [...extraPlaces];
+                                updatedExtraPlaces[idx] = {
+                                  ...updatedExtraPlaces[idx],
+                                  priceNoFood: +e.target.value,
+                                };
+                                setExtraPlaces(updatedExtraPlaces);
+                              }}
+                            />
+                          </div>
+                          <div className="service-input">
+                            <label htmlFor="">Стоимость питания</label>
+                            <input
+                              className="primary-input"
+                              type="number"
+                              onWheel={(e) => e.target.blur()}
+                              name=""
+                              id=""
+                              value={xp.foodPrice}
+                              onChange={(e) => {
+                                const updatedExtraPlaces = [...extraPlaces];
+                                updatedExtraPlaces[idx] = {
+                                  ...updatedExtraPlaces[idx],
+                                  foodPrice: +e.target.value,
+                                };
+                                setExtraPlaces(updatedExtraPlaces);
+                              }}
+                            />
+                          </div>
+                          <div className="service-input">
+                            <label htmlFor="">Макс. кол-во</label>
+                            <input
+                              className="primary-input"
+                              type="number"
+                              onWheel={(e) => e.target.blur()}
+                              name=""
+                              id=""
+                              value={xp.maxAmount}
+                              onChange={(e) => {
+                                const updatedExtraPlaces = [...extraPlaces];
+                                updatedExtraPlaces[idx] = {
+                                  ...updatedExtraPlaces[idx],
+                                  maxAmount: +e.target.value,
+                                };
+                                setExtraPlaces(updatedExtraPlaces);
+                              }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <EmptyHolder text="Вы пока не заполнили доп. места в этом номере" />
+                )}
+                {console.log(extraPlaces, "extra places")}
+              </Section>
+            ) : null}
           </>
         ) : null}
         <Section section="add_more-section" wrapper="add_more-wrapper">

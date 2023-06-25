@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
-const Category = require("../models/categoryModel");
+const Category = require("../../models/services/categoryModel");
 
 //@desc   Get all categories
 //@route  GET /api/categories
