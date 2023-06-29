@@ -7,8 +7,6 @@ export default function useHotelData() {
     length: 6,
   });
 
-  console.log(uid, "uid");
-
   const [hotelData, setHotelData] = useState({
     uid: uid(),
     hotelServices: [],
@@ -39,7 +37,6 @@ export default function useHotelData() {
     hotelStars: 5,
     marge: 0,
   });
-  console.log(hotelData, "hotel data from inside hook");
 
   return [hotelData, setHotelData];
 }

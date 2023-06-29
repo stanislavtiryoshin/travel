@@ -38,7 +38,10 @@ import PriceTable from "./PriceTable";
 
 import { enterTimes } from "./values/enterTimes";
 import { paymentPercents } from "./values/paymentPercents";
+import { babyAges } from "./values/babyAges";
+import { kidAges } from "./values/kidAges";
 import useHotelData from "../../hooks/addData/useHotelData";
+import { useFetchedData } from "../../hooks/fetchedData/useFetchedData";
 
 const AddHotel = ({
   fetchedHotelData,
@@ -77,11 +80,8 @@ const AddHotel = ({
   const [isOpen, setIsOpen] = useState(false);
 
   // Fetching all categories, services, locations, foods
-  const { data: allServices, isLoading: servicesIsLoading } =
-    useGetServicesQuery();
-  const { data: allFoods } = useGetFoodQuery();
-  const { data: allCategories } = useGetCategoryQuery();
-  const { data: allLocations } = useGetLocationQuery();
+  const { allServices, allFoods, allCategories, allLocations } =
+    useFetchedData();
 
   const [servicesToRender, setServicesToRender] = useState();
   const [fetchedOptionsToRender, setFetchedOptionsToRender] = useState([]);
@@ -110,6 +110,8 @@ const AddHotel = ({
 
     if (allServices) setServicesToRender(arrayResult);
   }, [allServices]);
+
+  console.log(servicesToRender, "servs to rendre");
 
   useEffect(() => {
     const result = fetchedOptions?.reduce((acc, cur) => {
@@ -287,7 +289,7 @@ const AddHotel = ({
                 {allLocations && allLocations.length >= 0 ? (
                   allLocations.map((location, idx) => {
                     return (
-                      <option value={location._id} key={idx}>
+                      <option value={location._id} key={location._id}>
                         {location.locationName}
                       </option>
                     );
@@ -401,7 +403,9 @@ const AddHotel = ({
                       Заезд с
                     </option>
                     {enterTimes.map((el) => (
-                      <option value={el}>{el}</option>
+                      <option key={el} value={el}>
+                        {el}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -424,7 +428,9 @@ const AddHotel = ({
                       Выезд с
                     </option>
                     {enterTimes.map((el) => (
-                      <option value={el}>{el}</option>
+                      <option key={el} value={el}>
+                        {el}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -451,10 +457,11 @@ const AddHotel = ({
                   <option value="" disabled selected>
                     Макс. возр. млад.
                   </option>
-                  <option value={2}>2</option>
-                  <option value={3}>3</option>
-                  <option value={4}>4</option>
-                  <option value={5}>5</option>
+                  {babyAges.map((el) => (
+                    <option key={el} value={el}>
+                      {el}
+                    </option>
+                  ))}
                 </select>
                 <select
                   name="kidMaxAge"
@@ -474,12 +481,11 @@ const AddHotel = ({
                   <option value="" disabled selected>
                     Макс. возр. реб.
                   </option>
-                  <option value={12}>12</option>
-                  <option value={13}>13</option>
-                  <option value={14}>14</option>
-                  <option value={15}>15</option>
-                  <option value={16}>16</option>
-                  <option value={17}>17</option>
+                  {kidAges.map((el) => (
+                    <option key={el} value={el}>
+                      {el}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="input_row">
@@ -547,7 +553,11 @@ const AddHotel = ({
                 >
                   {allFoods?.length > 0
                     ? allFoods?.map((food) => {
-                        return <option value={food?._id}>{food?.label}</option>;
+                        return (
+                          <option value={food?._id} key={food?._id}>
+                            {food?.label}
+                          </option>
+                        );
                       })
                     : null}
                 </select>
@@ -642,7 +652,9 @@ const AddHotel = ({
                     }}
                   >
                     {paymentPercents.map((el) => (
-                      <option value={el.value}>{el.label}</option>
+                      <option key={el.value} value={el.value}>
+                        {el.label}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -655,6 +667,7 @@ const AddHotel = ({
               ? servicesToRender?.map((serv, idx) => {
                   return (
                     <ServiceCard
+                      key={serv._id}
                       setIsOpen={setIsOpen}
                       number={idx + 1}
                       editMode

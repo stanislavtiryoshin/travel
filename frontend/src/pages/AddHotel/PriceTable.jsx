@@ -38,7 +38,11 @@ const PriceTable = ({ fetchedHotelData, hotelData }) => {
                   fetchedHotelData.rooms &&
                   fetchedHotelData.periods &&
                   fetchedHotelData?.rooms?.map((room) => (
-                    <RoomRow room={room} periodPrices={room.periodPrices} />
+                    <RoomRow
+                      key={room._id}
+                      room={room}
+                      periodPrices={room.periodPrices}
+                    />
                   ))}
               </tbody>
             </table>

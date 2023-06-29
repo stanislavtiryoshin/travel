@@ -2,10 +2,10 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const Period = require("../models/periodModel");
-const { Hotel } = require("../models/hotelModel");
-const Sanatorium = require("../models/sanatoriumModel");
-const Tour = require("../models/tourModel");
-const Camp = require("../models/campModel");
+const { Hotel } = require("../models/resorts/hotelModel");
+const Sanatorium = require("../models/resorts/sanatoriumModel");
+const Tour = require("../models/resorts/tourModel");
+const Camp = require("../models/resorts/campModel");
 const Room = require("../models/roomModel");
 const { comparePeriods } = require("../periodUtils");
 

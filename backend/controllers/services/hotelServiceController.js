@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
-const HotelService = require("../models/hotelServiceModel");
+const HotelService = require("../../models/services/hotelServiceModel");
 
 //@desc   Get all hotel services
 //@route  GET /api/hotelServices
@@ -23,5 +23,5 @@ const addNewService = asyncHandler(async (req, res) => {
 
 module.exports = {
   getHotelServices,
-  addNewService
+  addNewService,
 };

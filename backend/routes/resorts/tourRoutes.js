@@ -10,10 +10,10 @@ const {
   insertTourPrices,
   tourByTagRecommendation,
   getPrice,
-} = require("../controllers/tourController");
-const Tour = require("../models/tourModel");
-const { protect } = require("../middleware/authMiddleware");
-const { upload } = require("./uploadRoutes");
+} = require("../../controllers/resorts/tourController");
+const Tour = require("../../models/resorts/tourModel");
+const { protect } = require("../../middleware/authMiddleware");
+const { upload } = require("../uploadRoutes");
 
 router.get("/", getTour);
 router.post("/", protect, addTour);

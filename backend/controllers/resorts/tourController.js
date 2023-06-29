@@ -1,4 +1,4 @@
-const { Tour } = require("../models/tourModel");
+const { Tour } = require("../../models/resorts/tourModel");
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 const expressAsyncHandler = require("express-async-handler");
@@ -6,8 +6,8 @@ const asyncHandler = require("express-async-handler");
 
 const fs = require("fs");
 const csv = require("fast-csv");
-const { isDateInRange } = require("../dateUtils");
-const { daysIntoArray } = require("../daysUtils");
+const { isDateInRange } = require("../../dateUtils");
+const { daysIntoArray } = require("../../daysUtils");
 
 //@desc Get all tours
 //@route GET /api/tour/

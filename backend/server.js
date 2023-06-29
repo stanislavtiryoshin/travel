@@ -19,6 +19,7 @@ const app = express();
 app.use(
   cors({
     origin: "http://localhost:3000",
+    credentials: true,
   })
 );
 app.use(express.json());
@@ -162,22 +163,27 @@ app.post("/api/send-status-email", (req, res) => {
 
 /* ROUTES */
 app.use("/api/users", require("./routes/userRoutes"));
-app.use("/api/hotels", require("./routes/hotelRoutes"));
 app.use("/api/orders", require("./routes/orderRoutes"));
 app.use("/api/excursions", require("./routes/excursionRoutes"));
 app.use("/api/locations", require("./routes/locationRoutes"));
-app.use("/api/foods", require("./routes/foodRoutes"));
-app.use("/api/categories", require("./routes/categoryRoutes"));
-app.use("/api/hotelServices", require("./routes/hotelServiceRoutes"));
+app.use("/api/foods", require("./routes/services/foodRoutes"));
+app.use("/api/categories", require("./routes/services/categoryRoutes"));
+app.use("/api/hotelServices", require("./routes/services/hotelServiceRoutes"));
 app.use("/api/rooms", require("./routes/roomRoutes"));
-
 app.use("/api/programs", require("./routes/programRoutes"));
-app.use("/api/sanatoriums", require("./routes/sanatoriumRoutes"));
-app.use("/api/camps", require("./routes/campRoutes"));
-app.use("/api/tour", require("./routes/tourRoutes"));
+
+app.use("/api/hotels", require("./routes/resorts/hotelRoutes"));
+app.use("/api/sanatoriums", require("./routes/resorts/sanatoriumRoutes"));
+app.use("/api/camps", require("./routes/resorts/campRoutes"));
+app.use("/api/tour", require("./routes/resorts/tourRoutes"));
+
 app.use("/api/periods", require("./routes/periodRoutes"));
 
 app.use("/images", express.static(path.join(__dirname, "../public/uploads")));
+
+app.use(errorHandler);
+
+app.listen(port, () => console.log(`Port ${port} is up and running baby`));
 
 // Serve frontend
 // if (process.env.NODE_ENV === "production") {
@@ -191,7 +197,3 @@ app.use("/images", express.static(path.join(__dirname, "../public/uploads")));
 // } else {
 //   app.get("/", (req, res) => res.send("Please set to production"));
 // }
-
-app.use(errorHandler);
-
-app.listen(port, () => console.log(`Port ${port} is up and running baby`));

@@ -138,7 +138,7 @@ const EditHotel = () => {
               {singleHotel?.rooms && singleHotel?.rooms?.length > 0 ? (
                 <div className="admin_rooms-grid">
                   {singleHotel?.rooms.map((room, idx) => {
-                    return <DashRoom room={room} />;
+                    return <DashRoom key={room._id} room={room} />;
                   })}
                 </div>
               ) : (

@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
-const Food = require("../models/foodModel");
+const Food = require("../../models/services/foodModel");
 
 //@desc   Get all foods
 //@route  GET /api/foods

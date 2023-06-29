@@ -1,13 +1,13 @@
-const { Sanatorium } = require("../models/sanatoriumModel");
+const { Sanatorium } = require("../../models/resorts/sanatoriumModel");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const Room = require("../models/roomModel");
-const Period = require("../models/periodModel");
-const Food = require("../models/foodModel");
-const Excursion = require("../models/excursionModel");
-const { isDateInRange } = require("../dateUtils");
-const { daysIntoArray } = require("../daysUtils");
+const Room = require("../../models/roomModel");
+const Period = require("../../models/periodModel");
+const Food = require("../../models/services/foodModel");
+const Excursion = require("../../models/excursionModel");
+const { removeAges } = require("../../utils/removeFreeBabyPlaces");
+const { checkCapacity } = require("../../utils/capacityUtils");
 
 const addSanatorium = async (req, res) => {
   const post = await Sanatorium.create(req.body);

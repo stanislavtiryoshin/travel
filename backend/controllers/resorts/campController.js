@@ -1,4 +1,4 @@
-const Camp = require("../../models/campModel");
+const Camp = require("../../models/resorts/campModel");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");

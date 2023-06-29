@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
-const Hotel = require("../models/hotelModel");
+const Hotel = require("../models/resorts/hotelModel");
 const Excursion = require("../models/excursionModel");
 
 //@desc   Get excursion by location

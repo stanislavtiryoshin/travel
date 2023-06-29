@@ -13,8 +13,8 @@ const {
   updateAgePriceById,
   addAge,
   deleteAge,
-} = require("../controllers/campController");
-const Camp = require("../models/campModel");
+} = require("../../controllers/resorts/campController");
+const Camp = require("../../models/resorts/campModel");
 const { protect } = require("../../middleware/authMiddleware");
 const { upload } = require("../uploadRoutes");
 

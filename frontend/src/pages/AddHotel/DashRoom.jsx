@@ -78,7 +78,7 @@ export const RoomTags = ({ tags }) => {
     <div className="admin_room-tags">
       {tags.map((tag, idx) => {
         return idx < 2 ? (
-          <div className="room_tag-card">
+          <div className="room_tag-card" key={tag}>
             <img src={greencheck} alt="" />
             {tag}
           </div>

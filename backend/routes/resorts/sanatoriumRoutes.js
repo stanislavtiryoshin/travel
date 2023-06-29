@@ -9,12 +9,12 @@ const {
   getRoomsByLimit,
   getSearchedSanatoriums,
   updateSanatorium,
-} = require("../controllers/sanatoriumController");
+} = require("../../controllers/resorts/sanatoriumController");
 
-const { protect } = require("../middleware/authMiddleware");
+const { protect } = require("../../middleware/authMiddleware");
 
-const Sanatorium = require("../models/sanatoriumModel");
-const { upload } = require("./uploadRoutes");
+const Sanatorium = require("../../models/resorts/sanatoriumModel");
+const { upload } = require("./../uploadRoutes");
 
 router.post("/", protect, addSanatorium);
 router.get("/", getSanatoriums);

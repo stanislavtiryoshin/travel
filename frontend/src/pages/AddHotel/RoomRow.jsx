@@ -13,7 +13,7 @@ const RoomRow = ({
 }) => {
   const dispatch = useDispatch();
 
-  console.log(periodPrices, "periodPrices");
+  // console.log(periodPrices, "periodPrices");
 
   const [oldPeriodPrices, setOldPeriodPrices] = useState(periodPrices);
 
@@ -38,11 +38,11 @@ const RoomRow = ({
     else setIsChanged(false);
   }, [newPeriodPrices, oldPeriodPrices]);
 
-  console.log(
-    JSON.stringify(newPeriodPrices?.map((el) => el.roomPrice)),
-    JSON.stringify(oldPeriodPrices?.map((el) => el.roomPrice)),
-    "change"
-  );
+  // console.log(
+  //   JSON.stringify(newPeriodPrices?.map((el) => el.roomPrice)),
+  //   JSON.stringify(oldPeriodPrices?.map((el) => el.roomPrice)),
+  //   "change"
+  // );
 
   return (
     <>

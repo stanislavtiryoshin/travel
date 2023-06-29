@@ -1,26 +1,26 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
-const User = require("../models/userModel");
-const { Hotel } = require("../models/hotelModel");
-const Period = require("../models/periodModel");
-const Excursion = require("../models/excursionModel");
-const Room = require("../models/roomModel");
+const User = require("../../models/userModel");
+const { Hotel } = require("../../models/resorts/hotelModel");
+const Period = require("../../models/periodModel");
+const Excursion = require("../../models/excursionModel");
+const Room = require("../../models/roomModel");
 const { parse } = require("csv-parse");
 const fs = require("fs");
 const path = require("path");
 const csv = require("fast-csv");
-const Tour = require("../models/tourModel");
+const Tour = require("../../models/resorts/tourModel");
 const queryString = require("querystring");
 const mongoose = require("mongoose");
-const { isDateInRange } = require("../dateUtils");
-const { daysIntoArray } = require("../daysUtils");
+const { isDateInRange } = require("../../dateUtils");
+const { daysIntoArray } = require("../../daysUtils");
 const {
   calculateExtraPlaces,
   checkExtraPlaces,
-} = require("../utils/extraPlacesUtills");
-const { removeAges } = require("../utils/removeFreeBabyPlaces");
-const { checkCapacity } = require("../utils/capacityUtils");
+} = require("../../utils/extraPlacesUtills");
+const { removeAges } = require("../../utils/removeFreeBabyPlaces");
+const { checkCapacity } = require("../../utils/capacityUtils");
 
 //@desc   Add new hotel
 //@route  POST /api/hotels
@@ -276,7 +276,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     };
   }
 
-  let adminHotels;
+  let adminHotels = [];
   if (dashMode && dashMode !== "false") {
     adminHotels = await Hotel.find(query)
       .populate("locationId")

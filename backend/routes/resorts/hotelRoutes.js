@@ -17,12 +17,12 @@ const {
   getPrice,
   getPriceRanges,
   // setSearchable,
-} = require("../controllers/hotelController");
-const { protect } = require("../middleware/authMiddleware");
+} = require("../../controllers/resorts/hotelController");
+const { protect } = require("../../middleware/authMiddleware");
 
-const { Hotel } = require("../models/hotelModel");
+const { Hotel } = require("../../models/resorts/hotelModel");
 
-const { upload } = require("./uploadRoutes");
+const { upload } = require("./../uploadRoutes");
 
 router.post("/", protect, addHotel);
 router.get("/", getHotels);
