@@ -31,5 +31,5 @@
     "nodemon": "^2.0.21"
   },
   "author": "Stanislav Tiryoshin",
-  "license": "ISC"
+  "license": "MIT"
 }
