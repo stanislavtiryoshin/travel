@@ -2,10 +2,10 @@ const Camp = require("../../models/resorts/campModel");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const { isDateInRange } = require("../../dateUtils");
+const { isDateInRange } = require("../../utils/dateUtils");
 const Period = require("../../models/periodModel");
 const mongoose = require("mongoose");
-const { daysIntoArray } = require("../../daysUtils");
+const { daysIntoArray } = require("../../utils/daysUtils");
 
 //@desc   Get all camps
 //@route  GET /api/camp

@@ -47,7 +47,6 @@ const checkExtraPlaces = (
   totalExtraPlacesAmount
 ) => {
   let chosenPlaces = [];
-  let extraPlacesSum = 0;
 
   const notChosen = (place) => {
     return (

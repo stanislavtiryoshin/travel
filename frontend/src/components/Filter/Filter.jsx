@@ -41,6 +41,8 @@ const Filter = ({ mode, dashMode }) => {
     setValue([minPrice, maxPrice]);
   }, [minPrice, maxPrice]);
 
+  console.log(minPrice, maxPrice, "min and max");
+
   useEffect(() => {
     switch (mode) {
       case "hotel":

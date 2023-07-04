@@ -6,8 +6,8 @@ const asyncHandler = require("express-async-handler");
 
 const fs = require("fs");
 const csv = require("fast-csv");
-const { isDateInRange } = require("../../dateUtils");
-const { daysIntoArray } = require("../../daysUtils");
+const { isDateInRange } = require("../../utils/dateUtils");
+const { daysIntoArray } = require("../../utils/daysUtils");
 
 //@desc Get all tours
 //@route GET /api/tour/

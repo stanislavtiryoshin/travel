@@ -1,4 +1,13 @@
 {
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "server": "nodemon server.js"
+  },
   "dependencies": {
     "@types/react-responsive": "^8.0.5",
     "bcryptjs": "^2.4.3",
@@ -16,22 +25,11 @@
     "nodemailer": "^6.9.1",
     "short-unique-id": "^4.4.4"
   },
-  "name": "travel",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "start": "node backend/server.js",
-    "server": "nodemon backend/server.js",
-    "client": "npm start --prefix frontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
-  },
-  "author": "Stanislav Tiryoshin",
-  "license": "MIT",
-  "description": "",
   "devDependencies": {
     "@types/multer": "^1.4.7",
     "concurrently": "^7.6.0",
     "nodemon": "^2.0.21"
-  }
+  },
+  "author": "Stanislav Tiryoshin",
+  "license": "ISC"
 }

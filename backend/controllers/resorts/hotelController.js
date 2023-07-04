@@ -13,8 +13,8 @@ const csv = require("fast-csv");
 const Tour = require("../../models/resorts/tourModel");
 const queryString = require("querystring");
 const mongoose = require("mongoose");
-const { isDateInRange } = require("../../dateUtils");
-const { daysIntoArray } = require("../../daysUtils");
+const { isDateInRange } = require("../../utils/dateUtils");
+const { daysIntoArray } = require("../../utils/daysUtils");
 const {
   calculateExtraPlaces,
   checkExtraPlaces,
@@ -317,15 +317,11 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
         model: "Category",
       },
     });
+
   hotels = hotels
     .filter((hotel) =>
       hotel.rooms.some((room) =>
         filterBathroom ? room.bathroom.type === filterBathroom : true
-      )
-    )
-    .filter((hotel) =>
-      hotel.rooms.some((room) =>
-        filterExtraPlaces ? room.extraPlaces.length > 0 : true
       )
     )
     .filter((hotel) => {
@@ -339,14 +335,23 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     let rooms = newHotel.rooms;
 
     rooms = rooms.filter((room) => {
-      return checkCapacity(
-        ages,
-        room.extraPlaces,
-        hotel.kids.babyMaxAge,
-        room.freeBabyPlaces,
-        room.totalExtraPlacesAmount,
-        room.capacity
-      );
+      return filterExtraPlaces
+        ? checkCapacity(
+            ages,
+            room.extraPlaces,
+            hotel.kids.babyMaxAge,
+            room.freeBabyPlaces,
+            room.totalExtraPlacesAmount,
+            room.capacity
+          )
+        : checkCapacity(
+            ages,
+            room.extraPlaces,
+            hotel.kids.babyMaxAge,
+            room.freeBabyPlaces,
+            0,
+            room.capacity
+          );
     });
 
     const cheapestRoom = rooms.reduce(
@@ -404,7 +409,7 @@ const getSearchedHotels = asyncHandler(async (req, res) => {
     }
   });
 
-  console.log(newHotels, "before res json");
+  // console.log(newHotels, "before res json");
 
   res
     .status(200)

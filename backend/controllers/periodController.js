@@ -7,7 +7,7 @@ const Sanatorium = require("../models/resorts/sanatoriumModel");
 const Tour = require("../models/resorts/tourModel");
 const Camp = require("../models/resorts/campModel");
 const Room = require("../models/roomModel");
-const { comparePeriods } = require("../periodUtils");
+const { comparePeriods } = require("../utils/periodUtils");
 
 //@desc   Get periods
 //@route  GET /api/periods
