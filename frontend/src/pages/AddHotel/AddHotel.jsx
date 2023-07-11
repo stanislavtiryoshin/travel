@@ -1,47 +1,36 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 
 import { useNavigate } from "react-router-dom";
 import { addHotel, updateHotel } from "../../features/hotel/hotelSlice";
-import { addService } from "../../features/hotelService/hotelServSlice";
-
-import ShortUniqueId from "short-unique-id";
 
 import "./AddHotel.scss";
 import "./Table.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { AdminHead } from "../../components/Admin";
-import { Input } from "../../components/Form";
-import Modal from "../../components/Modal";
 import Section from "../../components/Section";
-import RoomRow from "./RoomRow";
 import ServiceCard from "./ServiceCard";
 
 import { useUploadImageMutation } from "../../features/services/upload.service";
 import GalleryBox from "../../components/Slider/GalleryBox";
 import { setCurrServices } from "../../features/adminSlice";
 import Periods from "./Periods";
-import { API_URL_PROXY } from "../../config/config";
 
 import hotelmain from "../../assets/hotel/hotelmain.png";
 import secondary from "../../assets/camp/campsecondary.png";
-import dateConfig from "../../components/DataConfig";
-import {
-  useGetCategoryQuery,
-  useGetFoodQuery,
-  useGetLocationQuery,
-  useGetServicesQuery,
-} from "../../features/services/base.service";
-import EmptyHolder from "../../components/HotelPage/EmptyHolder";
 import NewServiceModal from "./NewServiceModal";
 import PriceTable from "./PriceTable";
 
 import { enterTimes } from "./values/enterTimes";
 import { paymentPercents } from "./values/paymentPercents";
 import { babyAges } from "./values/babyAges";
+import { hotelStars } from "./values/hotelStars";
 import { kidAges } from "./values/kidAges";
 import useHotelData from "../../hooks/addData/useHotelData";
 import { useFetchedData } from "../../hooks/fetchedData/useFetchedData";
+import LabeledInput from "../../components/Inputs/LabeledInput";
+import LocationSelect from "../../components/Inputs/LocationSelect";
+import { useGetServicesQuery } from "../../features/services/base.service";
+import HotelServices from "./components/HotelServices";
 
 const AddHotel = ({
   fetchedHotelData,
@@ -83,7 +72,7 @@ const AddHotel = ({
   const { allServices, allFoods, allCategories, allLocations } =
     useFetchedData();
 
-  const [servicesToRender, setServicesToRender] = useState();
+  const [servicesToRender, setServicesToRender] = useState([]);
   const [fetchedOptionsToRender, setFetchedOptionsToRender] = useState([]);
 
   useEffect(() => {
@@ -110,8 +99,6 @@ const AddHotel = ({
 
     if (allServices) setServicesToRender(arrayResult);
   }, [allServices]);
-
-  console.log(servicesToRender, "servs to rendre");
 
   useEffect(() => {
     const result = fetchedOptions?.reduce((acc, cur) => {
@@ -250,20 +237,20 @@ const AddHotel = ({
             </div>
 
             <div className="input_row">
-              <input
-                type="text"
-                className="primary-input"
+              <LabeledInput
+                inputType="text"
+                label="Название"
                 value={hotelData && hotelData?.name}
                 placeholder="Название"
                 onChange={(e) =>
                   setHotelData({ ...hotelData, name: e.target.value })
                 }
               />
-              <input
-                type="text"
-                className="primary-input"
+              <LabeledInput
+                inputType="text"
+                label="Особенность местоположения"
                 placeholder="Особенность местоположения"
-                value={hotelData?.locationFeature}
+                value={hotelData && hotelData?.locationFeature}
                 onChange={(e) =>
                   setHotelData({
                     ...hotelData,
@@ -273,34 +260,10 @@ const AddHotel = ({
               />
             </div>
             <div className="input_row">
-              <select
-                className="primary-input"
-                type="text"
-                placeholder="Местоположение"
-                name="destination"
-                value={hotelData?.locationId}
-                onChange={(e) => {
-                  setHotelData({
-                    ...hotelData,
-                    locationId: e.target.value,
-                  });
-                }}
-              >
-                {allLocations && allLocations.length >= 0 ? (
-                  allLocations.map((location, idx) => {
-                    return (
-                      <option value={location._id} key={location._id}>
-                        {location.locationName}
-                      </option>
-                    );
-                  })
-                ) : (
-                  <>Locations are loading</>
-                )}
-              </select>
-              <input
-                type="text"
-                className="primary-input"
+              <LocationSelect />
+              <LabeledInput
+                label="Ссылка на карту"
+                inputType="text"
                 value={hotelData?.mapLink}
                 placeholder="Ссылка на карту"
                 onChange={(e) =>
@@ -309,22 +272,19 @@ const AddHotel = ({
               />
             </div>
             <div className="input_row">
-              <input
-                type="number"
-                onWheel={(e) => e.target.blur()}
-                className="primary-input"
+              <LabeledInput
+                inputType="number"
+                label="Рейтинг отеля"
                 value={hotelData?.rating}
                 placeholder="Рейтинг отеля"
                 onChange={(e) =>
                   setHotelData({ ...hotelData, rating: e.target.value })
                 }
               />
-              <select
-                className="primary-input"
-                type="number"
-                onWheel={(e) => e.target.blur()}
+              <LabeledInput
+                label="Звёзды отеля"
+                selectMode
                 placeholder="Местоположение"
-                name="hotelStars"
                 value={hotelData?.hotelStars}
                 onChange={(e) => {
                   setHotelData({
@@ -333,18 +293,14 @@ const AddHotel = ({
                   });
                 }}
               >
-                <option value={5}>5</option>
-                <option value={4}>4</option>
-                <option value={3}>3</option>
-                <option value={2}>2</option>
-                <option value={1}>1</option>
-              </select>
+                {hotelStars.map((el) => (
+                  <option value={el}>{el}</option>
+                ))}
+              </LabeledInput>
             </div>
             <div className="input_row">
               <textarea
                 className="primary-input"
-                name=""
-                id=""
                 cols="30"
                 rows="15"
                 style={{ height: "100%" }}
@@ -409,31 +365,26 @@ const AddHotel = ({
                     ))}
                   </select>
                 </div>
-                <div className="service-input">
-                  <label htmlFor="discountType">Время выезда</label>
-
-                  <select
-                    name=""
-                    id=""
-                    className="primary-input"
-                    value={hotelData?.leaveTime}
-                    onChange={(e) =>
-                      setHotelData({
-                        ...hotelData,
-                        leaveTime: e.target.value,
-                      })
-                    }
-                  >
-                    <option value="" disabled selected>
-                      Выезд с
+                <LabeledInput
+                  label="Время выезда"
+                  selectMode
+                  value={hotelData?.leaveTime}
+                  onChange={(e) =>
+                    setHotelData({
+                      ...hotelData,
+                      leaveTime: e.target.value,
+                    })
+                  }
+                >
+                  <option value="" disabled selected>
+                    Выезд с
+                  </option>
+                  {enterTimes.map((el) => (
+                    <option key={el} value={el}>
+                      {el}
                     </option>
-                    {enterTimes.map((el) => (
-                      <option key={el} value={el}>
-                        {el}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                  ))}
+                </LabeledInput>
               </div>
             </div>
             <div className="input_box">
@@ -691,6 +642,11 @@ const AddHotel = ({
                 })
               : null}
           </div>
+          <HotelServices
+            allServices={allServices}
+            setIsOpen={setIsOpen}
+            fetchedOptions={fetchedOptions}
+          />
         </Section>
 
         {editMode ? (

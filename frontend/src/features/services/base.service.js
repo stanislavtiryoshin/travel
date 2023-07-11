@@ -51,10 +51,10 @@ export const baseApi = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ _id }) => ({ type: "hotelServices", _id })),
-              { type: "location", id: "LIST" },
+              ...result.map(({ _id }) => ({ type: "services", _id })),
+              { type: "services", id: "LIST" },
             ]
-          : [{ type: "location", id: "LIST" }],
+          : [{ type: "services", id: "LIST" }],
     }),
     getProgram: builder.query({
       query: () => ({

@@ -147,7 +147,6 @@ const Periods = ({
                   >
                     <div className="period_title">
                       {`Период ${idx + 1}`}
-                      {console.log(periods, "periods")}
                       <button
                         onClick={() => {
                           if (per._id) {

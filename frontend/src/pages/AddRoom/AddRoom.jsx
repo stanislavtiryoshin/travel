@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-// import axios from "axios";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
-import addhotel from "../../assets/addhotel.png";
 
 import { useUploadImageMutation } from "../../features/services/upload.service";
 
@@ -18,7 +16,6 @@ import GalleryBox from "../../components/Slider/GalleryBox";
 import secondary from "../../assets/camp/campsecondary.png";
 import room from "../../assets/hotel/hotelmain.png";
 import dateConfig from "../../components/DataConfig";
-import { set } from "mongoose";
 import EmptyHolder from "../../components/HotelPage/EmptyHolder";
 
 const AddRoom = ({ fetchedRoomData, editMode }) => {

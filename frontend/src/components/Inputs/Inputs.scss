@@ -1,0 +1,16 @@
+@import "../../_variables.scss";
+
+.service-input.loc {
+  z-index: 100;
+  label {
+    z-index: 11;
+  }
+  .locations-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(249, 249, 249, 1);
+    z-index: 10;
+  }
+}

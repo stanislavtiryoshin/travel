@@ -14,21 +14,20 @@ export function useFetchedData() {
     allFoods: [],
   });
 
-  const { data: allServices, isLoading: servicesIsLoading } =
-    useGetServicesQuery();
+  const { data: allServices } = useGetServicesQuery();
   const { data: allFoods } = useGetFoodQuery();
   const { data: allCategories } = useGetCategoryQuery();
   const { data: allLocations } = useGetLocationQuery();
 
   useEffect(() => {
-    if (allServices)
-      setFetchedData({ ...fetchedData, allServices: allServices });
-    if (allFoods) setFetchedData({ ...fetchedData, allFoods: allFoods });
-    if (allCategories)
-      setFetchedData({ ...fetchedData, allCategories: allCategories });
-    if (allLocations)
-      setFetchedData({ ...fetchedData, allLocations: allLocations });
+    setFetchedData((prevData) => ({
+      ...prevData,
+      allServices: allServices || prevData.allServices,
+      allFoods: allFoods || prevData.allFoods,
+      allCategories: allCategories || prevData.allCategories,
+      allLocations: allLocations || prevData.allLocations,
+    }));
   }, [allServices, allFoods, allCategories, allLocations]);
 
-  return [fetchedData, setFetchedData];
+  return fetchedData;
 }
