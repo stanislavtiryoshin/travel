@@ -66,68 +66,11 @@ const AddHotel = ({
   const [upload, { data: uploadedImage, isLoading: uploadIsLoading }] =
     useUploadImageMutation();
 
-  const [isOpen, setIsOpen] = useState(false);
+  // const [isOpen, setIsOpen] = useState(false);
 
   // Fetching all categories, services, locations, foods
   const { allServices, allFoods, allCategories, allLocations } =
     useFetchedData();
-
-  const [servicesToRender, setServicesToRender] = useState([]);
-  const [fetchedOptionsToRender, setFetchedOptionsToRender] = useState([]);
-
-  useEffect(() => {
-    const result = allServices?.reduce((acc, cur) => {
-      const category = cur.category.categoryName;
-      const service = {
-        _id: cur._id,
-        hotelServiceName: cur.hotelServiceName,
-      };
-
-      if (!acc[category]) {
-        acc[category] = {
-          category,
-          services: [service],
-        };
-      } else {
-        acc[category].services.push(service);
-      }
-
-      return acc;
-    }, {});
-
-    const arrayResult = result ? Object.values(result) : [];
-
-    if (allServices) setServicesToRender(arrayResult);
-  }, [allServices]);
-
-  useEffect(() => {
-    const result = fetchedOptions?.reduce((acc, cur) => {
-      const category = cur?.category?.categoryName;
-      const service = {
-        _id: cur._id,
-        hotelServiceName: cur?.hotelServiceName,
-        label: cur?.hotelServiceName,
-        value: cur?._id,
-      };
-
-      if (!acc[category]) {
-        acc[category] = {
-          category,
-          services: [service],
-        };
-      } else {
-        acc[category]?.services?.push(service);
-      }
-
-      return acc;
-    }, {});
-
-    const arrayResult = result ? Object.values(result) : [];
-
-    if (fetchedOptions) setFetchedOptionsToRender(arrayResult);
-  }, [fetchedOptions]);
-
-  // console.log(fetchedOptionsToRender, "fetched options to rendre");
 
   // comforts: [...JSON.parse(localStorage.getItem("comforts"))],
 
@@ -612,39 +555,9 @@ const AddHotel = ({
               </div>
             </div>
           </div>
-          <div className="add_more-col categ-col shadowed_box">
-            <div className="gen_title">Услуги отеля</div>
-            {servicesToRender?.length > 0
-              ? servicesToRender?.map((serv, idx) => {
-                  return (
-                    <ServiceCard
-                      key={serv._id}
-                      setIsOpen={setIsOpen}
-                      number={idx + 1}
-                      editMode
-                      allServices={allServices}
-                      setCurrServices={setCurrServices}
-                      necCategory={serv.category}
-                      necServices={serv.services.map((el) => {
-                        return {
-                          ...el,
-                          label: el.hotelServiceName,
-                          value: el._id,
-                        };
-                      })}
-                      fetchedOptions={
-                        fetchedOptionsToRender?.filter(
-                          (service) => service.category === serv.category
-                        )[0]?.services
-                      }
-                    />
-                  );
-                })
-              : null}
-          </div>
           <HotelServices
             allServices={allServices}
-            setIsOpen={setIsOpen}
+            // setIsOpen={setIsOpen}
             fetchedOptions={fetchedOptions}
           />
         </Section>
@@ -666,13 +579,13 @@ const AddHotel = ({
         ) : null}
       </div>
 
-      <NewServiceModal
+      {/* <NewServiceModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         newService={newService}
         setNewService={setNewService}
         allCategories={allCategories}
-      />
+      /> */}
     </>
   );
 };

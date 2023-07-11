@@ -33,9 +33,9 @@ const ServiceCard = ({
         Категория {number}: {necCategory}
       </div>
       <MultiSelect options={necServices} fetchedOptions={fetchedOptions} />
-      <span onClick={() => setIsOpen(true)} className="additional-service">
+      {/* <span onClick={() => setIsOpen(true)} className="additional-service">
         Добавить новую услугу
-      </span>
+      </span> */}
     </div>
   );
 };
